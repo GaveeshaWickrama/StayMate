@@ -8,7 +8,11 @@ const app = express();
 app.use(cors());
 app.use(morgan('dev'));
 
-
+const mongoose = require('mongoose')
+mongoose.connect(process.env.DATABASE_URL) //use 127.0.0.1 insted of localhost to fix conversion issues with IPV6
+const db = mongoose.connection
+db.on('error', (error) => console.error(error))
+db.once('open', () => console.log('Connected to Database'))
 
 // Basic Route
 app.get('/', (req, res) => {

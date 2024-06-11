@@ -5,3 +5,5 @@ npm install --save-dev nodemon
 npm install dotenv
 npm install cors
 npm install morgan
+npm install mongoose
+
