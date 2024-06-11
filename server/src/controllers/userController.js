@@ -138,11 +138,44 @@ async function requestRegister(req, res) {
     }
 }
 
+async function verifyOtp(req, res) {
+    const { email, otp } = req.body;
 
+    if (!email || !otp) {
+        return res.status(400).json({ message: 'Email and OTP are required' });
+    }
+
+    try {
+        const emailfound = await OTP.findOne({ email});
+
+        if (!emailfound) {
+            return res.status(400).json({ message: 'Registration reuqest not found' });
+        }
+
+        const otpEntry = await OTP.findOne({ email, otp });
+
+        if (!otpEntry) {
+            return res.status(400).json({ message: 'Invalid OTP' });
+        }
+
+        // Create user
+        const user = new User(otpEntry.userDetails);
+        await user.save();
+
+        // Delete the OTP entry after verification
+        await OTP.deleteOne({ email, otp });
+
+        res.status(200).json({ message: 'Email verified and user account created successfully' });
+    } catch (error) {
+        console.error(error);
+        res.status(500).json({ message: 'Internal server error' });
+    }
+}
 
 module.exports = {
     loginUser,
     requestRegister,
-  
+    verifyOtp
 };
+
 
