@@ -1,5 +1,5 @@
 const User = require('../models/userModel');
-// const bcrypt = require('bcrypt');
+const bcrypt = require('bcrypt');
 
 const userController = {
   createUser: async (req, res) => {
@@ -13,7 +13,7 @@ const userController = {
       }
 
       // Hash the password
-      const hashedPassword = password;
+      const hashedPassword = await bcrypt.hash(password, 10);
 
       // Create a new user
       const newUser = new User({

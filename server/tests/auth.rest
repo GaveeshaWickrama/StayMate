@@ -1,0 +1,31 @@
+#email which doesnt exist 
+POST http://localhost:3000/auth/login
+Content-Type: application/json
+
+{
+    "email": "hello762@gmail.com",
+    "password": "sachin12345678"
+}
+
+###
+
+#incorrect password, correct email 
+
+POST http://localhost:3000/auth/login
+Content-Type: application/json
+
+{
+    "email": "hello612@gmail.com",
+    "password": "sa2chin12345678"
+}
+
+###
+
+#correct password, correct email /make sure u have created this user in the db
+POST http://localhost:3000/auth/login
+Content-Type: application/json
+
+{
+    "email": "hello612@gmail.com",
+    "password": "sachin12345678"
+}
