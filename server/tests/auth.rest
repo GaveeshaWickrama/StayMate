@@ -1,4 +1,4 @@
-#email which doesnt exist 
+#LOGIN - email which doesnt exist 
 POST http://localhost:3000/auth/login
 Content-Type: application/json
 
@@ -9,7 +9,7 @@ Content-Type: application/json
 
 ###
 
-#incorrect password, correct email 
+#LOGIN - incorrect password, correct email 
 
 POST http://localhost:3000/auth/login
 Content-Type: application/json
@@ -21,11 +21,24 @@ Content-Type: application/json
 
 ###
 
-#correct password, correct email /make sure u have created this user in the db
+#LOGIN - correct password, correct email /make sure u have created this user in the db
 POST http://localhost:3000/auth/login
 Content-Type: application/json
 
 {
     "email": "hello612@gmail.com",
     "password": "sachin12345678"
+}
+
+###
+
+#REGISTER - create a user, email isnt configured yet but should create OTP request
+POST http://localhost:3000/auth/register
+Content-Type: application/json
+
+{
+    
+    "email": "heyman@gmail.com",
+    "password": "letmeintest"
+    
 }
