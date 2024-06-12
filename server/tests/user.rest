@@ -1,3 +1,4 @@
+### no longer in use
 POST http://localhost:3000/users/register
 Content-Type: application/json
 
@@ -6,3 +7,8 @@ Content-Type: application/json
     "password": "sachin12345678", 
     "role": "user"
 }
+
+
+### Get user (Self) info // Signin using auth routes and replace the token
+GET http://localhost:3000/users
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiI2NjY4OWRkMGFjY2EyOGM4NWIyMDcyNDkiLCJlbWFpbCI6ImhlbGxvNjEyQGdtYWlsLmNvbSIsInJvbGUiOiJ1c2VyIiwiaWF0IjoxNzE4MTk1Mjk5LCJleHAiOjE3MTgyODE2OTl9.1sBL6Ml_lPPX8rt4sSxs7SZRhb9XuEES5scGjjN8zcg
