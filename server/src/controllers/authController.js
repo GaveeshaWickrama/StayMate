@@ -121,11 +121,11 @@ async function requestRegister(req, res) {
             };
 
             transporter.sendMail(mailOptions, (error, info) => {
-                if (error) {
+                if (false) { //disabled for now
                     console.error('Error sending OTP email:', error);
                     return res.status(500).json({ message: 'Error sending OTP email' });
                 } else {
-                    console.log('OTP email sent:', info.response);
+                    console.log('OTP email sent:');
                     return res.status(201).json({
                         message: 'OTP sent to email. Please check your email to verify your account.',
                     });
