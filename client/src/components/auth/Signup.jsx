@@ -12,7 +12,7 @@ function Signup() {
   const handleSubmit = async (e) => {
     e.preventDefault();
     const { error } = await signup(email, password);
-    if (false) {
+    if (error) {
       setError(error);
     } else {
       navigate('/verify-otp', { state: { email, password } }); // Pass email and password
