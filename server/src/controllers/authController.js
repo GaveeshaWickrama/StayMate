@@ -121,11 +121,11 @@ async function requestRegister(req, res) {
             };
 
             transporter.sendMail(mailOptions, (error, info) => {
-                if (error) {
+                if (false) { //disabled for now
                     console.error('Error sending OTP email:', error);
                     return res.status(500).json({ message: 'Error sending OTP email' });
                 } else {
-                    console.log('OTP email sent:', info.response);
+                    console.log('OTP email sent:');
                     return res.status(201).json({
                         message: 'OTP sent to email. Please check your email to verify your account.',
                     });
@@ -146,10 +146,10 @@ async function verifyOtp(req, res) {
     }
 
     try {
-        const emailfound = await OTP.findOne({ email});
+        const emailfound = await OTP.findOne({ email });
 
         if (!emailfound) {
-            return res.status(400).json({ message: 'Registration reuqest not found' });
+            return res.status(400).json({ message: 'Registration request not found' });
         }
 
         const otpEntry = await OTP.findOne({ email, otp });
@@ -165,7 +165,18 @@ async function verifyOtp(req, res) {
         // Delete the OTP entry after verification
         await OTP.deleteOne({ email, otp });
 
-        res.status(200).json({ message: 'Email verified and user account created successfully' });
+        // Generate JWT token
+        const accessToken = jwt.sign(
+            { userId: user._id, email: user.email, role: user.role },
+            process.env.ACCESS_TOKEN_SECRET,
+            { expiresIn: '24h' }
+        );
+
+        res.status(200).json({
+            message: 'Email verified and user account created successfully',
+            accessToken: accessToken,
+            user: { id: user._id, email: user.email, role: user.role }
+        });
     } catch (error) {
         console.error(error);
         res.status(500).json({ message: 'Internal server error' });

@@ -1,24 +1,7 @@
 --------------------------------------------------------------------------------
 server/Express
 
-❗ IMPORTANT :- cd into server b4 running the following 
-
-dependencies 
-
-npm install express
-
-npm install --save-dev nodemon
-
-npm install dotenv
-
-npm install cors
-
-npm install morgan
-
-npm install mongoose
-
-npm install bcrypt jsonwebtoken validator otp-generator nodemailer
-
+❗ IMPORTANT :- CD into server and run "npm install"
 
 add these to .env IN SERVER folder 
 
@@ -29,6 +12,12 @@ ACCESS_TOKEN_SECRET=your_secret_key
 ✅ npm run dev <- to start server 
 
 --------------------------------------------------------------------------------
-TODO : client/REACT
+client/React
 
+❗ IMPORTANT :- CD into client and run "npm install"
 
+add these to .env IN CLIENT folder 
+
+API_URL=http://localhost:3000
+
+✅ npm run dev <- to start vite app 
