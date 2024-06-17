@@ -23,17 +23,16 @@ export const AuthProvider = ({ children }) => {
     return { user, error };
   };
 
-  const signup = async (email, password) => {
-    const { error } = await authService.signup(email, password);
+  const signup = async (email, password, role) => {
+    const { error } = await authService.signup(email, password, role);
     if (!error) {
       setEmailForVerification(email);
     }
     return { error };
   };
 
-  const verifyOtp = async (email, otp) => {
-    const { user, error } = await authService.verifyOtp(email, otp);
-    console.log(error); 
+  const verifyOtp = async (email, otp, role) => {
+    const { user, error } = await authService.verifyOtp(email, otp, role);
     if (user) {
       setCurrentUser(user);
     }

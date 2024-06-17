@@ -38,8 +38,8 @@ Content-Type: application/json
 
 {
     
-    "email": "hello123@gmail.com",
-    "password": "letmeintest" , 
+    "email": "hello1233@gmail.com",
+    "password": "123456" , 
     "role" : "guest"
 }
 
