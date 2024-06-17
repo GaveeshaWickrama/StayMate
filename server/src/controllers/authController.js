@@ -59,7 +59,8 @@ async function requestRegister(req, res) {
 
         // Check if email and role combination already exists
         const normalizedEmail = email.toLowerCase().trim();
-        const existingUser = await User.findOne({ email: normalizedEmail, role });
+        // const existingUser = await User.findOne({ email: normalizedEmail, role });
+        const existingUser = await User.findOne({ email: normalizedEmail });
         if (existingUser) {
             return res.status(400).json({ message: "Email and Role already in use." });
         }
@@ -76,7 +77,9 @@ async function requestRegister(req, res) {
         };
 
         // Check if an OTP request has already been sent
-        const existingOtp = await OTP.findOne({ email: normalizedEmail, 'userDetails.role': role });
+        // const existingOtp = await OTP.findOne({ email: normalizedEmail, 'userDetails.role': role });
+        const existingOtp = await OTP.findOne({ email: normalizedEmail });
+
         if (existingOtp) {
             const currentTime = Date.now();
             const timeDifference = (currentTime - existingOtp.lastOtpTime) / 1000; // in seconds
@@ -145,7 +148,7 @@ async function requestRegister(req, res) {
 }
 
 async function verifyOtp(req, res) {
-    const { email, otp, role } = req.body;
+    const { email, otp, role } = req.body; //This should be changed 
 
     if (!email || !otp || !role) {
         return res.status(400).json({ message: 'Email, OTP, and Role are required' });

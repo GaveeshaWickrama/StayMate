@@ -38,7 +38,17 @@ Content-Type: application/json
 
 {
     
-    "email": "rtheyman@gmail.com",
+    "email": "hello123@gmail.com",
     "password": "letmeintest" , 
+    "role" : "guest"
+}
+
+###
+POST http://localhost:3000/auth/verify-otp
+Content-Type: application/json
+
+{
+    "email": "hello123@gmail.com",
+    "otp": "g6fb2w" , 
     "role" : "guest"
 }
