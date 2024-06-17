@@ -6,6 +6,8 @@ const User = require('../models/userModel');
 const OTP = require('../models/otpModel');
 const transporter = require('../config/emailConfig');
 
+const ALLOWED_ROLES = ['guest', 'host', 'technician'];
+
 async function loginUser(req, res) {
     const { email, password, role } = req.body;
 
@@ -44,6 +46,10 @@ async function requestRegister(req, res) {
 
         if (!email || !password || !role) {
             return res.status(400).json({ message: "Email, Password, or Role not defined" });
+        }
+
+        if (!ALLOWED_ROLES.includes(role)) {
+            return res.status(400).json({ message: "Invalid role" });
         }
 
         // Validate email format
@@ -87,7 +93,7 @@ async function requestRegister(req, res) {
             existingOtp.userDetails = newUserDetails;
             await existingOtp.save();
 
-            // Send OTP email
+            // Send OTP email TODO: MOVE these 
             const mailOptions = {
                 from: process.env.EMAIL_USER,
                 to: normalizedEmail,
@@ -107,7 +113,7 @@ async function requestRegister(req, res) {
                 }
             });
         } else {
-            // Generate OTP
+            // Generate OTP TODO: MOVE these 
             const otp = otpGenerator.generate(6, { upperCaseAlphabets: false, specialChars: false });
             const otpEntry = new OTP({ email: normalizedEmail, otp, userDetails: newUserDetails });
             await otpEntry.save();
@@ -125,7 +131,7 @@ async function requestRegister(req, res) {
                     console.error('Error sending OTP email:', error);
                     return res.status(500).json({ message: 'Error sending OTP email' });
                 } else {
-                    console.log('OTP email sent:', info.response);
+                    console.log('OTP email sent');
                     return res.status(201).json({
                         message: 'OTP sent to email. Please check your email to verify your account.',
                     });
@@ -143,6 +149,10 @@ async function verifyOtp(req, res) {
 
     if (!email || !otp || !role) {
         return res.status(400).json({ message: 'Email, OTP, and Role are required' });
+    }
+
+    if (!ALLOWED_ROLES.includes(role)) {
+        return res.status(400).json({ message: "Invalid role" });
     }
 
     try {

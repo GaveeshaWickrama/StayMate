@@ -40,5 +40,5 @@ Content-Type: application/json
     
     "email": "rtheyman@gmail.com",
     "password": "letmeintest" , 
-    "role" : "admin"
+    "role" : "guest"
 }
