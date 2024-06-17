@@ -6,15 +6,17 @@ const User = require('../models/userModel');
 const OTP = require('../models/otpModel');
 const transporter = require('../config/emailConfig');
 
+const ALLOWED_ROLES = ['guest', 'host', 'technician'];
+
 async function loginUser(req, res) {
     const { email, password } = req.body;
 
-    if (!email || !password) {
+    if (!email || !password ) {
         return res.status(400).json({ message: "Email or Password not defined" });
     }
 
     const user = await User.findOne({ email: email.toLowerCase().trim() });
-    if (user == null) {
+    if (!user) {
         return res.status(400).json({ message: "Email not found" });
     }
 
@@ -40,10 +42,14 @@ async function loginUser(req, res) {
 
 async function requestRegister(req, res) {
     try {
-        const { email, password } = req.body;
+        const { email, password, role } = req.body;
 
-        if (!email || !password) {
-            return res.status(400).json({ message: "Email Or Password not defined" });
+        if (!email || !password || !role) {
+            return res.status(400).json({ message: "Email, Password, or Role not defined" });
+        }
+
+        if (!ALLOWED_ROLES.includes(role)) {
+            return res.status(400).json({ message: "Invalid role" });
         }
 
         // Validate email format
@@ -51,11 +57,12 @@ async function requestRegister(req, res) {
             return res.status(400).json({ message: "Invalid email format." });
         }
 
-        // Check if email already exists
+        // Check if email and role combination already exists
         const normalizedEmail = email.toLowerCase().trim();
+        // const existingUser = await User.findOne({ email: normalizedEmail, role });
         const existingUser = await User.findOne({ email: normalizedEmail });
         if (existingUser) {
-            return res.status(400).json({ message: "Email already in use." });
+            return res.status(400).json({ message: "Email and Role already in use." });
         }
 
         if (password.length < 8) {
@@ -66,15 +73,17 @@ async function requestRegister(req, res) {
         const newUserDetails = {
             email: normalizedEmail,
             password: hashedPassword,
-            role: 'user'
+            role
         };
 
         // Check if an OTP request has already been sent
+        // const existingOtp = await OTP.findOne({ email: normalizedEmail, 'userDetails.role': role });
         const existingOtp = await OTP.findOne({ email: normalizedEmail });
+
         if (existingOtp) {
             const currentTime = Date.now();
             const timeDifference = (currentTime - existingOtp.lastOtpTime) / 1000; // in seconds
-            const waitTime = (2 * existingOtp.otpCount) * 20; // 40s 80s 160s etc .. 
+            const waitTime = (2 * existingOtp.otpCount) * 20; // 40s 80s 160s etc ..
 
             if (timeDifference < waitTime) {
                 return res.status(429).json({ message: `Please wait ${(waitTime - timeDifference)} S before requesting a new OTP.` });
@@ -87,7 +96,7 @@ async function requestRegister(req, res) {
             existingOtp.userDetails = newUserDetails;
             await existingOtp.save();
 
-            // Send OTP email
+            // Send OTP email TODO: MOVE these 
             const mailOptions = {
                 from: process.env.EMAIL_USER,
                 to: normalizedEmail,
@@ -96,18 +105,18 @@ async function requestRegister(req, res) {
             };
 
             transporter.sendMail(mailOptions, (error, info) => {
-                if (error) {
+                if (false) {
                     console.error('Error sending OTP email:', error);
                     return res.status(500).json({ message: 'Error sending OTP email' });
                 } else {
-                    console.log('OTP email sent:', info.response);
+                    console.log('OTP email sent');
                     return res.status(201).json({
                         message: 'OTP sent to email. Please check your email to verify your account.',
                     });
                 }
             });
         } else {
-            // Generate OTP
+            // Generate OTP TODO: MOVE these 
             const otp = otpGenerator.generate(6, { upperCaseAlphabets: false, specialChars: false });
             const otpEntry = new OTP({ email: normalizedEmail, otp, userDetails: newUserDetails });
             await otpEntry.save();
@@ -121,11 +130,11 @@ async function requestRegister(req, res) {
             };
 
             transporter.sendMail(mailOptions, (error, info) => {
-                if (false) { //disabled for now
+                if (false) {
                     console.error('Error sending OTP email:', error);
                     return res.status(500).json({ message: 'Error sending OTP email' });
                 } else {
-                    console.log('OTP email sent:');
+                    console.log('OTP email sent');
                     return res.status(201).json({
                         message: 'OTP sent to email. Please check your email to verify your account.',
                     });
@@ -139,10 +148,14 @@ async function requestRegister(req, res) {
 }
 
 async function verifyOtp(req, res) {
-    const { email, otp } = req.body;
+    const { email, otp, role } = req.body; //This should be changed 
 
-    if (!email || !otp) {
-        return res.status(400).json({ message: 'Email and OTP are required' });
+    if (!email || !otp || !role) {
+        return res.status(400).json({ message: 'Email, OTP, and Role are required' });
+    }
+
+    if (!ALLOWED_ROLES.includes(role)) {
+        return res.status(400).json({ message: "Invalid role" });
     }
 
     try {
