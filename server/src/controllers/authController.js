@@ -9,15 +9,15 @@ const transporter = require('../config/emailConfig');
 const ALLOWED_ROLES = ['guest', 'host', 'technician'];
 
 async function loginUser(req, res) {
-    const { email, password, role } = req.body;
+    const { email, password } = req.body;
 
-    if (!email || !password || !role) {
-        return res.status(400).json({ message: "Email, Password, or Role not defined" });
+    if (!email || !password ) {
+        return res.status(400).json({ message: "Email or Password not defined" });
     }
 
-    const user = await User.findOne({ email: email.toLowerCase().trim(), role });
+    const user = await User.findOne({ email: email.toLowerCase().trim() });
     if (!user) {
-        return res.status(400).json({ message: "Email or Role not found" });
+        return res.status(400).json({ message: "Email not found" });
     }
 
     try {
