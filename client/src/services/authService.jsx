@@ -17,9 +17,9 @@ const authService = {
     }
   },
 
-  signup: async (email, password) => {
+  signup: async (email, password, role) => {
     try {
-      await axios.post(`${API_URL}/auth/register`, { email, password });
+      await axios.post(`${API_URL}/auth/register`, { email, password, role });
       return { error: null };
     } catch (error) {
       const errorMessage = error.response?.data?.message || 'Signup failed';
@@ -27,9 +27,9 @@ const authService = {
     }
   },
 
-  verifyOtp: async (email, otp) => {
+  verifyOtp: async (email, otp, role) => {
     try {
-      const response = await axios.post(`${API_URL}/auth/verify-otp`, { email, otp });
+      const response = await axios.post(`${API_URL}/auth/verify-otp`, { email, otp, role });
       const { accessToken, user } = response.data;
       localStorage.setItem('user', JSON.stringify(user));
       localStorage.setItem('token', accessToken);
