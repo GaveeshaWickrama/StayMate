@@ -34,7 +34,7 @@ function PublicNavbar() {
       <h1>Public Nav</h1>
       <Link to="/">Home</Link>
       <Link to="/login">Login</Link>
-      <Link to="/signup">Signup</Link>
+      <Link to="/signup/guest">Signup</Link>
     </nav>
   );
 }

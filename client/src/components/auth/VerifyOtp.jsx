@@ -10,11 +10,11 @@ function VerifyOtp() {
   const { verifyOtp } = useContext(AuthContext);
   const navigate = useNavigate();
   const location = useLocation();
-  const { email, password } = location.state;
+  const { email, password, role } = location.state; // Destructure role from location.state
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    const { error } = await verifyOtp(email, otp);
+    const { user, error } = await verifyOtp(email, otp, role); // Pass role to verifyOtp
     if (error) {
       setError(error);
     } else {
@@ -24,11 +24,11 @@ function VerifyOtp() {
 
   const handleResendOtp = async () => {
     try {
-      const response = await authService.signup(email, password);
+      const response = await authService.signup(email, password, role); // Pass role to signup
       if(response.error){
         setError(response.error || 'Failed to resend OTP. Please try again later.');
-        setResendMessage(null)
-      } else{
+        setResendMessage(null);
+      } else {
         setResendMessage(response.message || 'OTP has been resent. Please check your email.');
         setError(null); // Clear any previous errors
       }
