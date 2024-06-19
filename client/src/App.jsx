@@ -10,16 +10,18 @@ import Unauthorized from './pages/common/Unauthorized';
 
 function App() {
   return (
-    <div>
+    <div id="stuff">
       <Navbar />
-      <Routes>
-        <Route path="/" element={<HomePage />} />
-        <Route path="/admin/*" element={<AdminRoutes />} />
-        <Route path="/user/*" element={<GuestRoutes />} />
-        <Route path="/*" element={<PublicRoutes />} />
-        <Route path="*" element={<NotFoundPage />} />
-        <Route path="/Unauthorized" element={<Unauthorized />} />
-      </Routes>
+      <div className="main-content">
+        <Routes>
+          <Route path="/" element={<HomePage />} />
+          <Route path="/admin/*" element={<AdminRoutes />} />
+          <Route path="/user/*" element={<GuestRoutes />} />
+          <Route path="/*" element={<PublicRoutes />} />
+          <Route path="*" element={<NotFoundPage />} />
+          <Route path="/Unauthorized" element={<Unauthorized />} />
+        </Routes>
+      </div>
     </div>
   );
 }

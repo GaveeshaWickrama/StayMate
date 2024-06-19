@@ -2,44 +2,26 @@ import React from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { useAuth } from '../../context/auth';
 
-// AdminNavbar component
-function AdminNavbar({ logout }) {
+// Sidebar component
+function Sidebar({ title, links, logout }) {
   return (
-    <nav>
-      <h1>Admin Nav</h1>
-      <Link to="/">Home</Link>
-      <Link to="/admin">Admin Dashboard</Link>
-      <Link to="/admin/UserCenter">UserCenter</Link>
-      <button onClick={logout}>Logout</button>
+    <nav className="sidebar bg-gray-800 text-white flex flex-col p-4">
+      <h1 className="text-2xl font-bold mb-6">{title}</h1>
+      {links.map((link, index) => (
+        <Link key={index} to={link.path} className="mb-2 p-2 hover:bg-gray-700 rounded">
+          {link.label}
+        </Link>
+      ))}
+      {logout && (
+        <button onClick={logout} className="mt-auto p-2 bg-red-600 hover:bg-red-700 rounded">
+          Logout
+        </button>
+      )}
     </nav>
   );
 }
 
-// UserNavbar component
-function GuestNavBar({ logout }) {
-  return (
-    <nav>
-      <h1>User</h1>
-      <Link to="/">Home</Link>
-      <Link to="/user">User Page</Link>
-      <button onClick={logout}>Logout</button>
-    </nav>
-  );
-}
-
-// PublicNavbar component
-function PublicNavbar() {
-  return (
-    <nav>
-      <h1>Public Nav</h1>
-      <Link to="/">Home</Link>
-      <Link to="/login">Login</Link>
-      <Link to="/signup/guest">Signup</Link>
-    </nav>
-  );
-}
-
-// Main Navbar component
+// Navbar component
 function Navbar() {
   const { currentUser, logout } = useAuth();
   const navigate = useNavigate();
@@ -49,19 +31,38 @@ function Navbar() {
     navigate('/');
   };
 
+  const adminLinks = [
+    { path: '/', label: 'Home' },
+    { path: '/admin', label: 'Admin Dashboard' },
+    { path: '/admin/UserCenter', label: 'User Center' },
+  ];
+
+  const guestLinks = [
+    { path: '/', label: 'Home' },
+    { path: '/user', label: 'User Page' },
+  ];
+
+  const publicLinks = [
+    { path: '/', label: 'Home' },
+    { path: '/login', label: 'Login' },
+    { path: '/signup/guest', label: 'Signup' },
+  ];
+
   if (!currentUser) {
-    return <PublicNavbar />;
+    return <Sidebar title="Public Nav" links={publicLinks} />;
   }
 
   if (currentUser.role === 'admin') {
-    return <AdminNavbar logout={handleLogout} />;
+    return <Sidebar title="Admin Nav" links={adminLinks} logout={handleLogout} />;
   }
 
   if (currentUser.role === 'guest') {
-    return <GuestNavBar logout={handleLogout} />;
+    return <Sidebar title="User Nav" links={guestLinks} logout={handleLogout} />;
   }
 
   return null;
 }
 
 export default Navbar;
+
+
