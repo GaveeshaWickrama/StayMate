@@ -32,7 +32,7 @@ const GuestSignup = () => {
     <div className="min-h-screen bg-gray-100 flex items-center justify-center">
       <form onSubmit={handleSubmit} className="bg-white p-8 pt-4 rounded shadow-md w-full max-w-sm">
         <Logo />
-        <h2 className="text-2xl font-bold mb-10 text-center">Guest SignUp</h2>
+        <h2 className="text-2xl font-bold mb-10 text-center">Guest Sign-Up</h2>
         <InputField
           id="email"
           name="email"
@@ -66,7 +66,7 @@ const GuestSignup = () => {
         </button>
         <div className="flex mb-4 mt-4 text-sm text-gray-600 items-center justify-center">
             <FaExclamationCircle className="mr-1 " />
-            <Link to="/forgot-password" className="hover:underline  ">Already have an account?</Link>
+            <Link to="/login" className="hover:underline  ">Already have an account?</Link>
         </div>
         <div className="flex flex-col mt-4 text-sm text-gray-600 text-center">
           <p className="mb-2">Are you looking to provide a service?</p>

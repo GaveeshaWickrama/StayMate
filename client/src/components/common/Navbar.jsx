@@ -16,12 +16,12 @@ function AdminNavbar({ logout }) {
 }
 
 // UserNavbar component
-function UserNavbar({ logout }) {
+function GuestNavBar({ logout }) {
   return (
     <nav>
       <h1>User</h1>
       <Link to="/">Home</Link>
-      <Link to="/user">User Dashboard</Link>
+      <Link to="/user">User Page</Link>
       <button onClick={logout}>Logout</button>
     </nav>
   );
@@ -57,8 +57,8 @@ function Navbar() {
     return <AdminNavbar logout={handleLogout} />;
   }
 
-  if (currentUser.role === 'user') {
-    return <UserNavbar logout={handleLogout} />;
+  if (currentUser.role === 'guest') {
+    return <GuestNavBar logout={handleLogout} />;
   }
 
   return null;
