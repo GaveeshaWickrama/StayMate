@@ -62,8 +62,9 @@ const LoginForm = () => {
       </button>
       <div className="flex mb-4 mt-10 text-sm text-gray-600">
         <FaQuestionCircle className="mr-1" />
-        <Link to="/signup" className="flex hover:underline relative top-[-3px]">
-          <div>Don't have an account? </div>
+          <div className='relative top-[-3px]'>Don't have an account? </div>
+        <Link to="/signup/guest" className="flex hover:underline relative top-[-3px]">
+          
           <div className="text-blue-600 ml-1">Create your account</div>
         </Link>
       </div>
