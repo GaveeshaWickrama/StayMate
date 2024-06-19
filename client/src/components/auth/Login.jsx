@@ -29,13 +29,14 @@ function Login() {
 
   return (
     <div className="min-h-screen bg-gray-100 flex items-center justify-center">
-      <form onSubmit={handleSubmit} className="bg-white p-8 pt-2 rounded shadow-md w-full max-w-sm">
-        <div className="flex justify-center">
-          <img src={logo} alt="Logo" />
-        </div>
+      <form onSubmit={handleSubmit} className="bg-white p-8 pt-4 rounded shadow-md w-full max-w-sm">
+        <Link to="/">
+          <div className="flex justify-center hover:scale-110 transition-transform duration-500 ease-in-out">
+            <img src={logo} alt="Logo" />
+          </div>
+        </Link>
         <h2 className="text-2xl font-bold mb-10 text-center">Log in to STAYMATE</h2>
-        {error && <p className="text-red-500 text-center mb-4">{error}</p>}
-        <div className="relative mb-6">
+        <div className="relative mb-8">
           <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
             <FaEnvelope className="text-gray-400" />
           </div>
@@ -57,7 +58,7 @@ function Login() {
             Email Address
           </label>
         </div>
-        <div className="relative mb-6">
+        <div className="relative mb-8">
           <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
             <FaLock className="text-gray-400" />
           </div>
@@ -79,10 +80,15 @@ function Login() {
             Password
           </label>
         </div>
-        <div className="flex  mb-4 mt-4 text-sm text-gray-600">
+        <div className="flex mb-4 mt-4 text-sm text-gray-600">
           <FaExclamationCircle className="mr-1" />
           <Link to="/forgot-password" className="hover:underline relative top-[-3px]">Forgotten password?</Link>
         </div>
+        {error && (
+          <div className="bg-red-100 border border-red-400 text-red-600 px-4 py-3 rounded relative mb-6" role="alert">
+            <span className="block sm:inline">{error}</span>
+          </div>
+        )}
         <button type="submit" className="w-full bg-blue-700 text-white p-2 rounded flex items-center justify-center hover:bg-blue-900 transition-colors">
           <FaArrowRight className="mr-2" />
           Login
@@ -90,17 +96,17 @@ function Login() {
         <div className="flex mb-4 mt-10 text-sm text-gray-600">
           <FaQuestionCircle className="mr-1" />
           <Link to="/signup" className="flex hover:underline relative top-[-3px]">
-          <div >Don't have an account? </div>
-          <div className='text-blue-600 ml-1'>Create your account</div>
-         </Link>
+            <div>Don't have an account? </div>
+            <div className="text-blue-600 ml-1">Create your account</div>
+          </Link>
         </div>
-
       </form>
     </div>
   );
 }
 
 export default Login;
+
 
 
 
