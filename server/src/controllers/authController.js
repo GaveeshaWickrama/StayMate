@@ -86,7 +86,8 @@ async function requestRegister(req, res) {
             const waitTime = (2 * existingOtp.otpCount) * 20; // 40s 80s 160s etc ..
 
             if (timeDifference < waitTime) {
-                return res.status(429).json({ message: `Please wait ${(waitTime - timeDifference)} S before requesting a new OTP.` });
+                
+                return res.status(429).json({ message: `Please wait ${(Math.round(waitTime - timeDifference))} S before requesting a new OTP.` });
             }
 
             // Update OTP count and lastOtpTime
@@ -117,7 +118,7 @@ async function requestRegister(req, res) {
             });
         } else {
             // Generate OTP TODO: MOVE these 
-            const otp = otpGenerator.generate(6, { upperCaseAlphabets: false, specialChars: false });
+            const otp = otpGenerator.generate(4, { upperCaseAlphabets: false, specialChars: false });
             const otpEntry = new OTP({ email: normalizedEmail, otp, userDetails: newUserDetails });
             await otpEntry.save();
 
@@ -151,7 +152,7 @@ async function verifyOtp(req, res) {
     const { email, otp, role } = req.body; //This should be changed 
 
     if (!email || !otp || !role) {
-        return res.status(400).json({ message: 'Email, OTP, and Role are required' });
+        return res.status(400).json({ message: 'Invalid Input' });
     }
 
     if (!ALLOWED_ROLES.includes(role)) {
