@@ -5,7 +5,7 @@ import { useAuth } from '../../context/auth';
 // Sidebar component
 function Sidebar({ title, links, logout }) {
   return (
-    <nav className="sidebar bg-gray-800 text-white flex flex-col p-4">
+    <nav className="sidebar h-full w-64 fixed top-0 left-0 bg-gray-800 text-white flex flex-col p-4">
       <h1 className="text-2xl font-bold mb-6">{title}</h1>
       {links.map((link, index) => (
         <Link key={index} to={link.path} className="mb-2 p-2 hover:bg-gray-700 rounded">
@@ -42,6 +42,13 @@ function Navbar() {
     { path: '/user', label: 'User Page' },
   ];
 
+  const hostLinks = [
+    { path: '/', label: 'Home' },
+    { path: '/host', label: 'Host Dashboard' },
+    { path: '/host/listings', label: 'Your Listings' },
+    { path: '/host/addProperty', label: 'New Listing' }
+  ];
+
   const publicLinks = [
     { path: '/', label: 'Home' },
     { path: '/login', label: 'Login' },
@@ -60,9 +67,14 @@ function Navbar() {
     return <Sidebar title="User Nav" links={guestLinks} logout={handleLogout} />;
   }
 
+  if (currentUser.role === 'host') {
+    return <Sidebar title="Host Nav" links={hostLinks} logout={handleLogout} />;
+  }
+
   return null;
 }
 
 export default Navbar;
+
 
 
