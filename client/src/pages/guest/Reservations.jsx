@@ -49,7 +49,6 @@ const Reservation = () => {
 
   const upcomingTrips = [
     {
-      image: "https://via.placeholder.com/150",
       title: "Premium guest house for rent in Cupertino, CA, USA",
       location: "Chernomorets, Burgas, BG, BG, 10036",
       guests: "4 Adults",
