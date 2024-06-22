@@ -7,11 +7,14 @@ export const AuthProvider = ({ children }) => {
   const [currentUser, setCurrentUser] = useState(null);
   const [emailForVerification, setEmailForVerification] = useState('');
   const [loading, setLoading] = useState(true);
+  const [token, setToken] = useState(null);
 
   useEffect(() => {
     const fetchUser = async () => {
       const user = authService.getCurrentUser();
+      const storedToken = authService.getToken();
       setCurrentUser(user);
+      setToken(storedToken);
       setLoading(false);
     };
     fetchUser();
@@ -21,6 +24,7 @@ export const AuthProvider = ({ children }) => {
     const { user, error } = await authService.login(email, password);
     if (user) {
       setCurrentUser(user);
+      setToken(authService.getToken());
     }
     return { user, error };
   };
@@ -37,6 +41,7 @@ export const AuthProvider = ({ children }) => {
     const { user, error } = await authService.verifyOtp(email, otp, role);
     if (user) {
       setCurrentUser(user);
+      setToken(authService.getToken());
     }
     return { user, error };
   };
@@ -44,14 +49,16 @@ export const AuthProvider = ({ children }) => {
   const logout = async () => {
     await authService.logout();
     setCurrentUser(null);
+    setToken(null);
   };
 
   return (
-    <AuthContext.Provider value={{ currentUser, loading, login, signup, verifyOtp, emailForVerification, logout }}>
+    <AuthContext.Provider value={{ currentUser, token, loading, login, signup, verifyOtp, emailForVerification, logout }}>
       {children}
     </AuthContext.Provider>
   );
 };
 
 export const useAuth = () => useContext(AuthContext);
+
 

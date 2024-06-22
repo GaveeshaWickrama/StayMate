@@ -1,13 +1,16 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import axios from 'axios';
+import { useAuth  } from '../../context/auth';
 
 const AddProperty = () => {
   const navigate = useNavigate();
   const location = useLocation();
+  const { currentUser, token } = useAuth();
+  console.log(currentUser); 
   const [stage, setStage] = useState(location.state?.stage || 1);
   const [property, setProperty] = useState({
-    host_id: '', // This should be populated based on the authenticated user
+    host_id: currentUser ? currentUser.id : '', // Use the authenticated user's ID
     title: '',
     description: '',
     type: 'House',
@@ -63,14 +66,18 @@ const AddProperty = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
-      const response = await axios.post(`${import.meta.env.VITE_API_URL}/properties/add`, property);
+      console.log('Submitting property with token:', token);
+      const response = await axios.post(`${import.meta.env.VITE_API_URL}/properties/add`, property, {
+        headers: {
+          'Authorization': `Bearer ${token}`
+        }
+      });
       console.log('Property added:', response.data);
     } catch (error) {
       console.error('There was an error adding the property:', error);
     }
   };
   
-
   return (
     <form onSubmit={handleSubmit} onKeyDown={(e) => { if (e.key === 'Enter') e.preventDefault(); }} className="max-w-4xl mx-auto p-8 bg-white shadow-md rounded">
       {stage === 1 && (
