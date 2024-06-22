@@ -8,7 +8,6 @@ const AddProperty = () => {
     title: '',
     description: '',
     type: 'House',
-    total_unique_sections: '',
     sections: [],
     images: [{ url: '' }],
     location: {
@@ -53,17 +52,40 @@ const AddProperty = () => {
     }));
   };
 
+  const handleAddSection = () => {
+    setProperty(prevState => ({
+      ...prevState,
+      sections: [
+        ...prevState.sections,
+        {
+          section_name: '',
+          count: 1,
+          plan: {
+            beds: 0,
+            living_area: 0,
+            bathrooms: 0,
+            kitchens: 0
+          },
+          price_per_night: 0,
+          images: [{ url: '' }],
+          amenities: ['']
+        }
+      ]
+    }));
+  };
+
+  const handleRemoveSection = (index) => {
+    setProperty(prevState => ({
+      ...prevState,
+      sections: prevState.sections.filter((_, sIndex) => sIndex !== index)
+    }));
+  };
+
   const handleNext = () => {
     setStage(prevStage => prevStage + 1);
   };
 
   const handlePrevious = () => {
-    if (stage === 4 && property.total_unique_sections > 0) {
-      setProperty(prevState => ({
-        ...prevState,
-        sections: []
-      }));
-    }
     setStage(prevStage => prevStage - 1);
   };
 
@@ -79,7 +101,6 @@ const AddProperty = () => {
 
   return (
     <form onSubmit={handleSubmit} onKeyDown={(e) => { if (e.key === 'Enter') e.preventDefault(); }} className="max-w-4xl mx-auto p-8 bg-white shadow-md rounded">
-
       {stage === 1 && (
         <div>
           <h2 className="text-xl font-bold mb-4">Select Property Type</h2>
@@ -110,113 +131,117 @@ const AddProperty = () => {
 
       {stage === 2 && (
         <div>
-          <h2 className="text-xl font-bold mb-4">Are you adding sections?</h2>
-          <div className="flex items-center mb-4">
-            <input
-              type="radio"
-              name="adding_sections"
-              value="yes"
-              onChange={() => setProperty({ ...property, total_unique_sections: 1 })}
-              className="mr-2"
-            />
-            <label>Yes</label>
-          </div>
-          <div className="flex items-center mb-4">
-            <input
-              type="radio"
-              name="adding_sections"
-              value="no"
-              onChange={() => setProperty({ ...property, total_unique_sections: 0, sections: [{ section_name: '', count: 1, plan: { beds: 0, living_area: 0, bathrooms: 0, kitchens: 0 }, price_per_night: 0, images: [{ url: '' }], amenities: [''] }] })}
-              className="mr-2"
-            />
-            <label>No</label>
-          </div>
-          <div className="flex justify-between mt-4">
-            <button
-              type="button"
-              onClick={handlePrevious}
-              className="bg-gray-500 text-white px-4 py-2 rounded"
-            >
-              Previous
-            </button>
-            <button
-              type="button"
-              onClick={handleNext}
-              className="bg-blue-500 text-white px-4 py-2 rounded"
-            >
-              Next
-            </button>
-          </div>
-        </div>
-      )}
-
-      {stage === 3 && property.total_unique_sections > 0 && (
-        <div>
-          <h2 className="text-xl font-bold mb-4">How many unique sections?</h2>
-          <input
-  type="number"
-  name="total_unique_sections"
-  value={property.total_unique_sections}
-  onChange={(e) => setProperty({ ...property, total_unique_sections: Math.max(1, parseInt(e.target.value) || 1) })}
-  min="1"
-  className="block w-full p-2 border border-gray-300 rounded"
-/>
-
-          <div className="flex justify-between mt-4">
-            <button
-              type="button"
-              onClick={handlePrevious}
-              className="bg-gray-500 text-white px-4 py-2 rounded"
-            >
-              Previous
-            </button>
-            <button
-              type="button"
-              onClick={() => {
-                const sections = Array.from({ length: property.total_unique_sections }, () => ({
-                  section_name: '',
-                  count: 1,
-                  plan: {
-                    beds: 0,
-                    living_area: 0,
-                    bathrooms: 0,
-                    kitchens: 0
-                  },
-                  price_per_night: 0,
-                  images: [{ url: '' }],
-                  amenities: ['']
-                }));
-                setProperty(prevState => ({ ...prevState, sections }));
-                handleNext();
-              }}
-              className="bg-blue-500 text-white px-4 py-2 rounded"
-            >
-              Next
-            </button>
-          </div>
-        </div>
-      )}
-
-      {stage === 4 && property.total_unique_sections > 0 && (
-        <div>
-          <h2 className="text-xl font-bold mb-4">Add Unique Section Details</h2>
-          {Array.from({ length: property.total_unique_sections }, (_, index) => (
-            <div key={index} className="mb-4">
-              <h3 className="text-lg font-semibold mb-2">Section {index + 1}</h3>
+          <h2 className="text-xl font-bold mb-4">Add Section Details</h2>
+          {property.sections.map((section, index) => (
+            <div key={index} className="mb-4 p-4 border border-gray-300 rounded">
+              <div className="flex justify-between">
+                <h3 className="text-lg font-semibold mb-2">Section {index + 1}</h3>
+                <button
+                  type="button"
+                  onClick={() => handleRemoveSection(index)}
+                  className="text-red-500"
+                >
+                  Remove
+                </button>
+              </div>
               <div>
                 <label className="block mb-1">Section Name:</label>
                 <input
                   type="text"
                   name="section_name"
-                  value={property.sections[index]?.section_name || ''}
+                  value={section.section_name}
                   onChange={(e) => handleSectionChange(index, e)}
                   className="block w-full p-2 border border-gray-300 rounded"
                   required
                 />
               </div>
-              {/* Add other section fields here similarly */}
+              <div>
+                <label className="block mb-1">Beds:</label>
+                <input
+                  type="number"
+                  name="beds"
+                  value={section.plan.beds}
+                  onChange={(e) => handleSectionChange(index, e)}
+                  className="block w-full p-2 border border-gray-300 rounded"
+                  required
+                />
+              </div>
+              <div>
+                <label className="block mb-1">Living Area:</label>
+                <input
+                  type="number"
+                  name="living_area"
+                  value={section.plan.living_area}
+                  onChange={(e) => handleSectionChange(index, e)}
+                  className="block w-full p-2 border border-gray-300 rounded"
+                  required
+                />
+              </div>
+              <div>
+                <label className="block mb-1">Bathrooms:</label>
+                <input
+                  type="number"
+                  name="bathrooms"
+                  value={section.plan.bathrooms}
+                  onChange={(e) => handleSectionChange(index, e)}
+                  className="block w-full p-2 border border-gray-300 rounded"
+                  required
+                />
+              </div>
+              <div>
+                <label className="block mb-1">Kitchens:</label>
+                <input
+                  type="number"
+                  name="kitchens"
+                  value={section.plan.kitchens}
+                  onChange={(e) => handleSectionChange(index, e)}
+                  className="block w-full p-2 border border-gray-300 rounded"
+                  required
+                />
+              </div>
+              <div>
+                <label className="block mb-1">Price Per Night:</label>
+                <input
+                  type="number"
+                  name="price_per_night"
+                  value={section.price_per_night}
+                  onChange={(e) => handleSectionChange(index, e)}
+                  className="block w-full p-2 border border-gray-300 rounded"
+                  required
+                />
+              </div>
+              <div>
+                <label className="block mb-1">Image URL:</label>
+                <input
+                  type="text"
+                  name="url"
+                  value={section.images[0].url}
+                  onChange={(e) => {
+                    const newSections = property.sections.map((sec, sIndex) => {
+                      if (index !== sIndex) return sec;
+                      return { 
+                        ...sec, 
+                        images: [{ url: e.target.value }]
+                      };
+                    });
+                    setProperty(prevState => ({
+                      ...prevState,
+                      sections: newSections
+                    }));
+                  }}
+                  className="block w-full p-2 border border-gray-300 rounded"
+                  required
+                />
+              </div>
             </div>
           ))}
+          <button
+            type="button"
+            onClick={handleAddSection}
+            className="bg-green-500 text-white px-4 py-2 rounded mb-4"
+          >
+            Add Section
+          </button>
           <div className="flex justify-between mt-4">
             <button
               type="button"
@@ -236,7 +261,7 @@ const AddProperty = () => {
         </div>
       )}
 
-      {stage === 5 && (
+      {stage === 3 && (
         <div>
           <h2 className="text-xl font-bold mb-4">Property Images</h2>
           {property.images.map((image, index) => (
@@ -290,64 +315,65 @@ const AddProperty = () => {
         </div>
       )}
 
-{stage === 6 && (
-  <div>
-    <h2 className="text-xl font-bold mb-4">Location Information</h2>
-    <div>
-      <label className="block mb-1">Address:</label>
-      <input
-        type="text"
-        name="address"
-        value={property.location.address}
-        onChange={handleLocationChange}
-        className="block w-full p-2 border border-gray-300 rounded"
-        required
-      />
-    </div>
-    <div>
-      <label className="block mb-1">Latitude:</label>
-      <input
-        type="number"
-        name="latitude"
-        value={property.location.latitude}
-        onChange={handleLocationChange}
-        className="block w-full p-2 border border-gray-300 rounded"
-        required
-      />
-    </div>
-    <div>
-      <label className="block mb-1">Longitude:</label>
-      <input
-        type="number"
-        name="longitude"
-        value={property.location.longitude}
-        onChange={handleLocationChange}
-        className="block w-full p-2 border border-gray-300 rounded"
-        required
-      />
-    </div>
-    <div className="flex justify-between mt-4">
-      <button
-        type="button"
-        onClick={handlePrevious}
-        className="bg-gray-500 text-white px-4 py-2 rounded"
-      >
-        Previous
-      </button>
-      <button
-        type="submit"
-        className="bg-blue-500 text-white px-4 py-2 rounded"
-      >
-        Submit
-      </button>
-    </div>
-  </div>
-)}
-
+      {stage === 4 && (
+        <div>
+          <h2 className="text-xl font-bold mb-4">Location Information</h2>
+          <div>
+            <label className="block mb-1">Address:</label>
+            <input
+              type="text"
+              name="address"
+              value={property.location.address}
+              onChange={handleLocationChange}
+              className="block w-full p-2 border border-gray-300 rounded"
+              required
+            />
+          </div>
+          <div>
+            <label className="block mb-1">Latitude:</label>
+            <input
+              type="number"
+              name="latitude"
+              value={property.location.latitude}
+              onChange={handleLocationChange}
+              className="block w-full p-2 border border-gray-300 rounded"
+              required
+            />
+          </div>
+          <div>
+            <label className="block mb-1">Longitude:</label>
+            <input
+              type="number"
+              name="longitude"
+              value={property.location.longitude}
+              onChange={handleLocationChange}
+              className="block w-full p-2 border border-gray-300 rounded"
+              required
+            />
+          </div>
+          {/* Add other location fields here similarly */}
+          <div className="flex justify-between mt-4">
+            <button
+              type="button"
+              onClick={handlePrevious}
+              className="bg-gray-500 text-white px-4 py-2 rounded"
+            >
+              Previous
+            </button>
+            <button
+              type="submit"
+              className="bg-blue-500 text-white px-4 py-2 rounded"
+            >
+              Submit
+            </button>
+          </div>
+        </div>
+      )}
     </form>
   );
 };
 
 export default AddProperty;
+
 
 
