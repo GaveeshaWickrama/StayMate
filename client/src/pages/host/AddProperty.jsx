@@ -1,40 +1,24 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import axios from 'axios';
-import { useAuth  } from '../../context/auth';
+import { useAuth } from '../../context/auth';
+import { useProperty } from '../../context/PropertyContext';
 
 const AddProperty = () => {
   const navigate = useNavigate();
   const location = useLocation();
   const { currentUser, token } = useAuth();
-  console.log(currentUser); 
+  const { property, setProperty } = useProperty();
   const [stage, setStage] = useState(location.state?.stage || 1);
-  const [property, setProperty] = useState({
-    host_id: currentUser ? currentUser.id : '', // Use the authenticated user's ID
-    title: '',
-    description: '',
-    type: 'House',
-    sections: location.state?.sections || [],
-    images: [{ url: '' }],
-    location: {
-      address: '',
-      latitude: 0,
-      longitude: 0,
-      city: '',
-      district: '',
-      province: '',
-      zipcode: ''
-    }
-  });
 
   useEffect(() => {
-    if (location.state && location.state.sections) {
+    if (location.state) {
       setProperty(prevState => ({
         ...prevState,
-        sections: location.state.sections
+        ...location.state
       }));
     }
-  }, [location.state]);
+  }, [location.state, setProperty]);
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -44,29 +28,25 @@ const AddProperty = () => {
     }));
   };
 
-  const handleLocationChange = (e) => {
-    const { name, value } = e.target;
-    setProperty(prevState => ({
-      ...prevState,
-      location: {
-        ...prevState.location,
-        [name]: value
-      }
-    }));
-  };
-
   const handleNext = () => {
-    setStage(prevStage => prevStage + 1);
+    if (stage === 3) {
+      navigate('/host/add-location', { state: { ...property, stage: 4 } });
+    } else {
+      setStage(prevStage => prevStage + 1);
+    }
   };
 
   const handlePrevious = () => {
-    setStage(prevStage => prevStage - 1);
+    if (stage === 4) {
+      navigate('/host/add-section', { state: { ...property, stage: 2 } });
+    } else {
+      setStage(prevStage => prevStage - 1);
+    }
   };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
-      console.log('Submitting property with token:', token);
       const response = await axios.post(`${import.meta.env.VITE_API_URL}/properties/add`, property, {
         headers: {
           'Authorization': `Bearer ${token}`
@@ -77,25 +57,60 @@ const AddProperty = () => {
       console.error('There was an error adding the property:', error);
     }
   };
-  
+
   return (
     <form onSubmit={handleSubmit} onKeyDown={(e) => { if (e.key === 'Enter') e.preventDefault(); }} className="max-w-4xl mx-auto p-8 bg-white shadow-md rounded">
       {stage === 1 && (
         <div>
-          <h2 className="text-xl font-bold mb-4">Select Property Type</h2>
-          <select
-            name="type"
-            value={property.type}
-            onChange={handleChange}
-            className="block w-full p-2 border border-gray-300 rounded"
-          >
-            <option value="House">House</option>
-            <option value="Apartment">Apartment</option>
-            <option value="Villa">Villa</option>
-            <option value="Cottage">Cottage</option>
-            <option value="Cabin">Cabin</option>
-            <option value="Hotel">Hotel</option>
-          </select>
+          <h2 className="text-xl font-bold mb-4">Property Details</h2>
+          <div className="mb-4">
+            <label className="block mb-1">Title:</label>
+            <input
+              type="text"
+              name="title"
+              value={property.title}
+              onChange={handleChange}
+              className="block w-full p-2 border border-gray-300 rounded"
+              required
+            />
+          </div>
+          <div className="mb-4">
+            <label className="block mb-1">Description:</label>
+            <textarea
+              name="description"
+              value={property.description}
+              onChange={handleChange}
+              className="block w-full p-2 border border-gray-300 rounded"
+              required
+            />
+          </div>
+          <div className="mb-4">
+            <label className="block mb-1">Total Unique Sections:</label>
+            <input
+              type="number"
+              name="total_unique_sections"
+              value={property.total_unique_sections}
+              onChange={handleChange}
+              className="block w-full p-2 border border-gray-300 rounded"
+              required
+            />
+          </div>
+          <div className="mb-4">
+            <label className="block mb-1">Property Type:</label>
+            <select
+              name="type"
+              value={property.type}
+              onChange={handleChange}
+              className="block w-full p-2 border border-gray-300 rounded"
+            >
+              <option value="House">House</option>
+              <option value="Apartment">Apartment</option>
+              <option value="Villa">Villa</option>
+              <option value="Cottage">Cottage</option>
+              <option value="Cabin">Cabin</option>
+              <option value="Hotel">Hotel</option>
+            </select>
+          </div>
           <div className="flex justify-between mt-4">
             <button
               type="button"
@@ -126,7 +141,7 @@ const AddProperty = () => {
           ))}
           <button
             type="button"
-            onClick={() => navigate('/host/add-section', { state: { sections: property.sections, stage: 2 } })}
+            onClick={() => navigate('/host/add-section', { state: { ...property, stage: 2 } })}
             className="bg-green-500 text-white px-4 py-2 rounded mb-4"
           >
             Add Section
@@ -213,7 +228,7 @@ const AddProperty = () => {
               type="text"
               name="address"
               value={property.location.address}
-              onChange={handleLocationChange}
+              onChange={(e) => handleChange({ target: { name: 'location.address', value: e.target.value } })}
               className="block w-full p-2 border border-gray-300 rounded"
               required
             />
@@ -224,7 +239,7 @@ const AddProperty = () => {
               type="number"
               name="latitude"
               value={property.location.latitude}
-              onChange={handleLocationChange}
+              onChange={(e) => handleChange({ target: { name: 'location.latitude', value: e.target.value } })}
               className="block w-full p-2 border border-gray-300 rounded"
               required
             />
@@ -235,7 +250,51 @@ const AddProperty = () => {
               type="number"
               name="longitude"
               value={property.location.longitude}
-              onChange={handleLocationChange}
+              onChange={(e) => handleChange({ target: { name: 'location.longitude', value: e.target.value } })}
+              className="block w-full p-2 border border-gray-300 rounded"
+              required
+            />
+          </div>
+          <div>
+            <label className="block mb-1">City:</label>
+            <input
+              type="text"
+              name="city"
+              value={property.location.city}
+              onChange={(e) => handleChange({ target: { name: 'location.city', value: e.target.value } })}
+              className="block w-full p-2 border border-gray-300 rounded"
+              required
+            />
+          </div>
+          <div>
+            <label className="block mb-1">District:</label>
+            <input
+              type="text"
+              name="district"
+              value={property.location.district}
+              onChange={(e) => handleChange({ target: { name: 'location.district', value: e.target.value } })}
+              className="block w-full p-2 border border-gray-300 rounded"
+              required
+            />
+          </div>
+          <div>
+            <label className="block mb-1">Province:</label>
+            <input
+              type="text"
+              name="province"
+              value={property.location.province}
+              onChange={(e) => handleChange({ target: { name: 'location.province', value: e.target.value } })}
+              className="block w-full p-2 border border-gray-300 rounded"
+              required
+            />
+          </div>
+          <div>
+            <label className="block mb-1">Zip Code:</label>
+            <input
+              type="text"
+              name="zipcode"
+              value={property.location.zipcode}
+              onChange={(e) => handleChange({ target: { name: 'location.zipcode', value: e.target.value } })}
               className="block w-full p-2 border border-gray-300 rounded"
               required
             />
@@ -262,4 +321,3 @@ const AddProperty = () => {
 };
 
 export default AddProperty;
-
