@@ -41,7 +41,7 @@ const AddSection = () => {
     e.preventDefault();
     const sections = location.state?.sections || [];
     sections.push(section);
-    navigate('/host/add-property', { state: { sections } });
+    navigate('/host/add-property', { state: { sections, stage: 2 } });
   };
 
   return (
@@ -151,3 +151,4 @@ const AddSection = () => {
 };
 
 export default AddSection;
+

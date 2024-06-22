@@ -5,13 +5,13 @@ import axios from 'axios';
 const AddProperty = () => {
   const navigate = useNavigate();
   const location = useLocation();
-  const [stage, setStage] = useState(1);
+  const [stage, setStage] = useState(location.state?.stage || 1);
   const [property, setProperty] = useState({
     host_id: '', // This should be populated based on the authenticated user
     title: '',
     description: '',
     type: 'House',
-    sections: location.state ? location.state.sections : [],
+    sections: location.state?.sections || [],
     images: [{ url: '' }],
     location: {
       address: '',
@@ -63,12 +63,13 @@ const AddProperty = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
-      const response = await axios.post('/api/properties/add', property);
+      const response = await axios.post(`${process.env.VITE_API_URL}/properties/add`, property);
       console.log('Property added:', response.data);
     } catch (error) {
       console.error('There was an error adding the property:', error);
     }
   };
+  
 
   return (
     <form onSubmit={handleSubmit} onKeyDown={(e) => { if (e.key === 'Enter') e.preventDefault(); }} className="max-w-4xl mx-auto p-8 bg-white shadow-md rounded">
@@ -118,7 +119,7 @@ const AddProperty = () => {
           ))}
           <button
             type="button"
-            onClick={() => navigate('/host/add-section', { state: { sections: property.sections } })}
+            onClick={() => navigate('/host/add-section', { state: { sections: property.sections, stage: 2 } })}
             className="bg-green-500 text-white px-4 py-2 rounded mb-4"
           >
             Add Section
