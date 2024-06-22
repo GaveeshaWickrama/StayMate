@@ -63,7 +63,7 @@ const AddProperty = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
-      const response = await axios.post(`${process.env.VITE_API_URL}/properties/add`, property);
+      const response = await axios.post(`${import.meta.env.VITE_API_URL}/properties/add`, property);
       console.log('Property added:', response.data);
     } catch (error) {
       console.error('There was an error adding the property:', error);
