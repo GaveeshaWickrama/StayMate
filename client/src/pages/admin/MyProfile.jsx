@@ -57,7 +57,7 @@ const MyProfile = () => {
             </div>
             
             <div className="flex justify-end col-span-2">
-                <Link to="/EditProfile">
+                <Link to="/admin/EditProfile">
                     <button className="bg-blue-500 text-white px-4 py-2 rounded-lg shadow-md flex items-center">
                         <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 mr-2" viewBox="0 0 20 20" fill="currentColor">
                             <path d="M17.414 2.586a2 2 0 00-2.828 0L8 9.172V11h1.828l6.586-6.586a2 2 0 000-2.828z" />
