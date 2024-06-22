@@ -34,6 +34,24 @@ function requireUser(req, res, next) {
   }
 }
 
+function requireGuest(req, res, next) {
+  // Check if the role from req.user is 'admin'
+  if (req.user && req.user.role === 'guest') {
+    next();
+  } else {
+    res.status(403).json({ message: "Access denied. Users only." });
+  }
+}
+
+function requireHost(req, res, next) {
+  // Check if the role from req.user is 'admin'
+  if (req.user && req.user.role === 'host') {
+    next();
+  } else {
+    res.status(403).json({ message: "Access denied. Users only." });
+  }
+}
+
 function requireAdmin(req, res, next) {
   // Check if the role from req.user is 'admin'
   if (req.user && req.user.role === 'admin') {
@@ -46,6 +64,8 @@ function requireAdmin(req, res, next) {
 
 module.exports = {
     authToken,
+    requireGuest,
     requireUser,
-    requireAdmin
+    requireAdmin,
+    requireHost
 };
