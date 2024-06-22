@@ -1,14 +1,17 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
+import { useNavigate, useLocation } from 'react-router-dom';
 import axios from 'axios';
 
 const AddProperty = () => {
+  const navigate = useNavigate();
+  const location = useLocation();
   const [stage, setStage] = useState(1);
   const [property, setProperty] = useState({
     host_id: '', // This should be populated based on the authenticated user
     title: '',
     description: '',
     type: 'House',
-    sections: [],
+    sections: location.state ? location.state.sections : [],
     images: [{ url: '' }],
     location: {
       address: '',
@@ -20,6 +23,15 @@ const AddProperty = () => {
       zipcode: ''
     }
   });
+
+  useEffect(() => {
+    if (location.state && location.state.sections) {
+      setProperty(prevState => ({
+        ...prevState,
+        sections: location.state.sections
+      }));
+    }
+  }, [location.state]);
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -37,63 +49,6 @@ const AddProperty = () => {
         ...prevState.location,
         [name]: value
       }
-    }));
-  };
-
-  const handleSectionChange = (index, field, value) => {
-    const newSections = property.sections.map((section, sIndex) => {
-      if (index !== sIndex) return section;
-      return { ...section, [field]: value };
-    });
-    setProperty(prevState => ({
-      ...prevState,
-      sections: newSections
-    }));
-  };
-
-  const handlePlanChange = (index, planField, value) => {
-    const newSections = property.sections.map((section, sIndex) => {
-      if (index !== sIndex) return section;
-      return { 
-        ...section,
-        plan: {
-          ...section.plan,
-          [planField]: value
-        }
-      };
-    });
-    setProperty(prevState => ({
-      ...prevState,
-      sections: newSections
-    }));
-  };
-
-  const handleAddSection = () => {
-    setProperty(prevState => ({
-      ...prevState,
-      sections: [
-        ...prevState.sections,
-        {
-          section_name: '',
-          count: 1,
-          plan: {
-            beds: 0,
-            living_area: 0,
-            bathrooms: 0,
-            kitchens: 0
-          },
-          price_per_night: 0,
-          images: [{ url: '' }],
-          amenities: ['']
-        }
-      ]
-    }));
-  };
-
-  const handleRemoveSection = (index) => {
-    setProperty(prevState => ({
-      ...prevState,
-      sections: prevState.sections.filter((_, sIndex) => sIndex !== index)
     }));
   };
 
@@ -147,113 +102,23 @@ const AddProperty = () => {
 
       {stage === 2 && (
         <div>
-          <h2 className="text-xl font-bold mb-4">Add Section Details</h2>
+          <h2 className="text-xl font-bold mb-4">Sections</h2>
           {property.sections.map((section, index) => (
             <div key={index} className="mb-4 p-4 border border-gray-300 rounded">
-              <div className="flex justify-between">
-                <h3 className="text-lg font-semibold mb-2">Section {index + 1}</h3>
-                <button
-                  type="button"
-                  onClick={() => handleRemoveSection(index)}
-                  className="text-red-500"
-                >
-                  Remove
-                </button>
-              </div>
-              <div>
-                <label className="block mb-1">Section Name:</label>
-                <input
-                  type="text"
-                  name="section_name"
-                  value={section.section_name}
-                  onChange={(e) => handleSectionChange(index, 'section_name', e.target.value)}
-                  className="block w-full p-2 border border-gray-300 rounded"
-                  required
-                />
-              </div>
-              <div>
-                <label className="block mb-1">Beds:</label>
-                <input
-                  type="number"
-                  name="beds"
-                  value={section.plan.beds}
-                  onChange={(e) => handlePlanChange(index, 'beds', e.target.value)}
-                  className="block w-full p-2 border border-gray-300 rounded"
-                  required
-                />
-              </div>
-              <div>
-                <label className="block mb-1">Living Area:</label>
-                <input
-                  type="number"
-                  name="living_area"
-                  value={section.plan.living_area}
-                  onChange={(e) => handlePlanChange(index, 'living_area', e.target.value)}
-                  className="block w-full p-2 border border-gray-300 rounded"
-                  required
-                />
-              </div>
-              <div>
-                <label className="block mb-1">Bathrooms:</label>
-                <input
-                  type="number"
-                  name="bathrooms"
-                  value={section.plan.bathrooms}
-                  onChange={(e) => handlePlanChange(index, 'bathrooms', e.target.value)}
-                  className="block w-full p-2 border border-gray-300 rounded"
-                  required
-                />
-              </div>
-              <div>
-                <label className="block mb-1">Kitchens:</label>
-                <input
-                  type="number"
-                  name="kitchens"
-                  value={section.plan.kitchens}
-                  onChange={(e) => handlePlanChange(index, 'kitchens', e.target.value)}
-                  className="block w-full p-2 border border-gray-300 rounded"
-                  required
-                />
-              </div>
-              <div>
-                <label className="block mb-1">Price Per Night:</label>
-                <input
-                  type="number"
-                  name="price_per_night"
-                  value={section.price_per_night}
-                  onChange={(e) => handleSectionChange(index, 'price_per_night', e.target.value)}
-                  className="block w-full p-2 border border-gray-300 rounded"
-                  required
-                />
-              </div>
-              <div>
-                <label className="block mb-1">Image URL:</label>
-                <input
-                  type="text"
-                  name="url"
-                  value={section.images[0].url}
-                  onChange={(e) => {
-                    const newSections = property.sections.map((sec, sIndex) => {
-                      if (index !== sIndex) return sec;
-                      return { 
-                        ...sec, 
-                        images: [{ url: e.target.value }]
-                      };
-                    });
-                    setProperty(prevState => ({
-                      ...prevState,
-                      sections: newSections
-                    }));
-                  }}
-                  className="block w-full p-2 border border-gray-300 rounded"
-                  required
-                />
-              </div>
+              <h3 className="text-lg font-semibold mb-2">Section {index + 1}</h3>
+              <p><strong>Name:</strong> {section.section_name}</p>
+              <p><strong>Count:</strong> {section.count}</p>
+              <p><strong>Beds:</strong> {section.plan.beds}</p>
+              <p><strong>Living Area:</strong> {section.plan.living_area}</p>
+              <p><strong>Bathrooms:</strong> {section.plan.bathrooms}</p>
+              <p><strong>Kitchens:</strong> {section.plan.kitchens}</p>
+              <p><strong>Price Per Night:</strong> ${section.price_per_night}</p>
+              <p><strong>Image URL:</strong> <a href={section.images[0].url} target="_blank" rel="noopener noreferrer">{section.images[0].url}</a></p>
             </div>
           ))}
           <button
             type="button"
-            onClick={handleAddSection}
+            onClick={() => navigate('/host/add-section', { state: { sections: property.sections } })}
             className="bg-green-500 text-white px-4 py-2 rounded mb-4"
           >
             Add Section
@@ -367,7 +232,6 @@ const AddProperty = () => {
               required
             />
           </div>
-          {/* Add other location fields here similarly */}
           <div className="flex justify-between mt-4">
             <button
               type="button"
@@ -390,6 +254,4 @@ const AddProperty = () => {
 };
 
 export default AddProperty;
-
-
 
