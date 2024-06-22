@@ -94,11 +94,11 @@ const sectionSchema = new Schema({
     },
     individual_sections: [individualSectionSchema],
     plan: {
-        bedrooms: {
+        beds: {
             type: Number,
             required: true
         },
-        guest_beds: {
+        living_area: { // Corrected field name
             type: Number,
             required: true
         },
@@ -106,26 +106,10 @@ const sectionSchema = new Schema({
             type: Number,
             required: true
         },
-        living_rooms: {
-            type: Number,
-            required: true
-        },
         kitchens: {
             type: Number,
             required: true
-        },
-        other_areas: [
-            {
-                name: {
-                    type: String,
-                    trim: true
-                },
-                description: {
-                    type: String,
-                    trim: true
-                }
-            }
-        ]
+        }
     },
     price_per_night: {
         type: Number,
@@ -170,6 +154,15 @@ const propertySchema = new Schema({
         required: true
     },
     sections: [sectionSchema],
+    images: [ // General images for the property
+        {
+            url: {
+                type: String,
+                required: true,
+                trim: true
+            }
+        }
+    ],
     location: locationSchema,
     created_at: {
         type: Date,

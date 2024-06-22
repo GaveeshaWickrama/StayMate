@@ -18,7 +18,7 @@ const authRoutes = require('./routes/authRoutes');
 const adminRoutes = require('./routes/adminRoutes');
 const propertyRoutes = require('./routes/propertyRoutes');
 
-mongoose.connect(process.env.DATABASE_URL, { useNewUrlParser: true, useUnifiedTopology: true }) // Use 127.0.0.1 instead of localhost to fix conversion issues with IPV6
+mongoose.connect(process.env.DATABASE_URL) // Use 127.0.0.1 instead of localhost to fix conversion issues with IPV6
 const db = mongoose.connection;
 db.on('error', (error) => console.error(error));
 db.once('open', () => console.log('Connected to Database'));
