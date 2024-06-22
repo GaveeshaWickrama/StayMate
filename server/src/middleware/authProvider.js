@@ -1,4 +1,4 @@
-require('dotenv').config()
+require('dotenv').config();
 const jwt = require('jsonwebtoken');
 
 function authToken(req, res, next) {
@@ -14,58 +14,18 @@ function authToken(req, res, next) {
     next();
   });
 }
-//Usage app.get('/users', authToken, userRoutes);
 
-// function requireRole(req, res, role , next) {
-//   // Check if the role from req.user is 'admin'
-//   if (req.user && req.user.role === role) {
-//     next();
-//   } else {
-//     res.status(403).json({ message: "Access denied. Admins only." });
-//   }
-// }
-
-function requireUser(req, res, next) {
-  // Check if the role from req.user is 'admin'
-  if (req.user && req.user.role === 'user') {
-    next();
-  } else {
-    res.status(403).json({ message: "Access denied. Users only." });
-  }
+function requireRole(...roles) {
+  return (req, res, next) => {
+    if (req.user && roles.includes(req.user.role)) {
+      next();
+    } else {
+      res.status(403).json({ message: `Access denied. Required roles: ${roles.join(', ')}` });
+    }
+  };
 }
-
-function requireGuest(req, res, next) {
-  // Check if the role from req.user is 'admin'
-  if (req.user && req.user.role === 'guest') {
-    next();
-  } else {
-    res.status(403).json({ message: "Access denied. Users only." });
-  }
-}
-
-function requireHost(req, res, next) {
-  // Check if the role from req.user is 'admin'
-  if (req.user && req.user.role === 'host') {
-    next();
-  } else {
-    res.status(403).json({ message: "Access denied. Users only." });
-  }
-}
-
-function requireAdmin(req, res, next) {
-  // Check if the role from req.user is 'admin'
-  if (req.user && req.user.role === 'admin') {
-    next();
-  } else {
-    res.status(403).json({ message: "Access denied. Admins only." });
-  }
-}
-
 
 module.exports = {
-    authToken,
-    requireGuest,
-    requireUser,
-    requireAdmin,
-    requireHost
+  authToken,
+  requireRole
 };
