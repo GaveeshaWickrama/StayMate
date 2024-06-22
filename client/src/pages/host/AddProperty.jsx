@@ -40,11 +40,27 @@ const AddProperty = () => {
     }));
   };
 
-  const handleSectionChange = (index, e) => {
-    const { name, value } = e.target;
+  const handleSectionChange = (index, field, value) => {
     const newSections = property.sections.map((section, sIndex) => {
       if (index !== sIndex) return section;
-      return { ...section, [name]: value };
+      return { ...section, [field]: value };
+    });
+    setProperty(prevState => ({
+      ...prevState,
+      sections: newSections
+    }));
+  };
+
+  const handlePlanChange = (index, planField, value) => {
+    const newSections = property.sections.map((section, sIndex) => {
+      if (index !== sIndex) return section;
+      return { 
+        ...section,
+        plan: {
+          ...section.plan,
+          [planField]: value
+        }
+      };
     });
     setProperty(prevState => ({
       ...prevState,
@@ -150,7 +166,7 @@ const AddProperty = () => {
                   type="text"
                   name="section_name"
                   value={section.section_name}
-                  onChange={(e) => handleSectionChange(index, e)}
+                  onChange={(e) => handleSectionChange(index, 'section_name', e.target.value)}
                   className="block w-full p-2 border border-gray-300 rounded"
                   required
                 />
@@ -161,7 +177,7 @@ const AddProperty = () => {
                   type="number"
                   name="beds"
                   value={section.plan.beds}
-                  onChange={(e) => handleSectionChange(index, e)}
+                  onChange={(e) => handlePlanChange(index, 'beds', e.target.value)}
                   className="block w-full p-2 border border-gray-300 rounded"
                   required
                 />
@@ -172,7 +188,7 @@ const AddProperty = () => {
                   type="number"
                   name="living_area"
                   value={section.plan.living_area}
-                  onChange={(e) => handleSectionChange(index, e)}
+                  onChange={(e) => handlePlanChange(index, 'living_area', e.target.value)}
                   className="block w-full p-2 border border-gray-300 rounded"
                   required
                 />
@@ -183,7 +199,7 @@ const AddProperty = () => {
                   type="number"
                   name="bathrooms"
                   value={section.plan.bathrooms}
-                  onChange={(e) => handleSectionChange(index, e)}
+                  onChange={(e) => handlePlanChange(index, 'bathrooms', e.target.value)}
                   className="block w-full p-2 border border-gray-300 rounded"
                   required
                 />
@@ -194,7 +210,7 @@ const AddProperty = () => {
                   type="number"
                   name="kitchens"
                   value={section.plan.kitchens}
-                  onChange={(e) => handleSectionChange(index, e)}
+                  onChange={(e) => handlePlanChange(index, 'kitchens', e.target.value)}
                   className="block w-full p-2 border border-gray-300 rounded"
                   required
                 />
@@ -205,7 +221,7 @@ const AddProperty = () => {
                   type="number"
                   name="price_per_night"
                   value={section.price_per_night}
-                  onChange={(e) => handleSectionChange(index, e)}
+                  onChange={(e) => handleSectionChange(index, 'price_per_night', e.target.value)}
                   className="block w-full p-2 border border-gray-300 rounded"
                   required
                 />
