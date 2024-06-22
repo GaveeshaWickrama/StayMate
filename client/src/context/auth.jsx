@@ -6,11 +6,13 @@ export const AuthContext = createContext();
 export const AuthProvider = ({ children }) => {
   const [currentUser, setCurrentUser] = useState(null);
   const [emailForVerification, setEmailForVerification] = useState('');
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     const fetchUser = async () => {
       const user = authService.getCurrentUser();
       setCurrentUser(user);
+      setLoading(false);
     };
     fetchUser();
   }, []);
@@ -45,10 +47,11 @@ export const AuthProvider = ({ children }) => {
   };
 
   return (
-    <AuthContext.Provider value={{ currentUser, login, signup, verifyOtp, emailForVerification, logout }}>
+    <AuthContext.Provider value={{ currentUser, loading, login, signup, verifyOtp, emailForVerification, logout }}>
       {children}
     </AuthContext.Provider>
   );
 };
 
 export const useAuth = () => useContext(AuthContext);
+
