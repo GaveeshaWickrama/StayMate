@@ -6,6 +6,7 @@ import { useProperty } from '../../context/PropertyContext';
 import PropertyDetails from './components/PropertyDetails';
 import PropertyDetailsSection from './components/PropertyDetailsSection';
 import PropertySections from './components/PropertySections';
+import EntirePlaceDetails from './components/EntirePlaceDetails';
 import PropertyImages from './components/PropertyImages';
 import LocationInformation from './components/LocationInformation';
 import ProgressBar from './components/ProgressBar';
@@ -15,8 +16,8 @@ const AddProperty = () => {
   const location = useLocation();
   const { currentUser, token } = useAuth();
   const { property, setProperty, stage, setStage, resetProperty } = useProperty();
-  const totalStages = 5; // Adjust this value based on your sidebar width
-  const sidebarWidth = "250px"; 
+  const totalStages = 5;
+  const sidebarWidth = "250px";
   const [isFormValid, setIsFormValid] = useState(false);
 
   useEffect(() => {
@@ -90,9 +91,9 @@ const AddProperty = () => {
   };
 
   const validatePropertyDetails = () => {
-    return property.title.trim() !== '' &&
-           property.description.trim() !== '' &&
-           property.type.trim() !== '';
+    return property.title?.trim() !== '' &&
+           property.description?.trim() !== '' &&
+           property.type?.trim() !== '';
   };
 
   const validatePropertyDetailsSection = () => {
@@ -109,13 +110,13 @@ const AddProperty = () => {
   };
 
   const validateLocationInformation = () => {
-    return property.location.address.trim() !== '' &&
+    return property.location.address?.trim() !== '' &&
            property.location.latitude !== 0 &&
            property.location.longitude !== 0 &&
-           property.location.city.trim() !== '' &&
-           property.location.district.trim() !== '' &&
-           property.location.province.trim() !== '' &&
-           property.location.zipcode.trim() !== '';
+           property.location.city?.trim() !== '' &&
+           property.location.district?.trim() !== '' &&
+           property.location.province?.trim() !== '' &&
+           property.location.zipcode?.trim() !== '';
   };
 
   return (
@@ -126,10 +127,12 @@ const AddProperty = () => {
             <PropertyDetails property={property} handleChange={handleChange} />
           )}
           {stage === 2 && (
-            <PropertyDetailsSection property={property} handleChange={handleChange} />
+            <PropertyDetailsSection property={property} handleChange={handleChange} setProperty={setProperty} />
           )}
           {stage === 3 && (
-            <PropertySections property={property} navigate={navigate} />
+            parseInt(property.total_unique_sections, 10) === -1 
+              ? <EntirePlaceDetails property={property} setProperty={setProperty} />
+              : <PropertySections property={property} setProperty={setProperty} navigate={navigate} />
           )}
           {stage === 4 && (
             <PropertyImages property={property} handleChange={handleChange} setProperty={setProperty} />

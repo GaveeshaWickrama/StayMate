@@ -1,93 +1,82 @@
 import React from 'react';
 
-const LocationInformation = ({ property, handleChange, navigate }) => (
-  <div>
-    <h2 className="text-xl font-bold mb-4">Location Information</h2>
+const LocationInformation = ({ property, navigate }) => {
+  const location = property.location;
+
+  return (
     <div>
-      <label className="block mb-1">Address:</label>
-      <input
-        type="text"
-        name="address"
-        value={property.location.address}
-        onChange={(e) => handleChange({ target: { name: 'location.address', value: e.target.value } })}
-        className="block w-full p-2 border border-gray-300 rounded"
-        required
-      />
+      <h2 className="text-xl font-bold mb-4">Location Information</h2>
+      {location.address ? (
+        <div>
+          <div className="mb-4">
+            <label className="block mb-1">Address:</label>
+            <p className="block w-full p-2 border border-gray-300 rounded">
+              {location.address}
+            </p>
+          </div>
+          <div className="mb-4">
+            <label className="block mb-1">Latitude:</label>
+            <p className="block w-full p-2 border border-gray-300 rounded">
+              {location.latitude}
+            </p>
+          </div>
+          <div className="mb-4">
+            <label className="block mb-1">Longitude:</label>
+            <p className="block w-full p-2 border border-gray-300 rounded">
+              {location.longitude}
+            </p>
+          </div>
+          <div className="mb-4">
+            <label className="block mb-1">City:</label>
+            <p className="block w-full p-2 border border-gray-300 rounded">
+              {location.city}
+            </p>
+          </div>
+          <div className="mb-4">
+            <label className="block mb-1">District:</label>
+            <p className="block w-full p-2 border border-gray-300 rounded">
+              {location.district}
+            </p>
+          </div>
+          <div className="mb-4">
+            <label className="block mb-1">Province:</label>
+            <p className="block w-full p-2 border border-gray-300 rounded">
+              {location.province}
+            </p>
+          </div>
+          <div className="mb-4">
+            <label className="block mb-1">Zip Code:</label>
+            <p className="block w-full p-2 border border-gray-300 rounded">
+              {location.zipcode}
+            </p>
+          </div>
+        </div>
+      ) : (
+        <div className="flex flex-col items-center">
+          <img src="https://via.placeholder.com/150" alt="Add Location" className="mb-4" />
+          <p className="text-gray-600 mb-4">--something here--.</p>
+          <button
+            type="button"
+            onClick={() => navigate('/host/add-location', { state: { ...property, stage: 4 } })}
+            className="bg-yellow-500 text-white px-4 py-2 rounded mt-4"
+          >
+            Add Location
+          </button>
+        </div>
+      )}
+      {location.address && (
+        <button
+          type="button"
+          onClick={() => navigate('/host/add-location', { state: { ...property, stage: 4 } })}
+          className="bg-yellow-500 text-white px-4 py-2 rounded mt-4"
+        >
+          Change Location
+        </button>
+      )}
     </div>
-    <div>
-      <label className="block mb-1">Latitude:</label>
-      <input
-        type="number"
-        name="latitude"
-        value={property.location.latitude}
-        onChange={(e) => handleChange({ target: { name: 'location.latitude', value: e.target.value } })}
-        className="block w-full p-2 border border-gray-300 rounded"
-        required
-      />
-    </div>
-    <div>
-      <label className="block mb-1">Longitude:</label>
-      <input
-        type="number"
-        name="longitude"
-        value={property.location.longitude}
-        onChange={(e) => handleChange({ target: { name: 'location.longitude', value: e.target.value } })}
-        className="block w-full p-2 border border-gray-300 rounded"
-        required
-      />
-    </div>
-    <div>
-      <label className="block mb-1">City:</label>
-      <input
-        type="text"
-        name="city"
-        value={property.location.city}
-        onChange={(e) => handleChange({ target: { name: 'location.city', value: e.target.value } })}
-        className="block w-full p-2 border border-gray-300 rounded"
-        required
-      />
-    </div>
-    <div>
-      <label className="block mb-1">District:</label>
-      <input
-        type="text"
-        name="district"
-        value={property.location.district}
-        onChange={(e) => handleChange({ target: { name: 'location.district', value: e.target.value } })}
-        className="block w-full p-2 border border-gray-300 rounded"
-        required
-      />
-    </div>
-    <div>
-      <label className="block mb-1">Province:</label>
-      <input
-        type="text"
-        name="province"
-        value={property.location.province}
-        onChange={(e) => handleChange({ target: { name: 'location.province', value: e.target.value } })}
-        className="block w-full p-2 border border-gray-300 rounded"
-        required
-      />
-    </div>
-    <div>
-      <label className="block mb-1">Zip Code:</label>
-      <input
-        type="text"
-        name="zipcode"
-        value={property.location.zipcode}
-        onChange={(e) => handleChange({ target: { name: 'location.zipcode', value: e.target.value } })}
-        className="block w-full p-2 border border-gray-300 rounded"
-        required
-      />
-    </div>
-    <button
-      type="button"
-      onClick={() => navigate('/host/add-location', { state: { ...property, stage: 4 } })}
-      className="bg-yellow-500 text-white px-4 py-2 rounded mt-4"
-    >
-      Change Location
-    </button>
-  </div>
-);
+  );
+};
 
 export default LocationInformation;
+
+

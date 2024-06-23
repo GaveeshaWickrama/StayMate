@@ -2,7 +2,7 @@ import React from 'react';
 
 const PropertySections = ({ property, navigate }) => (
   <div>
-    <h2 className="text-xl font-bold mb-4">Sections</h2>
+    <h2 className="text-xl font-bold mb-4">Sections LMAO</h2>
     {property.sections.map((section, index) => (
       <div key={index} className="mb-4 p-4 border border-gray-300 rounded">
         <h3 className="text-lg font-semibold mb-2">Section {index + 1}</h3>
