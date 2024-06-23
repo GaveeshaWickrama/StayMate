@@ -8,7 +8,6 @@ const app = express();
 
 // Middleware
 app.use(cors());
-
 app.use(morgan('dev'));
 morgan.token('body', (req) => JSON.stringify(req.body));
 app.use(morgan(':method :url :status :res[content-length] - :response-time ms :body'));
@@ -18,17 +17,16 @@ const authRoutes = require('./routes/authRoutes');
 const adminRoutes = require('./routes/adminRoutes');
 const propertyRoutes = require('./routes/propertyRoutes');
 
-mongoose.connect(process.env.DATABASE_URL) // Use 127.0.0.1 instead of localhost to fix conversion issues with IPV6
+mongoose.connect(process.env.DATABASE_URL); // Use 127.0.0.1 instead of localhost to fix conversion issues with IPV6
 const db = mongoose.connection;
 db.on('error', (error) => console.error(error));
 db.once('open', () => console.log('Connected to Database'));
 
 app.use(express.json());
-
 app.use('/auth', authRoutes);
 app.use('/users', userRoutes);
 app.use('/admin', adminRoutes);
-app.use('/properties', propertyRoutes); 
+app.use('/properties', propertyRoutes);
 
 app.get('/', (req, res) => {
     res.send('Hello World!');
@@ -37,5 +35,5 @@ app.get('/', (req, res) => {
 // Start Server
 const port = process.env.PORT || 3000;
 app.listen(port, () => {
-  console.log(`Server running at http://localhost:${port}/`);
+    console.log(`Server running at http://localhost:${port}/`);
 });
