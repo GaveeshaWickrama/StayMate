@@ -1,35 +1,64 @@
 const Property = require('../models/propertyModel');
+const path = require('path');
 
-// Create a new property
 async function createProperty(req, res) {
-    const { title, description, type, total_unique_sections, sections, location } = req.body;
+  console.log('Decoded user:', req.user); // Log decoded user
+  console.log('User role:', req.user.role); // Log user role
+  console.log('Request body:', req.body); // Log request body
+  console.log('Request files:', req.files); // Log request files
 
-    // Extract host_id from the token payload
-    const host_id = req.user.userId;
+  const { title, description, type, total_unique_sections, sections: sectionsString, location } = req.body;
 
-    if (!host_id || !title || !description || !type || !total_unique_sections || !sections || !location) {
-        return res.status(400).json({ message: 'All fields are required' });
-    }
+  // Extract host_id from the token payload
+  const host_id = req.user.userId;
 
-    try {
-        const property = new Property({
-            host_id,
-            title,
-            description,
-            type,
-            total_unique_sections,
-            sections,
-            location
-        });
+  if (!host_id || !title || !description || !type || !total_unique_sections || !sectionsString || !location) {
+    return res.status(400).json({ message: 'All fields are required' });
+  }
 
-        const newProperty = await property.save();
-        res.status(201).json(newProperty);
-    } catch (error) {
-        console.error(error);
-        res.status(500).json({ message: 'Server error' });
-    }
+  // Parse sections string back into an object
+  let sections;
+  try {
+    sections = JSON.parse(sectionsString);
+  } catch (error) {
+    return res.status(400).json({ message: 'Invalid sections format' });
+  }
+
+  // Handle file uploads
+  const images = req.files ? req.files.map(file => ({ url: path.join('uploads', file.filename) })) : [];
+
+  // Associate images with their respective sections
+  sections = sections.map((section, index) => ({
+    ...section,
+    images: section.images.map(img => ({
+      url: images[index]?.url || img.url,
+    }))
+  }));
+
+  try {
+    const property = new Property({
+      host_id,
+      title,
+      description,
+      type,
+      total_unique_sections,
+      sections,
+      location,
+      images
+    });
+
+    const newProperty = await property.save();
+    res.status(201).json(newProperty);
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ message: 'Server error' });
+  }
 }
 
 module.exports = {
-    createProperty,
+  createProperty,
 };
+
+
+
+

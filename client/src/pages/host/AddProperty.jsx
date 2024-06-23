@@ -55,10 +55,31 @@ const AddProperty = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    const formData = new FormData();
+  
+    // Serialize the sections array as a JSON string
+    formData.append('sections', JSON.stringify(property.sections));
+  
+    // Append other fields
+    Object.keys(property).forEach(key => {
+      if (key === 'images') {
+        property.images.forEach((image, index) => {
+          formData.append('images', image.file); // Assuming image.file is the File object
+        });
+      } else if (key === 'location') {
+        Object.keys(property.location).forEach(locKey => {
+          formData.append(`location[${locKey}]`, property.location[locKey]);
+        });
+      } else if (key !== 'sections') {
+        formData.append(key, property[key]);
+      }
+    });
+  
     try {
-      const response = await axios.post(`${import.meta.env.VITE_API_URL}/properties/add`, property, {
+      const response = await axios.post(`${import.meta.env.VITE_API_URL}/properties/add`, formData, {
         headers: {
-          'Authorization': `Bearer ${token}`
+          'Authorization': `Bearer ${token}`,
+          'Content-Type': 'multipart/form-data'
         }
       });
       console.log('Property added:', response.data);
@@ -68,6 +89,8 @@ const AddProperty = () => {
       console.error('There was an error adding the property:', error);
     }
   };
+  
+  
 
   const validateForm = () => {
     switch (stage) {
