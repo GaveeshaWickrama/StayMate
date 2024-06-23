@@ -77,7 +77,7 @@ function Navbar() {
     { path: "/", label: "Home" },
     { path: "/host", label: "Host Dashboard" },
     { path: "/host/listings", label: "Your Listings" },
-    { path: "/host/addProperty", label: "New Listing" },
+    { path: "/host/add-property", label: "New Listing" },
   ];
 
   const publicLinks = [
