@@ -14,7 +14,7 @@ const AddSection = () => {
       kitchens: 0,
     },
     price_per_night: 0,
-    images: [{ url: '' }],
+    images: [{ url: '', file: null }],
     amenities: ['']
   });
 
@@ -37,11 +37,20 @@ const AddSection = () => {
     }));
   };
 
+  const handleFileChange = (e, index) => {
+    const file = e.target.files[0];
+    const url = URL.createObjectURL(file);
+    setSection(prevState => ({
+      ...prevState,
+      images: prevState.images.map((img, imgIndex) => imgIndex === index ? { url, file } : img)
+    }));
+  };
+
   const handleSubmit = (e) => {
     e.preventDefault();
     const sections = location.state?.sections || [];
     sections.push(section);
-    navigate('/host/add-property', { state: { sections, stage: 2 } });
+    navigate('/host/add-property', { state: { sections, stage: 3 } });
   };
 
   return (
@@ -127,15 +136,9 @@ const AddSection = () => {
       <div className="mb-4">
         <label className="block mb-1">Image URL:</label>
         <input
-          type="text"
-          name="url"
-          value={section.images[0].url}
-          onChange={(e) => {
-            setSection(prevState => ({
-              ...prevState,
-              images: [{ url: e.target.value }]
-            }));
-          }}
+          type="file"
+          name="image"
+          onChange={(e) => handleFileChange(e, 0)}
           className="block w-full p-2 border border-gray-300 rounded"
           required
         />
@@ -151,4 +154,5 @@ const AddSection = () => {
 };
 
 export default AddSection;
+
 

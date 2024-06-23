@@ -6,6 +6,7 @@ import PublicRoutes from './routes/PublicRoutes';
 import AdminRoutes from './routes/AdminRoutes';
 import GuestRoutes from './routes/GuestRoutes';
 import HostRoutes from './routes/HostRoutes';
+import TenantRoutes from './routes/TenantRoutes';
 import TechnicianRoutes from './routes/TechnicianRoutes';
 
 import HomePage from './pages/common/HomePage';
@@ -26,6 +27,7 @@ function App() {
           <Route path="/technician/*" element={<TechnicianRoutes />} />
           <Route path="/*" element={<PublicRoutes />} />
           <Route path="*" element={<NotFoundPage />} />
+          <Route path="/tenant/*" element={<TenantRoutes />} /> 
           <Route path="/Unauthorized" element={<Unauthorized />} />
         </Routes>
       </div>

@@ -1,15 +1,25 @@
-import React, { useState, useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import axios from 'axios';
 import { useAuth } from '../../context/auth';
 import { useProperty } from '../../context/PropertyContext';
+import PropertyDetails from './components/PropertyDetails';
+import PropertyDetailsSection from './components/PropertyDetailsSection';
+import PropertySections from './components/PropertySections';
+import EntirePlaceDetails from './components/EntirePlaceDetails';
+import PropertyImages from './components/PropertyImages';
+import LocationInformation from './components/LocationInformation';
+import ProgressBar from './components/ProgressBar';
+import Publish from './components/Publish';
 
 const AddProperty = () => {
   const navigate = useNavigate();
   const location = useLocation();
   const { currentUser, token } = useAuth();
-  const { property, setProperty } = useProperty();
-  const [stage, setStage] = useState(location.state?.stage || 1);
+  const { property, setProperty, stage, setStage, resetProperty } = useProperty();
+  const totalStages = 6;
+  const sidebarWidth = "250px";
+  const [isFormValid, setIsFormValid] = useState(false);
 
   useEffect(() => {
     if (location.state) {
@@ -17,8 +27,13 @@ const AddProperty = () => {
         ...prevState,
         ...location.state
       }));
+      setStage(location.state.stage || 1);
     }
-  }, [location.state, setProperty]);
+  }, [location.state, setProperty, setStage]);
+
+  useEffect(() => {
+    validateForm();
+  }, [property, stage]);
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -29,295 +44,142 @@ const AddProperty = () => {
   };
 
   const handleNext = () => {
-    if (stage === 3) {
-      navigate('/host/add-location', { state: { ...property, stage: 4 } });
-    } else {
+    if (isFormValid) {
       setStage(prevStage => prevStage + 1);
     }
   };
 
   const handlePrevious = () => {
-    if (stage === 4) {
-      navigate('/host/add-section', { state: { ...property, stage: 2 } });
-    } else {
-      setStage(prevStage => prevStage - 1);
-    }
+    setStage(prevStage => prevStage - 1);
   };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    const formData = new FormData();
+  
+    // Serialize the sections array as a JSON string
+    formData.append('sections', JSON.stringify(property.sections));
+  
+    // Append other fields
+    Object.keys(property).forEach(key => {
+      if (key === 'images') {
+        property.images.forEach((image, index) => {
+          formData.append('images', image.file); // Assuming image.file is the File object
+        });
+      } else if (key === 'location') {
+        Object.keys(property.location).forEach(locKey => {
+          formData.append(`location[${locKey}]`, property.location[locKey]);
+        });
+      } else if (key !== 'sections') {
+        formData.append(key, property[key]);
+      }
+    });
+  
     try {
-      const response = await axios.post(`${import.meta.env.VITE_API_URL}/properties/add`, property, {
+      const response = await axios.post(`${import.meta.env.VITE_API_URL}/properties/add`, formData, {
         headers: {
-          'Authorization': `Bearer ${token}`
+          'Authorization': `Bearer ${token}`,
+          'Content-Type': 'multipart/form-data'
         }
       });
       console.log('Property added:', response.data);
+      resetProperty(); // Reset context after successful submit
+      navigate('/host/your-listings'); // Redirect to Your Listings
     } catch (error) {
       console.error('There was an error adding the property:', error);
     }
   };
+  
+  
+
+  const validateForm = () => {
+    switch (stage) {
+      case 1:
+        setIsFormValid(validatePropertyDetails());
+        break;
+      case 2:
+        setIsFormValid(validatePropertyDetailsSection());
+        break;
+      case 3:
+        setIsFormValid(validatePropertySections());
+        break;
+      case 4:
+        setIsFormValid(validatePropertyImages());
+        break;
+      case 5:
+        setIsFormValid(validateLocationInformation());
+        break;
+      default:
+        setIsFormValid(false);
+    }
+  };
+
+  const validatePropertyDetails = () => {
+    return property.title?.trim() !== '' &&
+           property.description?.trim() !== '' &&
+           property.type?.trim() !== '';
+  };
+
+  const validatePropertyDetailsSection = () => {
+    return property.total_unique_sections !== '';
+  };
+
+  const validatePropertySections = () => {
+    return property.sections.length > 0;
+  };
+
+  const validatePropertyImages = () => {
+    return property.images.length > 0 &&
+           property.images.every(image => image.url.trim() !== '');
+  };
+
+  const validateLocationInformation = () => {
+    return property.location.address?.trim() !== '' &&
+           property.location.latitude !== 0 &&
+           property.location.longitude !== 0 &&
+           property.location.city?.trim() !== '' &&
+           property.location.district?.trim() !== '' &&
+           property.location.province?.trim() !== '' &&
+           property.location.zipcode?.trim() !== '';
+  };
 
   return (
-    <form onSubmit={handleSubmit} onKeyDown={(e) => { if (e.key === 'Enter') e.preventDefault(); }} className="max-w-4xl mx-auto p-8 bg-white shadow-md rounded">
-      {stage === 1 && (
-        <div>
-          <h2 className="text-xl font-bold mb-4">Property Details</h2>
-          <div className="mb-4">
-            <label className="block mb-1">Title:</label>
-            <input
-              type="text"
-              name="title"
-              value={property.title}
-              onChange={handleChange}
-              className="block w-full p-2 border border-gray-300 rounded"
-              required
-            />
-          </div>
-          <div className="mb-4">
-            <label className="block mb-1">Description:</label>
-            <textarea
-              name="description"
-              value={property.description}
-              onChange={handleChange}
-              className="block w-full p-2 border border-gray-300 rounded"
-              required
-            />
-          </div>
-          <div className="mb-4">
-            <label className="block mb-1">Total Unique Sections:</label>
-            <input
-              type="number"
-              name="total_unique_sections"
-              value={property.total_unique_sections}
-              onChange={handleChange}
-              className="block w-full p-2 border border-gray-300 rounded"
-              required
-            />
-          </div>
-          <div className="mb-4">
-            <label className="block mb-1">Property Type:</label>
-            <select
-              name="type"
-              value={property.type}
-              onChange={handleChange}
-              className="block w-full p-2 border border-gray-300 rounded"
-            >
-              <option value="House">House</option>
-              <option value="Apartment">Apartment</option>
-              <option value="Villa">Villa</option>
-              <option value="Cottage">Cottage</option>
-              <option value="Cabin">Cabin</option>
-              <option value="Hotel">Hotel</option>
-            </select>
-          </div>
-          <div className="flex justify-between mt-4">
-            <button
-              type="button"
-              onClick={handleNext}
-              className="bg-blue-500 text-white px-4 py-2 rounded"
-            >
-              Next
-            </button>
-          </div>
-        </div>
-      )}
-
-      {stage === 2 && (
-        <div>
-          <h2 className="text-xl font-bold mb-4">Sections</h2>
-          {property.sections.map((section, index) => (
-            <div key={index} className="mb-4 p-4 border border-gray-300 rounded">
-              <h3 className="text-lg font-semibold mb-2">Section {index + 1}</h3>
-              <p><strong>Name:</strong> {section.section_name}</p>
-              <p><strong>Count:</strong> {section.count}</p>
-              <p><strong>Beds:</strong> {section.plan.beds}</p>
-              <p><strong>Living Area:</strong> {section.plan.living_area}</p>
-              <p><strong>Bathrooms:</strong> {section.plan.bathrooms}</p>
-              <p><strong>Kitchens:</strong> {section.plan.kitchens}</p>
-              <p><strong>Price Per Night:</strong> ${section.price_per_night}</p>
-              <p><strong>Image URL:</strong> <a href={section.images[0].url} target="_blank" rel="noopener noreferrer">{section.images[0].url}</a></p>
-            </div>
-          ))}
-          <button
-            type="button"
-            onClick={() => navigate('/host/add-section', { state: { ...property, stage: 2 } })}
-            className="bg-green-500 text-white px-4 py-2 rounded mb-4"
-          >
-            Add Section
-          </button>
-          <div className="flex justify-between mt-4">
-            <button
-              type="button"
-              onClick={handlePrevious}
-              className="bg-gray-500 text-white px-4 py-2 rounded"
-            >
-              Previous
-            </button>
-            <button
-              type="button"
-              onClick={handleNext}
-              className="bg-blue-500 text-white px-4 py-2 rounded"
-            >
-              Next
-            </button>
-          </div>
-        </div>
-      )}
-
-      {stage === 3 && (
-        <div>
-          <h2 className="text-xl font-bold mb-4">Property Images</h2>
-          {property.images.map((image, index) => (
-            <div key={index} className="mb-4">
-              <label className="block mb-1">Image URL:</label>
-              <input
-                type="text"
-                name={`image_${index}`}
-                value={image.url}
-                onChange={(e) => {
-                  const newImages = property.images.map((img, imgIndex) => {
-                    if (imgIndex !== index) return img;
-                    return { ...img, url: e.target.value };
-                  });
-                  setProperty(prevState => ({
-                    ...prevState,
-                    images: newImages
-                  }));
-                }}
-                className="block w-full p-2 border border-gray-300 rounded"
-                required
-              />
-            </div>
-          ))}
-          <button
-            type="button"
-            onClick={() => setProperty(prevState => ({
-              ...prevState,
-              images: [...prevState.images, { url: '' }]
-            }))}
-            className="bg-green-500 text-white px-4 py-2 rounded mb-4"
-          >
-            Add More Images
-          </button>
-          <div className="flex justify-between mt-4">
-            <button
-              type="button"
-              onClick={handlePrevious}
-              className="bg-gray-500 text-white px-4 py-2 rounded"
-            >
-              Previous
-            </button>
-            <button
-              type="button"
-              onClick={handleNext}
-              className="bg-blue-500 text-white px-4 py-2 rounded"
-            >
-              Next
-            </button>
-          </div>
-        </div>
-      )}
-
-      {stage === 4 && (
-        <div>
-          <h2 className="text-xl font-bold mb-4">Location Information</h2>
-          <div>
-            <label className="block mb-1">Address:</label>
-            <input
-              type="text"
-              name="address"
-              value={property.location.address}
-              onChange={(e) => handleChange({ target: { name: 'location.address', value: e.target.value } })}
-              className="block w-full p-2 border border-gray-300 rounded"
-              required
-            />
-          </div>
-          <div>
-            <label className="block mb-1">Latitude:</label>
-            <input
-              type="number"
-              name="latitude"
-              value={property.location.latitude}
-              onChange={(e) => handleChange({ target: { name: 'location.latitude', value: e.target.value } })}
-              className="block w-full p-2 border border-gray-300 rounded"
-              required
-            />
-          </div>
-          <div>
-            <label className="block mb-1">Longitude:</label>
-            <input
-              type="number"
-              name="longitude"
-              value={property.location.longitude}
-              onChange={(e) => handleChange({ target: { name: 'location.longitude', value: e.target.value } })}
-              className="block w-full p-2 border border-gray-300 rounded"
-              required
-            />
-          </div>
-          <div>
-            <label className="block mb-1">City:</label>
-            <input
-              type="text"
-              name="city"
-              value={property.location.city}
-              onChange={(e) => handleChange({ target: { name: 'location.city', value: e.target.value } })}
-              className="block w-full p-2 border border-gray-300 rounded"
-              required
-            />
-          </div>
-          <div>
-            <label className="block mb-1">District:</label>
-            <input
-              type="text"
-              name="district"
-              value={property.location.district}
-              onChange={(e) => handleChange({ target: { name: 'location.district', value: e.target.value } })}
-              className="block w-full p-2 border border-gray-300 rounded"
-              required
-            />
-          </div>
-          <div>
-            <label className="block mb-1">Province:</label>
-            <input
-              type="text"
-              name="province"
-              value={property.location.province}
-              onChange={(e) => handleChange({ target: { name: 'location.province', value: e.target.value } })}
-              className="block w-full p-2 border border-gray-300 rounded"
-              required
-            />
-          </div>
-          <div>
-            <label className="block mb-1">Zip Code:</label>
-            <input
-              type="text"
-              name="zipcode"
-              value={property.location.zipcode}
-              onChange={(e) => handleChange({ target: { name: 'location.zipcode', value: e.target.value } })}
-              className="block w-full p-2 border border-gray-300 rounded"
-              required
-            />
-          </div>
-          <div className="flex justify-between mt-4">
-            <button
-              type="button"
-              onClick={handlePrevious}
-              className="bg-gray-500 text-white px-4 py-2 rounded"
-            >
-              Previous
-            </button>
-            <button
-              type="submit"
-              className="bg-blue-500 text-white px-4 py-2 rounded"
-            >
-              Submit
-            </button>
-          </div>
-        </div>
-      )}
-    </form>
+    <div className='flex flex-col h-screen justify-between bg-white overflow-auto'>
+      <div className="m-0 p-10 rounded bg-white overflow-auto">
+        <form onSubmit={handleSubmit} onKeyDown={(e) => { if (e.key === 'Enter') e.preventDefault(); }} className="mb-8">
+          {stage === 1 && (
+            <PropertyDetails property={property} handleChange={handleChange} />
+          )}
+          {stage === 2 && (
+            <PropertyDetailsSection property={property} handleChange={handleChange} setProperty={setProperty} />
+          )}
+          {stage === 3 && (
+            parseInt(property.total_unique_sections, 10) === -1 
+              ? <EntirePlaceDetails property={property} setProperty={setProperty} />
+              : <PropertySections property={property} setProperty={setProperty} navigate={navigate} />
+          )}
+          {stage === 4 && (
+            <PropertyImages property={property} handleChange={handleChange} setProperty={setProperty} />
+          )}
+          {stage === 5 && (
+            <LocationInformation property={property} handleChange={handleChange} navigate={navigate} />
+          )}
+          {stage === 6 && (
+            <Publish handleSubmit={handleSubmit} />
+          )}
+        </form>
+      </div>
+      <ProgressBar 
+        stage={stage} 
+        totalStages={totalStages} 
+        sidebarWidth={sidebarWidth} 
+        handlePrevious={handlePrevious} 
+        handleNext={handleNext} 
+        isFormValid={isFormValid}
+      />
+    </div>
   );
 };
 
 export default AddProperty;
+
