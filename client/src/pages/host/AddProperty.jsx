@@ -1,10 +1,10 @@
-import React, { useState, useEffect } from 'react';
+import React, { useEffect } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import axios from 'axios';
 import { useAuth } from '../../context/auth';
 import { useProperty } from '../../context/PropertyContext';
 
-const PropertyDetails = ({ property, handleChange, handleNext }) => (
+const PropertyDetails = ({ property, handleChange }) => (
   <div>
     <h2 className="text-xl font-bold mb-4">Property Details</h2>
     <div className="mb-4">
@@ -55,19 +55,10 @@ const PropertyDetails = ({ property, handleChange, handleNext }) => (
         <option value="Hotel">Hotel</option>
       </select>
     </div>
-    <div className="flex justify-between mt-4">
-      <button
-        type="button"
-        onClick={handleNext}
-        className="bg-blue-500 text-white px-4 py-2 rounded"
-      >
-        Next
-      </button>
-    </div>
   </div>
 );
 
-const PropertySections = ({ property, navigate, handlePrevious, handleNext }) => (
+const PropertySections = ({ property, navigate }) => (
   <div>
     <h2 className="text-xl font-bold mb-4">Sections</h2>
     {property.sections.map((section, index) => (
@@ -90,26 +81,10 @@ const PropertySections = ({ property, navigate, handlePrevious, handleNext }) =>
     >
       Add Section
     </button>
-    <div className="flex justify-between mt-4">
-      <button
-        type="button"
-        onClick={handlePrevious}
-        className="bg-gray-500 text-white px-4 py-2 rounded"
-      >
-        Previous
-      </button>
-      <button
-        type="button"
-        onClick={handleNext}
-        className="bg-blue-500 text-white px-4 py-2 rounded"
-      >
-        Next
-      </button>
-    </div>
   </div>
 );
 
-const PropertyImages = ({ property, handleChange, handlePrevious, handleNext, setProperty }) => (
+const PropertyImages = ({ property, handleChange, setProperty }) => (
   <div>
     <h2 className="text-xl font-bold mb-4">Property Images</h2>
     {property.images.map((image, index) => (
@@ -144,26 +119,10 @@ const PropertyImages = ({ property, handleChange, handlePrevious, handleNext, se
     >
       Add More Images
     </button>
-    <div className="flex justify-between mt-4">
-      <button
-        type="button"
-        onClick={handlePrevious}
-        className="bg-gray-500 text-white px-4 py-2 rounded"
-      >
-        Previous
-      </button>
-      <button
-        type="button"
-        onClick={handleNext}
-        className="bg-blue-500 text-white px-4 py-2 rounded"
-      >
-        Next
-      </button>
-    </div>
   </div>
 );
 
-const LocationInformation = ({ property, handleChange, handlePrevious, handleSubmit, navigate }) => (
+const LocationInformation = ({ property, handleChange, navigate }) => (
   <div>
     <h2 className="text-xl font-bold mb-4">Location Information</h2>
     <div>
@@ -243,38 +202,61 @@ const LocationInformation = ({ property, handleChange, handlePrevious, handleSub
         required
       />
     </div>
-    <div className="flex justify-between mt-4">
-      <button
-        type="button"
-        onClick={handlePrevious}
-        className="bg-gray-500 text-white px-4 py-2 rounded"
-      >
-        Previous
-      </button>
-      <button
-        type="button"
-        onClick={() => navigate('/host/add-location', { state: { ...property, stage: 4 } })}
-        className="bg-yellow-500 text-white px-4 py-2 rounded"
-      >
-        Change Location
-      </button>
-      <button
-        type="submit"
-        className="bg-blue-500 text-white px-4 py-2 rounded"
-      >
-        Submit
-      </button>
-    </div>
+    <button
+      type="button"
+      onClick={() => navigate('/host/add-location', { state: { ...property, stage: 4 } })}
+      className="bg-yellow-500 text-white px-4 py-2 rounded mt-4"
+    >
+      Change Location
+    </button>
   </div>
 );
 
+const ProgressBar = ({ stage, totalStages, sidebarWidth, handlePrevious, handleNext }) => {
+  const progressPercentage = (stage / totalStages) * 100;
+
+  return (
+    <div className="pb-8 w-full bg-green-900">
+      <div className="relative h-3 bg-gray-200 rounded-full">
+        <div
+          className="absolute top-0 left-0 h-3 bg-gradient-to-r from-blue-500 to-blue-700 shadow-md transition-all duration-500"
+          style={{ width: `${progressPercentage}%` }}
+        ></div>
+        <div className="absolute top-0 left-0 h-3 w-full flex justify-between">
+          {Array(totalStages - 1).fill().map((_, i) => (
+            <div key={i} className="h-full w-1 bg-white" style={{ marginLeft: `${((i + 1) * 100) / totalStages}%` }}></div>
+          ))}
+        </div>
+      </div>
+      <div className="flex justify-between mt-4 px-8">
+        <button
+          type="button"
+          onClick={handlePrevious}
+          className="bg-gray-500 text-white px-4 py-2 rounded"
+          disabled={stage === 1}
+        >
+          Previous
+        </button>
+        <button
+          type="button"
+          onClick={handleNext}
+          className="bg-blue-500 text-white px-4 py-2 rounded"
+          disabled={stage === totalStages}
+        >
+          Next
+        </button>
+      </div>
+    </div>
+  );
+};
 
 const AddProperty = () => {
   const navigate = useNavigate();
   const location = useLocation();
   const { currentUser, token } = useAuth();
-  const { property, setProperty } = useProperty();
-  const [stage, setStage] = useState(location.state?.stage || 1);
+  const { property, setProperty, stage, setStage, resetProperty } = useProperty();
+  const totalStages = 4;
+  const sidebarWidth = "250px"; // Adjust this value based on your sidebar width
 
   useEffect(() => {
     if (location.state) {
@@ -282,8 +264,9 @@ const AddProperty = () => {
         ...prevState,
         ...location.state
       }));
+      setStage(location.state.stage || 1);
     }
-  }, [location.state, setProperty]);
+  }, [location.state, setProperty, setStage]);
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -296,11 +279,7 @@ const AddProperty = () => {
   const handleNext = () => {
     setStage(prevStage => prevStage + 1);
   };
-  
-  const handleStageChange = (newStage) => {
-    setStage(newStage);
-  };
-  
+
   const handlePrevious = () => {
     setStage(prevStage => prevStage - 1);
   };
@@ -314,35 +293,38 @@ const AddProperty = () => {
         }
       });
       console.log('Property added:', response.data);
+      resetProperty(); // Reset context after successful submit
+      navigate('/host/your-listings'); // Redirect to Your Listings
     } catch (error) {
       console.error('There was an error adding the property:', error);
     }
   };
 
   return (
-    <form onSubmit={handleSubmit} onKeyDown={(e) => { if (e.key === 'Enter') e.preventDefault(); }} className="max-w-4xl mx-auto p-8 bg-white shadow-md rounded">
-      {stage === 1 && (
-        <PropertyDetails property={property} handleChange={handleChange} handleNext={handleNext} />
-      )}
-      {stage === 2 && (
-        <PropertySections property={property} navigate={navigate} handlePrevious={handlePrevious} handleNext={handleNext} />
-      )}
-      {stage === 3 && (
-        <PropertyImages property={property} handleChange={handleChange} handlePrevious={handlePrevious} handleNext={handleNext} setProperty={setProperty} />
-      )}
-{stage === 4 && (
-  <LocationInformation
-    property={property}
-    handleChange={handleChange}
-    handlePrevious={handlePrevious}
-    handleSubmit={handleSubmit}
-    navigate={navigate}
-  />
-)}
-
-
-    </form>
+    <div className='flex flex-col h-screen justify-between bg-white overflow-auto'>
+    <div className="m-0 p-10 rounded bg-white overflow-auto">
+      <form onSubmit={handleSubmit} onKeyDown={(e) => { if (e.key === 'Enter') e.preventDefault(); }} className="mb-8">
+        {stage === 1 && (
+          <PropertyDetails property={property} handleChange={handleChange} />
+        )}
+        {stage === 2 && (
+          <PropertySections property={property} navigate={navigate} />
+        )}
+        {stage === 3 && (
+          <PropertyImages property={property} handleChange={handleChange} setProperty={setProperty} />
+        )}
+        {stage === 4 && (
+          <LocationInformation property={property} handleChange={handleChange} navigate={navigate} />
+        )}
+      </form>
+      
+    </div>
+    <ProgressBar stage={stage} totalStages={totalStages} sidebarWidth={sidebarWidth} handlePrevious={handlePrevious} handleNext={handleNext} />
+    </div>
   );
 };
 
 export default AddProperty;
+
+
+

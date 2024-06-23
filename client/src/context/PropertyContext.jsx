@@ -5,7 +5,7 @@ const PropertyContext = createContext();
 
 // Create a provider component
 export const PropertyProvider = ({ children }) => {
-  const [property, setProperty] = useState({
+  const initialPropertyState = {
     host_id: '',
     title: '',
     description: '',
@@ -22,10 +22,18 @@ export const PropertyProvider = ({ children }) => {
       province: '',
       zipcode: ''
     }
-  });
+  };
+
+  const [property, setProperty] = useState(initialPropertyState);
+  const [stage, setStage] = useState(1);
+
+  const resetProperty = () => {
+    setProperty(initialPropertyState);
+    setStage(1);
+  };
 
   return (
-    <PropertyContext.Provider value={{ property, setProperty }}>
+    <PropertyContext.Provider value={{ property, setProperty, stage, setStage, resetProperty }}>
       {children}
     </PropertyContext.Provider>
   );
@@ -33,3 +41,4 @@ export const PropertyProvider = ({ children }) => {
 
 // Custom hook to use the PropertyContext
 export const useProperty = () => useContext(PropertyContext);
+
