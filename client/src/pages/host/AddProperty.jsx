@@ -10,13 +10,14 @@ import EntirePlaceDetails from './components/EntirePlaceDetails';
 import PropertyImages from './components/PropertyImages';
 import LocationInformation from './components/LocationInformation';
 import ProgressBar from './components/ProgressBar';
+import Publish from './components/Publish';
 
 const AddProperty = () => {
   const navigate = useNavigate();
   const location = useLocation();
   const { currentUser, token } = useAuth();
   const { property, setProperty, stage, setStage, resetProperty } = useProperty();
-  const totalStages = 5;
+  const totalStages = 6;
   const sidebarWidth = "250px";
   const [isFormValid, setIsFormValid] = useState(false);
 
@@ -139,6 +140,9 @@ const AddProperty = () => {
           )}
           {stage === 5 && (
             <LocationInformation property={property} handleChange={handleChange} navigate={navigate} />
+          )}
+          {stage === 6 && (
+            <Publish handleSubmit={handleSubmit} />
           )}
         </form>
       </div>

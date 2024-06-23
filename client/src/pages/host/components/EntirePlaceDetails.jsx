@@ -1,16 +1,21 @@
 import React, { useEffect } from 'react';
 
 const EntirePlaceDetails = ({ property, setProperty }) => {
-  useEffect(() => {
-    console.log('EntirePlaceDetails component rendered');
-    // Ensure the sections array has at least one element with a plan object
-    if (property.sections.length === 0) {
-      setProperty(prevState => ({
-        ...prevState,
-        sections: [{ plan: { beds: 0, living_area: 0, bathrooms: 0, kitchens: 0 }, price_per_night: 0 }]
-      }));
-    }
-  }, [property.sections.length, setProperty]);
+    useEffect(() => {
+      console.log('EntirePlaceDetails component rendered');
+      // Ensure the sections array has at least one element with a plan object, count, and section_name
+      if (property.sections.length === 0) {
+        setProperty(prevState => ({
+          ...prevState,
+          sections: [{
+            section_name: 'entire_place',
+            count: 1,
+            plan: { beds: 0, living_area: 0, bathrooms: 0, kitchens: 0 },
+            price_per_night: 0
+          }]
+        }));
+      }
+    }, [property.sections.length, setProperty]);
 
   const handlePlanChange = (e) => {
     const { name, value } = e.target;

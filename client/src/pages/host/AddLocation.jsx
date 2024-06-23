@@ -24,7 +24,7 @@ const AddLocation = () => {
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    navigate('/host/add-property', { state: { ...location.state, location: propertyLocation, stage: 4 } });
+    navigate('/host/add-property', { state: { ...location.state, location: propertyLocation, stage: 5 } });
   };
 
   return (
