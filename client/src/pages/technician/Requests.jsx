@@ -1,4 +1,5 @@
 import React, {useEffect, useState} from 'react'
+import { Navigate } from 'react-router-dom';
 
 export default function Requests() {
     const [requests, setRequests] = useState([]);
@@ -28,6 +29,7 @@ export default function Requests() {
             request.id ===id ? { ...request, status:'accepted'} : request
         )
         );
+        Navigate('./active-tasks');
     };
 
     const handleReject = (id) => {
