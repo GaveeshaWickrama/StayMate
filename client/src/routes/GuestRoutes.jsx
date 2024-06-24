@@ -42,6 +42,17 @@ function UserRoutes() {
           )
         }
       />
+      {/* route for raising Complaint */}
+      <Route
+      path="/raisecomplaints"
+      element={
+        currentUser && currentUser.role === "guest" ? (
+          <RaiseComplaintPage />
+        ) : (
+          <Navigate to="/Unauthorized" />
+        )
+        }
+      />
     </Routes>
   );
 }
