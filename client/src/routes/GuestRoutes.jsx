@@ -6,7 +6,11 @@ import ReviewAdd from "../pages/guest/ReviewAdd";
 import Reservations from "../pages/guest/Reservations";
 
 function UserRoutes() {
-  const { currentUser } = useAuth();
+  const { currentUser, loading } = useAuth();
+
+  if (loading) {
+    return <div>Loading...</div>; // Show a loading spinner or message
+  }
 
   return (
     <Routes>
@@ -58,3 +62,4 @@ function UserRoutes() {
 }
 
 export default UserRoutes;
+
