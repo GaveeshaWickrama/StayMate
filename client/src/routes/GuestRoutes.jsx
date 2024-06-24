@@ -4,6 +4,7 @@ import { useAuth } from "../context/auth";
 import GuestPage from "../pages/guest/GuestPage";
 import ReviewAdd from "../pages/guest/ReviewAdd";
 import Reservations from "../pages/guest/Reservations";
+import RaiseComplaintPage from "../pages/guest/RaiseComplaintPage";
 
 function UserRoutes() {
   const { currentUser, loading } = useAuth();
