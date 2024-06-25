@@ -27,7 +27,6 @@ function App() {
           <Route path="/technician/*" element={<TechnicianRoutes />} />
           <Route path="/*" element={<PublicRoutes />} />
           <Route path="*" element={<NotFoundPage />} />
-          <Route path="/tenant/*" element={<TenantRoutes />} /> 
           <Route path="/Unauthorized" element={<Unauthorized />} />
         </Routes>
       </div>

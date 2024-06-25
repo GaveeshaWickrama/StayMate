@@ -1,23 +1,3 @@
-/* import React from 'react';
-
-const PhotoUpload = () => {
-  return (
-    <div className="bg-blue-50 m-4 rounded-lg shadow-md mx-4 sm:mx-10 md:mx-20 lg:mx-40 mt-11">
-      <h2 className="text-2xl font-bold mb-2">Upload Photos</h2>
-      <div className="flex space-x-4">
-        <div className="w-24 h-24 border-2 border-dashed border-gray-400 rounded-lg flex items-center justify-center bg-gray-200"></div>
-        <div className="w-24 h-24 border-2 border-dashed border-gray-400 rounded-lg flex items-center justify-center bg-gray-200">
-          <span className="text-2xl font-bold text-gray-500">+</span>
-        </div>
-        <div className="w-24 h-24 border-2 border-dashed border-gray-400 rounded-lg flex items-center justify-center bg-gray-200"></div>
-      </div>
-    </div>
-  );
-};
-
-export default PhotoUpload;
- */
-
 import React, { useState } from 'react';
 
 const PhotoUpload = () => {
