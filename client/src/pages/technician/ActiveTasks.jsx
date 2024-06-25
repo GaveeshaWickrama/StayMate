@@ -1,22 +1,23 @@
-import React, {Component, useState} from 'react'
+import React, {Component, useState, useEffect} from 'react'
+import Title from '../../components/common/Title';
+import { LinearProgress } from '@mui/material';
+export default function ActiveTasks(prop) {
 
-export default function ActiveTasks() {
-
-  const [taskState, setTaskState] = useState();
+  const [taskState, setTaskState] = useState([]);
 
 
   handleWithdraw = () => {
       {/* how to fetch only active tasks */}
       setTaskState((prevTaskState)=>{
-        ...prevTaskState,
-        prevTaskState.map((task)=>task.state:'withdraw');
+        
+        prevTaskState.map(task=>({...task, state:'withdraw'}));
       });
   }
   handleCompleted = () => {
       {/* how to fetch only active tasks */}
       setTaskState((prevTaskState)=>{
-        ...prevTaskState,
-        prevTaskState.map((task)=>task.state:'completed');
+        
+        prevTaskState.map(task=>({...task, state:'completed'}));
       });
   }
 
@@ -26,9 +27,9 @@ export default function ActiveTasks() {
   }
   return (
     <div>
-        <h1>Active Tasks</h1>
+       <Title title="Active tasks" />
         <p>Progress</p>
-        <button onClick={markProgress}></button>
+        <button onClick={markProgress} className=".MuiLinearProgress-bar"></button>
         <button onClick={handleWithdraw}>Withdraw</button>
         <button onClick={handleCompleted}>Completed</button>
     </div>

@@ -13,7 +13,7 @@ const MyProfile = () => {
         address: "",
         nic: "",
         contactNumber: "",
-        gender: "", // Assuming gender is part of the data
+        gender: "", 
     });
 
     // Mock fetch function for getting requests from an API
