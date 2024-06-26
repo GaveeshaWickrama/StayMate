@@ -1,7 +1,11 @@
 import React, { useState, useEffect } from 'react';
 import Title from '../../components/common/Title';
+import { useNavigate } from 'react-router-dom';
+
 
 export default function PendingTasks() {
+  const navigate = useNavigate();
+
   const [taskState, setTaskState] = useState([
     { id: 1, state: 'pending', title:"leaking faucet", description:"The kitchen faucet has been leaking for the past two days. Water drips continuously from the faucet even when it is turned off, and the leak seems to be getting worse.",postedBy:"user1",property:"golden rose",transportProvided: true },
     { id: 2, state: 'pending', title:"water leak", description:"The kitchen faucet has been leaking for the past two days. Water drips continuously from the faucet even when it is turned off, and the leak seems to be getting worse..",postedBy:"user1",property:"golden rose" ,transportProvided: false},
@@ -14,6 +18,9 @@ export default function PendingTasks() {
     setTaskState(prevTaskState =>
       prevTaskState.map(task => ({ ...task, state: 'accepted' }))
     );
+
+
+    navigate('../requests/ActiveTasks');
     
   };
 
@@ -50,6 +57,7 @@ export default function PendingTasks() {
                 <p className="text-sm text-gray-600 ml-[30px] my-[5px]">Posted By {task.postedBy}</p>
                 
               <p className="text-sm underline text-blue-600 ml-[30px]  my-[5px] cursor-pointer" >See Photos</p>
+
                 {task.transportProvided && (<p className="text-sm text-gray-600 ml-[30px]  my-[5px]">Transport Provided</p>)} 
               
               </div>

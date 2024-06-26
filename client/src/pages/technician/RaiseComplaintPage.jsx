@@ -1,10 +1,10 @@
 import React from "react";
 import Title from '../../components/common/Title';
 import DropDown from '../../components/common/DropDown';
-import InputField from '../../components/tenant/InputField';
-import DescriptionInput from "../../components/tenant/DescriptionInput";
-import PhotoUpload from "../../components/tenant/PhotoUpload";
-import Contact from "../../components/tenant/Contact";
+import InputField from '../../components/guest/InputField';
+import DescriptionInput from "../../components/guest/DescriptionInput";
+import PhotoUpload from "../../components/guest/PhotoUpload";
+import Contact from "../../components/guest/Contact";
 import Button from "../common/Button";
 
 const complaintCategories = [
