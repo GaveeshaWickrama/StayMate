@@ -64,6 +64,9 @@ async function getPropertiesByHostId(req, res) {
     if (!properties.length) {
       return res.status(404).json({ message: 'No properties found for this host.' });
     }
+
+    console.log('Properties found:', properties); // Log the properties
+
     res.status(200).json(properties);
   } catch (error) {
     console.error(error);
