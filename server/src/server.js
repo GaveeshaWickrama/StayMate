@@ -3,10 +3,13 @@ const express = require("express");
 const cors = require("cors");
 const morgan = require("morgan"); // Logging HTTP requests
 const mongoose = require("mongoose");
+const path = require('path'); // Import the path module
 
 const app = express();
 
 // Middleware
+app.use('/uploads', express.static(path.join(__dirname, '../uploads')));
+
 app.use(cors());
 app.use(morgan("dev"));
 morgan.token("body", (req) => JSON.stringify(req.body));

@@ -30,9 +30,9 @@ async function createProperty(req, res) {
   // Associate images with their respective sections
   sections = sections.map((section, index) => ({
     ...section,
-    images: section.images.map(img => ({
-      url: images[index]?.url || img.url,
-    }))
+    images: section.images ? section.images.map((img, imgIndex) => ({
+      url: images[imgIndex]?.url || img.url,
+    })) : []
   }));
 
   try {
