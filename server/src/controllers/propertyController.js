@@ -53,10 +53,29 @@ async function createProperty(req, res) {
     console.error(error);
     res.status(500).json({ message: 'Server error' });
   }
+  
 }
+
+async function getPropertiesByHostId(req, res) {
+  const hostId = req.user.userId;
+
+  try {
+    const properties = await Property.find({ host_id: hostId });
+    if (!properties.length) {
+      return res.status(404).json({ message: 'No properties found for this host.' });
+    }
+    res.status(200).json(properties);
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ message: 'Server error' });
+  }
+}
+
+
 
 module.exports = {
   createProperty,
+  getPropertiesByHostId,
 };
 
 
