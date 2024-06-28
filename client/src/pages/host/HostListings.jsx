@@ -54,9 +54,9 @@ function HostListings() {
                 <img 
                   src={`${import.meta.env.VITE_API_URL}/${property.images[0]?.url}`}
                   alt={property.title}
-                  className="w-1/4 h-48 object-cover"
+                  className="w-1/3 h-48 object-cover"
                 />
-                <div className="flex flex-col justify-between pl-6 w-2/3">
+                <div className="flex flex-col justify-between pl-6 w-2/3 overflow-hidden">
                   <div>
                     <h2 className="text-2xl font-semibold text-black-500 mb-2 pt-3">{property.title}</h2>
                     <div className="flex items-center mb-2">

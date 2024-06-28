@@ -9,5 +9,9 @@ router.post('/add', authToken, requireRole('host', 'admin'), upload.array('image
 
 router.get('/host-properties', authToken, requireRole('host', 'admin'), propertyController.getPropertiesByHostId);
 
+// Get property by ID
+router.get('/:id', propertyController.getPropertyById);
+
 module.exports = router;
+
 
