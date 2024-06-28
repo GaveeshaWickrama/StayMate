@@ -30,10 +30,13 @@ function PropertyDetails() {
   return (
     <div className="container mx-auto p-10">
       <h1 className="text-4xl font-extrabold text-black-600 mb-8 border-b-4 border-blue-600 p-6 bg-gray-100 rounded-md shadow-sm">{property.title}</h1>
-      <div className="bg-white shadow-lg rounded-lg overflow-hidden mx-20">
+      <div className="bg-white shadow-lg rounded-lg overflow-hidden">
         <Carousel images={property.images.map(img => ({ url: `${import.meta.env.VITE_API_URL}/${img.url}` }))} />
+        
       </div>
     </div>
+    
+
   );
 }
 
