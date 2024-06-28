@@ -6,7 +6,7 @@ import { FaMapMarkerAlt, FaHome, FaCalendarAlt, FaInfoCircle, FaEdit, FaTrash, F
 
 function ListingCard({ property, handleEdit, handleDelete }) {
   return (
-    <Link to={`/property-details/${property._id}`}>
+    <Link to={`/host/property-details/${property._id}`}>
       <div className="bg-white shadow-lg rounded-lg overflow-hidden border border-transparent transform transition-transform duration-300 hover:scale-105 relative card-hover-border">
         <div className='flex w-full'>
             <img src={`${import.meta.env.VITE_API_URL}/${property.images[0]?.url}`} alt={property.title} className="w-1/3 h-48 object-cover"/>

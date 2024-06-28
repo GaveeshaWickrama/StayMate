@@ -21,12 +21,12 @@ function HostRoutes() {
   return (
     <PropertyProvider>
       <Routes>
+        <Route path="/property-details/:id" element={currentUser && currentUser.role === 'host' ? <PropertyDetails /> : <Navigate to="/Unauthorized" />} />
         <Route path="/" element={currentUser && currentUser.role === 'host' ? <HostPage /> : <Navigate to="/Unauthorized" />} />
         <Route path="/listings" element={currentUser && currentUser.role === 'host' ? <HostListings /> : <Navigate to="/Unauthorized" />} />
-          <Route path="/add-property" element={currentUser && currentUser.role === 'host' ? <AddProperty /> : <Navigate to="/Unauthorized" />} />
-          <Route path="/add-section" element={currentUser && currentUser.role === 'host' ? <AddSection /> : <Navigate to="/Unauthorized" />} />
-          <Route path="/add-location" element={currentUser && currentUser.role === 'host' ? <AddLocation /> : <Navigate to="/Unauthorized" />} />
-          <Route path="/property-details" element={currentUser && currentUser.role === 'host' ? <PropertyDetails /> : <Navigate to="/Unauthorized" />} />
+        <Route path="/add-property" element={currentUser && currentUser.role === 'host' ? <AddProperty /> : <Navigate to="/Unauthorized" />} />
+        <Route path="/add-section" element={currentUser && currentUser.role === 'host' ? <AddSection /> : <Navigate to="/Unauthorized" />} />
+        <Route path="/add-location" element={currentUser && currentUser.role === 'host' ? <AddLocation /> : <Navigate to="/Unauthorized" />} />
       </Routes>
     </PropertyProvider>
   );

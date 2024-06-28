@@ -76,7 +76,7 @@ async function getPropertiesByHostId(req, res) {
 
 async function getPropertyById(req, res) {
   const propertyId = req.params.id;
-
+  console.log("test")
   try {
     const property = await Property.findById(propertyId);
     if (!property) {
@@ -89,9 +89,6 @@ async function getPropertyById(req, res) {
     res.status(500).json({ message: 'Server error' });
   }
 }
-
-
-
 
 module.exports = {
   createProperty,
