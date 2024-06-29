@@ -1,56 +1,79 @@
-// src/components/PropertyAmenities.js
+// src/components/Amenities.js
 import React from 'react';
-import { FaWifi, FaUtensils, FaParking, FaDumbbell, FaSwimmer, FaHotTub, FaUmbrellaBeach, FaLock, FaBilliards, FaChair, FaSpa, FaDoorOpen, FaSteam } from 'react-icons/fa';
+import { FaWifi, FaParking, FaDumbbell, FaSwimmingPool, FaHotTub, FaUmbrellaBeach, FaShieldAlt, FaUtensils, FaSpa, FaFireAlt, FaSnowflake } from 'react-icons/fa';
+import { FaKitchenSet } from "react-icons/fa6";
+import { RiBilliardsFill } from "react-icons/ri";
+import { TbSteam } from "react-icons/tb";
+import { RiFridgeFill } from "react-icons/ri";
+import { MdOutdoorGrill } from "react-icons/md";
+import { useProperty } from '../../../context/PropertyContext';
+import { PiTelevisionFill } from "react-icons/pi";
+import { RiNetflixFill } from "react-icons/ri";
 
-const PropertyAmenities = ({ property, handleChange }) => {
-  const amenitiesList = [
-    { name: 'WiFi', icon: <FaWifi size={32} /> },
-    { name: 'Kitchen', icon: <FaUtensils size={32} /> },
-    { name: 'Parking', icon: <FaParking size={32} /> },
-    { name: 'Gym', icon: <FaDumbbell size={32} /> },
-    { name: 'Pool', icon: <FaSwimmer size={32} /> },
-    { name: 'Hot tub', icon: <FaHotTub size={32} /> },
-    { name: 'Beach access', icon: <FaUmbrellaBeach size={32} /> },
-    { name: 'Security', icon: <FaLock size={32} /> },
-    { name: 'Pool table', icon: <FaBilliards size={32} /> },
-    { name: 'Outdoor dining', icon: <FaChair size={32} /> },
-    { name: 'Spa', icon: <FaSpa size={32} /> },
-    { name: 'Sauna', icon: <FaDoorOpen size={32} /> },
-    { name: 'Steam Room', icon: <FaSteam size={32} /> },
+const PropertyAmenities = ({ handleChange }) => {
+  const { property } = useProperty();
+
+  const generalAmenitiesList = [
+    { name: 'WiFi', icon: <FaWifi /> },
+    { name: 'Kitchen', icon: <FaKitchenSet /> },
+    { name: 'Parking', icon: <FaParking /> },
+    { name: 'Gym', icon: <FaDumbbell /> },
+    { name: 'Pool', icon: <FaSwimmingPool /> },
+    { name: 'Hot tub', icon: <FaHotTub /> },
+    { name: 'Beach access', icon: <FaUmbrellaBeach /> },
+    { name: 'Security', icon: <FaShieldAlt /> },
+    { name: 'Pool table', icon: <RiBilliardsFill /> },
+    { name: 'Out door dining', icon: <FaUtensils /> },
+    { name: 'Spa', icon: <FaSpa /> },
+    { name: 'Sauna', icon: <FaFireAlt /> },
+    { name: 'Steam Room', icon: <TbSteam /> },
+    { name: 'BBQ', icon: <MdOutdoorGrill /> },
+
+    { name: 'Fridge', icon: <RiFridgeFill /> },
+    { name: 'Air Conditioning', icon: <FaSnowflake /> },
+    { name: 'TV', icon: <PiTelevisionFill /> },
+    { name: 'Streaming Service', icon: <RiNetflixFill /> }
   ];
 
-  const handleCheckboxChange = (e) => {
-    const { value, checked } = e.target;
-    const newAmenities = checked
-      ? [...property.amenities, value]
-      : property.amenities.filter(amenity => amenity !== value);
+  const sectionAmenitiesList = [
+    { name: 'WiFi', icon: <FaWifi /> },
+    { name: 'Kitchen', icon: <FaKitchenSet /> },
+    { name: 'Parking', icon: <FaParking /> },
+    { name: 'Gym', icon: <FaDumbbell /> },
+    { name: 'Pool', icon: <FaSwimmingPool /> },
+    { name: 'Hot tub', icon: <FaHotTub /> },
+    { name: 'Beach access', icon: <FaUmbrellaBeach /> },
+    { name: 'Security', icon: <FaShieldAlt /> },
+    { name: 'Pool table', icon: <RiBilliardsFill /> },
+    { name: 'Out door dining', icon: <FaUtensils /> },
+    { name: 'Spa', icon: <FaSpa /> },
+    { name: 'Sauna', icon: <FaFireAlt /> },
+    { name: 'Steam Room', icon: <TbSteam /> }
+  ];
+
+  const amenitiesList = property.total_unique_sections == -1 ? generalAmenitiesList : sectionAmenitiesList;
+  console.log(amenitiesList); 
+  const handleIconClick = (amenity) => {
+    const newAmenities = property.amenities.includes(amenity)
+      ? property.amenities.filter(item => item !== amenity)
+      : [...property.amenities, amenity];
     
     handleChange({ target: { name: 'amenities', value: newAmenities } });
   };
 
   return (
-    <div>
-      <h2>Amenities</h2>
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-        {amenitiesList.map((amenity) => (
-          <label
-            key={amenity.name}
-            className={`flex flex-col items-center justify-center cursor-pointer border-4 rounded-lg w-full h-28 font-bold transition duration-300 ease-in-out ${
-              property.amenities.includes(amenity.name) ? 'border-blue-500 bg-blue-200' : 'bg-white text-black border-gray-300 hover:bg-gray-100'
-            }`}
+    <div className="p-6 bg-white rounded-lg shadow-md">
+      <h2 className="text-2xl font-semibold text-blue-600 mb-4">Amenities</h2>
+      <div className="grid grid-cols-6 gap-4">
+        {amenitiesList.map(({ name, icon }) => (
+          <div
+            key={name}
+            onClick={() => handleIconClick(name)}
+            className={`flex flex-col items-center p-4 border-4 rounded-lg cursor-pointer ${property.amenities.includes(name) ? 'bg-white-100 border-blue-400 text-blue-600' : 'bg-white border-gray-200 text-gray-600'}`}
           >
-            <input
-              type="checkbox"
-              value={amenity.name}
-              checked={property.amenities.includes(amenity.name)}
-              onChange={handleCheckboxChange}
-              className="hidden"
-            />
-            <div className="w-12 h-12 mb-2 flex items-center justify-center">
-              {amenity.icon}
-            </div>
-            <span className="mt-2">{amenity.name}</span>
-          </label>
+            <div className="text-3xl mb-2">{icon}</div>
+            <label className="text-center">{name}</label>
+          </div>
         ))}
       </div>
     </div>

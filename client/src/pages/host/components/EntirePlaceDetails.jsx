@@ -1,3 +1,4 @@
+// src/components/EntirePlaceDetails.js
 import React, { useEffect } from 'react';
 
 const EntirePlaceDetails = ({ property, setProperty }) => {
@@ -88,8 +89,8 @@ const EntirePlaceDetails = ({ property, setProperty }) => {
             <input
               type="number"
               name="price_per_night"
-              value={property.sections[0]?.plan?.price_per_night}
-              onChange={e => handleChange('price_per_night',e.target.value)}
+              value={property.sections[0]?.price_per_night || 0}
+              onChange={e => handleChange('price_per_night', Number(e.target.value))}
               className="p-2 border border-gray-300 rounded-lg"
               min="0"
             />
@@ -102,6 +103,7 @@ const EntirePlaceDetails = ({ property, setProperty }) => {
 };
 
 export default EntirePlaceDetails;
+
 
 
 
