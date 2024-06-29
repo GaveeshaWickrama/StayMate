@@ -154,6 +154,7 @@ const propertySchema = new Schema({
         required: true
     },
     sections: [sectionSchema],
+    amenities: [String], 
     images: [ // General images for the property
         {
             url: {

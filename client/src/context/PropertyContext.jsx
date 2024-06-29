@@ -1,3 +1,4 @@
+// src/context/PropertyContext.js
 import React, { createContext, useState, useContext, useEffect } from 'react';
 
 // Create a context
@@ -13,6 +14,7 @@ export const PropertyProvider = ({ children }) => {
     total_unique_sections: -1,
     sections: [],
     images: [],
+    amenities: [], 
     location: {
       address: '',
       latitude: 0,
@@ -45,6 +47,7 @@ export const PropertyProvider = ({ children }) => {
 
 // Custom hook to use the PropertyContext
 export const useProperty = () => useContext(PropertyContext);
+
 
 
 
