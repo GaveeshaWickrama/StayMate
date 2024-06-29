@@ -8,6 +8,7 @@ import RaiseComplaintPage from "../pages/guest/RaiseComplaintPage";
 
 function UserRoutes() {
   const { currentUser, loading } = useAuth();
+  console.log(currentUser)
 
   if (loading) {
     return <div>Loading...</div>; // Show a loading spinner or message
