@@ -1,9 +1,9 @@
 const express = require("express");
 const router = express.Router();
-const reservationController = require("../controllers/reservationController");
+const reviewController = require("../controllers/reviewController");
 const { authToken, requireRole } = require("../middleware/authProvider"); // Adjust as necessary
 
-// book a property
-router.post( "/add", authToken, requireRole("guest"), reservationController.addReservation );
+// add review
+router.post( "/add", authToken, requireRole("guest"), reviewController.addReview );
 
 module.exports = router;

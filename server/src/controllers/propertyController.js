@@ -30,9 +30,9 @@ async function createProperty(req, res) {
   // Associate images with their respective sections
   sections = sections.map((section, index) => ({
     ...section,
-    images: section.images.map(img => ({
-      url: images[index]?.url || img.url,
-    }))
+    images: section.images ? section.images.map((img, imgIndex) => ({
+      url: images[imgIndex]?.url || img.url,
+    })) : []
   }));
 
   try {
@@ -53,10 +53,32 @@ async function createProperty(req, res) {
     console.error(error);
     res.status(500).json({ message: 'Server error' });
   }
+  
 }
+
+async function getPropertiesByHostId(req, res) {
+  const hostId = req.user.userId;
+
+  try {
+    const properties = await Property.find({ host_id: hostId });
+    if (!properties.length) {
+      return res.status(404).json({ message: 'No properties found for this host.' });
+    }
+
+    console.log('Properties found:', properties); // Log the properties
+
+    res.status(200).json(properties);
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ message: 'Server error' });
+  }
+}
+
+
 
 module.exports = {
   createProperty,
+  getPropertiesByHostId,
 };
 
 
