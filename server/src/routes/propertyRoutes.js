@@ -8,7 +8,7 @@ const upload = require('../middleware/multer'); // Import multer middleware
 router.post('/add', authToken, requireRole('host', 'admin'), upload.array('images', 10), propertyController.createProperty);
 
 router.get('/host-properties', authToken, requireRole('host', 'admin'), propertyController.getPropertiesByHostId);
-
+// router.get('/host-properties', authToken, requireRole('host', 'admin'), propertyController.getPropertiesByHostId);
 // Get property by ID
 router.get('/:id', propertyController.getPropertyById);
 
