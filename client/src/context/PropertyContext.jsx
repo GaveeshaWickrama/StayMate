@@ -12,7 +12,7 @@ export const PropertyProvider = ({ children }) => {
     type: 'House',
     total_unique_sections: -1,
     sections: [],
-    images: [{ url: '' }],
+    images: [],
     location: {
       address: '',
       latitude: 0,
