@@ -42,11 +42,11 @@ const PropertyDetailsSection = ({ property, handleChange, setProperty }) => {
   ];
 
   return (
-    <>
+    <div className='container mx-auto px-8'>
       <h2 className="text-4xl font-extrabold text-black-600 mb-8 border-b-4 border-blue-600 p-6 rounded-md shadow-sm">Property Section Info</h2>
       <div className="flex-col p-10 bg-gray-50 rounded-lg shadow-lg">
       <div className="mb-4">
-        <label className="text-3xl block mb-2 font-semibold">Is this an entire place or a partition?</label>
+        <label className="text-3xl block mb-2 font-semibold">Are you listing an entire place or a partition?</label>
         <div className="mt-8 space-y-4">
           {partitionTypes.map((type) => (
             <div className="w-1/2">
@@ -64,7 +64,7 @@ const PropertyDetailsSection = ({ property, handleChange, setProperty }) => {
         </div>
       </div>
       </div>
-    </>
+    </div>
   );
 };
 

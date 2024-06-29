@@ -36,7 +36,8 @@ const PropertyDetails = ({ property, handleChange }) => {
   ];
 
   return (
-      <> <h2 className="text-4xl font-extrabold text-black-600 mb-8 border-b-4 border-blue-600 p-6 rounded-md shadow-sm">Property Details</h2> 
+    <div className='container mx-auto px-8'>
+     <h2 className="text-4xl font-extrabold text-black-600 mb-8 border-b-4 border-blue-600 p-6 rounded-md shadow-sm">Property Details</h2> 
       <div className="flex-col p-10 bg-gray-50 rounded-lg shadow-lg">
         
         <div className="mb-4">
@@ -74,7 +75,7 @@ const PropertyDetails = ({ property, handleChange }) => {
           </div>
         </div>
       </div>
-      </>
+      </div>
   );
 };
 

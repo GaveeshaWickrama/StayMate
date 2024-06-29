@@ -98,7 +98,7 @@ const sectionSchema = new Schema({
             type: Number,
             required: true
         },
-        living_area: { // Corrected field name
+        guests: { // Corrected field name
             type: Number,
             required: true
         },
@@ -106,7 +106,7 @@ const sectionSchema = new Schema({
             type: Number,
             required: true
         },
-        kitchens: {
+        bedrooms: {
             type: Number,
             required: true
         }

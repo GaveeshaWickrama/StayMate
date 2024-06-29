@@ -1,24 +1,22 @@
 import React, { useEffect } from 'react';
 
 const EntirePlaceDetails = ({ property, setProperty }) => {
-    useEffect(() => {
-      console.log('EntirePlaceDetails component rendered');
-      // Ensure the sections array has at least one element with a plan object, count, and section_name
-      if (property.sections.length === 0) {
-        setProperty(prevState => ({
-          ...prevState,
-          sections: [{
-            section_name: 'entire_place',
-            count: 1,
-            plan: { beds: 0, living_area: 0, bathrooms: 0, kitchens: 0 },
-            price_per_night: 0
-          }]
-        }));
-      }
-    }, [property.sections.length, setProperty]);
+  useEffect(() => {
+    console.log('EntirePlaceDetails component rendered');
+    if (property.sections.length === 0) {
+      setProperty(prevState => ({
+        ...prevState,
+        sections: [{
+          section_name: 'entire_place',
+          count: 1,
+          plan: { beds: 1, bedrooms: 1, bathrooms: 1, guests: 1 },
+          price_per_night: 0
+        }]
+      }));
+    }
+  }, [property.sections.length, setProperty]);
 
-  const handlePlanChange = (e) => {
-    const { name, value } = e.target;
+  const handlePlanChange = (name, value) => {
     setProperty(prevState => {
       const updatedPlan = {
         ...prevState.sections[0]?.plan,
@@ -37,8 +35,7 @@ const EntirePlaceDetails = ({ property, setProperty }) => {
     });
   };
 
-  const handleChange = (e) => {
-    const { name, value } = e.target;
+  const handleChange = (name, value) => {
     setProperty(prevState => ({
       ...prevState,
       sections: [{
@@ -48,69 +45,64 @@ const EntirePlaceDetails = ({ property, setProperty }) => {
     }));
   };
 
+  const renderNumberInput = (label, name, value, handleChange, min = 0) => (
+    <div className="mb-4 w-1/5 flex items-center justify-between">
+      <label className="block font-medium text-gray-900">{label}</label>
+      <div className="flex items-center">
+        <button
+          type="button"
+          onClick={() => handleChange(name, Math.max(min, value - 1))}
+          className="px-3 py-2 border border-gray-300 rounded-l-lg bg-gray-100 hover:bg-gray-200 focus:outline-none"
+        >-</button>
+        <input
+          type="text"
+          name={name}
+          value={value}
+          readOnly
+          className="py-2 w-12 text-center border-t border-b border-gray-300"
+        />
+        <button
+          type="button"
+          onClick={() => handleChange(name, value + 1)}
+          className="px-3 py-2 border border-gray-300 rounded-r-lg bg-gray-100 hover:bg-gray-200 focus:outline-none"
+        >+</button>
+      </div>
+    </div>
+  );
+
   return (
-    <div>
-      <h2 className="text-xl font-bold mb-4">Entire Place Details</h2>
-      <div className="mb-4">
-        <label className="block mb-1">Living Area:</label>
-        <input
-          type="number"
-          name="living_area"
-          value={property.sections[0]?.plan?.living_area || ''}
-          onChange={handlePlanChange}
-          className="block w-full p-2 border border-gray-300 rounded"
-          required
-        />
+    <div className="container mx-auto px-8">
+      <h2 className="text-4xl font-extrabold text-black-600 mb-8 border-b-4 border-blue-600 p-6 rounded-md shadow-sm">Property Section Info</h2>
+      <div className='p-6'> 
+      <p className="mb-8 text-gray-500">Lorem ipsum dolor sit amet consectetur adipisicing elit. </p>
+      <div className="flex-col space-y-6">
+        {renderNumberInput("Guests", "guests", property.sections[0]?.plan?.guests || 1, handlePlanChange, 1)}
+        {renderNumberInput("Bedrooms", "bedrooms", property.sections[0]?.plan?.bedrooms || 1, handlePlanChange, 1)}
+        {renderNumberInput("Beds", "beds", property.sections[0]?.plan?.beds || 1, handlePlanChange, 1)}
+        {renderNumberInput("Bathrooms", "bathrooms", property.sections[0]?.plan?.bathrooms || 1, handlePlanChange, 1)}
       </div>
-      <div className="mb-4">
-        <label className="block mb-1">Beds:</label>
-        <input
-          type="number"
-          name="beds"
-          value={property.sections[0]?.plan?.beds || ''}
-          onChange={handlePlanChange}
-          className="block w-full p-2 border border-gray-300 rounded"
-          required
-        />
-      </div>
-      <div className="mb-4">
-        <label className="block mb-1">Bathrooms:</label>
-        <input
-          type="number"
-          name="bathrooms"
-          value={property.sections[0]?.plan?.bathrooms || ''}
-          onChange={handlePlanChange}
-          className="block w-full p-2 border border-gray-300 rounded"
-          required
-        />
-      </div>
-      <div className="mb-4">
-        <label className="block mb-1">Kitchens:</label>
-        <input
-          type="number"
-          name="kitchens"
-          value={property.sections[0]?.plan?.kitchens || ''}
-          onChange={handlePlanChange}
-          className="block w-full p-2 border border-gray-300 rounded"
-          required
-        />
-      </div>
-      <div className="mb-4">
-        <label className="block mb-1">Price Per Night:</label>
-        <input
-          type="number"
-          name="price_per_night"
-          value={property.sections[0]?.price_per_night || ''}
-          onChange={handleChange}
-          className="block w-full p-2 border border-gray-300 rounded"
-          required
-        />
+      <div className="mt-8 p-6 bg-gray-100 rounded-lg shadow-inner">
+          <h3 className="text-lg font-bold mb-4">Price Per Night</h3>
+          <div className="flex items-center text-lg" >
+            <label className="block font-medium text-gray-900 mr-4">Price:</label>
+            <input
+              type="number"
+              name="price_per_night"
+              value={property.sections[0]?.plan?.price_per_night}
+              onChange={e => handleChange('price_per_night',e.target.value)}
+              className="p-2 border border-gray-300 rounded-lg"
+              min="0"
+            />
+            <span className="ml-2 text-gray-600">Rs</span>
+          </div>
+        </div>
       </div>
     </div>
   );
 };
 
 export default EntirePlaceDetails;
+
 
 
 
