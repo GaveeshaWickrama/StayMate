@@ -34,8 +34,8 @@ export const PropertyProvider = ({ children }) => {
   }, [property]);
 
   const resetProperty = () => {
-    setProperty(initialPropertyState);
-    setStage(1);
+    // setProperty(initialPropertyState);
+    // setStage(1);
   };
 
   return (
