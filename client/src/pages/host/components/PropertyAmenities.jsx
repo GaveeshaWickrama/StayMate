@@ -62,19 +62,21 @@ const PropertyAmenities = ({ handleChange }) => {
   };
 
   return (
-    <div className="p-6 bg-white rounded-lg shadow-md">
-      <h2 className="text-2xl font-semibold text-blue-600 mb-4">Amenities</h2>
-      <div className="grid grid-cols-6 gap-4">
-        {amenitiesList.map(({ name, icon }) => (
-          <div
-            key={name}
-            onClick={() => handleIconClick(name)}
-            className={`flex flex-col items-center p-4 border-4 rounded-lg cursor-pointer ${property.amenities.includes(name) ? 'bg-white-100 border-blue-400 text-blue-600' : 'bg-white border-gray-200 text-gray-600'}`}
-          >
-            <div className="text-3xl mb-2">{icon}</div>
-            <label className="text-center">{name}</label>
-          </div>
-        ))}
+    <div className='container mx-auto px-8'>
+      <h2 className="text-4xl font-extrabold text-black-600 mb-8 border-b-4 border-blue-600 p-6 rounded-md shadow-sm">Select Amenities</h2>
+      <div className="p-6 bg-white rounded-lg shadow-md">
+        <div className="grid grid-cols-6 gap-4">
+          {amenitiesList.map(({ name, icon }) => (
+            <div
+              key={name}
+              onClick={() => handleIconClick(name)}
+              className={`flex flex-col items-center p-4 border-4 rounded-lg cursor-pointer ${property.amenities.includes(name) ? 'bg-white-100 border-blue-400 text-blue-600' : 'bg-white border-gray-200 text-gray-600'}`}
+            >
+              <div className="text-3xl mb-2">{icon}</div>
+              <label className="text-center">{name}</label>
+            </div>
+          ))}
+        </div>
       </div>
     </div>
   );
