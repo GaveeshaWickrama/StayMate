@@ -19,6 +19,6 @@ router.patch('/users/:id', authToken, requireRole('admin'), adminController.upda
 router.delete('/users/:id', authToken, requireRole('admin'), adminController.deleteUser);
 
 //get profile details
-// router.post('/MyProfile', authToken, requireRole('admin'), adminController.viewProfile);
+router.get('/viewProfile', authToken, requireRole('admin'), adminController.viewProfile);
 
 module.exports = router;

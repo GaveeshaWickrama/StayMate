@@ -57,14 +57,25 @@ async function deleteUser(req, res) {
     }
 }
 
-async function viewprofile(req, res) {
+async function viewProfile(req, res) {
+
+    const userId = req.user.userId;
+    console.log(userId);
+
     try {
-        const user = await User.findByIdfindOneById(req.params.id);
+
+        const user = await User.findById(userId);
         if (!user) return res.status(404).json({ message: 'Not found' });
-        res.json({ message: 'Deleted successfully' });
+
+        console.log(user);
+        res.json(user);
+
+
     } catch (err) {
         res.status(500).json({ message: err.message });
     }
+
+    
 }
 
 module.exports = {
@@ -73,5 +84,5 @@ module.exports = {
     getUser,
     updateUser,
     deleteUser,
-    viewprofile
+    viewProfile,
 };

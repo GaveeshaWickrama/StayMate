@@ -1,9 +1,39 @@
-import React from 'react';
+import React, { useState, useEffect,useContext }  from 'react';
+import axios from 'axios';
+import { useAuth } from '../../context/auth';
 
 const EditProfile = () => {
 
+  const { token } = useAuth();
+
+  const [email, setEmail] = useState('Raveesa@gmail.com');
+  const [contactNumber, setContactNumber] = useState('(+94) 077-1234567');
+  const [address, setAddress] = useState('290 Chatham Way Reston, Maryland (MD), 20191');
+  const [nic, setNIC] = useState('20002345434');
+  const [gender, setGender] = useState('Male');
+  const [obj, setObj] = useState([]);
+
+
+  useEffect(() => {
+    const fetchProfile = async () => {
+      try {
+        const response = await axios.get(`${import.meta.env.VITE_API_URL}/admin/viewProfile`, {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        });
+        setObj(response.data);
+      } catch (error) {
+        console.error('Error fetching properties:', error);
+      }
+    };
+
+    fetchProfile();
+  }, [token]);
+
+
   return (
-    // <div><h2>dd</h2></div>
+    
     <div className="flex justify-center items-center min-h-screen bg-gray-100">
       <div className="bg-white p-6 rounded-lg shadow-lg w-full max-w-md">
         <form className="space-y-4">
@@ -13,6 +43,7 @@ const EditProfile = () => {
               <input
                 type="text"
                 className="w-full px-4 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                value={obj.firstname}
                 placeholder="First Name"
               />
             </div>
@@ -21,6 +52,7 @@ const EditProfile = () => {
               <input
                 type="text"
                 className="w-full px-4 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                value={obj.email}
                 placeholder="Last Name"
               />
             </div>
@@ -31,6 +63,7 @@ const EditProfile = () => {
             <input
               type="email"
               className="w-full px-4 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+              value={obj.email}
               placeholder="Email"
             />
           </div>
