@@ -2,6 +2,7 @@ import React, { useState,  } from 'react';
 import { useNavigate } from 'react-router-dom';
 import Title from '../../components/common/Title';
 import { LinearProgress } from '@mui/material';
+import Table from '../../components/common/Table';
 
 
 export default function ActiveTasks() {
@@ -68,6 +69,8 @@ export default function ActiveTasks() {
         
         </div>
         
+
+        <Table />
         
         <div className=" flex  items-center mt-2 ml-[30px] mb-4">
           <button onClick={handleWithdraw} className="font-semibold text-white text-sm px-10 py-2 rounded-xl bg-red-500 border border-red-500 rounded ml-[150px] mt-[50px]">
