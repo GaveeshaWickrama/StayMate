@@ -1,7 +1,6 @@
 import React, { useState } from 'react';
 
-const PhotoUpload = () => {
-  const [photos, setPhotos] = useState([]);
+const PhotoUpload = ({ photos, setPhotos }) => {
 
 const handlePhotoUpload = (event) => {
   const files = Array.from(event.target.files);
