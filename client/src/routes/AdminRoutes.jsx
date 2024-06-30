@@ -8,6 +8,7 @@ import UserCenter from '../pages/admin/UserCenter';
 
 function AdminRoutes() {
   const { currentUser, loading } = useAuth();
+  // console.log(currentUser);
 
   if (loading) {
     return <div>Loading...</div>; // Show a loading spinner or message
@@ -16,7 +17,7 @@ function AdminRoutes() {
   return (
     <Routes>
       <Route path="/" element={currentUser && currentUser.role === 'admin' ? <AdminDashboard /> : <Navigate to="/Unauthorized" />} />
-      <Route path="/myprofile" element={currentUser && currentUser.role === 'admin' ? <MyProfile /> : <Navigate to="/Unauthorized" />} />
+      {/* <Route path="/myprofile" element={currentUser && currentUser.role === 'admin' ? <MyProfile /> : <Navigate to="/Unauthorized" />} /> */}
       <Route path="/editprofile" element={currentUser && currentUser.role === 'admin' ? <EditProfile /> : <Navigate to="/Unauthorized" />} />
       <Route path="/UserCenter" element={currentUser && currentUser.role === 'admin' ? <UserCenter /> : <Navigate to="/Unauthorized" />} />
     </Routes>
