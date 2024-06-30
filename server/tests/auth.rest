@@ -52,3 +52,6 @@ Content-Type: application/json
     "otp": "g6fb2w" , 
     "role" : "guest"
 }
+
+### Test complaint
+get http://localhost:3000/complaints

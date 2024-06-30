@@ -1,11 +1,12 @@
 import React from 'react';
+import addLocationImage from '../../../assets/location.jpg';
 
 const LocationInformation = ({ property, navigate }) => {
   const location = property.location;
 
   return (
-    <div>
-      <h2 className="text-xl font-bold mb-4">Location Information</h2>
+    <div className='container mx-auto px-8'>
+      <h2 className="text-4xl font-extrabold text-black-600 mb-8 border-b-4 border-blue-600 p-6 rounded-md shadow-sm">Location Information</h2>
       {location.address ? (
         <div>
           <div className="mb-4">
@@ -53,12 +54,12 @@ const LocationInformation = ({ property, navigate }) => {
         </div>
       ) : (
         <div className="flex flex-col items-center">
-          <img src="https://via.placeholder.com/150" alt="Add Location" className="mb-4" />
-          <p className="text-gray-600 mb-4">--something here--.</p>
+          <img src={addLocationImage} alt="Add Location" className="mb-4" />
+          {/* <p className="text-gray-600 mb-4">Select a Location</p> */}
           <button
             type="button"
             onClick={() => navigate('/host/add-location', { state: { ...property, stage: 4 } })}
-            className="bg-yellow-500 text-white px-4 py-2 rounded mt-4"
+            className="bg-black text-white px-10 py-4 rounded mt-4 "
           >
             Add Location
           </button>
@@ -68,7 +69,7 @@ const LocationInformation = ({ property, navigate }) => {
         <button
           type="button"
           onClick={() => navigate('/host/add-location', { state: { ...property, stage: 4 } })}
-          className="bg-yellow-500 text-white px-4 py-2 rounded mt-4"
+          className="bg-black text-white px-4 py-2 rounded mt-4"
         >
           Change Location
         </button>

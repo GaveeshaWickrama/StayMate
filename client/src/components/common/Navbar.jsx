@@ -22,7 +22,7 @@ const iconMap = {
 // Sidebar component with updated styling and icons
 function Sidebar({ title, links, logout }) {
   return (
-    <nav className="sidebar h-full w-64 fixed top-0 left-0 bg-sky-300 text-white flex flex-col p-4">
+    <nav className="sidebar h-full w-64 fixed top-0 left-0 bg-gray-800 z-2 text-white flex flex-col p-4">
       <h1 className="text-2xl font-bold mb-6">{title}</h1>
       <IconContext.Provider value={{ className: "inline-block mr-2" }}>
         {links.map((link, index) => (
@@ -78,6 +78,7 @@ function Navbar() {
     { path: "/host", label: "Host Dashboard" },
     { path: "/host/listings", label: "Your Listings" },
     { path: "/host/add-property", label: "New Listing" },
+    { path: "/host/property-details", label: "Test" },
   ];
 
   const publicLinks = [
