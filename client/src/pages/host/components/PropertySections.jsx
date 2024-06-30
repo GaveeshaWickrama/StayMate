@@ -9,9 +9,9 @@ const PropertySections = ({ property, navigate }) => (
         <p><strong>Name:</strong> {section.section_name}</p>
         <p><strong>Count:</strong> {section.count}</p>
         <p><strong>Beds:</strong> {section.plan.beds}</p>
-        <p><strong>Living Area:</strong> {section.plan.living_area}</p>
+        <p><strong>BedRooms:</strong> {section.plan.bedrooms}</p>
         <p><strong>Bathrooms:</strong> {section.plan.bathrooms}</p>
-        <p><strong>Kitchens:</strong> {section.plan.kitchens}</p>
+        <p><strong>Guests:</strong> {section.plan.guests}</p>
         <p><strong>Price Per Night:</strong> ${section.price_per_night}</p>
         <p><strong>Image URL:</strong> <a href={section.images[0].url} target="_blank" rel="noopener noreferrer">{section.images[0].url}</a></p>
       </div>
