@@ -7,7 +7,9 @@ const mongoose = require("mongoose");
 const app = express();
 
 // Middleware
-app.use(cors());
+// CORS configuration
+app.use(cors);
+
 app.use(morgan("dev"));
 morgan.token("body", (req) => JSON.stringify(req.body));
 app.use(
