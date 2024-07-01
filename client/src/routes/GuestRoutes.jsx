@@ -5,9 +5,11 @@ import GuestPage from "../pages/guest/GuestPage";
 import ReviewAdd from "../pages/guest/ReviewAdd";
 import Reservations from "../pages/guest/Reservations";
 import RaiseComplaintPage from "../pages/guest/RaiseComplaintPage";
+import Chat from "../pages/common/Chat";
 
 function UserRoutes() {
   const { currentUser, loading } = useAuth();
+  console.log(currentUser)
 
   if (loading) {
     return <div>Loading...</div>; // Show a loading spinner or message
@@ -58,7 +60,19 @@ function UserRoutes() {
         )
         }
       />
+
+      <Route
+      path="/chat"
+      element={
+        currentUser && currentUser.role === "guest" ? (
+          <Chat />
+        ) : (
+          <Navigate to="/Unauthorized" />
+        )
+        }
+      />
     </Routes>
+
   );
 }
 
