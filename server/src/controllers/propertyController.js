@@ -27,7 +27,7 @@ async function createProperty(req, res) {
   }
 
   // Handle file uploads
-  const images = req.files ? req.files.map(file => ({ url: path.join('uploads', file.filename) })) : [];
+  const images = req.files ? req.files.map(file => ({ url: path.join('uploads/properties', file.filename) })) : [];
 
   // Associate images with their respective sections
   sections = sections.map((section, index) => ({
