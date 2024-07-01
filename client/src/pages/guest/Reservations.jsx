@@ -50,7 +50,7 @@ const Reservation = () => {
           ongoingTrips.map((trip, index) => (
             <TripDetails key={index} trip={trip} isOngoing={true} />
           ))}
-        {activeTab === "previous" &&
+        {activeTab === "completed" &&
           previousTrips.map((trip, index) => (
             <TripDetails key={index} trip={trip} isUpcoming={false} />
           ))}
