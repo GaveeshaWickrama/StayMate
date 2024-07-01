@@ -4,8 +4,8 @@ const ProgressBar = ({ stage, totalStages, sidebarWidth, handlePrevious, handleN
   const progressPercentage = (stage / totalStages) * 100;
 
   return (
-    <div className="pb-8 w-full bg-green-900">
-      <div className="relative h-3 bg-gray-200 rounded-full">
+    <div className="pb-10 w-full bg-gray-900 overflow-hidden">
+      <div className="relative left-1 h-3 bg-gray-200 rounded-full ">
         <div
           className="absolute top-0 left-0 h-3 bg-gradient-to-r from-blue-500 to-blue-700 shadow-md transition-all duration-500"
           style={{ width: `${progressPercentage}%` }}

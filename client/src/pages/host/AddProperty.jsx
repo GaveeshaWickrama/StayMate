@@ -1,3 +1,4 @@
+// src/pages/AddProperty.js
 import React, { useEffect, useState } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import axios from 'axios';
@@ -9,6 +10,7 @@ import PropertySections from './components/PropertySections';
 import EntirePlaceDetails from './components/EntirePlaceDetails';
 import PropertyImages from './components/PropertyImages';
 import LocationInformation from './components/LocationInformation';
+import PropertyAmenities from './components/PropertyAmenities';
 import ProgressBar from './components/ProgressBar';
 import Publish from './components/Publish';
 
@@ -17,7 +19,7 @@ const AddProperty = () => {
   const location = useLocation();
   const { currentUser, token } = useAuth();
   const { property, setProperty, stage, setStage, resetProperty } = useProperty();
-  const totalStages = 6;
+  const totalStages = 7;
   const sidebarWidth = "250px";
   const [isFormValid, setIsFormValid] = useState(false);
 
@@ -104,9 +106,12 @@ const AddProperty = () => {
         setIsFormValid(validatePropertySections());
         break;
       case 4:
-        setIsFormValid(validatePropertyImages());
+        setIsFormValid(validateAmenities());
         break;
       case 5:
+        setIsFormValid(validatePropertyImages());
+        break;
+      case 6:
         setIsFormValid(validateLocationInformation());
         break;
       default:
@@ -126,6 +131,10 @@ const AddProperty = () => {
 
   const validatePropertySections = () => {
     return property.sections.length > 0;
+  };
+
+  const validateAmenities = () => {
+    return property.amenities.length > 0;
   };
 
   const validatePropertyImages = () => {
@@ -159,12 +168,15 @@ const AddProperty = () => {
               : <PropertySections property={property} setProperty={setProperty} navigate={navigate} />
           )}
           {stage === 4 && (
-            <PropertyImages property={property} handleChange={handleChange} setProperty={setProperty} />
+            <PropertyAmenities property={property} handleChange={handleChange} />
           )}
           {stage === 5 && (
-            <LocationInformation property={property} handleChange={handleChange} navigate={navigate} />
+            <PropertyImages property={property} handleChange={handleChange} setProperty={setProperty} />
           )}
           {stage === 6 && (
+            <LocationInformation property={property} handleChange={handleChange} navigate={navigate} />
+          )}
+          {stage === 7 && (
             <Publish handleSubmit={handleSubmit} />
           )}
         </form>
@@ -182,4 +194,5 @@ const AddProperty = () => {
 };
 
 export default AddProperty;
+
 
