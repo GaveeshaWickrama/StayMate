@@ -36,6 +36,11 @@ const reservationSchema = new Schema({
     type: Date,
     default: Date.now,
   },
+  status: {
+    type: String,
+    enum: ["upcoming", "ongoing", "completed"],
+    default: "upcoming",
+  },
 });
 
 module.exports = mongoose.model("Reservation", reservationSchema);
