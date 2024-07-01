@@ -1,18 +1,18 @@
-import React, { useState, useEffect,useContext }  from 'react';
+import React, { useState, useEffect, useContext } from 'react';
 import axios from 'axios';
 import { useAuth } from '../../context/auth';
 
 const EditProfile = () => {
-
   const { token } = useAuth();
-
-  const [email, setEmail] = useState('Raveesa@gmail.com');
-  const [contactNumber, setContactNumber] = useState('(+94) 077-1234567');
-  const [address, setAddress] = useState('290 Chatham Way Reston, Maryland (MD), 20191');
-  const [nic, setNIC] = useState('20002345434');
-  const [gender, setGender] = useState('Male');
-  const [obj, setObj] = useState([]);
-
+  const [obj, setObj] = useState({
+    firstname: '',
+    lastname: '',
+    email: '',
+    contactNumber: '',
+    address: '',
+    nic: '',
+    gender: '',
+  });
 
   useEffect(() => {
     const fetchProfile = async () => {
@@ -24,26 +24,48 @@ const EditProfile = () => {
         });
         setObj(response.data);
       } catch (error) {
-        console.error('Error fetching properties:', error);
+        console.error('Error fetching profile:', error);
       }
     };
 
     fetchProfile();
   }, [token]);
 
+  const handleChange = (e) => {
+    const { name, value } = e.target;
+    setObj((prevObj) => ({
+      ...prevObj,
+      [name]: value,
+    }));
+  };
+
+  const handleSave = async (e) => {
+    e.preventDefault();
+    try {
+      const response = await axios.put(`${import.meta.env.VITE_API_URL}/admin/updateProfile`, obj, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
+      console.log('Profile updated:', response.data);
+    } catch (error) {
+      console.error('Error updating profile:', error);
+    }
+  };
 
   return (
-    
     <div className="flex justify-center items-center min-h-screen bg-gray-100">
       <div className="bg-white p-6 rounded-lg shadow-lg w-full max-w-md">
-        <form className="space-y-4">
+        <form className="space-y-4" onSubmit={handleSave}>
           <div className="flex space-x-2">
             <div className="w-1/2">
               <label className="block text-gray-700">First Name</label>
               <input
                 type="text"
+                name="firstname"
                 className="w-full px-4 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
                 value={obj.firstname}
+                onChange={handleChange}
                 placeholder="First Name"
               />
             </div>
@@ -51,8 +73,10 @@ const EditProfile = () => {
               <label className="block text-gray-700">Last Name</label>
               <input
                 type="text"
+                name="lastname"
                 className="w-full px-4 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-                value={obj.email}
+                value={obj.lastname}
+                onChange={handleChange}
                 placeholder="Last Name"
               />
             </div>
@@ -62,8 +86,10 @@ const EditProfile = () => {
             <label className="block text-gray-700">Email</label>
             <input
               type="email"
+              name="email"
               className="w-full px-4 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
               value={obj.email}
+              onChange={handleChange}
               placeholder="Email"
             />
           </div>
@@ -72,7 +98,10 @@ const EditProfile = () => {
             <label className="block text-gray-700">Mobile</label>
             <input
               type="tel"
+              name="contactNumber"
               className="w-full px-4 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+              value={obj.contactNumber}
+              onChange={handleChange}
               placeholder="Mobile"
             />
           </div>
@@ -81,7 +110,10 @@ const EditProfile = () => {
             <label className="block text-gray-700">NIC</label>
             <input
               type="text"
+              name="nic"
               className="w-full px-4 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+              value={obj.nic}
+              onChange={handleChange}
               placeholder="NIC"
             />
           </div>
@@ -93,6 +125,9 @@ const EditProfile = () => {
                 type="radio"
                 name="gender"
                 id="male"
+                value="Male"
+                checked={obj.gender === 'Male'}
+                onChange={handleChange}
                 className="mr-2"
               />
               <label htmlFor="male" className="mr-4 text-gray-700">Male</label>
@@ -100,6 +135,9 @@ const EditProfile = () => {
                 type="radio"
                 name="gender"
                 id="female"
+                value="Female"
+                checked={obj.gender === 'Female'}
+                onChange={handleChange}
                 className="mr-2"
               />
               <label htmlFor="female" className="text-gray-700">Female</label>
@@ -131,10 +169,17 @@ const EditProfile = () => {
               </label>
             </div>
           </div>
+
+          <button
+            type="submit"
+            className="w-full px-4 py-2 bg-blue-500 text-white rounded-md hover:bg-blue-600 focus:outline-none focus:bg-blue-600"
+          >
+            Save
+          </button>
         </form>
       </div>
     </div>
-   );
+  );
 };
 
 export default EditProfile;

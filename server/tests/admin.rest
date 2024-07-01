@@ -1,2 +1,2 @@
-GET http://localhost:3000/admin/viewProfile
+PUT http://localhost:3000/admin/updateProfile
 Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiI2NjczZTJjNWMzZTAzYWE1MTcwYWExNjQiLCJlbWFpbCI6Im1AZ21haWwuY29tIiwicm9sZSI6ImFkbWluIiwiaWF0IjoxNzE5NzI3MTYxLCJleHAiOjE3MTk4MTM1NjF9.mxR7POIzbxLUpaKQ3tGU9HurF48Z8g8ZbeHrYyaGDhQ

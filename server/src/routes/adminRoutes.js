@@ -21,4 +21,9 @@ router.delete('/users/:id', authToken, requireRole('admin'), adminController.del
 //get profile details
 router.get('/viewProfile', authToken, requireRole('admin'), adminController.viewProfile);
 
+//update profile details
+router.put('/viewProfile', authToken, requireRole('admin'), adminController.updateProfile);
+
+
+
 module.exports = router;

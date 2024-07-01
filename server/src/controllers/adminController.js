@@ -78,6 +78,27 @@ async function viewProfile(req, res) {
     
 }
 
+async function updateProfile(req, res) {
+
+    const userId = req.user.userId;
+    console.log(userId);
+
+    try {
+
+        const user = await User.updateOne(userId);
+        if (!user) return res.status(404).json({ message: 'Not found' });
+
+        console.log(user);
+        res.json(user);
+
+
+    } catch (err) {
+        res.status(500).json({ message: err.message });
+    }
+
+    
+}
+
 module.exports = {
     getAllUsers,
     createUser,
@@ -85,4 +106,5 @@ module.exports = {
     updateUser,
     deleteUser,
     viewProfile,
+    updateProfile,
 };
