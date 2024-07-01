@@ -51,35 +51,37 @@ const recentOrderData = [
 
 function RecentOrders() {
     return (
-        <div className="bg-white px-4 pt-3 pb-4 rounded-sm border border-gray-200 flex-1">
-            <strong className="text-gray-700 font-medium">Recent Orders</strong>
-            <div className="mt-3">
-                <table className="w-full text-gray-700">
-                    <thead>
+        <div className="bg-white px-4 pt-3 pb-4 rounded-sm border border-gray-200 shadow-md">
+            <strong className="block text-gray-700 font-medium text-lg mb-2">Recent</strong>
+            <div className="overflow-x-auto">
+                <table className="min-w-full bg-white border border-gray-200">
+                    <thead className="bg-gray-100">
                         <tr>
-                            <th>ID</th>
-                            <th>Property ID</th>
-                            <th>Customer Name</th>
-                            <th>Booking Date</th>
-                            <th>income Total</th>
-                            <th>Property Status</th>
+                            <th className="py-2 px-4 border-b border-gray-200">ID</th>
+                            <th className="py-2 px-4 border-b border-gray-200">Property ID</th>
+                            <th className="py-2 px-4 border-b border-gray-200">User Name</th>
+                            <th className="py-2 px-4 border-b border-gray-200">Booking Date</th>
+                            <th className="py-2 px-4 border-b border-gray-200">Income</th>
+                            <th className="py-2 px-4 border-b border-gray-200">Property Status</th>
                         </tr>
                     </thead>
                     <tbody>
                         {recentOrderData.map((order) => (
                             <tr key={order.id}>
-                                <td>
-                                    <Link to={`/order/${order.id}`}>#{order.id}</Link>
+                                <td className="py-2 px-4 border-b border-gray-200">
+                                    <Link to={`/order/${order.id}`} className="text-blue-500 hover:underline">#{order.id}</Link>
                                 </td>
-                                <td>
-                                    <Link to={`/product/${order.product_id}`}>#{order.product_id}</Link>
+                                <td className="py-2 px-4 border-b border-gray-200">
+                                    <Link to={`/product/${order.product_id}`} className="text-blue-500 hover:underline">#{order.product_id}</Link>
                                 </td>
-                                <td>
-                                    <Link to={`/customer/${order.customer_id}`}>{order.customer_name}</Link>
+                                <td className="py-2 px-4 border-b border-gray-200">{order.customer_name}</td>
+                                <td className="py-2 px-4 border-b border-gray-200">{new Date(order.order_date).toLocaleDateString()}</td>
+                                <td className="py-2 px-4 border-b border-gray-200">{order.order_total}</td>
+                                <td className="py-2 px-4 border-b border-gray-200">
+                                    <span className={`px-2 py-1 inline-block rounded-lg text-sm ${getStatusColor(order.current_order_status)}`}>
+                                        {order.current_order_status}
+                                    </span>
                                 </td>
-                                <td>{new Date(order.order_date).toLocaleDateString()}</td>
-                                <td>{order.order_total}</td>
-                                <td>{order.current_order_status}</td>
                             </tr>
                         ))}
                     </tbody>
@@ -87,6 +89,24 @@ function RecentOrders() {
             </div>
         </div>
     );
+}
+
+// Function to assign color based on order status
+function getStatusColor(status) {
+    switch (status) {
+        case 'PLACED':
+            return 'bg-blue-200 text-blue-800';
+        case 'SHIPPED':
+            return 'bg-green-200 text-green-800';
+        case 'DELIVERED':
+            return 'bg-teal-200 text-teal-800';
+        case 'CANCELLED':
+            return 'bg-red-200 text-red-800';
+        case 'RETURNED':
+            return 'bg-yellow-200 text-yellow-800';
+        default:
+            return 'bg-gray-200 text-gray-800';
+    }
 }
 
 export default RecentOrders;

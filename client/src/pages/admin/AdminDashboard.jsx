@@ -10,13 +10,14 @@ function AdminDashboard() {
     { name: 'April', uv: 2780, pv: 3908, amt: 2000 },
     { name: 'May', uv: 1890, pv: 4800, amt: 2181 },
     { name: 'June', uv: 2390, pv: 3800, amt: 2500 },
-    { name: 'July', uv: 3490, pv: 4300, amt: 2100 },kkkkkkkkkkkkkkkkkkkkkk
+    { name: 'July', uv: 3490, pv: 4300, amt: 2100 },
   ];
 
   return (
     <main className="p-5 text-gray-900 bg-gray-100 min-h-screen">
-      <div className="flex justify-between">
-        <h3 className="text-3xl font-bold py-8">DASHBOARD</h3>
+      <div className="flex flex-col items-start">
+        <h3 className="text-2xl font-bold py-8">DASHBOARD</h3> 
+        <h3 className="text-4xl font-bold py-2">Hello, Sameera Perera</h3>
       </div>
 
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5 my-5">
