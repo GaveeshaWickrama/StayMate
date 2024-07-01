@@ -9,6 +9,9 @@ import HostListings from '../pages/host/HostListings';
 import AddProperty from '../pages/host/AddProperty';
 import AddSection from '../pages/host/AddSection';
 import AddLocation from '../pages/host/AddLocation';
+import Dashboard from '../pages/host/Dashboard';
+
+import RecentOrders from '../pages/host/RecentOrders';
 
 function HostRoutes() {
   const { currentUser, loading } = useAuth();
@@ -25,6 +28,9 @@ function HostRoutes() {
           <Route path="/add-property" element={currentUser && currentUser.role === 'host' ? <AddProperty /> : <Navigate to="/Unauthorized" />} />
           <Route path="/add-section" element={currentUser && currentUser.role === 'host' ? <AddSection /> : <Navigate to="/Unauthorized" />} />
           <Route path="/add-location" element={currentUser && currentUser.role === 'host' ? <AddLocation /> : <Navigate to="/Unauthorized" />} />
+          <Route path="/dashboard" element={currentUser && currentUser.role === 'host' ? <Dashboard /> : <Navigate to="/Unauthorized" />} />
+         
+          <Route path="/recent-orders" element={currentUser && currentUser.role === 'host' ? <RecentOrders /> : <Navigate to="/Unauthorized" />} />
       </Routes>
     </PropertyProvider>
   );
