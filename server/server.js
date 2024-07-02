@@ -1,9 +1,12 @@
-require("dotenv").config();
+const dotenv = require("dotenv").config();
 const express = require("express");
 const cors = require("cors");
 const morgan = require("morgan"); // Logging HTTP requests
 const mongoose = require("mongoose");
 const path = require('path'); // Import the path module
+
+// Correct path example
+const indexRouter = require('./index');
 
 const app = express();
 
@@ -17,14 +20,14 @@ app.use(
   morgan(":method :url :status :res[content-length] - :response-time ms :body")
 );
 
-const userRoutes = require("./routes/userRoutes");
-const authRoutes = require("./routes/authRoutes");
-const adminRoutes = require("./routes/adminRoutes");
-const propertyRoutes = require("./routes/propertyRoutes");
-const reservationRoutes = require("./routes/reservationRoutes");
-const complaintRoutes = require("./routes/complaintRoutes");
-const reviewRoutes = require("./routes/reviewRoutes");
-const taskRoutes = require("./routes/taskRoutes");
+const userRoutes = require("./src/routes/userRoutes");
+const authRoutes = require("./src/routes/authRoutes");
+const adminRoutes = require("./src/routes/adminRoutes");
+const propertyRoutes = require("./src/routes/propertyRoutes");
+const reservationRoutes = require("./src/routes/reservationRoutes");
+const complaintRoutes = require("./src/routes/complaintRoutes");
+const reviewRoutes = require("./src/routes/reviewRoutes");
+const taskRoutes = require("./src/routes/taskRoutes");
 
 
 mongoose.connect(process.env.DATABASE_URL); // Use 127.0.0.1 instead of localhost to fix conversion issues with IPV6
@@ -40,7 +43,7 @@ app.use("/properties", propertyRoutes);
 app.use("/reservation", reservationRoutes);
 app.use("/complaints", complaintRoutes);
 app.use("/reviews", reviewRoutes);
-app.use("/tasks", technicianRoutes);
+app.use("/tasks", taskRoutes);
 
 app.get("/", (req, res) => {
   res.send("Hello World!");
