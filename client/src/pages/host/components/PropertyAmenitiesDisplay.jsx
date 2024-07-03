@@ -42,7 +42,7 @@ const PropertyAmenitiesDisplay = ({ amenities }) => {
                 key={name}
                 className={`flex flex-col items-center p-3 border-4 rounded-lg bg-white border-blue-500 text-blue-500`}
               >
-                <div className="text-2xl mb-2">{icon}</div>
+                <div className="text-4xl mb-2">{icon}</div>
                 <label className="text-center">{name}</label>
               </div>
             )

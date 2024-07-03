@@ -16,14 +16,15 @@ const defaultCenter = {
 const AddLocation = () => {
   const navigate = useNavigate();
   const location = useLocation();
-  const [propertyLocation, setPropertyLocation] = useState(location.state?.location || {
+  const initialLocation = location.state?.location || {
     address: '',
     latitude: 0,
     longitude: 0,
     district: '',
     province: '',
     zipcode: ''
-  });
+  };
+  const [propertyLocation, setPropertyLocation] = useState(initialLocation);
   const [googleResponse, setGoogleResponse] = useState(null);
 
   const { isLoaded, loadError } = useLoadScript({
@@ -210,30 +211,29 @@ const AddLocation = () => {
         </div>
 
         <div className="my-8">
-        <GoogleMap
-          mapContainerStyle={mapContainerStyle}
-          zoom={20}
-          center={{
-            lat: propertyLocation.latitude || defaultCenter.lat,
-            lng: propertyLocation.longitude || defaultCenter.lng,
-          }}
-        >
-          {propertyLocation.latitude && propertyLocation.longitude && (
-            <Marker
-              position={{
-                lat: propertyLocation.latitude,
-                lng: propertyLocation.longitude,
-              }}
-              draggable
-              onDragEnd={handleMarkerDragEnd}
-            />
-          )}
-        </GoogleMap>
-      </div>
-      <button type="submit" className="w-1/2 bg-blue-500 text-white p-3 rounded-lg hover:bg-blue-600 focus:outline-none focus:bg-blue-700" > Save Location </button>
-        
+          <GoogleMap
+            mapContainerStyle={mapContainerStyle}
+            zoom={20}
+            center={{
+              lat: propertyLocation.latitude || defaultCenter.lat,
+              lng: propertyLocation.longitude || defaultCenter.lng,
+            }}
+          >
+            {propertyLocation.latitude && propertyLocation.longitude && (
+              <Marker
+                position={{
+                  lat: propertyLocation.latitude,
+                  lng: propertyLocation.longitude,
+                }}
+                draggable
+                onDragEnd={handleMarkerDragEnd}
+              />
+            )}
+          </GoogleMap>
+        </div>
+        <button type="submit" className="w-1/2 bg-blue-500 text-white p-3 rounded-lg hover:bg-blue-600 focus:outline-none focus:bg-blue-700">Save Location</button>
       </form>
-      
+
       {googleResponse && (
         <pre className="mt-4 bg-gray-100 p-4 rounded">
           {JSON.stringify(googleResponse, null, 2)}

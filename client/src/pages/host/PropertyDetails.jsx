@@ -48,7 +48,7 @@ function PropertyDetails() {
         <div className="w-full md:w-2/3 rounded-lg p-1  bg-white shadow">
           <div className="bg-white p-8 flex items-center border-b">
             <FaMapMarkerAlt className="mr-2" /> 
-            <p className=" font-semibold">{capitalizeWords(property.location.city)} - {capitalizeWords(property.location.province)}, {capitalizeWords(property.location.address)}</p>
+            <p className=" font-semibold"> {capitalizeWords(property.location.address)} {capitalizeWords(property.location.province)}</p>
             <p></p>
           </div>
           <div className="bg-white p-8 flex items-center text-xl gap-4 border-b">

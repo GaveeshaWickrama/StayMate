@@ -19,7 +19,7 @@ export const PropertyProvider = ({ children }) => {
       address: '',
       latitude: 0,
       longitude: 0,
-      city: '',
+      // city: '',
       district: '',
       province: '',
       zipcode: ''

@@ -27,12 +27,12 @@ const LocationInformation = ({ property, navigate }) => {
               {location.longitude}
             </p>
           </div>
-          <div className="mb-4">
+          {/* <div className="mb-4">
             <label className="block mb-1">City:</label>
             <p className="block w-full p-2 border border-gray-300 rounded">
               {location.city}
             </p>
-          </div>
+          </div> */}
           <div className="mb-4">
             <label className="block mb-1">District:</label>
             <p className="block w-full p-2 border border-gray-300 rounded">
@@ -55,7 +55,6 @@ const LocationInformation = ({ property, navigate }) => {
       ) : (
         <div className="flex flex-col items-center">
           <img src={addLocationImage} alt="Add Location" className="mb-4" />
-          {/* <p className="text-gray-600 mb-4">Select a Location</p> */}
           <button
             type="button"
             onClick={() => navigate('/host/add-location', { state: { ...property, stage: 4 } })}
@@ -68,7 +67,7 @@ const LocationInformation = ({ property, navigate }) => {
       {location.address && (
         <button
           type="button"
-          onClick={() => navigate('/host/add-location', { state: { ...property, stage: 4 } })}
+          onClick={() => navigate('/host/add-location', { state: { ...property, location: location, stage: 4 } })}
           className="bg-black text-white px-4 py-2 rounded mt-4"
         >
           Change Location
