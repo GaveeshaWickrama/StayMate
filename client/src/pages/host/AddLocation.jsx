@@ -122,8 +122,8 @@ const AddLocation = () => {
   if (!isLoaded) return <div>Loading Maps</div>;
 
   return (
-    <>
-      <form onSubmit={handleSubmit} className="max-w-4xl mx-auto p-8 bg-white shadow-md rounded-lg">
+    <div className='p-8 bg-white shadow-md rounded-lg'>
+      <form onSubmit={handleSubmit} className="">
         <h2 className="text-2xl font-semibold mb-6 text-gray-800">Location Information</h2>
         <div className="mb-4">
           <label className="block text-gray-600 mb-2">Address:</label>
@@ -208,17 +208,11 @@ const AddLocation = () => {
             />
           </div>
         </div>
-        <button
-          type="submit"
-          className="w-full bg-blue-500 text-white p-3 rounded-lg hover:bg-blue-600 focus:outline-none focus:bg-blue-700"
-        >
-          Save Location
-        </button>
-      </form>
-      <div className="mt-8">
+
+        <div className="my-8">
         <GoogleMap
           mapContainerStyle={mapContainerStyle}
-          zoom={18}
+          zoom={20}
           center={{
             lat: propertyLocation.latitude || defaultCenter.lat,
             lng: propertyLocation.longitude || defaultCenter.lng,
@@ -236,12 +230,16 @@ const AddLocation = () => {
           )}
         </GoogleMap>
       </div>
+      <button type="submit" className="w-1/2 bg-blue-500 text-white p-3 rounded-lg hover:bg-blue-600 focus:outline-none focus:bg-blue-700" > Save Location </button>
+        
+      </form>
+      
       {googleResponse && (
         <pre className="mt-4 bg-gray-100 p-4 rounded">
           {JSON.stringify(googleResponse, null, 2)}
         </pre>
       )}
-    </>
+    </div>
   );
 };
 
