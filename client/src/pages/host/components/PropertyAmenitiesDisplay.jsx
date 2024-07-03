@@ -32,23 +32,23 @@ const PropertyAmenitiesDisplay = ({ amenities }) => {
   ];
 
   return (
-    <div className='container mx-auto px-8'>
-      <h2 className="text-4xl font-extrabold text-black-600 mb-8 border-b-4 border-blue-600 p-6 rounded-md shadow-sm">Amenities</h2>
-      <div className="p-6 bg-white rounded-lg shadow-md">
-        <div className="grid grid-cols-6 gap-4">
+    <div className='p-6 bg-white rounded-lg shadow-md mt-2'>
+      <h2 className="text-2xl font-bold text-black-600 mb-4 ">Amenities</h2>
+     
+        <div className="grid grid-cols-12 gap-4">
           {amenitiesList.map(({ name, icon }) => (
             amenities.includes(name) && (
               <div
                 key={name}
-                className={`flex flex-col items-center p-4 border-4 rounded-lg bg-white border-gray-200 text-gray-600`}
+                className={`flex flex-col items-center p-3 border-4 rounded-lg bg-white border-blue-500 text-blue-500`}
               >
-                <div className="text-3xl mb-2">{icon}</div>
+                <div className="text-2xl mb-2">{icon}</div>
                 <label className="text-center">{name}</label>
               </div>
             )
           ))}
         </div>
-      </div>
+     
     </div>
   );
 };

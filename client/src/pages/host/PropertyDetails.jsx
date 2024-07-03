@@ -33,7 +33,7 @@ function PropertyDetails() {
   }
 
   return (
-    <div className="container bg-gray-100 mx-auto p-6">
+    <div className="bg-gray-100 mx-auto py-2 px-8">
        <div className='flex mb-1 border-b-4 border-blue-600 p-6 rounded-md shadow-sm bg-white'> 
         <h1 className="flex items-center text-4xl font-extrabold text-black-600"> <FaHome className="mr-4" /> {/* House icon */} {property.title} </h1>
         <div className="flex items-center text-gray-600 ml-6 mt-3"> <FaClock className="mr-2" /> <span>Added on: {new Date(property.created_at).toLocaleDateString()}</span> </div>
@@ -46,18 +46,18 @@ function PropertyDetails() {
       <div className="flex flex-col md:flex-row gap-4">
         
         <div className="w-full md:w-2/3 rounded-lg p-1  bg-white shadow">
-          <div className="bg-white p-4 flex items-center border-b">
+          <div className="bg-white p-8 flex items-center border-b">
             <FaMapMarkerAlt className="mr-2" /> 
             <p className=" font-semibold">{capitalizeWords(property.location.city)} - {capitalizeWords(property.location.province)}, {capitalizeWords(property.location.address)}</p>
             <p></p>
           </div>
-          <div className="bg-white p-4 flex items-center text-xl gap-4 border-b">
+          <div className="bg-white p-8 flex items-center text-xl gap-4 border-b">
             <MdOutlineMeetingRoom className='text-blue-500'/><p>Bedrooms: {property.sections[0].plan.bedrooms}</p>
             <IoBedSharp className='ml-3 text-blue-500'/><p >Beds: {property.sections[0].plan.beds}</p>
             <FaShower className='ml-3 text-blue-500'/><p >Bathrooms: {property.sections[0].plan.bathrooms}</p>
             <GoPersonFill  className='ml-3 text-blue-500'/><p>Guests: {property.sections[0].plan.guests}</p>
           </div>
-          <div className="bg-white p-4 flex items-center">
+          <div className="bg-white p-8 flex items-center">
             <h2 className="text-xl font-bold">Rating: </h2>
               <p className='ml-4'>No reviews yet.</p>
           </div>
@@ -72,7 +72,7 @@ function PropertyDetails() {
         </div>
       </div>
 
-      <div className='w-full bg-white rounded-lg p-4 bg-white shadow mt-2'>
+      <div className='w-full bg-white rounded-lg p-6 bg-white shadow mt-2'>
         <h2 className="text-xl font-bold mb-2">Description</h2>
         <p className='text-lg'>{property.description}</p> 
         {/* 30 words is good */}
