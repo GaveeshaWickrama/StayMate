@@ -4,13 +4,13 @@ import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, Legend, Responsive
 
 function AdminDashboard() {
   const data = [
-    { name: 'January', uv: 4000, pv: 2400, amt: 2400 },
-    { name: 'February', uv: 3000, pv: 1398, amt: 2210 },
-    { name: 'March', uv: 2000, pv: 9800, amt: 2290 },
-    { name: 'April', uv: 2780, pv: 3908, amt: 2000 },
-    { name: 'May', uv: 1890, pv: 4800, amt: 2181 },
-    { name: 'June', uv: 2390, pv: 3800, amt: 2500 },
-    { name: 'July', uv: 3490, pv: 4300, amt: 2100 },
+    { name: 'January', income: 4000, expenses: 2400, amt: 2400 },
+    { name: 'February', income: 3000, expenses: 1398, amt: 2210 },
+    { name: 'March', income: 2000, expenses: 9800, amt: 2290 },
+    { name: 'April', income: 2780, expenses: 3908, amt: 2000 },
+    { name: 'May', income: 1890, expenses: 4800, amt: 2181 },
+    { name: 'June', income: 2390, expenses: 3800, amt: 2500 },
+    { name: 'July', income: 3490, expenses: 4300, amt: 2100 },
   ];
 
   return (
@@ -59,8 +59,8 @@ function AdminDashboard() {
             <YAxis />
             <Tooltip />
             <Legend />
-            <Bar dataKey="pv" fill="#8884d8" />
-            <Bar dataKey="uv" fill="#82ca9d" />
+            <Bar dataKey="income" fill="#8884d8" />
+            <Bar dataKey="expenses" fill="#82ca9d" />
           </BarChart>
         </ResponsiveContainer>
 
@@ -71,8 +71,8 @@ function AdminDashboard() {
             <YAxis />
             <Tooltip />
             <Legend />
-            <Line type="monotone" dataKey="pv" stroke="#8884d8" activeDot={{ r: 8 }} />
-            <Line type="monotone" dataKey="uv" stroke="#82ca9d" />
+            <Line type="monotone" dataKey="income" stroke="#8884d8" activeDot={{ r: 8 }} />
+            <Line type="monotone" dataKey="expenses" stroke="#82ca9d" />
           </LineChart>
         </ResponsiveContainer>
       </div>
