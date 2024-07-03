@@ -10,6 +10,7 @@ import GuestSignup from '../pages/auth/GuestSignup';
 import HostSignup from '../pages/auth/HostSignup';
 import VerifyOtp from '../pages/auth/VerifyOtp';
 // import Test from '../pages/auth/test';
+import ViewReviews from '../pages/host/ViewReviews';
 
 function PublicRoutes() {
   return (
@@ -21,6 +22,7 @@ function PublicRoutes() {
       <Route path="/signup/technician" element={<TechnicianSignup />} />
       {/* <Route path="/test" element={<Test />} /> */}
       <Route path="/*" element={<NotFoundPage />} />
+      <Route path="/view-reviews" element={currentUser && currentUser.role === 'host' ? <ViewReviews /> : <Navigate to="/Unauthorized" />} />
      
     </Routes>
   );

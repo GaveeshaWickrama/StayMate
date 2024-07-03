@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
 import { BsFillArchiveFill, BsFillGrid3X3GapFill, BsPeopleFill, BsFillBellFill } from 'react-icons/bs';
 
@@ -46,9 +46,40 @@ const recentBookingData = [
 ];
 
 function RecentBookings() {
+    const [searchTerm, setSearchTerm] = useState('');
+    const [filteredData, setFilteredData] = useState(recentBookingData);
+
+    const handleSearchChange = (event) => {
+        setSearchTerm(event.target.value);
+        filterData(event.target.value);
+    };
+
+    const filterData = (term) => {
+        if (!term) {
+            setFilteredData(recentBookingData);
+        } else {
+            const filtered = recentBookingData.filter((booking) =>
+                Object.values(booking).some((value) =>
+                    value.toString().toLowerCase().includes(term.toLowerCase())
+                )
+            );
+            setFilteredData(filtered);
+        }
+    };
+
     return (
         <div className="bg-white px-4 pt-3 pb-4 rounded-sm border border-gray-200 shadow-md mt-8">
             <strong className="block text-gray-700 font-medium text-lg mb-2">Property Analysis</strong>
+            <div className="flex justify-between items-center mb-4">
+                <input
+                    type="text"
+                    placeholder="Search..."
+                    className="border border-gray-300 p-2 rounded-md focus:outline-none w-1/3"
+                    value={searchTerm}
+                    onChange={handleSearchChange}
+                />
+                {/* You can add more filters here if needed */}
+            </div>
             <div className="overflow-x-auto">
                 <table className="min-w-full bg-white border border-gray-200">
                     <thead className="bg-gray-100">
@@ -62,7 +93,7 @@ function RecentBookings() {
                         </tr>
                     </thead>
                     <tbody>
-                        {recentBookingData.map((booking) => (
+                        {filteredData.map((booking) => (
                             <tr key={booking.id} className="hover:bg-gray-50">
                                 <td className="py-2 px-4 border-b border-gray-300">
                                     <Link to={`/booking/${booking.id}`} className="text-blue-500 hover:underline">#{booking.id}</Link>
@@ -87,7 +118,6 @@ function RecentBookings() {
     );
 }
 
-// Function to assign color based on booking status
 function getStatusColor(status) {
     switch (status) {
         case 'BOOKED':
@@ -106,33 +136,33 @@ function getStatusColor(status) {
 function Analysis() {
     return (
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5 my-5">
-            <div className="bg-white shadow-md p-5 rounded-md flex flex-col justify-around">
-                <div className="flex items-center justify-between">
+            <div className="bg-white shadow-md p-5 rounded-md flex flex-col justify-around items-center">
+                <div className="flex items-center justify-between w-full mb-2">
                     <h3 className="text-lg font-medium">Paid Bookings</h3>
-                    <BsFillArchiveFill className="text-2xl" />
+                    <BsFillArchiveFill className="text-2xl text-blue-500" />
                 </div>
-                <h1 className="text-3xl font-bold">1,074</h1>
+                <h1 className="text-3xl font-bold text-center">1,074</h1>
             </div>
-            <div className="bg-white shadow-md p-5 rounded-md flex flex-col justify-around">
-                <div className="flex items-center justify-between">
+            <div className="bg-white shadow-md p-5 rounded-md flex flex-col justify-around items-center">
+                <div className="flex items-center justify-between w-full mb-2">
                     <h3 className="text-lg font-medium">Site Visit</h3>
-                    <BsFillGrid3X3GapFill className="text-2xl" />
+                    <BsFillGrid3X3GapFill className="text-2xl text-blue-500" />
                 </div>
-                <h1 className="text-3xl font-bold">3,944</h1>
+                <h1 className="text-3xl font-bold text-center">3,944</h1>
             </div>
-            <div className="bg-white shadow-md p-5 rounded-md flex flex-col justify-around">
-                <div className="flex items-center justify-between">
+            <div className="bg-white shadow-md p-5 rounded-md flex flex-col justify-around items-center">
+                <div className="flex items-center justify-between w-full mb-2">
                     <h3 className="text-lg font-medium">Searchers</h3>
-                    <BsPeopleFill className="text-2xl" />
+                    <BsPeopleFill className="text-2xl text-blue-500" />
                 </div>
-                <h1 className="text-3xl font-bold">14,743</h1>
+                <h1 className="text-3xl font-bold text-center">14,743</h1>
             </div>
-            <div className="bg-white shadow-md p-5 rounded-md flex flex-col justify-around">
-                <div className="flex items-center justify-between">
+            <div className="bg-white shadow-md p-5 rounded-md flex flex-col justify-around items-center">
+                <div className="flex items-center justify-between w-full mb-2">
                     <h3 className="text-lg font-medium">Total Monthly Income</h3>
-                    <BsFillBellFill className="text-2xl" />
+                    <BsFillBellFill className="text-2xl text-blue-500" />
                 </div>
-                <h1 className="text-3xl font-bold">$6,766</h1>
+                <h1 className="text-3xl font-bold text-center">$6,766</h1>
             </div>
         </div>
     );
@@ -142,11 +172,14 @@ function HostPage() {
     return (
         <div className="p-8">
             <h1 className="text-3xl font-bold mb-4">Dashboard</h1>
-            <h1 className="text-4xl font-bold mb-4">Hello, Raveesha Wickrama!</h1>
+            <div className="bg-blue-100 rounded-md p-4 mb-4">
+                <h1 className="text-4xl font-bold">Hello, Raveesha Wickrama!</h1>
+            </div>
             <Analysis />
             <RecentBookings />
         </div>
     );
 }
+
 
 export default HostPage;
