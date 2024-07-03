@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { useLoadScript, GoogleMap, Marker } from '@react-google-maps/api';
 import usePlacesAutocomplete, { getGeocode, getLatLng } from 'use-places-autocomplete';
+import { useProperty } from '../../context/PropertyContext'; // Adjust the import path as needed
 
 const libraries = ['places'];
 const mapContainerStyle = {
@@ -16,15 +17,8 @@ const defaultCenter = {
 const AddLocation = () => {
   const navigate = useNavigate();
   const location = useLocation();
-  const initialLocation = location.state?.location || {
-    address: '',
-    latitude: 0,
-    longitude: 0,
-    district: '',
-    province: '',
-    zipcode: ''
-  };
-  const [propertyLocation, setPropertyLocation] = useState(initialLocation);
+  const { property, updateLocation } = useProperty(); // Use the context
+  const [propertyLocation, setPropertyLocation] = useState(location.state?.location || property.location);
   const [googleResponse, setGoogleResponse] = useState(null);
 
   const { isLoaded, loadError } = useLoadScript({
@@ -71,13 +65,16 @@ const AddLocation = () => {
         }
         return acc;
       }, {});
-      setPropertyLocation({
+      const newLocation = {
         address: results[0].formatted_address,
         latitude: lat,
         longitude: lng,
-        ...addressComponents
-      });
-      setGoogleResponse(results[0]); // Store the Google response object
+        ...addressComponents,
+        geocoding_response: JSON.stringify(results[0]) // Store as a string
+      };
+      setPropertyLocation(newLocation);
+      updateLocation(newLocation); // Update context
+      setGoogleResponse(results[0]);
     } catch (error) {
       console.error("Error fetching location details: ", error);
     }
@@ -100,13 +97,15 @@ const AddLocation = () => {
         }
         return acc;
       }, {});
-
-      setPropertyLocation({
+      const newLocation = {
         address: results[0].formatted_address,
         latitude: lat,
         longitude: lng,
-        ...addressComponents
-      });
+        ...addressComponents,
+        geocoding_response: JSON.stringify(results[0]) // Store as a string
+      };
+      setPropertyLocation(newLocation);
+      updateLocation(newLocation); // Update context
       setValue(results[0].formatted_address, false);
       setGoogleResponse(results[0]);
     } catch (error) {
@@ -116,6 +115,7 @@ const AddLocation = () => {
 
   const handleSubmit = (e) => {
     e.preventDefault();
+    // The location state should now be serializable
     navigate('/host/add-property', { state: { ...location.state, location: propertyLocation, stage: 6 } });
   };
 
@@ -231,7 +231,12 @@ const AddLocation = () => {
             )}
           </GoogleMap>
         </div>
-        <button type="submit" className="w-1/2 bg-blue-500 text-white p-3 rounded-lg hover:bg-blue-600 focus:outline-none focus:bg-blue-700">Save Location</button>
+        <button
+          type="submit"
+          className="w-1/2 bg-blue-500 text-white p-3 rounded-lg hover:bg-blue-600 focus:outline-none focus:bg-blue-700"
+        >
+          Save Location
+        </button>
       </form>
 
       {googleResponse && (
@@ -244,3 +249,4 @@ const AddLocation = () => {
 };
 
 export default AddLocation;
+

@@ -27,12 +27,6 @@ const LocationInformation = ({ property, navigate }) => {
               {location.longitude}
             </p>
           </div>
-          {/* <div className="mb-4">
-            <label className="block mb-1">City:</label>
-            <p className="block w-full p-2 border border-gray-300 rounded">
-              {location.city}
-            </p>
-          </div> */}
           <div className="mb-4">
             <label className="block mb-1">District:</label>
             <p className="block w-full p-2 border border-gray-300 rounded">
@@ -50,6 +44,12 @@ const LocationInformation = ({ property, navigate }) => {
             <p className="block w-full p-2 border border-gray-300 rounded">
               {location.zipcode}
             </p>
+          </div>
+          <div className="mb-4">
+            <label className="block mb-1">Geocoding Response:</label>
+            <pre className="block w-full p-2 border border-gray-300 rounded bg-gray-100">
+              {JSON.stringify(location.geocoding_response, null, 2)}
+            </pre>
           </div>
         </div>
       ) : (
@@ -78,5 +78,4 @@ const LocationInformation = ({ property, navigate }) => {
 };
 
 export default LocationInformation;
-
 
