@@ -7,15 +7,17 @@ async function createProperty(req, res) {
   console.log('Request body:', req.body); // Log request body
   console.log('Request files:', req.files); // Log request files
 
-  const { title, description, type, total_unique_sections, sections: sectionsString, location } = req.body;
+  const { title, description, type, total_unique_sections, sections: sectionsString, location, amenities } = req.body;
 
   // Extract host_id from the token payload
   const host_id = req.user.userId;
 
-  if (!host_id || !title || !description || !type || !total_unique_sections || !sectionsString || !location) {
+  if (!host_id || !title || !description || !type || !total_unique_sections || !sectionsString || !location || !amenities) {
     return res.status(400).json({ message: 'All fields are required' });
   }
-
+  
+  console.log(amenities)
+  
   // Parse sections string back into an object
   let sections;
   try {
@@ -25,7 +27,7 @@ async function createProperty(req, res) {
   }
 
   // Handle file uploads
-  const images = req.files ? req.files.map(file => ({ url: path.join('uploads', file.filename) })) : [];
+  const images = req.files ? req.files.map(file => ({ url: path.join('uploads/properties', file.filename) })) : [];
 
   // Associate images with their respective sections
   sections = sections.map((section, index) => ({
@@ -44,7 +46,8 @@ async function createProperty(req, res) {
       total_unique_sections,
       sections,
       location,
-      images
+      images,
+      amenities: Array.isArray(amenities) ? amenities : amenities.split(',').map(a => a.trim()) // Ensure amenities is an array
     });
 
     const newProperty = await property.save();
@@ -53,7 +56,6 @@ async function createProperty(req, res) {
     console.error(error);
     res.status(500).json({ message: 'Server error' });
   }
-  
 }
 
 async function getPropertiesByHostId(req, res) {
@@ -76,7 +78,7 @@ async function getPropertiesByHostId(req, res) {
 
 async function getPropertyById(req, res) {
   const propertyId = req.params.id;
-  console.log("test")
+
   try {
     const property = await Property.findById(propertyId);
     if (!property) {
@@ -95,6 +97,7 @@ module.exports = {
   getPropertiesByHostId,
   getPropertyById,
 };
+
 
 
 
