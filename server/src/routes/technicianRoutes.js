@@ -18,7 +18,7 @@ const technicianController = require('../controllers/technicianController')
 // router.post('/register', technicianController.createTechnician);
 
 router.get('/all', technicianController.getAllTechnicians);
-// router.get('/:id', technicianController.getTechnicianById);
+router.get('/:id', technicianController.getTechnicianById);
 
 
 

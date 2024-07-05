@@ -9,7 +9,7 @@ import {FaInfoCircle, FaPlus} from 'react-icons/fa';
 
 function TechnicianCard({technician}){
   return(
-    <Link to={`/${technician._id}`}>
+    <Link to={`/technician/${technician._id}`}>
     <div className="bg-white shadow-lg rounded-lg overflow-hidden border border-transparent transform transition-transform duration-300 hover:scale-105 relative card-hover-border">
     
     <div className='flex w-full'>
@@ -51,20 +51,24 @@ function NoTechnicians(){
 function TechnicianExplore(){
   const [technicians, setTechnicians] = useState([]);
 
-
   useEffect(()=>{
+    alert("hello world");
+
     const fetchTechnicians = async () => {
+
       await axios.get(`${import.meta.env.VITE_API_URL}/technicians/all`)
       .then((res)=>{
+        alert("these are the data",res.data);
+
         setTechnicians(res.data);
       })
       .catch((error)=>{
         alert("error fetching technicians", error);
       })
-      fetchTechnicians();
     }
 
-    
+    fetchTechnicians();
+
   },[]);
 
   return (

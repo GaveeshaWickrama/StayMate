@@ -33,7 +33,7 @@ const technicianSchema = new mongoose.Schema({
   }
 }, {
   timestamps: true, // Adds createdAt and updatedAt timestamps
-  collection: 'yourCustomCollectionName' // Explicitly set the collection name
+  collection: 'technicians' // Explicitly set the collection name
 });
 
 module.exports = mongoose.model('Technician', technicianSchema);

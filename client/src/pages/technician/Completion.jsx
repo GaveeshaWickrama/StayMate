@@ -24,7 +24,7 @@ export default function completion() {
 
         <PhotoUpload title={"Upload photos"} />
 
-      <Button text={"submit"}/>
+      <Button text={"submit"} />
     </div>
   )
 }

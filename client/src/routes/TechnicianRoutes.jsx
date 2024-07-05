@@ -18,7 +18,7 @@ function UserRoutes() {
       <Route path="/requests/active-tasks" element={<ActiveTasks/>} />
       <Route path="/requests/completion" element={<UploadProof/>} />
       <Route path="/all" element={<TechnicianExplore/>} />
-      {/* <Route path="details/:id" element={<TechnicianDetails/>} /> */}
+      <Route path="/:id" element={<TechnicianDetails/>} />
 
     </Routes>
   );

@@ -8,17 +8,21 @@ function TechnicianDetails() {
   const { id } = useParams();
   const [technician, setTechnician] = useState(null);
 
+
   useEffect(() => {
+    alert("inside useeffect");
+
     const fetchTechnician = async () => {
       try {
-        const response = await axios.get(`${import.meta.env.VITE_API_URL}/technician/${id}`);
+        const response = await axios.get(`${import.meta.env.VITE_API_URL}/technicians/${id}`);
+        alert("these are the data",response);
         setTechnician(response.data);
       } catch (error) {
         console.error('Error fetching technician:', error);
       }
     };
 
-    fetchtechnician();
+    fetchTechnician();
   }, [id]);
 
   if (!technician) {
