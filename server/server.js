@@ -6,7 +6,6 @@ const mongoose = require("mongoose");
 const path = require('path'); // Import the path module
 
 // Correct path example
-const indexRouter = require('./index');
 
 const app = express();
 
@@ -28,6 +27,7 @@ const reservationRoutes = require("./src/routes/reservationRoutes");
 const complaintRoutes = require("./src/routes/complaintRoutes");
 const reviewRoutes = require("./src/routes/reviewRoutes");
 const taskRoutes = require("./src/routes/taskRoutes");
+const technicianRoutes = require("./src/routes/technicianRoutes");
 
 
 mongoose.connect(process.env.DATABASE_URL); // Use 127.0.0.1 instead of localhost to fix conversion issues with IPV6
@@ -44,6 +44,8 @@ app.use("/reservation", reservationRoutes);
 app.use("/complaints", complaintRoutes);
 app.use("/reviews", reviewRoutes);
 app.use("/tasks", taskRoutes);
+app.use("/technicians", technicianRoutes);
+
 
 app.get("/", (req, res) => {
   res.send("Hello World!");

@@ -7,7 +7,12 @@ const complaintSchema = new mongoose.Schema({
     ref: 'reservation', // Reference to the Tenant model (if you have one)
     //required: true,
   },
+
   category: {
+    type: String,
+    required: true,
+  },
+  propertyName:{
     type: String,
     required: true,
   },
