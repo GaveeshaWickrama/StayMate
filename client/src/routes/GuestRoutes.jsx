@@ -6,10 +6,11 @@ import ReviewAdd from "../pages/guest/ReviewAdd";
 import Reservations from "../pages/guest/Reservations";
 import RaiseComplaintPage from "../pages/guest/RaiseComplaintPage";
 import Chat from "../pages/common/Chat";
+import TripDetails from "../pages/guest/TripDetails";
 
 function UserRoutes() {
   const { currentUser, loading } = useAuth();
-  console.log(currentUser)
+  console.log(currentUser);
 
   if (loading) {
     return <div>Loading...</div>; // Show a loading spinner or message
@@ -51,30 +52,38 @@ function UserRoutes() {
       />
       {/* route for raising Complaint */}
       <Route
-      path="/raisecomplaints"
-      element={
-        currentUser && currentUser.role === "guest" ? (
-          <RaiseComplaintPage />
-        ) : (
-          <Navigate to="/Unauthorized" />
-        )
+        path="/raisecomplaints"
+        element={
+          currentUser && currentUser.role === "guest" ? (
+            <RaiseComplaintPage />
+          ) : (
+            <Navigate to="/Unauthorized" />
+          )
         }
       />
-
+      {/* route for View Booking Info */}
       <Route
-      path="/chat"
-      element={
-        currentUser && currentUser.role === "guest" ? (
-          <Chat />
-        ) : (
-          <Navigate to="/Unauthorized" />
-        )
+        path="/tripdetails"
+        element={
+          currentUser && currentUser.role === "guest" ? (
+            <TripDetails />
+          ) : (
+            <Navigate to="/Unauthorized" />
+          )
+        }
+      />
+      <Route
+        path="/chat"
+        element={
+          currentUser && currentUser.role === "guest" ? (
+            <Chat />
+          ) : (
+            <Navigate to="/Unauthorized" />
+          )
         }
       />
     </Routes>
-
   );
 }
 
 export default UserRoutes;
-
