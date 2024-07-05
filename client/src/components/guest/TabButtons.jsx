@@ -20,9 +20,9 @@ const TabButtons = ({ activeTab, setActiveTab }) => (
     </button>
     <button
       className={`py-2 px-4 ${
-        activeTab === "previous" ? "text-red-500 underline" : "text-gray-500"
+        activeTab === "completed" ? "text-red-500 underline" : "text-gray-500"
       }`}
-      onClick={() => setActiveTab("previous")}
+      onClick={() => setActiveTab("completed")}
     >
       Previous trips
     </button>
