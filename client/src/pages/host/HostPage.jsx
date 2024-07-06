@@ -41,7 +41,7 @@ const recentBookingData = [
         user_name: 'Bob White',
         booking_date: '2024-05-14',
         income: '$2500',
-        property_status: 'RETURNED',
+        property_status: 'P',
     },
 ];
 
@@ -133,7 +133,22 @@ function getStatusColor(status) {
     }
 }
 
-function Analysis() {
+const Analysis = () => {
+    const [selectedPeriod, setSelectedPeriod] = useState('This Month'); // State to manage selected period
+
+    // Dummy data for total monthly income for different periods
+    const incomeData = {
+        'This Month': '$6,766',
+        'Last Month': '$7,200',
+        'Last 3 Months': '$20,500',
+        'Last 6 Months': '$42,300',
+    };
+
+    // Function to handle dropdown change
+    const handlePeriodChange = (event) => {
+        setSelectedPeriod(event.target.value);
+    };
+
     return (
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5 my-5">
             <div className="bg-white shadow-md p-5 rounded-md flex flex-col justify-around items-center">
@@ -162,11 +177,24 @@ function Analysis() {
                     <h3 className="text-lg font-medium">Total Monthly Income</h3>
                     <BsFillBellFill className="text-2xl text-blue-500" />
                 </div>
-                <h1 className="text-3xl font-bold text-center">$6,766</h1>
+                <div className="flex items-center justify-center mb-2">
+                    <select
+                        className="border border-gray-300 p-2 rounded-md focus:outline-none"
+                        value={selectedPeriod}
+                        onChange={handlePeriodChange}
+                    >
+                        {Object.keys(incomeData).map((period) => (
+                            <option key={period} value={period}>
+                                {period}
+                            </option>
+                        ))}
+                    </select>
+                </div>
+                <h1 className="text-3xl font-bold text-center">{incomeData[selectedPeriod]}</h1>
             </div>
         </div>
     );
-}
+};
 
 function HostPage() {
     return (
@@ -180,6 +208,5 @@ function HostPage() {
         </div>
     );
 }
-
 
 export default HostPage;

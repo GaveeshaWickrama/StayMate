@@ -7,7 +7,9 @@ const path = require('path'); // Import the path module
 
 const app = express();
 
+
 // Middleware
+
 app.use('/uploads', express.static(path.join(__dirname, '../uploads')));
 
 app.use(cors());
@@ -39,6 +41,7 @@ app.use("/properties", propertyRoutes);
 app.use("/reservation", reservationRoutes);
 app.use("/complaints", complaintRoutes);
 app.use("/reviews", reviewRoutes);
+
 
 app.get("/", (req, res) => {
   res.send("Hello World!");
