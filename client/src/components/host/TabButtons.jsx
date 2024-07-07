@@ -1,7 +1,7 @@
 import React from "react";
 
 const TabButtons = ({ activeTab, setActiveTab }) => (
-  <div className="flex flex-col md:flex-row space-y-2 md:space-y-0 md:space-x-4 mb-4">
+  <div className="flex space-x-4 mb-4">
     <button
       className={`py-2 px-4 ${
         activeTab === "upcoming" ? "text-red-500 underline" : "text-gray-500"
