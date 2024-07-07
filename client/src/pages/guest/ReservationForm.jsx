@@ -1,9 +1,9 @@
 import React from "react";
-import { useReservation } from "../../context/ReservationContext";
+import { useStore } from "../../context/StoreContext";
 import { useNavigate } from "react-router-dom";
 
 const ReservationForm = ({ propertyId, pricePerNight, property }) => {
-  const { formData, handleChange } = useReservation();
+  const { formData, handleChange } = useStore();
   const navigate = useNavigate();
 
   const calculateTotalPrice = () => {
