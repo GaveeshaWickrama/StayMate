@@ -9,7 +9,7 @@ const reservationSchema = new Schema({
   },
   property: {
     type: Schema.Types.ObjectId,
-    ref: "property",
+    ref: "Property",
     required: true,
   },
   checkInDate: {
