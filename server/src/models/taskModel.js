@@ -34,10 +34,16 @@ const taskSchema = new mongoose.Schema({
     enum: ['pending', 'assigned', 'in-progress', 'completed'],
     default: 'pending',
   },
-  timestamp: {
+  
+
+  
+},
+{
+  timestamps: {
     type: Date,
     default: Date.now,
   },
+  collection: 'tasks'
 });
 
 module.exports = mongoose.model('Task', taskSchema);
