@@ -50,9 +50,30 @@ function TechnicianDetails() {
         </div>
         
       </div>
-
+      <sendRequest technicianID={} complaintID={}/>
     </div>
   );
+}
+
+
+//function to make the complainID coming from the hostId, state pending to a chosen technician
+const sendRequest = ({technicianID, complaintID}) => {
+//assign the technician id to the task
+//mark that complaint as pending approval from technician
+//copy that complaint into tasks and mark it as pending
+//accpt the task and mark it as resolved
+const handleSendRequest = () => {
+//create a task
+//assign the technician id to the task
+
+}
+
+return (
+<div>
+  <button onClick={handleSendRequest}></button>
+</div>
+);
+
 }
 
 export default TechnicianDetails;
