@@ -16,11 +16,11 @@ const locationSchema = new Schema({
         type: Number,
         required: true
     },
-    city: {
-        type: String,
-        required: true,
-        trim: true
-    },
+    // city: {
+    //     type: String,
+    //     required: true,
+    //     trim: true
+    // },
     district: {
         type: String,
         required: true,
