@@ -74,4 +74,5 @@ const getHostReviews = async (req, res) => {
 module.exports = {
   addReview,
   getHostReviews,
+  
 };

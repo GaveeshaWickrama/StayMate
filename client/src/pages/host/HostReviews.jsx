@@ -3,7 +3,7 @@ import axios from "axios";
 import { useAuth } from "../../context/auth";
 import defaultProfileImg from "../../assets/profile.jpg";
 
-const ViewReviews = () => {
+const HostReviews = () => {
   const { token } = useAuth();
   const [hostReviews, setHostReviews] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -21,6 +21,7 @@ const ViewReviews = () => {
         );
 
         setHostReviews(response.data);
+        console.log("Response data:", response.data);
         setLoading(false);
       } catch (error) {
         console.error("Error fetching host reviews:", error);
@@ -39,7 +40,7 @@ const ViewReviews = () => {
   }
 
   return (
-    <div className="mt-8 ml-32">
+    <div className="flex mt-8 ml-32">
       <h2 className="text-3xl font-bold mb-4 ml-[200px]">Reviews</h2>
       <ul className="ml-2 mt-[100px]">
         {hostReviews.map((review) => (
@@ -55,7 +56,7 @@ const ViewReviews = () => {
             <div className="flex-1">
               <div className="flex items-center mb-1">
                 <h3 className="text-gray-900 font-semibold">
-                  {review.user?.email || "Unknown User"}
+                  {review.user.email}
                 </h3>
                 <div className="ml-2 flex">
                   {[...Array(5)].map((_, index) => (
@@ -80,7 +81,7 @@ const ViewReviews = () => {
                 </div>
               </div>
               <p className="text-gray-700">{review.comment}</p>
-              <p className="text-gray-600">{review.property?.title || "Unknown Property"}</p>
+              <p className="text-gray-600">{review.property.title}</p>
               {/* Add more review details as needed */}
             </div>
           </li>
@@ -90,4 +91,4 @@ const ViewReviews = () => {
   );
 };
 
-export default ViewReviews;
+export default HostReviews;
