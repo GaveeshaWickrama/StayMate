@@ -1,0 +1,13 @@
+###Route for testing send message functionality
+POST http://localhost:3000/message/send/667085d65042e4f9fe3501a2
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiI2NjcwODQyYzljMGFjYTNlZGU3NWRhMTYiLCJlbWFpbCI6Imd1ZXN0dGVzdEBnbWFpbC5jb20iLCJyb2xlIjoiZ3Vlc3QiLCJpYXQiOjE3MjAzMzUzMjQsImV4cCI6MTcyMDQyMTcyNH0.ROCWdLNd0Qsd_y9pxn9Fya_zLknH5Is4dKmnxjfiGxo
+Content-Type: application/json
+
+{
+    "message" : "This is the first message."
+}
+
+
+###Route for testing get messages functionality
+GET http://localhost:3000/message/667085d65042e4f9fe3501a2
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiI2NjcwODQyYzljMGFjYTNlZGU3NWRhMTYiLCJlbWFpbCI6Imd1ZXN0dGVzdEBnbWFpbC5jb20iLCJyb2xlIjoiZ3Vlc3QiLCJpYXQiOjE3MjAzMzUzMjQsImV4cCI6MTcyMDQyMTcyNH0.ROCWdLNd0Qsd_y9pxn9Fya_zLknH5Is4dKmnxjfiGxo

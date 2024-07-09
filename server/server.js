@@ -19,13 +19,14 @@ app.use(
   morgan(":method :url :status :res[content-length] - :response-time ms :body")
 );
 
-const userRoutes = require("./src/routes/userRoutes");
-const authRoutes = require("./src/routes/authRoutes");
-const adminRoutes = require("./src/routes/adminRoutes");
-const propertyRoutes = require("./src/routes/propertyRoutes");
-const reservationRoutes = require("./src/routes/reservationRoutes");
-const complaintRoutes = require("./src/routes/complaintRoutes");
-const reviewRoutes = require("./src/routes/reviewRoutes");
+const userRoutes = require("./routes/userRoutes");
+const authRoutes = require("./routes/authRoutes");
+const adminRoutes = require("./routes/adminRoutes");
+const propertyRoutes = require("./routes/propertyRoutes");
+const reservationRoutes = require("./routes/reservationRoutes");
+const complaintRoutes = require("./routes/complaintRoutes");
+const reviewRoutes = require("./routes/reviewRoutes");
+const messageRoutes = require("./routes/messageRoutes");
 const taskRoutes = require("./src/routes/taskRoutes");
 const technicianRoutes = require("./src/routes/technicianRoutes");
 
@@ -43,9 +44,10 @@ app.use("/properties", propertyRoutes);
 app.use("/reservation", reservationRoutes);
 app.use("/complaints", complaintRoutes);
 app.use("/reviews", reviewRoutes);
+
+app.use("/message", messageRoutes);
 app.use("/tasks", taskRoutes);
 app.use("/technicians", technicianRoutes);
-
 
 app.get("/", (req, res) => {
   res.send("Hello World!");
