@@ -102,21 +102,21 @@ async function getPropertyById(req, res) {
   }
 }
 
-async function getAllProperties(req, res) {
-  try {
-    const properties = await Property.find({});
-    if (!properties.length) {
-      return res.status(404).json({ message: 'No properties found.' });
-    }
+// async function getAllProperties(req, res) {
+//   try {
+//     const properties = await Property.find({});
+//     if (!properties.length) {
+//       return res.status(404).json({ message: 'No properties found.' });
+//     }
 
-    console.log('All properties found:', properties); // Log all properties
+//     console.log('All properties found:', properties); // Log all properties
 
-    res.status(200).json(properties);
-  } catch (error) {
-    console.error(error);
-    res.status(500).json({ message: 'Server error' });
-  }
-}
+//     res.status(200).json(properties);
+//   } catch (error) {
+//     console.error(error);
+//     res.status(500).json({ message: 'Server error' });
+//   }
+// }
 
 async function getPropertyHostById(req, res) {
   const propertyId = req.params.id;
@@ -136,6 +136,44 @@ async function getPropertyHostById(req, res) {
 
     // Return the host details
     res.status(200).json(host);
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ message: 'Server error' });
+  }
+}
+
+async function getAllProperties(req, res) {
+  const { latitude, longitude, radius, page = 1, limit = 10 } = req.query;
+
+  let query = {};
+  if (latitude && longitude && radius) {
+    query = {
+      "location.coordinates": {
+        $geoWithin: {
+          $centerSphere: [[parseFloat(longitude), parseFloat(latitude)], parseFloat(radius) / 3963.2] // Convert radius to radians
+        }
+      }
+    };
+  }
+
+  try {
+    const properties = await Property.find(query)
+      .skip((page - 1) * limit)
+      .limit(parseInt(limit));
+
+    const totalProperties = await Property.countDocuments(query);
+
+    if (!properties.length) {
+      return res.status(404).json({ message: 'No properties found.' });
+    }
+
+    console.log('Properties found:', properties); // Log the properties
+
+    res.status(200).json({
+      properties,
+      totalPages: Math.ceil(totalProperties / limit),
+      currentPage: parseInt(page)
+    });
   } catch (error) {
     console.error(error);
     res.status(500).json({ message: 'Server error' });
