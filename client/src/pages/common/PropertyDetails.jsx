@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 import axios from 'axios';
 import { useParams } from 'react-router-dom';
 import Carousel from '../../components/Carousel';
-import PropertyAmenitiesDisplay from './components/PropertyAmenitiesDisplay';
+import PropertyAmenitiesDisplay from '../host/components/PropertyAmenitiesDisplay';
 import ReservationSection from '../../components/ReservationSection';
 import PropertyHost from '../../components/PropertyHost';
 import { FaHome, FaClock, FaMapMarkerAlt, FaShower } from 'react-icons/fa';
