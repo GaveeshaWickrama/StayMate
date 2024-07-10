@@ -4,7 +4,7 @@ import { useParams } from 'react-router-dom';
 import Carousel from '../../components/Carousel';
 import PropertyAmenitiesDisplay from './components/PropertyAmenitiesDisplay';
 import ReservationSection from '../../components/ReservationSection';
-import HostDetails from '../../components/PropertyHost';
+import PropertyHost from '../../components/PropertyHost';
 import { FaHome, FaClock, FaMapMarkerAlt, FaShower } from 'react-icons/fa';
 import { MdOutlineMeetingRoom } from "react-icons/md";
 import { IoBedSharp } from "react-icons/io5";
@@ -34,14 +34,6 @@ function PropertyDetails() {
   if (!property) {
     return <div>Loading...</div>;
   }
-
-  const host = {
-    image: property.host_image_url, // Replace with actual host image URL
-    name: property.host_name, // Replace with actual host name
-    reviews: 14, // Replace with actual number of reviews
-    rating: 4.93, // Replace with actual rating
-    monthsHosting: 11 // Replace with actual months hosting
-  };
 
   return (
     <div className="bg-gray-100 mx-auto py-2 px-8">
@@ -78,7 +70,7 @@ function PropertyDetails() {
 
         <div className="w-full md:w-1/3 bg-white p-4 rounded-lg shadow">
           <h2 className="text-xl font-bold mb-2">Hosted By</h2>
-          <HostDetails host={host} />
+          <PropertyHost propertyId={id} />
         </div>
       </div>
 

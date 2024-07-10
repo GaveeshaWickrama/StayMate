@@ -12,6 +12,8 @@ router.get('/host-properties', authToken, requireRole('host', 'admin'), property
 // Get property by ID
 router.get('/:id', propertyController.getPropertyById);
 
+router.get('/:id/host', propertyController.getPropertyHostById);
+
 module.exports = router;
 
 

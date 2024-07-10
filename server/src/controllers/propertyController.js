@@ -118,9 +118,34 @@ async function getAllProperties(req, res) {
   }
 }
 
+async function getPropertyHostById(req, res) {
+  const propertyId = req.params.id;
+
+  try {
+    // Find the property by its ID
+    const property = await Property.findById(propertyId).populate('host_id', 'nicPassport phone gender firstName lastName createdOn');
+    if (!property) {
+      return res.status(404).json({ message: 'Property not found.' });
+    }
+
+    // Get the host details from the populated `host_id` field
+    const host = property.host_id;
+    if (!host) {
+      return res.status(404).json({ message: 'Host not found for this property.' });
+    }
+
+    // Return the host details
+    res.status(200).json(host);
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ message: 'Server error' });
+  }
+}
+
 module.exports = {
   createProperty,
   getPropertiesByHostId,
   getPropertyById,
   getAllProperties,
+  getPropertyHostById, // Add this line
 };
