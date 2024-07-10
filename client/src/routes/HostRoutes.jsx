@@ -11,7 +11,7 @@ import AddSection from "../pages/host/AddSection";
 import AddLocation from "../pages/host/AddLocation";
 import PropertyDetails from "../pages/host/PropertyDetails";
 import HostReservation from "../pages/host/hostReservations";
-import HostReviews from "../pages/host/hostReviews";
+// import HostReviews from "../pages/host/hostReviews";
 
 function HostRoutes() {
   const { currentUser, loading } = useAuth();
