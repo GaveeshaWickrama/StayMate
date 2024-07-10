@@ -74,7 +74,7 @@ function PropertyDetails() {
         </div>
       </div>
 
-      <div className='w-full bg-white rounded-lg p-6 bg-white shadow mt-2'>
+      <div className='w-full rounded-lg p-6 bg-white shadow mt-2'>
         <h2 className="text-xl font-bold mb-2">Description</h2>
         <p className='text-lg'>{property.description}</p>
       </div>
