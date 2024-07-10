@@ -81,6 +81,7 @@ function PropertyDetails() {
       </div>
 
       <ReservationSection
+        propertyId={id}
         nightlyRate={property.sections[0].price_per_night}
         initialCheckInDate="2024-07-11"
         initialCheckOutDate="2024-07-16"
@@ -93,5 +94,6 @@ function PropertyDetails() {
 }
 
 export default PropertyDetails;
+
 
 

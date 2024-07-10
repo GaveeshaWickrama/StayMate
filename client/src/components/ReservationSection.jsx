@@ -1,12 +1,14 @@
 import React, { useState, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { FaCalendarAlt, FaMoneyBillWave, FaInfoCircle } from 'react-icons/fa';
 
-const ReservationSection = ({ nightlyRate, initialCheckInDate, initialCheckOutDate, serviceFeePercentage }) => {
+const ReservationSection = ({ propertyId, nightlyRate, initialCheckInDate, initialCheckOutDate, serviceFeePercentage }) => {
   const [checkInDate, setCheckInDate] = useState(initialCheckInDate);
   const [checkOutDate, setCheckOutDate] = useState(initialCheckOutDate);
   const [nights, setNights] = useState(0);
   const [totalPrice, setTotalPrice] = useState(0);
   const [serviceFee, setServiceFee] = useState(0);
+  const navigate = useNavigate();
 
   useEffect(() => {
     const calculateNights = (start, end) => (new Date(end) - new Date(start)) / (1000 * 60 * 60 * 24);
@@ -19,6 +21,10 @@ const ReservationSection = ({ nightlyRate, initialCheckInDate, initialCheckOutDa
     setServiceFee(fee);
     setTotalPrice(nightlyRate * nights + fee);
   }, [checkInDate, checkOutDate, nightlyRate, serviceFeePercentage]);
+
+  const handleReserve = () => {
+    navigate(`/reserve/${propertyId}?checkin=${checkInDate}&checkout=${checkOutDate}`);
+  };
 
   return (
     <div className="bg-white p-6 rounded-lg shadow mt-4">
@@ -67,7 +73,10 @@ const ReservationSection = ({ nightlyRate, initialCheckInDate, initialCheckOutDa
           </div>
         </div>
         <div className="flex items-center w-1/2 ml-4">
-          <button className="bg-blue-600 text-white p-4 rounded font-bold w-full my-10">
+          <button 
+            className="bg-blue-600 text-white p-4 rounded font-bold w-full my-10"
+            onClick={handleReserve}
+          >
             Reserve
           </button>
         </div>
