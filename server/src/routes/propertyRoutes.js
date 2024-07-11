@@ -19,7 +19,6 @@ router.get(
   requireRole("host", "admin"),
   propertyController.getPropertiesByHostId
 );
-// router.get('/host-properties', authToken, requireRole('host', 'admin'), propertyController.getPropertiesByHostId);
 // Get property by ID
 router.get("/:id", propertyController.getPropertyById);
 
