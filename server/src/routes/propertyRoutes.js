@@ -23,7 +23,4 @@ router.get(
 // Get property by ID
 router.get("/:id", propertyController.getPropertyById);
 
-// Get all properties (accessible by everyone)
-router.get("/", propertyController.getAllProperties);
-
 module.exports = router;
