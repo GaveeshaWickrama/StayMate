@@ -13,13 +13,22 @@ router.post(
   propertyController.createProperty
 );
 
+// Get properties by host ID (accessible by hosts and admins)
 router.get(
   "/host-properties",
   authToken,
   requireRole("host", "admin"),
   propertyController.getPropertiesByHostId
 );
+
 // Get property by ID
 router.get("/:id", propertyController.getPropertyById);
 
+// Get host details for a property
+router.get('/:id/host', propertyController.getPropertyHostById);
+
+// Get all properties with optional geospatial querying and pagination
+router.get('/', propertyController.getAllProperties);
+
 module.exports = router;
+
