@@ -25,6 +25,9 @@ const userSchema = new mongoose.Schema({
         enum: ['guest', 'host', 'technician', 'admin', 'moderator'], // Specifies the allowable roles
         default: 'guest' // Default role when none is specified
     },
+    assigned:{
+        type: Number,
+    },
     createdOn: {
         type: Date,
         default: Date.now

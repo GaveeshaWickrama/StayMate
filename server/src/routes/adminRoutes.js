@@ -3,6 +3,12 @@ const router = express.Router();
 const adminController = require('../controllers/adminController');
 const { authToken, requireRole } = require('../middleware/authProvider');
 
+//get all moderators
+router.get('/moderators',adminController.getModerators);
+
+//create a new moderator
+router.post('/moderators',adminController.createModerator);
+
 // get all users 
 router.get('/users', authToken, requireRole('admin'), adminController.getAllUsers); 
 

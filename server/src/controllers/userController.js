@@ -29,6 +29,33 @@ const getUser = async (req, res) => {
     res.status(200).json(user);
 }
 
+
+
+//this is same as the above function here on;y change is I;m getting the id by the token not from the URL
+const viewProfile = async (req, res) => {
+
+    const { id } = req.user.userId;
+    console.log(id);
+
+    if (!mongoose.Types.ObjectId.isValid(id)) {
+        return res.status(400).json({ error: 'Invalid user ID' });
+    }
+
+    const user = await User.findById(id);
+    if (!user) {
+        return res.status(404).json({ error: 'No such user' });
+    }
+    res.status(200).json(user);
+    
+    
+}
+
+
+
+
+
+
+
 //update user
 const updateUser = async (req,res)=>{
 
@@ -104,4 +131,5 @@ module.exports = {
     getUsers,
     updateUser,
     deleteUser,
+    viewProfile,
 };

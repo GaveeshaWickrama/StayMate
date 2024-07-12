@@ -1,5 +1,47 @@
 const User = require('../models/userModel');
 
+//get all users
+const getModerators = async (req,res)=>{
+
+    try{
+        const user = await User.find({ role: 'moderator' }).sort({createdAt: -1})
+        res.status(200).json(user)
+    }catch(error){
+        res.status(400).json({error: error.message})
+    }
+
+}
+
+//create a new moderator
+const createModerator= async (req,res)=>{
+    const {firstname, lastname, email, password, nic, gender, address}= req.body
+
+    //add to db
+    try{
+        const moderator = await User.create({firstname, lastname, email, password, nic, gender, address})
+        res.status(200).json(moderator)
+    }catch(error){
+        res.status(400).json({error: error.message})
+    }
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 async function getAllUsers(req, res) {
     try {
         const users = await User.find();
@@ -107,4 +149,6 @@ module.exports = {
     deleteUser,
     viewProfile,
     updateProfile,
+    getModerators,
+    createModerator,
 };
