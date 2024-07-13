@@ -4,7 +4,7 @@ const Task = require('../models/taskModel');
 const Complaint = require('../models/complaintModel');
 
 async function createTask(req, res) {
-  const { complaintId } = req.body;
+  const { complaintId, technicianId } = req.body;
 
   try {
     // only if the complaint exists, its forwarded to the technician
@@ -18,6 +18,7 @@ async function createTask(req, res) {
       //get the current user id as the hostID
       complaint: complaint.complaintId,
       title: complaint.title,
+      technician:technicianId,
       property:complaint.property,
       description: complaint.description,
       category: complaint.category,
@@ -35,7 +36,7 @@ async function createTask(req, res) {
 }
 
 async function assignTaskToTechnician(req, res) {
-  const { taskId, technicianId } = req.body;
+  const { taskId, technicianId , complaintId } = req.body;
 
   try {
     // Find the task based on the provided ID

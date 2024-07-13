@@ -1,15 +1,16 @@
 import React, {useEffect, useState} from 'react';
 import axios from 'axios';
-import {Link} from 'react-router-dom';
+import {Link, useNavigate, useLocation} from 'react-router-dom';
 import {FaInfoCircle, FaPlus} from 'react-icons/fa';
-
 
 
 
 
 function TechnicianCard({technician}){
   return(
-    <Link to={`/technician/${technician._id}`}>
+    // <Link to={{pathname:`/technician/${technician._id}`, state: {complaintID}}}>
+    <Link to={{pathname:`/technician/${technician._id}`}}>
+
     <div className="bg-white shadow-lg rounded-lg overflow-hidden border border-transparent transform transition-transform duration-300 hover:scale-105 relative card-hover-border">
     
     <div className='flex w-full'>
@@ -49,6 +50,12 @@ function NoTechnicians(){
 
 
 function TechnicianExplore(){
+
+
+  const location = useLocation();
+  // const {complaintID} = location.state;
+  const navigate = useNavigate;
+
   const [technicians, setTechnicians] = useState([]);
 
   useEffect(()=>{

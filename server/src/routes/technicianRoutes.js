@@ -22,6 +22,7 @@ router.get('/:id', technicianController.getTechnicianById);
 
 
 
+
 // router.get('/all', taskController.getAllTasks);
 // router.get('/:id', taskController.getTaskById);
 // router.get('/active',taskController.getActiveTasks);

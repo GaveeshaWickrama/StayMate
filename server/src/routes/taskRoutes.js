@@ -11,9 +11,10 @@ const upload = require('../middleware/multer'); // Import multer middleware
 
 // router.get('/all', authToken, requireRole('technician', 'admin'), taskController.getAllTasks);
 
-// router.post('/:id/assign-task', taskController.createTask);
+router.post('/create-task', taskController.createTask);
 
 router.post('/tasks', taskController.createTask);
+router.post('/:id/assign', taskController.assignTaskToTechnician);
 
 
 

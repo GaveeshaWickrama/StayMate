@@ -9,10 +9,28 @@ const path = require('path'); // Import the path module
 
 const app = express();
 
+
 // Middleware
 app.use('/uploads', express.static(path.join(__dirname, '../uploads')));
 
-app.use(cors());
+// Allow requests from the frontend origin
+const allowedOrigins = ['http://localhost:5173'];
+
+
+app.use(cors({
+  origin: function (origin, callback) {
+    // Allow requests with no origin (like mobile apps or curl requests)
+    if (!origin) return callback(null, true);
+    if (allowedOrigins.indexOf(origin) === -1) {
+      const msg = 'The CORS policy for this site does not allow access from the specified origin.';
+      return callback(new Error(msg), false);
+    }
+    return callback(null, true);
+  },
+
+}));
+
+
 app.use(morgan("dev"));
 morgan.token("body", (req) => JSON.stringify(req.body));
 app.use(
@@ -27,8 +45,8 @@ const reservationRoutes = require("./routes/reservationRoutes");
 const complaintRoutes = require("./routes/complaintRoutes");
 const reviewRoutes = require("./routes/reviewRoutes");
 const messageRoutes = require("./routes/messageRoutes");
-const taskRoutes = require("./src/routes/taskRoutes");
-const technicianRoutes = require("./src/routes/technicianRoutes");
+const taskRoutes = require("./routes/taskRoutes");
+const technicianRoutes = require("./routes/technicianRoutes");
 
 
 mongoose.connect(process.env.DATABASE_URL); // Use 127.0.0.1 instead of localhost to fix conversion issues with IPV6

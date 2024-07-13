@@ -19,6 +19,7 @@ function UserRoutes() {
       <Route path="/requests/completion" element={<UploadProof/>} />
       <Route path="/all" element={<TechnicianExplore/>} />
       <Route path="/:id" element={<TechnicianDetails/>} />
+      
 
     </Routes>
   );

@@ -11,7 +11,9 @@ import AddSection from "../pages/host/AddSection";
 import AddLocation from "../pages/host/AddLocation";
 import PropertyDetails from "../pages/host/PropertyDetails";
 import HostReservation from "../pages/host/hostReservations";
-import HostReviews from "../pages/host/hostReviews";
+import ManageComplaints from "../pages/host/ManageComplaints";
+import ComplaintDetails from "../pages/host/ComplaintDetails";
+// import HostReviews from  "../pages/host/hostReviews";
 
 function HostRoutes() {
   const { currentUser, loading } = useAuth();
@@ -91,6 +93,20 @@ function HostRoutes() {
             ) : (
               <Navigate to="/Unauthorized" />
             )
+          }
+        />
+        <Route
+          path="/manage-complaints"
+          element={
+              <ManageComplaints />
+            
+          }
+        />
+        <Route
+          path="/complaint-details/:id"
+          element={
+              <ComplaintDetails />
+            
           }
         />
       </Routes>

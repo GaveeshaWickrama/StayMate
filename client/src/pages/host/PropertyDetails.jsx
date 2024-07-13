@@ -34,7 +34,7 @@ function PropertyDetails() {
 
   return (
     <div className="bg-gray-100 mx-auto py-2 px-8">
-       <div className='flex mb-1 border-b-4 border-blue-600 p-6 rounded-md shadow-sm bg-white'> 
+      <div className='flex mb-1 border-b-4 border-blue-600 p-6 rounded-md shadow-sm bg-white'> 
         <h1 className="flex items-center text-4xl font-extrabold text-black-600"> <FaHome className="mr-4" /> {/* House icon */} {property.title} </h1>
         <div className="flex items-center text-gray-600 ml-6 mt-3"> <FaClock className="mr-2" /> <span>Added on: {new Date(property.created_at).toLocaleDateString()}</span> </div>
       </div>
