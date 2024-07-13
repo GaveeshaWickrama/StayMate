@@ -4,10 +4,10 @@ const adminController = require('../controllers/adminController');
 const { authToken, requireRole } = require('../middleware/authProvider');
 
 //get all moderators
-router.get('/moderators',adminController.getModerators);
+router.get('/moderators', authToken, requireRole('admin'), adminController.getModerators);
 
 //create a new moderator
-router.post('/moderators',adminController.createModerator);
+router.post('/moderators', authToken, requireRole('admin'), adminController.createModerator);
 
 // get all users 
 router.get('/users', authToken, requireRole('admin'), adminController.getAllUsers); 

@@ -1,4 +1,4 @@
-const User = require('../models/userModel');
+const User = require('../models/userModel')
 const mongoose = require('mongoose')
 
 //get all users
@@ -34,7 +34,9 @@ const getUser = async (req, res) => {
 //this is same as the above function here on;y change is I;m getting the id by the token not from the URL
 const viewProfile = async (req, res) => {
 
-    const { id } = req.user.userId;
+    
+    const id  = req.user.userId;
+    
     console.log(id);
 
     if (!mongoose.Types.ObjectId.isValid(id)) {

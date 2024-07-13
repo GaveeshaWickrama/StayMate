@@ -28,6 +28,9 @@ const userSchema = new mongoose.Schema({
     assigned:{
         type: Number,
     },
+    picture:{
+        type: String,
+    },
     createdOn: {
         type: Date,
         default: Date.now

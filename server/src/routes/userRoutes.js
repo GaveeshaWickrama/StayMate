@@ -3,6 +3,24 @@ const router = express.Router();
 const userController = require('../controllers/userController');
 const { authToken, requireRole } = require('../middleware/authProvider');
 
+
+//get the profile of a single user
+router.get('/:id',authToken, requireRole('user', 'admin', 'guest', 'host', 'technician'), userController.viewProfile)
+
+
+
+
+
+
+
+
+
+
+
+
+
+//haven't used the below
+
 //get all users
 router.get('/',userController.getUsers)
 

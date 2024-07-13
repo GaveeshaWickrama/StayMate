@@ -1,4 +1,5 @@
-const User = require('../models/userModel');
+const User = require('../models/userModel')
+const mongoose = require('mongoose')
 
 //get all users
 const getModerators = async (req,res)=>{
@@ -107,6 +108,9 @@ async function viewProfile(req, res) {
     try {
 
         const user = await User.findById(userId);
+        if (!mongoose.Types.ObjectId.isValid(userId)) {
+                return res.status(400).json({ error: 'Invalid user ID' });
+            }
         if (!user) return res.status(404).json({ message: 'Not found' });
 
         console.log(user);
