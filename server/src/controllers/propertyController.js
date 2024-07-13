@@ -102,16 +102,78 @@ async function getPropertyById(req, res) {
   }
 }
 
-async function getAllProperties(req, res) {
+// async function getAllProperties(req, res) {
+//   try {
+//     const properties = await Property.find({});
+//     if (!properties.length) {
+//       return res.status(404).json({ message: 'No properties found.' });
+//     }
+
+//     console.log('All properties found:', properties); // Log all properties
+
+//     res.status(200).json(properties);
+//   } catch (error) {
+//     console.error(error);
+//     res.status(500).json({ message: 'Server error' });
+//   }
+// }
+
+async function getPropertyHostById(req, res) {
+  const propertyId = req.params.id;
+
   try {
-    const properties = await Property.find({});
+    // Find the property by its ID
+    const property = await Property.findById(propertyId).populate('host_id', 'nicPassport phone gender firstName lastName createdOn');
+    if (!property) {
+      return res.status(404).json({ message: 'Property not found.' });
+    }
+
+    // Get the host details from the populated `host_id` field
+    const host = property.host_id;
+    if (!host) {
+      return res.status(404).json({ message: 'Host not found for this property.' });
+    }
+
+    // Return the host details
+    res.status(200).json(host);
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ message: 'Server error' });
+  }
+}
+
+async function getAllProperties(req, res) {
+  const { latitude, longitude, radius, page = 1, limit = 10 } = req.query;
+
+  let query = {};
+  if (latitude && longitude && radius) {
+    query = {
+      "location.coordinates": {
+        $geoWithin: {
+          $centerSphere: [[parseFloat(longitude), parseFloat(latitude)], parseFloat(radius) / 3963.2] // Convert radius to radians
+        }
+      }
+    };
+  }
+
+  try {
+    const properties = await Property.find(query)
+      .skip((page - 1) * limit)
+      .limit(parseInt(limit));
+
+    const totalProperties = await Property.countDocuments(query);
+
     if (!properties.length) {
       return res.status(404).json({ message: 'No properties found.' });
     }
 
-    console.log('All properties found:', properties); // Log all properties
+    console.log('Properties found:', properties); // Log the properties
 
-    res.status(200).json(properties);
+    res.status(200).json({
+      properties,
+      totalPages: Math.ceil(totalProperties / limit),
+      currentPage: parseInt(page)
+    });
   } catch (error) {
     console.error(error);
     res.status(500).json({ message: 'Server error' });
@@ -123,4 +185,5 @@ module.exports = {
   getPropertiesByHostId,
   getPropertyById,
   getAllProperties,
+  getPropertyHostById, // Add this line
 };
