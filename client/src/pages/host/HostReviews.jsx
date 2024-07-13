@@ -1,73 +1,63 @@
-import React, { useEffect, useState } from "react";
-import axios from "axios";
-import { useAuth } from "../../context/auth";
+import React from "react";
 import defaultProfileImg from "../../assets/profile.jpg";
 
 const HostReviews = () => {
-  const { token } = useAuth();
-  const [hostReviews, setHostReviews] = useState([]);
-  const [loading, setLoading] = useState(true);
-
-  useEffect(() => {
-    const fetchHostReviews = async () => {
-      try {
-        const response = await axios.get(
-          `${import.meta.env.VITE_API_URL}/reviews/hostreviews`,
-          {
-            headers: {
-              Authorization: `Bearer ${token}`,
-            },
-          }
-        );
-
-        setHostReviews(response.data);
-        console.log("Response data:", response.data);
-        setLoading(false);
-      } catch (error) {
-        console.error("Error fetching host reviews:", error);
-        // Handle error as per your application's requirements
-        setLoading(false);
-      }
-    };
-
-    if (token) {
-      fetchHostReviews();
-    }
-  }, [token]);
-
-  if (loading) {
-    return <p>Loading reviews...</p>;
-  }
+  const hostReviews = [
+    {
+      _id: "1",
+      user: {
+        email: "SanandiSithumya@example.com",
+      },
+      rating: 4,
+      comment: "Great stay! Very clean and comfortable.",
+      property: {
+        title: "Cozy Apartment in City Center",
+      },
+    },
+    {
+      _id: "2",
+      user: {
+        email: "user2@example.com",
+      },
+      rating: 5,
+      comment: "Amazing experience! Highly recommended.",
+      property: {
+        title: "Luxury Condo with Sea View",
+      },
+    },
+    {
+      _id: "3",
+      user: {
+        email: "user3@example.com",
+      },
+      rating: 3,
+      comment: "Decent place, but a bit noisy at night.",
+      property: {
+        title: "Budget Room near Downtown",
+      },
+    },
+  ];
 
   return (
-    <div className="flex mt-8 ml-32">
-      <h2 className="text-3xl font-bold mb-4 ml-[200px]">Reviews</h2>
-      <ul className="ml-2 mt-[100px]">
+    <div className="container mx-auto p-10">
+      <h2 className="text-4xl font-extrabold text-blue-600 mb-6">Host Reviews</h2>
+      <ul className="space-y-6">
         {hostReviews.map((review) => (
-          <li
-            key={review._id}
-            className="flex items-start border-b border-gray-200 py-4"
-          >
+          <li key={review._id} className="flex items-start border border-gray-300 rounded-lg p-4 bg-white shadow-md hover:shadow-lg transition-shadow duration-200">
             <img
               src={defaultProfileImg}
               alt="Profile"
-              className="w-12 h-12 rounded-full mr-4"
+              className="w-16 h-16 rounded-full mr-4"
             />
             <div className="flex-1">
-              <div className="flex items-center mb-1">
-                <h3 className="text-gray-900 font-semibold">
-                  {review.user.email}
-                </h3>
-                <div className="ml-2 flex">
+              <div className="flex items-center mb-2">
+                <h3 className="text-gray-800 font-semibold">{review.user.email}</h3>
+                <div className="ml-3 flex">
                   {[...Array(5)].map((_, index) => (
                     <svg
                       key={index}
                       xmlns="http://www.w3.org/2000/svg"
-                      className={`h-5 w-5 ${
-                        index < review.rating
-                          ? "text-yellow-400"
-                          : "text-gray-300"
-                      }`}
+                      className={`h-5 w-5 ${index < review.rating ? "text-yellow-400" : "text-gray-300"}`}
                       viewBox="0 0 20 20"
                       fill="currentColor"
                     >
@@ -81,8 +71,7 @@ const HostReviews = () => {
                 </div>
               </div>
               <p className="text-gray-700">{review.comment}</p>
-              <p className="text-gray-600">{review.property.title}</p>
-              {/* Add more review details as needed */}
+              <p className="text-gray-600 italic">{review.property.title}</p>
             </div>
           </li>
         ))}

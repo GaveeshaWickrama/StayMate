@@ -22,6 +22,9 @@ router.patch('/users/:id', authToken, requireRole('admin'), adminController.upda
 
 // delete single user 
 router.delete('/users/:id', authToken, requireRole('admin'), adminController.deleteUser);
+//get monthly income
+//router.get('/monthly-income', adminController.getMonthlyIncome);
+
 
 
 

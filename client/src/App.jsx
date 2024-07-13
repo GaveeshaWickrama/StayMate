@@ -5,13 +5,14 @@ import Navbar from './components/common/Navbar';
 import PublicRoutes from './routes/PublicRoutes';
 import AdminRoutes from './routes/AdminRoutes';
 import GuestRoutes from './routes/GuestRoutes';
-import HostRoutes from './routes/hostRoutes';
+import HostRoutes from './routes/HostRoutes';
 // import TenantRoutes from './routes/TenantRoutes';
 import TechnicianRoutes from './routes/TechnicianRoutes';
 
 import HomePage from './pages/common/HomePage';
 import NotFoundPage from './pages/common/NotFoundPage';
 import Unauthorized from './pages/common/Unauthorized';
+
 
 function App() {
   return (

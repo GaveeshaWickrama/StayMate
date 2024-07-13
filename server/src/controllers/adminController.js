@@ -1,4 +1,4 @@
-const User = require('../models/userModel');
+const User = require('../models/userModel'); // Import the User model
 
 async function getAllUsers(req, res) {
     try {
@@ -23,7 +23,7 @@ async function getUser(req, res) {
     try {
         const userId = req.params.id;
         const user = await User.findById(userId);
-        if (!user) return res.status(404).json({ message: 'Not found' });
+        if (!user) return res.status(404).json({ message: 'User not found' });
         res.json(user);
     } catch (err) {
         res.status(500).json({ message: err.message });
@@ -33,12 +33,11 @@ async function getUser(req, res) {
 async function updateUser(req, res) {
     try {
         const userId = req.params.id;
-        const user = await User.findById(userId);
-        if (!user) return res.status(404).json({ message: 'Not found' });
+        let user = await User.findById(userId);
+        if (!user) return res.status(404).json({ message: 'User not found' });
 
-        Object.keys(req.body).forEach(key => {
-            user[key] = req.body[key];
-        });
+        // Update user fields
+        Object.assign(user, req.body);
 
         const updatedUser = await user.save();
         res.json(updatedUser);
@@ -50,46 +49,43 @@ async function updateUser(req, res) {
 async function deleteUser(req, res) {
     try {
         const user = await User.findByIdAndDelete(req.params.id);
-        if (!user) return res.status(404).json({ message: 'Not found' });
-        res.json({ message: 'Deleted successfully' });
+        if (!user) return res.status(404).json({ message: 'User not found' });
+        res.json({ message: 'User deleted successfully' });
     } catch (err) {
         res.status(500).json({ message: err.message });
     }
 }
 
-const getAdminDashboard = async (req, res) => {
+async function getAdminDashboard(req, res) {
     try {
-      // Fetch data or perform necessary operations
-      const data = {
-        paidBookings: 1074,
-        siteVisits: 3944,
-        searchers: 14743,
-        totalSales: 6766,
-        chartData: [
-          { name: 'January', income: 4000, expenses: 2400, amt: 2400 },
-          { name: 'February', income: 3000, expenses: 1398, amt: 2210 },
-          { name: 'March', income: 2000, expenses: 9800, amt: 2290 },
-          { name: 'April', income: 2780, expenses: 3908, amt: 2000 },
-          { name: 'May', income: 1890, expenses: 4800, amt: 2181 },
-          { name: 'June', income: 2390, expenses: 3800, amt: 2500 },
-          { name: 'July', income: 3490, expenses: 4300, amt: 2100 },
-        ],
-      };
-  
-      res.json(data);
+        // Example data for admin dashboard
+        const data = {
+            paidBookings: 1074,
+            siteVisits: 3944,
+            searchers: 14743,
+            totalSales: 6766
+        };
+
+        // Fetch monthly income data (example)
+        try {
+            const monthlyIncome = await AdminModel.getMonthlyIncome(); // Replace with actual logic to fetch monthly income
+            data.monthlyIncome = monthlyIncome; // Assuming monthlyIncome is an array or object fetched
+        } catch (err) {
+            console.error('Error fetching monthly income:', err);
+            // Handle error fetching monthly income
+        }
+
+        res.json(data);
     } catch (error) {
-      res.status(500).json({ message: error.message });
+        res.status(500).json({ message: error.message });
     }
-  };
-  
-  module.exports = {
-    getAdminDashboard,
-  };
+}
 
 module.exports = {
     getAllUsers,
     createUser,
     getUser,
     updateUser,
-    deleteUser
+    deleteUser,
+    getAdminDashboard
 };

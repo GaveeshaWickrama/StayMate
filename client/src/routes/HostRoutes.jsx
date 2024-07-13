@@ -32,7 +32,7 @@ function HostRoutes() {
             )
           }
         />
-        <Route
+         <Route
           path="/"
           element={
             currentUser && currentUser.role === "host" ? (
@@ -41,7 +41,7 @@ function HostRoutes() {
               <Navigate to="/Unauthorized" />
             )
           }
-        />
+        /> 
         <Route
           path="/listings"
           element={
