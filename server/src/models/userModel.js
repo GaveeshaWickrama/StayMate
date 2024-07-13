@@ -8,6 +8,12 @@ const userSchema = new mongoose.Schema({
         lowercase: true,
         trim: true
     },
+    firstname: {
+        type: String,
+    },
+    lastname: {
+        type: String,
+    },
     password: {
         type: String,
         required: true,
@@ -39,6 +45,12 @@ const userSchema = new mongoose.Schema({
     lastName: {
         type: String,
         required: true
+    },
+    assigned:{
+        type: Number,
+    },
+    picture:{
+        type: String,
     },
     createdOn: {
         type: Date,
