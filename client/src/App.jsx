@@ -8,6 +8,7 @@ import GuestRoutes from './routes/GuestRoutes';
 import HostRoutes from './routes/HostRoutes';
 // import TenantRoutes from './routes/TenantRoutes';
 import TechnicianRoutes from './routes/TechnicianRoutes';
+import UserRoutes from './routes/UserRoutes';
 
 import HomePage from './pages/common/HomePage';
 import NotFoundPage from './pages/common/NotFoundPage';
@@ -28,6 +29,9 @@ function App() {
           <Route path="/*" element={<PublicRoutes />} />
           <Route path="*" element={<NotFoundPage />} />
           <Route path="/Unauthorized" element={<Unauthorized />} />
+
+          {/* to every user */}
+          <Route path="/users/*" element={<UserRoutes />} />
         </Routes>
       </div>
     </div>

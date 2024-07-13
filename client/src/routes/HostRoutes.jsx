@@ -9,7 +9,7 @@ import HostListings from "../pages/host/HostListings";
 import AddProperty from "../pages/host/AddProperty";
 import AddSection from "../pages/host/AddSection";
 import AddLocation from "../pages/host/AddLocation";
-import PropertyDetails from "../pages/host/PropertyDetails";
+import PropertyDetails from "../pages/common/PropertyDetails";
 import HostReservation from "../pages/host/hostReservations";
 import ManageComplaints from "../pages/host/ManageComplaints";
 import ComplaintDetails from "../pages/host/ComplaintDetails";

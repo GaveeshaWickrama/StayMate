@@ -1,39 +1,38 @@
 import React, { useState, useEffect,useContext } from 'react';
-import adminprofilepic from "../../assets/adminprofilepic.png";
 import { Link } from 'react-router-dom';
 import axios from 'axios';
 import { useAuth } from '../../context/auth';
 
-const MyProfile = () => {
+const ViewProfile = () => {
 
     const { token } = useAuth();
-
-    const [email, setEmail] = useState('Raveesa@gmail.com');
-    const [contactNumber, setContactNumber] = useState('(+94) 077-1234567');
-    const [address, setAddress] = useState('290 Chatham Way Reston, Maryland (MD), 20191');
-    const [nic, setNIC] = useState('20002345434');
-    const [gender, setGender] = useState('Male');
-    const [obj, setObj] = useState([]);
-
+    const [profile, setProfile] = useState('null');
 
     useEffect(() => {
-      const fetchProfile = async () => {
-        try {
-          const response = await axios.get(`${import.meta.env.VITE_API_URL}/admin/viewProfile`, {
-            headers: {
-              Authorization: `Bearer ${token}`,
-            },
-          });
-          setObj(response.data);
-        } catch (error) {
-          console.error('Error fetching properties:', error);
-        }
-      };
-  
-      fetchProfile();
+        const fetchProfile = async () => {
+            try {
+                const response = await axios.get(`${import.meta.env.VITE_API_URL}/users/viewProfile`, {
+                    headers: {
+                        Authorization: `Bearer ${token}`,
+                    },
+                });
+
+                if (response.status === 200) {
+                    const json = response.data;
+                    setProfile(json);
+                } else {
+                        console.error('Failed to fetch profile. Status:', response.status);
+                    }
+            } catch (error) {
+                console.error('Error fetching the profile:', error);
+            }
+        };
+
+    
+        fetchProfile();
     }, [token]);
 
-    // console.log(obj);
+    
 
 
 
@@ -44,13 +43,13 @@ const MyProfile = () => {
           <div className="flex items-center justify-between">
             <div className="flex items-center">
               <img
-                src={ adminprofilepic }
+                src={ profile.profilepicture }
                 alt="Profile"
                 className="w-32 h-32 rounded-full"
               />
               <div className="ml-4">
-                <h1 className="text-2xl font-bold">{obj.firstname} {obj.lastname}</h1>
-                <p className="text-gray-600">{obj.role}</p>
+                <h1 className="text-2xl font-bold">{profile.firstname} {profile.lastname}</h1>
+                <p className="text-gray-600">{profile.role}</p>
                 {/* <p className="text-yellow-500">4.5 ★★★★☆</p> */}
               </div>
             </div>
@@ -64,23 +63,23 @@ const MyProfile = () => {
           <div className="mt-6 grid grid-cols-1 sm:grid-cols-2 gap-4">
             <div className="bg-white p-4 rounded-lg shadow">
               <h2 className="text-lg font-semibold">Email</h2>
-              <p>{ obj.email }</p>
+              <p>{ profile.email }</p>
             </div>
             <div className="bg-white p-4 rounded-lg shadow">
               <h2 className="text-lg font-semibold">Phone</h2>
-              <p>{ contactNumber }</p>
+              <p>{ profile.contactNumber }</p>
             </div>
             <div className="bg-white p-4 rounded-lg shadow">
               <h2 className="text-lg font-semibold">NIC</h2>
-              <p>{ nic }</p>
+              <p>{ profile.nic }</p>
             </div>
             <div className="bg-white p-4 rounded-lg shadow">
               <h2 className="text-lg font-semibold">Gender</h2>
-              <p>{ gender }</p>
+              <p>{ profile.gender }</p>
             </div>
             <div className="bg-white p-4 rounded-lg shadow col-span-2">
               <h2 className="text-lg font-semibold">Address</h2>
-              <p>{ address }</p>
+              <p>{ profile.address }</p>
             </div>
             
             <div className="flex justify-end col-span-2">
@@ -106,4 +105,4 @@ const MyProfile = () => {
      );
 }
  
-export default MyProfile;
+export default ViewProfile;
