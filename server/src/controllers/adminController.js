@@ -15,11 +15,11 @@ const getModerators = async (req,res)=>{
 
 //create a new moderator
 const createModerator= async (req,res)=>{
-    const {firstname, lastname, email, password, nic, gender, address}= req.body
+    const {firstname, lastname, email, password, nic, gender, address, role}= req.body
 
     //add to db
     try{
-        const moderator = await User.create({firstname, lastname, email, password, nic, gender, address})
+        const moderator = await User.create({firstname, lastname, email, password, nic, gender, address, role})
         res.status(200).json(moderator)
     }catch(error){
         res.status(400).json({error: error.message})

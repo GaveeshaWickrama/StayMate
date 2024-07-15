@@ -1,10 +1,11 @@
 import { useState } from "react";
 import axios from 'axios';
 import { useAuth } from '../../context/auth';
+import { useModeratorsContext } from "../../hooks/useModeratorsContext";
 
 const ModeratorForm = () => {
-
     const { token } = useAuth();
+    //const { dispatch } = useModeratorsContext();
 
     const [firstname, setFirstname] = useState('');
     const [lastname, setLastname] = useState('');
@@ -14,11 +15,12 @@ const ModeratorForm = () => {
     const [gender, setGender] = useState('');
     const [address, setAddress] = useState('');
     const [error, setError] = useState('');
+    const role = 'moderator';
 
     const handleSubmit = async (e) => {
         e.preventDefault();
 
-        const moderator = { firstname, lastname, email, password, nic, gender, address };
+        const moderator = { firstname, lastname, email, password, nic, gender, address, role };
 
         try {
             const response = await axios.post(`${import.meta.env.VITE_API_URL}/admin/moderators`, moderator, {
@@ -28,15 +30,20 @@ const ModeratorForm = () => {
                 },
             });
 
-            if (response.status !== 201) { // Assuming 201 Created is the expected status code
+            if (response.status !== 201) {
                 setError(response.data.error);
             } else {
                 setError(null);
+                // Reset form fields
                 setFirstname('');
                 setLastname('');
+                setEmail('');
+                setPassword('');
+                setNic('');
                 setGender('');
                 setAddress('');
                 console.log('new Moderator added', response.data);
+               // dispatch({ type: 'CREATE_MODERATORS', payload: response.data });
             }
         } catch (error) {
             setError(error.response?.data?.error );
@@ -64,14 +71,14 @@ const ModeratorForm = () => {
             />
             <label className="block mb-2">Email:</label>
             <input 
-                type="text"
+                type="email"
                 onChange={(e) => setEmail(e.target.value)}
                 value={email}
                 className="w-full p-2 mb-4 border border-gray-300 rounded"
             />
             <label className="block mb-2">Password:</label>
             <input 
-                type="text"
+                type="password"
                 onChange={(e) => setPassword(e.target.value)}
                 value={password}
                 className="w-full p-2 mb-4 border border-gray-300 rounded"
@@ -89,6 +96,15 @@ const ModeratorForm = () => {
                 onChange={(e) => setAddress(e.target.value)}
                 value={address}
                 className="w-full p-2 mb-4 border border-gray-300 rounded"
+            />
+
+            {/* hardcoding the role to be moderator */}
+            <label className="block mb-2">Role:</label>
+            <input 
+                type="text"
+                value={role}
+                className="w-full p-2 mb-4 border border-gray-300 rounded"
+                readOnly
             />
 
             <button className="w-full bg-blue-500 text-white p-2 rounded hover:bg-blue-600">Add Moderator</button>
