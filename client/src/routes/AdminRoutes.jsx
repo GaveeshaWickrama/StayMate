@@ -26,6 +26,7 @@ function AdminRoutes() {
       <Route path="/UserCenter" element={currentUser && currentUser.role === 'admin' ? <UserCenter /> : <Navigate to="/Unauthorized" />} />
       <Route path="/AddUser" element={currentUser && currentUser.role === 'admin' ? <AddUser /> : <Navigate to="/Unauthorized" />} />
       <Route path="/UpdateUser" element={currentUser && currentUser.role === 'admin' ? <UpdateUser /> : <Navigate to="/Unauthorized" />} />
+      <Route path="/" element={<UserCenter />} />
       
       
     </Routes>

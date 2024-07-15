@@ -1,36 +1,32 @@
-const User = require('../models/userModel');
-
+// In userController.js
+// In userController.js
 async function getUser(req, res) {
     try {
-        const userId = req.user.userId;
+        const userId = req.params.id; // Get the user ID from the request parameters
         const user = await User.findById(userId);
-        if (!user) return res.status(404).json({ message: 'Not found' });
+        
+        if (!user) {
+            return res.status(404).json({ message: 'User not found' });
+        }
+
         res.json(user);
     } catch (err) {
         res.status(500).json({ message: err.message });
     }
 }
 
-async function updateUser(req, res) {
+async function getAllUsers(req, res) {
     try {
-        const userId = req.user.userId;
-        const user = await User.findById(userId);
-        if (!user) return res.status(404).json({ message: 'Not found' });
-
-        Object.keys(req.body).forEach(key => {
-            user[key] = req.body[key];
-        });
-
-        const updatedUser = await user.save();
-        res.json(updatedUser);
+        const users = await User.find({});
+        res.json(users);
     } catch (err) {
-        res.status(400).json({ message: err.message });
+        res.status(500).json({ message: err.message });
     }
 }
 
+// Export the functions
 module.exports = {
-  
     getUser,
-    updateUser,
-   
+    getAllUsers,
+    // updateUser, // Ensure updateUser is defined if you are exporting it too
 };
