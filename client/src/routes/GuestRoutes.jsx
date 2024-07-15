@@ -5,7 +5,7 @@ import GuestPage from "../pages/guest/GuestPage";
 import ReviewAdd from "../pages/guest/ReviewAdd";
 import Reservations from "../pages/guest/Reservations";
 import RaiseComplaintPage from "../pages/guest/RaiseComplaintPage";
-import Chat from "../pages/common/Chat";
+import ChatHomePage from "../pages/common/ChatHomePage";
 import TripDetails from "../pages/guest/TripDetails";
 
 function UserRoutes() {
@@ -76,7 +76,7 @@ function UserRoutes() {
         path="/chat"
         element={
           currentUser && currentUser.role === "guest" ? (
-            <Chat />
+            <ChatHomePage />
           ) : (
             <Navigate to="/Unauthorized" />
           )
