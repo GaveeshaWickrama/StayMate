@@ -26,7 +26,24 @@ const createModerator= async (req,res)=>{
     }
 }
 
+//delete a Moderator
+const deleteModerator = async (req, res) => {
+    const { id } = req.params;
+    console.log( id)
 
+    if (!mongoose.Types.ObjectId.isValid(id)) {
+        return res.status(400).json({ error: 'Invalid Moderator ID' });
+    }
+
+    
+        const moderator = await User.findOneAndDelete({ _id: id });
+        if (!moderator) {
+            return res.status(404).json({ error: 'No such Moderator' });
+        }
+        res.status(200).json(moderator);
+   
+        
+};
 
 
 
@@ -155,4 +172,5 @@ module.exports = {
     updateProfile,
     getModerators,
     createModerator,
+    deleteModerator,
 };

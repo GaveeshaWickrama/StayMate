@@ -12,6 +12,10 @@ export const ModeratorReducer = (state, action) =>{
             return {
                 Moderators: [action.payload, ...state.Moderators]
             }
+        case 'DELETE_MODERATOR' :
+            return {
+                Moderators: state.Moderators.filter((m) => m._id !== action.payload._id )
+            }
         default:
             return state
     }

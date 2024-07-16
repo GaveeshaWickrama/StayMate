@@ -5,7 +5,7 @@ import { useModeratorsContext } from "../../hooks/useModeratorsContext";
 
 const ModeratorForm = () => {
     const { token } = useAuth();
-    //const { dispatch } = useModeratorsContext();
+    const { dispatch } = useModeratorsContext();
 
     const [firstname, setFirstname] = useState('');
     const [lastname, setLastname] = useState('');
@@ -33,7 +33,10 @@ const ModeratorForm = () => {
             if (response.status !== 201) {
                 setError(response.data.error);
             } else {
+                console.log("Came here")
                 setError(null);
+                console.log('State before reset:', { firstname, lastname, email, password, nic, gender, address });
+
                 // Reset form fields
                 setFirstname('');
                 setLastname('');
@@ -42,8 +45,11 @@ const ModeratorForm = () => {
                 setNic('');
                 setGender('');
                 setAddress('');
+
+                console.log('State after reset:', { firstname, lastname, email, password, nic, gender, address });
+
                 console.log('new Moderator added', response.data);
-               // dispatch({ type: 'CREATE_MODERATORS', payload: response.data });
+                dispatch({ type: 'CREATE_MODERATORS', payload: response.data });
             }
         } catch (error) {
             setError(error.response?.data?.error );
