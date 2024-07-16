@@ -32,6 +32,7 @@ body, html {
   @tailwind components;
   @tailwind utilities;
   
+
   /* DarkMode lokking scroll Bar */
   ::-webkit-scrollbar {
     width: 8px;
