@@ -1,6 +1,8 @@
 import React, { useEffect, useState } from 'react'
 import {Link} from 'react-router-dom'
 import axios from 'axios';
+import Title from '../../components/common/Title';
+
 import {
   FaInfoCircle
 } from "react-icons/fa";
@@ -75,55 +77,43 @@ fetchComplaints();
     function ComplaintCard ({complaint}) {
       const { timestamp } = complaint;
       const date = new Date(timestamp);
-      const formattedDate = date.toISOString().split('T')[0];
+      const formattedDate = date.toISOString().split("T")[0];
 
+      return (
+        <div className="m-10 pb-90 px-10">
+          <Link to={`/host/complaint-details/${complaint._id}`}>
+            <div className="p-2 bg-white shadow-lg rounded-lg overflow-hidden border border-transparent transform transition-transform duration-300 hover:scale-105 relative card-hover-border w-2/3">
+              <div className="flex w-full flex-col">
+                <h2 className="font-bold text-lg mb-2">
+                  <div>{complaint.title}</div>
+                </h2>
 
-      return(
-        <Link to={`/host/complaint-details/${complaint._id}`}>
+                <div className="flex items-center mb-2 text-gray-700 text-sm">
+                  <div className="text-gray-700 overflow-hidden text-ellipsis whitespace-nowrap">
+                    {complaint.description}
+                  </div>
+                </div>
 
-<div className="bg-white shadow-lg rounded-lg overflow-hidden border border-transparent transform transition-transform duration-300 hover:scale-105 relative card-hover-border">
-<div className="flex w-full">
-
-<h2 className='text-2xl font-semibold text-black-500 mb-2 pt-3'>
-<div>{complaint.title}</div>
-</h2>
-
-
-<div className="flex items-center mb-2">
-                <FaInfoCircle className="text-blue-500 mr-2" />
-                <p className="text-gray-700 overflow-hidden text-ellipsis whitespace-nowrap">
-                {complaint.description}
-                </p>
+                <div className="flex items-center space-x-0">
+                  <p className="text-gray-700">
+                    <span className='text-xs'>Posted on </span>
+                    <span> {formattedDate}</span>
+                   
+                  </p>
+                </div>
               </div>
-
-
-        <div className='flex items-center'>
-            <p className='text-gray-700'>
-              posted on
-              {formattedDate}
-
-
-
-            </p>
+            </div>
+          </Link>
         </div>
-
-</div>
-</div>
-
-
-
-
-
-   </Link>
       );
-            
     }
   return (
     <div>
 
-      {console.log("hello world!")}
-
-        <div className="flex flex-col gap-8">
+<h1 className="text-4xl font-extrabold text-black-600 mb-8 border-b-4 border-blue-600 p-6 bg-gray-100 rounded-md shadow-sm">
+  Complaints
+      </h1>
+        <div className="flex flex-col">
         
           {complaints.map((complaint) => (
             <ComplaintCard

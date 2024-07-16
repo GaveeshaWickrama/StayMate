@@ -1,9 +1,9 @@
 import React, { useEffect, useState } from 'react';
 import axios from 'axios';
-import { useParams, useLocation } from 'react-router-dom';
+import { useParams, useLocation, useNavigate } from 'react-router-dom';
 import { FaHome, FaMapPin } from 'react-icons/fa';
 
-function HandleSendRequest({ complaintId, technicianID }) {
+function HandleSendRequest({ complaintId, technicianID, navigate }) {
   const sendRequest = async (complaintId, technicianID) => {
     try {
       console.log("complaint id is received in the send requet function", complaintId);
@@ -12,7 +12,7 @@ function HandleSendRequest({ complaintId, technicianID }) {
         complaintId: complaintId
 
       });
-
+      navigate('/host/manage-complaints');
       alert("Request successfully sent!");
     } catch (error) {
       console.error("Request couldn't be sent to the technician", error);
@@ -27,7 +27,7 @@ function HandleSendRequest({ complaintId, technicianID }) {
 
   return (
     <div>
-      <button className="bg-blue-900" onClick={handleButtonClick}>Send Request</button>
+      <button className="font-semibold text-white text-sm px-10 py-2 bg-blue-950 rounded-xl ml-[150px] mt-[50px]" onClick={handleButtonClick}>Send Request</button>
     </div>
   );
 }
@@ -38,6 +38,7 @@ function TechnicianDetails() {
   // const { complaintID } = location.state;
   const {complaintId, setComplaintId}  = useState('');
   const [technician, setTechnician] = useState(null);
+  const navigate = useNavigate();
 
   useEffect(() => {
     const fetchTechnician = async () => {
@@ -73,7 +74,7 @@ function TechnicianDetails() {
           <div><span>{technician.location}</span></div>
         </div>
       </div>
-      <HandleSendRequest complaintId='66823d0abbcb757d9c5668e9' technicianID={id} />
+      <HandleSendRequest complaintId='66823d0abbcb757d9c5668e9' technicianID={id} navigate />
     </div>
   );
 }

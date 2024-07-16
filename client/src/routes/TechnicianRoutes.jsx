@@ -1,6 +1,8 @@
 import React from 'react';
 import { Routes, Route, Navigate } from 'react-router-dom';
+import TechnicianDashboard from '../pages/technician/TechnicianDashboard';
 // import { useAuth } from '../context/auth';
+import TechnicianExploreLayout from '../pages/technician/layouts/TechnicianExplore';
 
 import PendingTasks from '../pages/technician/PendingTasks';
 import ActiveTasks from '../pages/technician/ActiveTasks';
@@ -14,6 +16,12 @@ function UserRoutes() {
 
   return (
     <Routes>
+      
+      <Route path="/" element={<TechnicianExploreLayout/>} >
+      <Route path="/dashboard" index element={<TechnicianDashboard/>} />
+
+      </Route>
+      <Route path="/dashboard" element={<TechnicianDashboard/>} />
       <Route path="/requests/pending-tasks" element={<PendingTasks/>} />
       <Route path="/requests/active-tasks" element={<ActiveTasks/>} />
       <Route path="/requests/completion" element={<UploadProof/>} />
