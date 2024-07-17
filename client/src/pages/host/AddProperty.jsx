@@ -1,4 +1,3 @@
-// src/pages/AddProperty.js
 import React, { useEffect, useState } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import axios from 'axios';
@@ -92,8 +91,6 @@ const AddProperty = () => {
     }
   };
   
-  
-
   const validateForm = () => {
     switch (stage) {
       case 1:
@@ -194,5 +191,6 @@ const AddProperty = () => {
 };
 
 export default AddProperty;
+
 
 
