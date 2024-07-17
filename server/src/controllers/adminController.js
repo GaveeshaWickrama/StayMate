@@ -17,6 +17,21 @@ const getModerators = async (req,res)=>{
 const createModerator= async (req,res)=>{
     const {firstname, lastname, email, password, nic, gender, address, role}= req.body
 
+    let emptyFields = []
+
+    if(!firstname){
+        emptyFields.push('firstname')
+    }
+    if(!lastname){
+        emptyFields.push('lastname')
+    }
+    if(!email){
+        emptyFields.push('email')
+    }
+    if(emptyFields.length > 0){
+        return res.status(400).json({error: 'Please fill in all the fields',emptyFields})
+    }
+
     //add to db
     try{
         const moderator = await User.create({firstname, lastname, email, password, nic, gender, address, role})

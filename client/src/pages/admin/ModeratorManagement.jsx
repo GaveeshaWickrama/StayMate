@@ -21,7 +21,7 @@ const ModeratorManagement = () => {
                 });
 
                 if (response.status === 200) {
-                    console.log('Fetched Moderators:', response.data);  // Add this line
+                    
                     const json = response.data;
                     dispatch({type: 'SET_MODERATORS', payload: json})
                 } else {

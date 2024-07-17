@@ -15,6 +15,7 @@ const ModeratorForm = () => {
     const [gender, setGender] = useState('');
     const [address, setAddress] = useState('');
     const [error, setError] = useState('');
+    const [emptyFields,setEmptyFields] = useState([])
     const role = 'moderator';
 
     const handleSubmit = async (e) => {
@@ -32,8 +33,9 @@ const ModeratorForm = () => {
 
             if (response.status !== 201) {
                 setError(response.data.error);
+                setEmptyFields(response.data.emptyFields)
             } else {
-                console.log("Came here")
+                
                 setError(null);
                 console.log('State before reset:', { firstname, lastname, email, password, nic, gender, address });
 
@@ -65,7 +67,7 @@ const ModeratorForm = () => {
                 type="text"
                 onChange={(e) => setFirstname(e.target.value)}
                 value={firstname}
-                className="w-full p-2 mb-4 border border-gray-300 rounded"
+                className="w-full p-2 mb-4 border rounded ${emptyFields.includes('firstname') ? 'border-red-500' : 'border-gray-300'}"
             />
             
             <label className="block mb-2">Last Name:</label>
@@ -73,28 +75,28 @@ const ModeratorForm = () => {
                 type="text"
                 onChange={(e) => setLastname(e.target.value)}
                 value={lastname}
-                className="w-full p-2 mb-4 border border-gray-300 rounded"
+                className="w-full p-2 mb-4 border rounded ${emptyFields.includes('lastname') ? 'border-red-500' : 'border-gray-300'}"
             />
             <label className="block mb-2">Email:</label>
             <input 
                 type="email"
                 onChange={(e) => setEmail(e.target.value)}
                 value={email}
-                className="w-full p-2 mb-4 border border-gray-300 rounded"
+                className="w-full p-2 mb-4 border rounded ${emptyFields.includes('email') ? 'border-red-500' : 'border-gray-300'}"
             />
             <label className="block mb-2">Password:</label>
             <input 
                 type="password"
                 onChange={(e) => setPassword(e.target.value)}
                 value={password}
-                className="w-full p-2 mb-4 border border-gray-300 rounded"
+                className="w-full p-2 mb-4 border rounded ${emptyFields.includes('password') ? 'border-red-500' : 'border-gray-300'}"
             />
             <label className="block mb-2">NIC:</label>
             <input 
                 type="text"
                 onChange={(e) => setNic(e.target.value)}
                 value={nic}
-                className="w-full p-2 mb-4 border border-gray-300 rounded"
+                className="w-full p-2 mb-4 border rounded ${emptyFields.includes('') ? 'bornicder-red-500' : 'border-gray-300'}"
             />
             <label className="block mb-2">Address:</label>
             <input 
