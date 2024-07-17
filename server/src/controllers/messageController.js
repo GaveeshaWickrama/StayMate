@@ -31,7 +31,7 @@ const sendMessage = async (req,res)=>{
       /*   await newMessage.save();
         await conversation.save(); */
 
-        await promise.all([newMessage.save(),conversation.save()]);
+        await Promise.all([newMessage.save(),conversation.save()]);
 
         res.status(201).json(newMessage);
 
@@ -52,6 +52,8 @@ const getMessages = async (req,res) => {
             participants : {$all: [senderId,userToChatId]}
         }).populate("messages");
 
+        if(!conversation) return res.status()
+
         res.status(200).json(conversation.messages);
         
     } catch (error) {
@@ -60,4 +62,27 @@ const getMessages = async (req,res) => {
     }
 }
 
-module.exports = { sendMessage,getMessages };
+const getContacts = async (req, res) => {
+    try {
+        const loggedInUser = req.user.userId;
+
+        // Find conversations where the participants array contains the current user's ID
+        const conversations = await Conversation.find({ participants: { $in: [loggedInUser] } });
+
+        // Extract user IDs from the conversations
+        const userIds = conversations.flatMap(conversation =>
+            conversation.participants.map(participant => participant.toString())
+        ).filter(userId => userId !== loggedInUser);
+
+        // Remove duplicates (if any)
+        const uniqueUserIds = [...new Set(userIds)];
+
+        res.status(200).json(uniqueUserIds);
+    } catch (err) {
+        console.error("Error Fetching Conversations: ", err.message);
+        res.status(500).json({ error: "Internal Server Error" });
+    }
+};
+
+
+module.exports = { sendMessage,getMessages, getContacts };

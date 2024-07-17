@@ -22,8 +22,29 @@ const userSchema = new mongoose.Schema({
     role: {
         type: String,
         required: true,
-        enum: ['guest', 'host', 'technician', 'admin', 'moderator'], // Specifies the allowable roles
-        default: 'guest' // Default role when none is specified
+        enum: ['guest', 'host', 'technician', 'admin', 'moderator'],
+        default: 'guest'
+    },
+    nicPassport: {
+        type: String,
+        required: true
+    },
+    phone: {
+        type: String,
+        required: true
+    },
+    gender: {
+        type: String,
+        required: true,
+        enum: ['male', 'female', 'other']
+    },
+    firstName: {
+        type: String,
+        required: true
+    },
+    lastName: {
+        type: String,
+        required: true
     },
     assigned:{
         type: Number,
