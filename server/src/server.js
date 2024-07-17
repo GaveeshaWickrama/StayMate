@@ -19,7 +19,6 @@ app.use(
   morgan(":method :url :status :res[content-length] - :response-time ms :body")
 );
 
-const userRoutes = require("./routes/userRoutes");
 const authRoutes = require("./routes/authRoutes");
 const adminRoutes = require("./routes/adminRoutes");
 const propertyRoutes = require("./routes/propertyRoutes");
@@ -36,7 +35,7 @@ db.once("open", () => console.log("Connected to Database"));
 
 app.use(express.json());
 app.use("/auth", authRoutes);
-app.use("/users", userRoutes);
+
 app.use("/admin", adminRoutes);
 app.use("/properties", propertyRoutes);
 app.use("/reservation", reservationRoutes);

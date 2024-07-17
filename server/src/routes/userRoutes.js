@@ -21,6 +21,3 @@ module.exports = {
     getAllUsers, // Add this line
 };
 
-// In your user route file
-router.get('/users', authToken, requireRole('admin'), userController.getAllUsers);
-router.get('/users/:id', authToken, requireRole('admin'), userController.getUser);

@@ -151,28 +151,28 @@ const Analysis = () => {
 
     return (
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5 my-5">
-            <div className="bg-white shadow-md p-5 rounded-md flex flex-col justify-around items-center">
+            <div className="bg-white shadow-md p-3 rounded-md flex flex-col justify-around items-center border-l-4 border-blue-500">
                 <div className="flex items-center justify-between w-full mb-2">
                     <h3 className="text-lg font-medium">Paid Bookings</h3>
                     <BsFillArchiveFill className="text-2xl text-blue-500" />
                 </div>
-                <h1 className="text-3xl font-bold text-center">1,074</h1>
+                <h1 className="text-2xl font-bold text-center">1,074</h1>
             </div>
-            <div className="bg-white shadow-md p-5 rounded-md flex flex-col justify-around items-center">
+            <div className="bg-white shadow-md p-3 rounded-md flex flex-col justify-around items-center border-l-4 border-blue-500">
                 <div className="flex items-center justify-between w-full mb-2">
                     <h3 className="text-lg font-medium">Site Visit</h3>
                     <BsFillGrid3X3GapFill className="text-2xl text-blue-500" />
                 </div>
-                <h1 className="text-3xl font-bold text-center">3,944</h1>
+                <h1 className="text-2xl font-bold text-center">3,944</h1>
             </div>
-            <div className="bg-white shadow-md p-5 rounded-md flex flex-col justify-around items-center">
+            <div className="bg-white shadow-md p-3 rounded-md flex flex-col justify-around items-center border-l-4 border-blue-500">
                 <div className="flex items-center justify-between w-full mb-2">
                     <h3 className="text-lg font-medium">Searchers</h3>
                     <BsPeopleFill className="text-2xl text-blue-500" />
                 </div>
-                <h1 className="text-3xl font-bold text-center">14,743</h1>
+                <h1 className="text-2xl font-bold text-center">14,743</h1>
             </div>
-            <div className="bg-white shadow-md p-5 rounded-md flex flex-col justify-around items-center">
+            <div className="bg-white shadow-md p-3 rounded-md flex flex-col justify-around items-center border-l-4 border-blue-500">
                 <div className="flex items-center justify-between w-full mb-2">
                     <h3 className="text-lg font-medium">Total Monthly Income</h3>
                     <BsFillBellFill className="text-2xl text-blue-500" />
@@ -190,7 +190,7 @@ const Analysis = () => {
                         ))}
                     </select>
                 </div>
-                <h1 className="text-3xl font-bold text-center">{incomeData[selectedPeriod]}</h1>
+                <h1 className="text-2xl font-bold text-center">{incomeData[selectedPeriod]}</h1>
             </div>
         </div>
     );
