@@ -91,7 +91,7 @@ const PropertySections = () => {
           <div className="mb-4">
             <label className="block font-semibold">Price Per Night:</label>
             <div className="p-2 border border-gray-300 rounded-lg bg-gray-50 flex items-center">
-              <span className="text-lg">${section.price_per_night}</span>
+              <span className="text-lg">Rs {section.price_per_night}</span>
             </div>
           </div>
         </div>
