@@ -64,12 +64,12 @@ function Navbar() {
     { path: "/admin", label: "Admin Dashboard" },
     { path: "/admin/MyProfile", label: "My Profile" },
     { path: "/admin/UserCenter", label: "User Center" },
+    { path: "/admin/Payments", label: "Payments" },
   ];
 
   const guestLinks = [
     { path: "/", label: "Home" },
-    { path: "/user", label: "User Page" },
-    { path: "/user/reviews/add", label: "Reviews" },
+    { path: "/user/viewreviews", label: "Reviews" },
     { path: "/user/reservations", label: "Reservations" },
   ];
 
@@ -80,6 +80,7 @@ function Navbar() {
     { path: "/host/add-property", label: "New Listing" },
     { path: "/host/reservations", label: "Reservations" },
     { path: "/host/property-details", label: "Test" },
+    { path: "/host/viewReviews", label: "Reviews" },
   ];
 
   const publicLinks = [
