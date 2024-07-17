@@ -21,7 +21,7 @@ const PropertySections = () => {
 
   return (
     <div className='container mx-auto px-8'>
-      <h2 className="text-4xl font-extrabold text-black-600 mb-8 border-b-4 border-blue-600 p-6 rounded-md shadow-sm">Sections</h2>
+      <h2 className="text-4xl font-extrabold text-black-600 mb-8 border-b-4 border-blue-600 p-6 rounded-md shadow-sm">Add Sections</h2>
       {property.sections.map((section, index) => (
         <div key={index} className="mb-8 p-6 bg-white rounded-lg shadow-lg border border-gray-200">
           <div className="flex items-center justify-between mb-4">
