@@ -1,7 +1,14 @@
 import React from "react";
+import { useNavigate } from "react-router-dom";
 import img1 from "../../assets/img1.jpeg";
 
 const TripDetails = ({ trip, isUpcoming, isOngoing, isCompleted }) => {
+  const navigate = useNavigate();
+
+  const handleAddReview = () => {
+    navigate(`/user/reviews/add?reservationId=${trip._id}`);
+  };
+
   // Construct the image URL using the API base URL and the image path
   const imageUrl =
     trip.property.images.length > 0
@@ -56,10 +63,7 @@ const TripDetails = ({ trip, isUpcoming, isOngoing, isCompleted }) => {
                 Completed
               </span>
               <button
-                onClick={() =>
-                  (window.location.href =
-                    "http://localhost:5173/user/reviews/add")
-                }
+                onClick={handleAddReview}
                 className="font-semibold text-white text-sm px-4 py-2 bg-blue-500 border border-blue-500 rounded mt-2 md:mt-0 md:ml-2"
               >
                 Add Review
