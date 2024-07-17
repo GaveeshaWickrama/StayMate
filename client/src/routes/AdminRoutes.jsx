@@ -7,6 +7,7 @@ import EditProfile from '../pages/admin/EditProfile';
 import UserCenter from '../pages/admin/UserCenter';
 import AddUser from '../pages/admin/AddUser';
 import UpdateUser from '../pages/admin/UpdateUser';
+import  Report from '../pages/admin/Report';
 
 
 
@@ -26,6 +27,7 @@ function AdminRoutes() {
       <Route path="/UserCenter" element={currentUser && currentUser.role === 'admin' ? <UserCenter /> : <Navigate to="/Unauthorized" />} />
       <Route path="/AddUser" element={currentUser && currentUser.role === 'admin' ? <AddUser /> : <Navigate to="/Unauthorized" />} />
       <Route path="/UpdateUser" element={currentUser && currentUser.role === 'admin' ? <UpdateUser /> : <Navigate to="/Unauthorized" />} />
+      <Route path="/Report" element={currentUser && currentUser.role === 'admin' ? <Report /> : <Navigate to="/Unauthorized" />} />
       <Route path="/" element={<UserCenter />} />
       
       

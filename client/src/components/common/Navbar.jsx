@@ -17,6 +17,7 @@ const iconMap = {
   "New Listing": "add_box",
   Login: "login",
   Signup: "person_add",
+  Report: "assessment",
 };
 
 // Sidebar component with updated styling and icons
@@ -64,6 +65,7 @@ function Navbar() {
     { path: "/admin", label: "Admin Dashboard" },
     { path: "/admin/MyProfile", label: "My Profile" },
     { path: "/admin/UserCenter", label: "User Center" },
+    { path: "/admin/report", label: "Report" },
   ];
 
   const guestLinks = [
