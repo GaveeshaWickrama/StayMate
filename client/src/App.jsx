@@ -1,7 +1,6 @@
 import React from 'react';
 import { Routes, Route } from 'react-router-dom';
 import Navbar from './components/common/Navbar';
-
 import PublicRoutes from './routes/PublicRoutes';
 import AdminRoutes from './routes/AdminRoutes';
 import GuestRoutes from './routes/GuestRoutes';
@@ -17,8 +16,7 @@ import Unauthorized from './pages/common/Unauthorized';
 function App() {
   return (
     <div id="stuff">
-      <Navbar />
-      
+      <Navbar/>
       <div className="main-content">
         <Routes>
           <Route path="/" element={<HomePage />} />

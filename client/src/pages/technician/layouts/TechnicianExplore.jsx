@@ -7,7 +7,8 @@ import {Outlet} from 'react-router-dom'
     //any component inside the wrapper will be passed to  the outlet here
   return (
     <div  className='w-full h-full'>
-       <Sidebar/>
+
+
         <div className='bg-teal-200'>Header</div>
         <div>{<Outlet/>}</div> 
     </div>
