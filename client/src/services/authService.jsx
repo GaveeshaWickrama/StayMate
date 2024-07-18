@@ -1,56 +1,62 @@
-import axios from 'axios';
+import React, { createContext, useState, useEffect, useContext } from 'react';
+import authService from '../services/authService';
 
-const API_URL = import.meta.env.VITE_API_URL;
+export const AuthContext = createContext();
 
-const authService = {
-  login: async (email, password) => {
-    try {
-      const response = await axios.post(`${API_URL}/auth/login`, { email, password });
-      const { accessToken, user } = response.data;
-      localStorage.setItem('user', JSON.stringify(user));
-      localStorage.setItem('token', accessToken);
-      return { user, error: null };
-    } catch (error) {
-      const errorMessage = error.response?.data?.message || 'Login failed';
-      return { user: null, error: errorMessage };
+export const AuthProvider = ({ children }) => {
+  const [currentUser, setCurrentUser] = useState(null);
+  const [emailForVerification, setEmailForVerification] = useState('');
+  const [loading, setLoading] = useState(true);
+  const [token, setToken] = useState(null);
+
+  useEffect(() => {
+    const fetchUser = async () => {
+      const user = authService.getCurrentUser();
+      const storedToken = authService.getToken();
+      setCurrentUser(user);
+      setToken(storedToken);
+      setLoading(false);
+    };
+    fetchUser();
+  }, []);
+
+  const login = async (email, password) => {
+    const { user, error } = await authService.login(email, password);
+    if (user) {
+      setCurrentUser(user);
+      setToken(authService.getToken());
     }
-  },
+    return { user, error };
+  };
 
-  signup: async (userData) => {
-    try {
-      await axios.post(`${API_URL}/auth/register`, userData);
-      return { error: null };
-    } catch (error) {
-      const errorMessage = error.response?.data?.message || 'Signup failed';
-      return { error: errorMessage };
+  const signup = async (userData) => {
+    const { error } = await authService.signup(userData);
+    if (!error) {
+      setEmailForVerification(userData.email);
     }
-  },
+    return { error };
+  };
 
-  verifyOtp: async (userData) => {
-    try {
-      const response = await axios.post(`${API_URL}/auth/verify-otp`, userData);
-      const { accessToken, user } = response.data;
-      localStorage.setItem('user', JSON.stringify(user));
-      localStorage.setItem('token', accessToken);
-      return { user, error: null };
-    } catch (error) {
-      const errorMessage = error.response?.data?.message || 'OTP verification failed';
-      return { user: null, error: errorMessage };
+  const verifyOtp = async (userData) => {
+    const { user, error } = await authService.verifyOtp(userData);
+    if (user) {
+      setCurrentUser(user);
+      setToken(authService.getToken());
     }
-  },
+    return { user, error };
+  };
 
-  logout: async () => {
-    localStorage.removeItem('user');
-    localStorage.removeItem('token');
-  },
+  const logout = async () => {
+    await authService.logout();
+    setCurrentUser(null);
+    setToken(null);
+  };
 
-  getCurrentUser: () => {
-    return JSON.parse(localStorage.getItem('user'));
-  },
-
-  getToken: () => {
-    return localStorage.getItem('token');
-  }
+  return (
+    <AuthContext.Provider value={{ currentUser, token, loading, login, signup, verifyOtp, emailForVerification, logout }}>
+      {children}
+    </AuthContext.Provider>
+  );
 };
 
-export default authService;
+export const useAuth = () => useContext(AuthContext);
