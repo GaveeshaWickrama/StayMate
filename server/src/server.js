@@ -3,7 +3,7 @@ const express = require("express");
 const cors = require("cors");
 const morgan = require("morgan"); // Logging HTTP requests
 const mongoose = require("mongoose");
-const path = require('path'); // Import the path module
+const path = require("path"); // Import the path module
 
 // Correct path example
 
@@ -11,7 +11,7 @@ const app = express();
 
 
 // Middleware
-app.use('/uploads', express.static(path.join(__dirname, '../uploads')));
+app.use("/uploads", express.static(path.join(__dirname, "../uploads")));
 
 // Allow requests from the frontend origin
 const allowedOrigins = ['http://localhost:5173'];
@@ -47,7 +47,6 @@ const reviewRoutes = require("./routes/reviewRoutes");
 const messageRoutes = require("./routes/messageRoutes");
 const taskRoutes = require("./routes/taskRoutes");
 const technicianRoutes = require("./routes/technicianRoutes");
-
 
 mongoose.connect(process.env.DATABASE_URL); // Use 127.0.0.1 instead of localhost to fix conversion issues with IPV6
 const db = mongoose.connection;
