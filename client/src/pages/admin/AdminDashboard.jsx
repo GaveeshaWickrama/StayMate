@@ -4,21 +4,16 @@ import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, Legend, Responsi
 
 function AdminDashboard() {
   const data = [
-    { name: 'January', customers: 300 },
-    { name: 'February', customers: 280 },
-    { name: 'March', customers: 350 },
-    { name: 'April', customers: 400 },
-    { name: 'May', customers: 380 },
-    { name: 'June', customers: 450 },
-    { name: 'July', customers: 420 },
+    { name: 'January', customers: 300, propertyOwners: 150 },
+    { name: 'February', customers: 280, propertyOwners: 140 },
+    { name: 'March', customers: 350, propertyOwners: 180 },
+    { name: 'April', customers: 400, propertyOwners: 200 },
+    { name: 'May', customers: 380, propertyOwners: 190 },
+    { name: 'June', customers: 450, propertyOwners: 220 },
+    { name: 'July', customers: 420, propertyOwners: 210 },
   ];
 
   const totalSales = 28740; // Use a fixed value for demonstration
-
-  const userTableData = [
-    { id: 1, name: 'John Doe', role: 'Admin', status: 'Online', lastLogin: '1 hours ago' },
-    { id: 2, name: 'Jane Smith', role: 'User', status: 'Offline', lastLogin: '1 day ago' },
-  ];
 
   return (
     <main className="p-5 text-gray-900 bg-gray-100 min-h-screen">
@@ -61,34 +56,6 @@ function AdminDashboard() {
       </div>
 
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-5">
-        <div className="bg-white shadow-md p-5 rounded-md h-96 overflow-auto">
-          <h3 className="text-lg font-medium mb-4">Users</h3>
-          <table className="min-w-full bg-white border border-gray-200 rounded-md">
-            <thead>
-              <tr className="bg-gray-100">
-                <th className="py-2 px-4 border-b">ID</th>
-                <th className="py-2 px-4 border-b">Name</th>
-                <th className="py-2 px-4 border-b">Role</th>
-                <th className="py-2 px-4 border-b">Status</th>
-                <th className="py-2 px-4 border-b">Last Login</th>
-              </tr>
-            </thead>
-            <tbody>
-              {userTableData.map(user => (
-                <tr key={user.id} className="hover:bg-gray-50">
-                  <td className="py-2 px-4 border-b">{user.id}</td>
-                  <td className="py-2 px-4 border-b">{user.name}</td>
-                  <td className="py-2 px-4 border-b">{user.role}</td>
-                  <td className={`py-2 px-4 border-b ${user.status === 'Online' ? 'text-green-500' : 'text-red-500'}`}>
-                    {user.status}
-                  </td>
-                  <td className="py-2 px-4 border-b">{user.lastLogin}</td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
-        </div>
-
         <div className="bg-white shadow-md p-5 rounded-md h-96">
           <h3 className="text-lg font-medium mb-4">Customers</h3>
           <ResponsiveContainer width="100%" height="100%">
@@ -99,6 +66,20 @@ function AdminDashboard() {
               <Tooltip />
               <Legend />
               <Line type="monotone" dataKey="customers" stroke="#8884d8" activeDot={{ r: 8 }} />
+            </LineChart>
+          </ResponsiveContainer>
+        </div>
+
+        <div className="bg-white shadow-md p-5 rounded-md h-96">
+          <h3 className="text-lg font-medium mb-4">Property Owners</h3>
+          <ResponsiveContainer width="100%" height="100%">
+            <LineChart data={data} margin={{ top: 5, right: 30, left: 20, bottom: 5 }}>
+              <CartesianGrid strokeDasharray="3 3" />
+              <XAxis dataKey="name" />
+              <YAxis />
+              <Tooltip />
+              <Legend />
+              <Line type="monotone" dataKey="propertyOwners" stroke="#82ca9d" activeDot={{ r: 8 }} />
             </LineChart>
           </ResponsiveContainer>
         </div>

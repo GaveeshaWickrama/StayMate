@@ -11,6 +11,7 @@ import AddSection from "../pages/host/AddSection";
 import AddLocation from "../pages/host/AddLocation";
 import PropertyDetails from "../pages/common/PropertyDetails";
 import HostReservation from "../pages/host/hostReservations";
+import HostReviews from "../pages/host/HostReviews";
 
 // import HostReviews from "../pages/host/hostReviews";
 
@@ -30,7 +31,9 @@ function HostRoutes() {
         <Route path="/add-property" element={ currentUser && currentUser.role === "host" ? ( <AddProperty /> ) : ( <Navigate to="/Unauthorized" /> ) } />
         <Route path="/add-section" element={ currentUser && currentUser.role === "host" ? ( <AddSection /> ) : ( <Navigate to="/Unauthorized" /> ) } />
         <Route path="/add-location" element={ currentUser && currentUser.role === "host" ? ( <AddLocation /> ) : ( <Navigate to="/Unauthorized" /> ) } />
-        <Route path="/reservations" element={ currentUser && currentUser.role === "host" ? ( <HostReservation /> ) : ( <Navigate to="/Unauthorized" /> ) } /> </Routes>
+        <Route path="/reservations" element={ currentUser && currentUser.role === "host" ? ( <HostReservation /> ) : ( <Navigate to="/Unauthorized" /> ) } />
+        <Route path="/reviews" element={ currentUser && currentUser.role === "host" ? ( <HostReviews /> ) : ( <Navigate to="/Unauthorized" /> ) } /> </Routes>
+         
     </PropertyProvider>
   );
 }

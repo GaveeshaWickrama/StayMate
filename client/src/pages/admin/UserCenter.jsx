@@ -1,5 +1,6 @@
 import React from "react";
 import { useNavigate } from "react-router-dom";
+import { FaEdit, FaTrash } from "react-icons/fa";
 
 const UserCenter = () => {
   const navigate = useNavigate();
@@ -32,14 +33,14 @@ const UserCenter = () => {
   return (
     <div className="container mx-auto p-10">
       <h2 className="text-4xl font-extrabold text-blue-600 mb-6 border-b-2 border-blue-200 pb-2">
-        User Center
+        Users
       </h2>
       <div className="flex justify-end mb-4">
         <button
           onClick={handleAddUser}
           className="bg-gradient-to-r from-blue-500 to-blue-700 text-white px-6 py-2 rounded-md shadow-lg hover:shadow-xl transition duration-200"
         >
-          Add New User
+          Add Moderrator
         </button>
       </div>
       <table className="min-w-full bg-white rounded-lg shadow-md overflow-hidden border border-gray-200">
@@ -64,17 +65,21 @@ const UserCenter = () => {
               <td className="py-3 px-4 border-b">{user.address}</td>
               <td className="py-3 px-4 border-b">{user.phone}</td>
               <td className="py-3 px-4 border-b flex space-x-2 justify-center">
-                <button
-                  onClick={() => handleEdit(user.id)}
-                  className="bg-blue-500 text-white rounded-md px-3 py-1 transition duration-200 hover:bg-blue-600 shadow-md hover:shadow-lg"
-                >
-                  Edit
-                </button>
+                {user.role === "Moderator" && (
+                  <button
+                    onClick={() => handleEdit(user.id)}
+                    className="text-blue-500 hover:text-blue-700 transition duration-200"
+                    aria-label="Edit"
+                  >
+                    <FaEdit className="text-xl" />
+                  </button>
+                )}
                 <button
                   onClick={() => handleDelete(user.id)}
-                  className="bg-red-500 text-white rounded-md px-3 py-1 transition duration-200 hover:bg-red-600 shadow-md hover:shadow-lg"
+                  className="text-blue-500 hover:text-blue-700 transition duration-200"
+                  aria-label="Delete"
                 >
-                  Delete
+                  <FaTrash className="text-xl" />
                 </button>
               </td>
             </tr>
