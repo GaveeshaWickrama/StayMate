@@ -1,4 +1,6 @@
 const Reservation = require("../models/reservationModel");
+const Property = require("../models/propertyModel");
+const User = require("../models/userModel");
 
 // add a reservation
 const addReservation = async (req, res) => {
@@ -43,7 +45,40 @@ const addReservation = async (req, res) => {
     res.status(500).json({ message: "Server error" });
   }
 };
+//get reservations for user(guest or host)
+const getReservations = async (req, res) => {
+  const userId = req.user.userId;
+  try {
+    const user = await User.findById(userId);
 
+    if (!user) {
+      return res.status(404).json({ message: "User not found" });
+    }
+
+    let reservations;
+
+    if (user.role === "host") {
+      const properties = await Property.find({ host_id: userId });
+
+      //extract propertyids
+      const propertyIds = properties.map((property) => property._id);
+
+      //find reservations for those properties
+      reservations = await Reservation.find({ property: { $in: propertyIds } })
+        .populate("property")
+        .populate("user");
+    } else {
+      reservations = await Reservation.find({ user: userId }).populate(
+        "property"
+      );
+    }
+    res.status(200).json(reservations);
+  } catch (error) {
+    console.log(error);
+    res.status(500).json({ message: "Server Error!" });
+  }
+};
 module.exports = {
   addReservation,
+  getReservations,
 };

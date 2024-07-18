@@ -9,7 +9,7 @@ const reservationSchema = new Schema({
   },
   property: {
     type: Schema.Types.ObjectId,
-    ref: "property",
+    ref: "Property",
     required: true,
   },
   checkInDate: {
@@ -35,6 +35,11 @@ const reservationSchema = new Schema({
   createdAt: {
     type: Date,
     default: Date.now,
+  },
+  status: {
+    type: String,
+    enum: ["upcoming", "ongoing", "completed"],
+    default: "upcoming",
   },
 });
 

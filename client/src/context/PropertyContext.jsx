@@ -1,4 +1,3 @@
-// src/context/PropertyContext.js
 import React, { createContext, useState, useContext, useEffect } from 'react';
 
 // Create a context
@@ -19,10 +18,10 @@ export const PropertyProvider = ({ children }) => {
       address: '',
       latitude: 0,
       longitude: 0,
-      city: '',
       district: '',
       province: '',
-      zipcode: ''
+      zipcode: '',
+      geocoding_response: '' // Store as a string
     }
   };
 
@@ -33,13 +32,20 @@ export const PropertyProvider = ({ children }) => {
     console.log('Property context changed:', property);
   }, [property]);
 
+  const updateLocation = (newLocation) => {
+    setProperty(prevProperty => ({
+      ...prevProperty,
+      location: newLocation
+    }));
+  };
+
   const resetProperty = () => {
     setProperty(initialPropertyState);
     setStage(1);
   };
 
   return (
-    <PropertyContext.Provider value={{ property, setProperty, stage, setStage, resetProperty }}>
+    <PropertyContext.Provider value={{ property, setProperty, stage, setStage, resetProperty, updateLocation }}>
       {children}
     </PropertyContext.Provider>
   );

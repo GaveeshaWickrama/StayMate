@@ -42,27 +42,25 @@ async function loginUser(req, res) {
 
 async function requestRegister(req, res) {
     try {
-        const { email, password, role } = req.body;
+        const { email, password, role, nicPassport, phone, gender, firstName, lastName } = req.body;
 
-        if (!email || !password || !role) {
-            return res.status(400).json({ message: "Email, Password, or Role not defined" });
+        if (!email || !password || !role || !nicPassport || !phone || !gender || !firstName || !lastName) {
+            return res.status(400).json({ message: "All fields are required." });
         }
 
         if (!ALLOWED_ROLES.includes(role)) {
             return res.status(400).json({ message: "Invalid role" });
         }
 
-        // Validate email format
         if (!validator.isEmail(email)) {
             return res.status(400).json({ message: "Invalid email format." });
         }
 
-        // Check if email and role combination already exists
         const normalizedEmail = email.toLowerCase().trim();
-        // const existingUser = await User.findOne({ email: normalizedEmail, role });
         const existingUser = await User.findOne({ email: normalizedEmail });
+
         if (existingUser) {
-            return res.status(400).json({ message: "Email and Role already in use." });
+            return res.status(400).json({ message: "Email already in use." });
         }
 
         if (password.length < 8) {
@@ -73,31 +71,31 @@ async function requestRegister(req, res) {
         const newUserDetails = {
             email: normalizedEmail,
             password: hashedPassword,
-            role
+            role,
+            nicPassport,
+            phone,
+            gender,
+            firstName,
+            lastName
         };
 
-        // Check if an OTP request has already been sent
-        // const existingOtp = await OTP.findOne({ email: normalizedEmail, 'userDetails.role': role });
         const existingOtp = await OTP.findOne({ email: normalizedEmail });
 
         if (existingOtp) {
             const currentTime = Date.now();
-            const timeDifference = (currentTime - existingOtp.lastOtpTime) / 1000; // in seconds
-            const waitTime = (2 * existingOtp.otpCount) * 20; // 40s 80s 160s etc ..
+            const timeDifference = (currentTime - existingOtp.lastOtpTime) / 1000;
+            const waitTime = (2 * existingOtp.otpCount) * 20;
 
             if (timeDifference < waitTime) {
-                
-                return res.status(429).json({ message: `Please wait ${(Math.round(waitTime - timeDifference))} S before requesting a new OTP.` });
+                return res.status(429).json({ message: `Please wait ${(Math.round(waitTime - timeDifference))} seconds before requesting a new OTP.` });
             }
 
-            // Update OTP count and lastOtpTime
             existingOtp.otpCount += 1;
             existingOtp.lastOtpTime = currentTime;
-            existingOtp.otp = otpGenerator.generate(6, { upperCaseAlphabets: false, specialChars: false });
+            existingOtp.otp = otpGenerator.generate(4, { upperCaseAlphabets: false, specialChars: false });
             existingOtp.userDetails = newUserDetails;
             await existingOtp.save();
 
-            // Send OTP email TODO: MOVE these 
             const mailOptions = {
                 from: process.env.EMAIL_USER,
                 to: normalizedEmail,
@@ -117,12 +115,10 @@ async function requestRegister(req, res) {
                 }
             });
         } else {
-            // Generate OTP TODO: MOVE these 
             const otp = otpGenerator.generate(4, { upperCaseAlphabets: false, specialChars: false });
             const otpEntry = new OTP({ email: normalizedEmail, otp, userDetails: newUserDetails });
             await otpEntry.save();
 
-            // Send OTP email
             const mailOptions = {
                 from: process.env.EMAIL_USER,
                 to: normalizedEmail,
@@ -149,7 +145,7 @@ async function requestRegister(req, res) {
 }
 
 async function verifyOtp(req, res) {
-    const { email, otp, role } = req.body; //This should be changed 
+    const { email, otp, role } = req.body;
 
     if (!email || !otp || !role) {
         return res.status(400).json({ message: 'Invalid Input' });
@@ -172,14 +168,11 @@ async function verifyOtp(req, res) {
             return res.status(400).json({ message: 'Invalid OTP' });
         }
 
-        // Create user
         const user = new User(otpEntry.userDetails);
         await user.save();
 
-        // Delete the OTP entry after verification
         await OTP.deleteOne({ email, otp });
 
-        // Generate JWT token
         const accessToken = jwt.sign(
             { userId: user._id, email: user.email, role: user.role },
             process.env.ACCESS_TOKEN_SECRET,
@@ -196,6 +189,7 @@ async function verifyOtp(req, res) {
         res.status(500).json({ message: 'Internal server error' });
     }
 }
+
 
 module.exports = {
     loginUser,

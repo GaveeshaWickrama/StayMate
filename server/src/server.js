@@ -3,14 +3,13 @@ const express = require("express");
 const cors = require("cors");
 const morgan = require("morgan"); // Logging HTTP requests
 const mongoose = require("mongoose");
-const path = require('path'); // Import the path module
+const path = require("path"); // Import the path module
 
 const app = express();
 
 
 // Middleware
-
-app.use('/uploads', express.static(path.join(__dirname, '../uploads')));
+app.use("/uploads", express.static(path.join(__dirname, "../uploads")));
 
 app.use(cors());
 app.use(morgan("dev"));
@@ -25,7 +24,7 @@ const propertyRoutes = require("./routes/propertyRoutes");
 const reservationRoutes = require("./routes/reservationRoutes");
 const complaintRoutes = require("./routes/complaintRoutes");
 const reviewRoutes = require("./routes/reviewRoutes");
-
+const messageRoutes = require("./routes/messageRoutes");
 
 mongoose.connect(process.env.DATABASE_URL); // Use 127.0.0.1 instead of localhost to fix conversion issues with IPV6
 console.log(process.env.DATABASE_URL);
@@ -41,6 +40,7 @@ app.use("/properties", propertyRoutes);
 app.use("/reservation", reservationRoutes);
 app.use("/complaints", complaintRoutes);
 app.use("/reviews", reviewRoutes);
+app.use("/message", messageRoutes);
 
 
 app.get("/", (req, res) => {
