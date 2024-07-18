@@ -16,7 +16,7 @@ function AdminDashboard() {
   const totalSales = 28740; // Use a fixed value for demonstration
 
   const userTableData = [
-    { id: 1, name: 'John Doe', role: 'Admin', status: 'Online', lastLogin: '7 hours ago' },
+    { id: 1, name: 'John Doe', role: 'Admin', status: 'Online', lastLogin: '1 hours ago' },
     { id: 2, name: 'Jane Smith', role: 'User', status: 'Offline', lastLogin: '1 day ago' },
   ];
 

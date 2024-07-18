@@ -14,7 +14,7 @@ const UserCenter = () => {
   ];
 
   const handleEdit = (id) => {
-    navigate(`/edit-user/${id}`);
+    navigate(`/UpdateUser/${id}`);
   };
 
   const handleDelete = (id) => {
@@ -26,7 +26,7 @@ const UserCenter = () => {
   };
 
   const handleAddUser = () => {
-    navigate("/add-user"); // Redirect to Add User page
+    navigate("/AddUser"); // Redirect to Add User page
   };
 
   return (
