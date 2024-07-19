@@ -21,16 +21,27 @@ const Header = () => {
           <p className="text-sm">Your Satisfaction, Our Priority</p>
         </div>
       </div>
-      <div className="flex items-center">
-        <div className="text-right mr-4">
-          <p className="text-lg font-bold">
-            {currentUser.gender === "male" ? "Mr. " : currentUser.gender === "female" ? "Ms. " : ""}
-            {currentUser.firstName} {currentUser.lastName}
-          </p>
-          <p className="text-blue-500">{currentUser.role}</p>
+      {currentUser ? (
+        <div className="flex items-center">
+          <div className="text-right mr-4">
+            <p className="text-lg font-bold">
+              {currentUser.gender === "male" ? "Mr. " : currentUser.gender === "female" ? "Ms. " : ""}
+              {currentUser.firstName} {currentUser.lastName}
+            </p>
+            <p className="text-blue-500">{currentUser.role}</p>
+          </div>
+          <img
+            src={`${import.meta.env.VITE_API_URL}/${currentUser.picture}`}
+            alt="Profile"
+            className="h-12 w-12 rounded-full"
+          />
         </div>
-        <img src="path/to/profile-pic.jpg" alt="Profile" className="h-12 w-12 rounded-full" />
-      </div>
+      ) : (
+        <div className="flex space-x-4">
+          <a href="/login" className="text-blue-500 hover:underline">Login</a>
+          <a href="/signup" className="text-blue-500 hover:underline">Signup</a>
+        </div>
+      )}
     </div>
   );
 };
