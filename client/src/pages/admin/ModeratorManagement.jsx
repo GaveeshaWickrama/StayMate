@@ -1,6 +1,7 @@
 import { useEffect } from "react";
 import axios from 'axios';
 import { useAuth } from '../../context/auth';
+import { authService } from '../../services/authService';
 import { useModeratorsContext } from "../../hooks/useModeratorsContext";
 
 //components
@@ -34,6 +35,12 @@ const ModeratorManagement = () => {
 
         fetchModerators();
     }, [token,dispatch]);
+
+    useEffect(() => {
+        const user = authService.getCurrentUser();
+        console.log(user); // Log the user object to check its structure
+    }, []);
+
 
     return (
         <div className="container mx-auto bg-gray-100 p-8">
