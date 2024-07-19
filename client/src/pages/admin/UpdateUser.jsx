@@ -34,7 +34,7 @@ const UpdateUser = () => {
     // Implement the API call to update the user here
     console.log("Updated user data submitted:", userData);
     // After submission, navigate back to the User Center
-    navigate("/user-center");
+    navigate("/UserCenter");
   };
 
   return (

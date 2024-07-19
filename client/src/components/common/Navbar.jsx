@@ -66,6 +66,8 @@ function Navbar() {
     { path: "/admin/MyProfile", label: "My Profile" },
     { path: "/admin/UserCenter", label: "User Center" },
     { path: "/admin/report", label: "Report" },
+    { path: "/admin/PropertyOwners", label: "PropertyOwners" },
+    { path: "/admin/Tenants", label: "Tenants" },
   ];
 
   const guestLinks = [

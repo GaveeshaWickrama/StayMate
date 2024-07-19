@@ -21,7 +21,7 @@ const AddUser = () => {
     // Implement the API call to add the user here
     console.log("User data submitted:", userData);
     // After submission, navigate back to the User Center
-    navigate("/user-center");
+    navigate("/UserCenter");
   };
 
   return (

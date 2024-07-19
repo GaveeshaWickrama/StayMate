@@ -9,6 +9,8 @@ import ModeratorManagement from '../pages/admin/ModeratorManagement';
 import AddUser from '../pages/admin/AddUser';
 import UpdateUser from '../pages/admin/UpdateUser';
 import Report from '../pages/admin/Report';
+import PropertyOwners from '../pages/admin/PropertyOwners';
+import Tenants from '../pages/admin/Tenants';
 
 function AdminRoutes() {
   const { currentUser, loading } = useAuth();
@@ -28,6 +30,8 @@ function AdminRoutes() {
       <Route path="/UpdateUser" element={currentUser && currentUser.role === 'admin' ? <UpdateUser /> : <Navigate to="/Unauthorized" />} />
       <Route path="/AddUser" element={currentUser && currentUser.role === 'admin' ? <AddUser /> : <Navigate to="/Unauthorized" />} />
       <Route path="/ModeratorManagement" element={currentUser && currentUser.role === 'admin' ? <ModeratorManagement /> : <Navigate to="/Unauthorized" />} />
+      <Route path="/PropertyOwners" element={currentUser && currentUser.role === 'admin' ? <PropertyOwners /> : <Navigate to="/Unauthorized" />} />
+      <Route path="/Tenants" element={currentUser && currentUser.role === 'admin' ? <Tenants /> : <Navigate to="/Unauthorized" />} />
     </Routes>
   );
 }
