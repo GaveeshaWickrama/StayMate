@@ -27,8 +27,7 @@ const AddUser = () => {
   return (
     <div className="container mx-auto p-10 bg-white shadow-lg rounded-lg">
       <h2 className="text-4xl font-extrabold text-blue-600 mb-6 border-b-2 border-blue-200 pb-2">
-        Add New User
-      </h2>
+        Add moderator    </h2>
       <form onSubmit={handleSubmit} className="space-y-6">
         <div>
           <label className="block text-gray-700 text-sm font-semibold mb-2">Name</label>
