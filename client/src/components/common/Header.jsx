@@ -23,7 +23,10 @@ const Header = () => {
       </div>
       <div className="flex items-center">
         <div className="text-right mr-4">
-          <p className="text-lg font-bold">{currentUser.firstName} {currentUser.lastName}</p>
+          <p className="text-lg font-bold">
+            {currentUser.gender === "male" ? "Mr. " : currentUser.gender === "female" ? "Ms. " : ""}
+            {currentUser.firstName} {currentUser.lastName}
+          </p>
           <p className="text-blue-500">{currentUser.role}</p>
         </div>
         <img src="path/to/profile-pic.jpg" alt="Profile" className="h-12 w-12 rounded-full" />

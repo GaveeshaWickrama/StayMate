@@ -23,13 +23,13 @@ async function loginUser(req, res) {
     try {
         if (await bcrypt.compare(password, user.password)) {
             const accessToken = jwt.sign(
-                { userId: user._id, email: user.email, role: user.role, firstName: user.firstName, lastName: user.lastName },
+                { userId: user._id, email: user.email, role: user.role, firstName: user.firstName, lastName: user.lastName, gender: user.gender },
                 process.env.ACCESS_TOKEN_SECRET,
                 { expiresIn: '24h' } // Token expires in 24 hours
             );
             res.json({
                 accessToken: accessToken,
-                user: { id: user._id, email: user.email, role: user.role, firstName: user.firstName, lastName: user.lastName  }
+                user: { id: user._id, email: user.email, role: user.role, firstName: user.firstName, lastName: user.lastName, gender: user.gender  }
             });
         } else {
             res.status(401).json({ message: "Incorrect Email or Password" });
