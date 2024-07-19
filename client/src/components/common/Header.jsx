@@ -39,7 +39,7 @@ const Header = () => {
       ) : (
         <div className="flex space-x-4">
           <a href="/login" className="text-blue-500 hover:underline">Login</a>
-          <a href="/signup" className="text-blue-500 hover:underline">Signup</a>
+          <a href="/signup/guest" className="text-blue-500 hover:underline">Signup</a>
         </div>
       )}
     </div>
