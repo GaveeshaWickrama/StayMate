@@ -7,6 +7,8 @@ const { authToken, requireRole } = require('../middleware/authProvider');
 //get the profile of a single user
 router.get('/',authToken, requireRole('user', 'admin', 'guest', 'host', 'technician'), userController.viewProfile)
 
+//update profile
+router.patch('/editProfile/',authToken, requireRole('user', 'admin', 'guest', 'host', 'technician'),userController.editProfile)
 
 
 
@@ -30,11 +32,9 @@ router.get('/:id',authToken, requireRole('user', 'admin', 'guest', 'host', 'tech
 //delete a user
 router.delete('/:id',userController.deleteUser)
 
-//update a user
-router.patch('/:id',userController.updateUser)
 
 
-// patch self user info (id stored in jwt token)
-router.patch('/:id', authToken, requireRole('user', 'admin', 'guest', 'host', 'technician'), userController.updateUser);
+// // patch self user info (id stored in jwt token)
+// router.patch('/:id', authToken, requireRole('user', 'admin', 'guest', 'host', 'technician'), userController.updateUser);
 
 module.exports = router;
