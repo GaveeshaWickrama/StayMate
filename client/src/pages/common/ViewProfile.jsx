@@ -43,7 +43,7 @@ const ViewProfile = () => {
           <div className="flex items-center justify-between">
             <div className="flex items-center">
               <img
-                src={ profile.profilepicture }
+                src={ profile.picture }
                 alt="Profile"
                 className="w-32 h-32 rounded-full"
               />
@@ -67,11 +67,11 @@ const ViewProfile = () => {
             </div>
             <div className="bg-white p-4 rounded-lg shadow">
               <h2 className="text-lg font-semibold">Phone</h2>
-              <p>{ profile.contactNumber }</p>
+              <p>{ profile.phone }</p>
             </div>
             <div className="bg-white p-4 rounded-lg shadow">
               <h2 className="text-lg font-semibold">NIC</h2>
-              <p>{ profile.nic }</p>
+              <p>{ profile.nicPassport }</p>
             </div>
             <div className="bg-white p-4 rounded-lg shadow">
               <h2 className="text-lg font-semibold">Gender</h2>
