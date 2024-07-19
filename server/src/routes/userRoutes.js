@@ -5,7 +5,7 @@ const { authToken, requireRole } = require('../middleware/authProvider');
 
 
 //get the profile of a single user
-router.get('/:id',authToken, requireRole('user', 'admin', 'guest', 'host', 'technician'), userController.viewProfile)
+router.get('/',authToken, requireRole('user', 'admin', 'guest', 'host', 'technician'), userController.viewProfile)
 
 
 
@@ -22,10 +22,10 @@ router.get('/:id',authToken, requireRole('user', 'admin', 'guest', 'host', 'tech
 //haven't used the below
 
 //get all users
-router.get('/',userController.getUsers)
+router.get('/',authToken, requireRole('admin'),userController.getUsers)
 
 //get a single user
-router.get('/:id',userController.getUser)
+router.get('/:id',authToken, requireRole('user', 'admin', 'guest', 'host', 'technician'),userController.getUser)
 
 //delete a user
 router.delete('/:id',userController.deleteUser)

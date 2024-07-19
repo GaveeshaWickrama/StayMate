@@ -5,7 +5,7 @@ const mongoose = require('mongoose')
 const getUsers = async (req,res)=>{
 
     try{
-        const user = await User.find({}).sort({createdAt: -1})
+        const user = await User.find()
         res.status(200).json(user)
     }catch(error){
         res.status(400).json({error: error.message})
@@ -52,6 +52,23 @@ const viewProfile = async (req, res) => {
     
 }
 
+//to get the name and the role of the logged user
+const getNameRole = async (req, res) => {
+
+        const id  = req.user.userId;
+    
+        if (!mongoose.Types.ObjectId.isValid(id)) {
+            return res.status(400).json({ error: 'Invalid user ID' });
+        }
+    
+        const user = await User.findById(id);
+        if (!user) {
+            return res.status(404).json({ error: 'No such user' });
+        }
+        res.status(200).json(user);
+        
+        
+    }
 
 
 
@@ -134,4 +151,5 @@ module.exports = {
     updateUser,
     deleteUser,
     viewProfile,
+    getNameRole,
 };

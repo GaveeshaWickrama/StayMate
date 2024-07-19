@@ -11,7 +11,7 @@ const ViewProfile = () => {
     useEffect(() => {
         const fetchProfile = async () => {
             try {
-                const response = await axios.get(`${import.meta.env.VITE_API_URL}/users/viewProfile`, {
+                const response = await axios.get(`${import.meta.env.VITE_API_URL}/users/`, {
                     headers: {
                         Authorization: `Bearer ${token}`,
                     },
@@ -48,7 +48,7 @@ const ViewProfile = () => {
                 className="w-32 h-32 rounded-full"
               />
               <div className="ml-4">
-                <h1 className="text-2xl font-bold">{profile.firstname} {profile.lastname}</h1>
+                <h1 className="text-2xl font-bold">{profile.firstName} {profile.lastName}</h1>
                 <p className="text-gray-600">{profile.role}</p>
                 {/* <p className="text-yellow-500">4.5 ★★★★☆</p> */}
               </div>
