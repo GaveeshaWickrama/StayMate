@@ -53,31 +53,40 @@ const viewProfile = async (req, res) => {
     
 }
 
-//edit userprofile
-const editProfile = async (req,res)=>{
-
-    const id  = req.user.userId;
-    console.log(id);
+/// Edit profile
+const editProfile = async (req, res) => {
+    const id = req.user.userId;
+    console.log("User ID:", id);
+    console.log("Uploaded file:", req.file);  // Log the file object
   
     if (!mongoose.Types.ObjectId.isValid(id)) {
-      return res.status(400).json({error: 'No such user'})
+      return res.status(400).json({ error: 'Invalid user ID' });
     }
   
-    const user = await User.findOneAndUpdate({_id: id}, {
-      ...req.body
-    })
+    try {
+      const updateData = { ...req.body };
+      if (req.file && req.file.path) {
+        updateData.picture = req.file.path.replace(/\\/g, '/'); 
+      }
   
-    if (!user) {
-      return res.status(400).json({error: 'No such user',id})
+      const user = await User.findOneAndUpdate(
+        { _id: id },
+        { $set: updateData },
+        { new: true, runValidators: true }
+      );
+  
+      if (!user) {
+        return res.status(400).json({ error: 'No such user' });
+      }
+  
+      res.status(200).json(user);
+    } catch (error) {
+      console.error('Error updating user profile:', error);
+      res.status(500).json({ error: 'Internal server error' });
     }
+  };
   
-    res.status(200).json(user)
-
-}
-
-
-
-
+  
 
 
 
