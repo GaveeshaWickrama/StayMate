@@ -5,8 +5,8 @@ import logo from '../../assets/icons/logo.png';
 const Header = () => {
 
   const { currentUser, loading } = useAuth();
-  
-  // console.log(currentUser);
+  console.log("Inside Header");
+  console.log(currentUser);
 
   if (loading) {
     return <div>Loading...</div>; // Show a loading spinner or message
