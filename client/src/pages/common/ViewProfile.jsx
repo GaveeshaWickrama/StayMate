@@ -70,7 +70,7 @@ const ViewProfile = () => {
               <p>{ profile.phone }</p>
             </div>
             <div className="bg-white p-4 rounded-lg shadow">
-              <h2 className="text-lg font-semibold">NIC</h2>
+              <h2 className="text-lg font-semibold">NIC/Passport</h2>
               <p>{ profile.nicPassport }</p>
             </div>
             <div className="bg-white p-4 rounded-lg shadow">
