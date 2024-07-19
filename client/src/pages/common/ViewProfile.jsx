@@ -43,10 +43,11 @@ const ViewProfile = () => {
           <div className="flex items-center justify-between">
             <div className="flex items-center">
               <img
-                src={ profile.picture }
+                src={`${import.meta.env.VITE_API_URL}/${profile.picture}`}
                 alt="Profile"
                 className="w-32 h-32 rounded-full"
               />
+          
               <div className="ml-4">
                 <h1 className="text-2xl font-bold">{profile.firstName} {profile.lastName}</h1>
                 <p className="text-gray-600">{profile.role}</p>
@@ -77,10 +78,7 @@ const ViewProfile = () => {
               <h2 className="text-lg font-semibold">Gender</h2>
               <p>{ profile.gender }</p>
             </div>
-            <div className="bg-white p-4 rounded-lg shadow col-span-2">
-              <h2 className="text-lg font-semibold">Address</h2>
-              <p>{ profile.address }</p>
-            </div>
+           
             
             <div className="flex justify-end col-span-2">
                 <Link to="/users/EditProfile">
