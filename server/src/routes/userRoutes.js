@@ -1,5 +1,6 @@
 const express = require('express');
 const router = express.Router();
+const upload = require('../middleware/multer');
 const userController = require('../controllers/userController');
 const { authToken, requireRole } = require('../middleware/authProvider');
 
@@ -8,9 +9,7 @@ const { authToken, requireRole } = require('../middleware/authProvider');
 router.get('/',authToken, requireRole('user', 'admin', 'guest', 'host', 'technician'), userController.viewProfile)
 
 //update profile
-router.patch('/editProfile/',authToken, requireRole('user', 'admin', 'guest', 'host', 'technician'),userController.editProfile)
-
-
+router.patch('/editProfile',authToken, requireRole('user', 'admin', 'guest', 'host', 'technician'), upload.single('photo'),userController.editProfile)
 
 
 
