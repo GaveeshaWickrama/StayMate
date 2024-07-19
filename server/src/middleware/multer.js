@@ -11,6 +11,10 @@ const storage = multer.diskStorage({
     else if(req.url.includes('/add')) {
       cb(null, 'uploads/properties/');
     }
+    else if(req.url.includes('/EditProfile')) {
+      cb(null, 'uploads/profilepictures/');
+    }
+
     else {
       cb(null, 'uploads/');
     }
