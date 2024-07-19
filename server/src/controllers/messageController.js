@@ -64,6 +64,44 @@ const getMessages = async (req,res) => {
 
 const getContacts = async (req, res) => {
     try {
+      const loggedInUser = req.user.userId;
+  
+      // Find conversations where the participants array contains the current user's ID
+      const conversations = await Conversation.find({ participants: { $in: [loggedInUser] } })
+        .populate('participants','firstname lastname picture'); // Adjust fields as necessary
+  
+      // Extract user objects from the populated conversations
+      const users = conversations.flatMap(conversation => 
+        conversation.participants.filter(participant => participant._id.toString() !== loggedInUser)
+      );
+  
+      // Remove duplicates based on user IDs
+      const uniqueUsers = Array.from(new Map(users.map(user => [user._id.toString(), user])).values());
+  
+      res.status(200).json(uniqueUsers);
+    } catch (err) {
+      console.error("Error Fetching Conversations: ", err.message);
+      res.status(500).json({ error: "Internal Server Error" });
+    }
+  };
+  
+
+
+module.exports = { sendMessage,getMessages, getContacts };
+
+
+
+
+
+
+
+
+
+
+
+
+/* const getContacts = async (req, res) => {
+    try {
         const loggedInUser = req.user.userId;
 
         // Find conversations where the participants array contains the current user's ID
@@ -82,7 +120,4 @@ const getContacts = async (req, res) => {
         console.error("Error Fetching Conversations: ", err.message);
         res.status(500).json({ error: "Internal Server Error" });
     }
-};
-
-
-module.exports = { sendMessage,getMessages, getContacts };
+}; */
