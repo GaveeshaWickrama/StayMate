@@ -1,10 +1,10 @@
 ###Route for testing send message functionality
-POST http://localhost:3000/message/send/6677b440ceb4d10a38fe8d61
+POST http://localhost:3000/message/send/6698e73b1203100f98fe8a17
 Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiI2NjhlNDc0YzZmMjQ3MTRkOGUxY2M0NzYiLCJlbWFpbCI6Imd1ZXN0dGVzdEBnbWFpbC5jb20iLCJyb2xlIjoiZ3Vlc3QiLCJpYXQiOjE3MjEzNTY5MzAsImV4cCI6MTcyMTQ0MzMzMH0.AlsJiX_iq-UhwPtae2r6ZCxJmcg0fLOLqe_V9TDqtog
 Content-Type: application/json
 
 {
-    "message" : "This is the first message to host user1@gmail.com by test user."
+    "message" : "Hey what's up dude?"
 }
 
 

@@ -68,7 +68,7 @@ const getContacts = async (req, res) => {
   
       // Find conversations where the participants array contains the current user's ID
       const conversations = await Conversation.find({ participants: { $in: [loggedInUser] } })
-        .populate('participants','firstname lastname picture'); // Adjust fields as necessary
+        .populate('participants'); // Adjust fields as necessary
   
       // Extract user objects from the populated conversations
       const users = conversations.flatMap(conversation => 
@@ -77,6 +77,8 @@ const getContacts = async (req, res) => {
   
       // Remove duplicates based on user IDs
       const uniqueUsers = Array.from(new Map(users.map(user => [user._id.toString(), user])).values());
+
+      console.log("Users : " ,uniqueUsers);
   
       res.status(200).json(uniqueUsers);
     } catch (err) {
