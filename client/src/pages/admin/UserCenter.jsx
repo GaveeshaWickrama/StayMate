@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { FaEdit, FaTrash, FaSearch, FaUserPlus } from "react-icons/fa";
 
-const UserCenter = () => {
+const Moderators = () => {
   const navigate = useNavigate();
 
   const [searchQuery, setSearchQuery] = useState("");
@@ -46,7 +46,7 @@ const UserCenter = () => {
 
   return (
     <div className="container mx-auto p-10">
-      <h2 className="text-4xl font-extrabold text-blue-600 mb-6 border-b-2 border-blue-200 pb-2">Users</h2>
+      <h2 className="text-4xl font-extrabold text-blue-600 mb-6 border-b-2 border-blue-200 pb-2">Moderators</h2>
       <div className="flex justify-between mb-4">
         <div className="relative">
           <input
@@ -63,7 +63,7 @@ const UserCenter = () => {
           className="flex items-center bg-gradient-to-r from-blue-500 to-blue-700 text-white px-6 py-2 rounded-md shadow-lg hover:shadow-xl transition duration-200"
         >
           <FaUserPlus className="mr-2" />
-          Add Moderator
+          Add User
         </button>
       </div>
       <table className="min-w-full bg-white rounded-lg shadow-md overflow-hidden border border-gray-200">
@@ -88,15 +88,13 @@ const UserCenter = () => {
               <td className="py-3 px-4 border-b">{user.address}</td>
               <td className="py-3 px-4 border-b">{user.phone}</td>
               <td className="py-3 px-4 border-b flex space-x-2 justify-center">
-                {user.role === "Moderator" && (
-                  <button
-                    onClick={() => handleEdit(user.id)}
-                    className="text-blue-500 hover:text-blue-700 transition duration-200"
-                    aria-label="Edit"
-                  >
-                    <FaEdit className="text-xl" />
-                  </button>
-                )}
+                <button
+                  onClick={() => handleEdit(user.id)}
+                  className="text-blue-500 hover:text-blue-700 transition duration-200"
+                  aria-label="Edit"
+                >
+                  <FaEdit className="text-xl" />
+                </button>
                 <button
                   onClick={() => handleDelete(user.id)}
                   className="text-blue-500 hover:text-blue-700 transition duration-200"
@@ -113,4 +111,4 @@ const UserCenter = () => {
   );
 };
 
-export default UserCenter;
+export default Moderators;

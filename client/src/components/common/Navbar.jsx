@@ -68,6 +68,7 @@ function Navbar() {
     { path: "/admin/report", label: "Report" },
     { path: "/admin/PropertyOwners", label: "PropertyOwners" },
     { path: "/admin/Tenants", label: "Tenants" },
+    { path: "/admin/Technicians", label: "Technicians" },
   ];
 
   const guestLinks = [
