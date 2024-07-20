@@ -29,7 +29,7 @@ const ViewNewProperties = () => {
                     className="bg-white rounded-lg shadow-lg overflow-hidden">
                         <img 
                             className="w-full h-48 object-cover"
-                            src= 'http://localhost:3000/uploads/1719842871939-img3.jpg'
+                            src= 'http://localhost:3000/uploads/1720194545293-img1.jpg.webp'
                             // src={property.images[0].url} 
                             // alt={property.title} 
                         />
@@ -58,8 +58,10 @@ const ViewNewProperties = () => {
                                 {/* {property.price_per_night} */}
                                 </p>
                             <div className="flex justify-between mt-4">
-                                <button className="bg-blue-500 text-white px-4 py-2 rounded-lg hover:bg-blue-700">Chat</button>
-                                <button className="bg-yellow-500 text-white px-4 py-2 rounded-lg hover:bg-yellow-700">View Complaints</button>
+                                {/* <button className="bg-blue-500 text-white px-4 py-2 rounded-lg hover:bg-blue-700">Chat</button> */}
+                                <div className="flex justify-center mt-4">
+        <button className="bg-yellow-500 text-white px-70 py-2 rounded-lg hover:bg-yellow-700">Verify</button>
+    </div>
                             </div>
                         </div>
                     </div>
