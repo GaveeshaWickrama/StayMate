@@ -45,16 +45,6 @@ async function createProperty(req, res) {
       return res.status(400).json({ message: 'Invalid sections format' });
     }
 
-    // Log the file part of each image in sections, or 'empty' if the file is empty
-    sections.forEach((section, sectionIndex) => {
-      console.log(`Section ${sectionIndex}: ${JSON.stringify(section, null, 2)}`);
-      if (section.images && section.images.length > 0) {
-        section.images.forEach((image, imageIndex) => {
-          console.log(`Section ${sectionIndex} Image ${imageIndex} File:`, image.file && Object.keys(image.file).length > 0 ? image.file : 'empty');
-        });
-      }
-    });
-
     const images = req.files.images ? req.files.images.map(file => ({ url: path.join('uploads/properties', file.filename) })) : [];
     const sectionImages = req.files.section_images ? req.files.section_images.map(file => ({ url: path.join('uploads/properties', file.filename) })) : [];
     
@@ -69,7 +59,7 @@ async function createProperty(req, res) {
           return { url: img.url };
         });
       } else {
-        throw new Error(`Section ${section.section_name} is missing images.`);
+        section.images = images;
       }
       return section;
     });
@@ -90,9 +80,12 @@ async function createProperty(req, res) {
     res.status(201).json(newProperty);
   } catch (error) {
     console.error(error);
-    res.status(500).json({ message: error.message || 'Server error' });
+    res.status(500).json({ message: 'Server error' });
   }
 }
+
+
+
 
 
 async function getPropertiesByHostId(req, res) {
