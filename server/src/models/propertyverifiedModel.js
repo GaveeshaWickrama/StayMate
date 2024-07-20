@@ -14,6 +14,10 @@ const propertyVerifiedSchema = new Schema({
         default: 'pending',
         enum: ['pending', 'verified', 'rejected']
     },
+    moderator: {
+        type: String,
+        default: ''
+    },
     created_at: {
         type: Date,
         default: Date.now
