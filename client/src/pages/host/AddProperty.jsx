@@ -12,11 +12,13 @@ import LocationInformation from './components/LocationInformation';
 import PropertyAmenities from './components/PropertyAmenities';
 import ProgressBar from './components/ProgressBar';
 import Publish from './components/Publish';
+import { ToastContainer, toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 
 const AddProperty = () => {
   const navigate = useNavigate();
   const location = useLocation();
-  const { currentUser, token } = useAuth();
+  const { token } = useAuth();
   const { property, setProperty, stage, setStage, resetProperty } = useProperty();
   const totalStages = 7;
   const sidebarWidth = "250px";
@@ -47,6 +49,9 @@ const AddProperty = () => {
   const handleNext = () => {
     if (isFormValid) {
       setStage(prevStage => prevStage + 1);
+      toast.dismiss(); // Clear any existing toast notifications
+    } else {
+      toast.error('Please complete all required fields.');
     }
   };
 
@@ -119,28 +124,31 @@ const AddProperty = () => {
   };
   
   const validateForm = () => {
+    let valid = false;
     switch (stage) {
       case 1:
-        setIsFormValid(validatePropertyDetails());
+        valid = validatePropertyDetails();
         break;
       case 2:
-        setIsFormValid(validatePropertyDetailsSection());
+        valid = validatePropertyDetailsSection();
         break;
       case 3:
-        setIsFormValid(validatePropertySections());
+        valid = validatePropertySections() && validatePrice();
         break;
       case 4:
-        setIsFormValid(validateAmenities());
+        valid = validateAmenities();
         break;
       case 5:
-        setIsFormValid(validatePropertyImages());
+        valid = validatePropertyImages();
         break;
       case 6:
-        setIsFormValid(validateLocationInformation());
+        valid = validateLocationInformation();
         break;
       default:
-        setIsFormValid(false);
+        valid = false;
     }
+    setIsFormValid(valid);
+    return valid;
   };
 
   const validatePropertyDetails = () => {
@@ -157,6 +165,14 @@ const AddProperty = () => {
     return property.sections.length > 0;
   };
 
+  const validatePrice = () => {
+    if (property.total_unique_sections === '-1') {
+      return property.sections[0]?.price_per_night > 0;
+    } else {
+      return property.sections.every(section => section.price_per_night > 0);
+    }
+  };
+
   const validateAmenities = () => {
     return property.amenities.length > 0;
   };
@@ -170,14 +186,14 @@ const AddProperty = () => {
     return property.location.address?.trim() !== '' &&
            property.location.latitude !== 0 &&
            property.location.longitude !== 0 &&
-           property.location.city?.trim() !== '' &&
            property.location.district?.trim() !== '' &&
            property.location.province?.trim() !== '' &&
            property.location.zipcode?.trim() !== '';
   };
 
   return (
-    <div className='flex flex-col h-screen justify-between bg-white overflow-auto'>
+    <div className='flex flex-col h-[calc(100vh-80px)] justify-between bg-white overflow-auto'>
+      <ToastContainer position="top-right" autoClose={5000} hideProgressBar={false} newestOnTop={false} closeOnClick rtl={false} pauseOnFocusLoss draggable pauseOnHover />
       <div className="m-0 p-10 rounded bg-white overflow-auto">
         <form onSubmit={handleSubmit} onKeyDown={(e) => { if (e.key === 'Enter') e.preventDefault(); }} className="mb-8">
           {stage === 1 && (

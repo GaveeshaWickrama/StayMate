@@ -5,7 +5,7 @@ const PropertyContext = createContext();
 
 // Define section object template
 const sectionTemplate = {
-  section_name: '',
+  section_name: 'entire_place',
   count: 1,
   plan: {
     beds: 1,
@@ -26,7 +26,7 @@ export const PropertyProvider = ({ children }) => {
     title: '',
     description: '',
     type: 'House',
-    total_unique_sections: -1,
+    total_unique_sections: '-1', // Default to "An entire place"
     sections: [sectionTemplate],
     images: [],
     amenities: [], 
@@ -56,8 +56,8 @@ export const PropertyProvider = ({ children }) => {
   };
 
   const resetProperty = () => {
-    // setProperty(initialPropertyState);
-    // setStage(1);
+    setProperty(initialPropertyState);
+    setStage(1);
   };
 
   return (
@@ -69,6 +69,7 @@ export const PropertyProvider = ({ children }) => {
 
 // Custom hook to use the PropertyContext
 export const useProperty = () => useContext(PropertyContext);
+
 
 
 
