@@ -1,8 +1,7 @@
 const mongoose = require('mongoose');
 const Schema = mongoose.Schema;
 
-// Define the schema for PropertyVerifiedModel
-const propertyVerifiedSchema = new Schema({
+const propertyverifiedSchema = new Schema({
     propertyID: {
         type: Schema.Types.ObjectId,
         required: true,
@@ -28,4 +27,4 @@ const propertyVerifiedSchema = new Schema({
     }
 });
 
-module.exports = mongoose.model('PropertyVerified', propertyVerifiedSchema);
+module.exports = mongoose.model('PropertyVerified', propertyverifiedSchema);

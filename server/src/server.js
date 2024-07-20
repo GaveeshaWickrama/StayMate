@@ -20,6 +20,7 @@ app.use(
 const userRoutes = require("./routes/userRoutes");
 const authRoutes = require("./routes/authRoutes");
 const adminRoutes = require("./routes/adminRoutes");
+const moderatorRoutes = require("./routes/moderatorRoutes");
 const propertyRoutes = require("./routes/propertyRoutes");
 const reservationRoutes = require("./routes/reservationRoutes");
 const complaintRoutes = require("./routes/complaintRoutes");
