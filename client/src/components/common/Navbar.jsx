@@ -62,7 +62,7 @@ function Navbar() {
   const adminLinks = [
     { path: "/", label: "Home" },
     { path: "/admin", label: "Admin Dashboard" },
-    { path: "/admin/MyProfile", label: "My Profile" },
+    // { path: "/admin/MyProfile", label: "My Profile" },
     { path: "/admin/managemoderators", label: "Manage Moderators" },
   ];
 

@@ -1,6 +1,7 @@
 import React from 'react';
 import { useAuth } from '../../context/auth';
 import logo from '../../assets/icons/logo.png'; 
+import { Link } from "react-router-dom";
 
 const Header = () => {
 
@@ -22,6 +23,7 @@ const Header = () => {
         </div>
       </div>
       {currentUser ? (
+        <Link to="/users/ViewProfile">
         <div className="flex items-center">
           <div className="text-right mr-4">
             <p className="text-lg font-bold">
@@ -36,6 +38,7 @@ const Header = () => {
             className="h-12 w-12 rounded-full"
           />
         </div>
+        </Link>
       ) : (
         <div className="flex space-x-4">
           <a href="/login" className="text-blue-500 hover:underline">Login</a>
