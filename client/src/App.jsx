@@ -5,6 +5,7 @@ import Header from './components/common/Header';
 
 import PublicRoutes from './routes/PublicRoutes';
 import AdminRoutes from './routes/AdminRoutes';
+import ModeratorRoutes from './routes/ModeratorRoutes';
 import GuestRoutes from './routes/GuestRoutes';
 import HostRoutes from './routes/HostRoutes';
 // import TenantRoutes from './routes/TenantRoutes';
@@ -26,6 +27,7 @@ function App() {
           <Routes>
             <Route path="/" element={<HomePage />} />
             <Route path="/admin/*" element={<AdminRoutes />} />
+            <Route path="/moderator/*" element={<ModeratorRoutes />} />
             <Route path="/user/*" element={<GuestRoutes />} />
             <Route path="/host/*" element={<HostRoutes />} />
             <Route path="/technician/*" element={<TechnicianRoutes />} />

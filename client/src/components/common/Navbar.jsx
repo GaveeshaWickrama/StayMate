@@ -3,6 +3,7 @@ import { Link, useNavigate } from "react-router-dom";
 import { useAuth } from "../../context/auth";
 import { IconContext } from "react-icons";
 import { RiLogoutBoxRLine } from "react-icons/ri"; // Example of using React Icons for logout icon
+import { BsFillHousesFill } from "react-icons/bs"; // for the view new properties
 
 // Define icons for each link type (customize as needed)
 const iconMap = {
@@ -17,6 +18,7 @@ const iconMap = {
   "New Listing": "add_box",
   Login: "login",
   Signup: "person_add",
+  "View New Properties": <BsFillHousesFill/>,
 };
 
 // Sidebar component with updated styling and icons
@@ -66,6 +68,13 @@ function Navbar() {
     { path: "/admin/managemoderators", label: "Manage Moderators" },
   ];
 
+  const moderatorLinks = [
+    { path: "/", label: "Home" },
+    { path: "/moderator", label: "Moderator Dashboard" },
+    { path: "/moderator/viewNewProperties", label: "View New Properties" },
+    // { path: "/admin/managemoderators", label: "Manage Moderators" },
+  ];
+
   const guestLinks = [
     { path: "/", label: "Home" },
     { path: "/user", label: "User Page" },
@@ -106,6 +115,10 @@ function Navbar() {
 
   if (currentUser.role === "host") {
     return <Sidebar title="Host Nav" links={hostLinks} logout={handleLogout} />;
+  }
+
+  if (currentUser.role === "moderator") {
+    return <Sidebar title="Moderator Nav" links={moderatorLinks} logout={handleLogout} />;
   }
 
   return null;
