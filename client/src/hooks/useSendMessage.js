@@ -19,12 +19,11 @@ const useSendMessage = () => {
                 {
                   headers: {
                     Authorization: `Bearer ${token}`,
-                     'Content-Type': 'multipart/form-data'
+                     'Content-Type': 'application/json'
                   },
                 }
             );
-            
-            const data = res.data()
+            const data = res.data;
             if(data.error) throw new Error(data.error);
 
             setMessages([...messages,data]);

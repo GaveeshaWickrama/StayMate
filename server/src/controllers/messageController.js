@@ -3,6 +3,7 @@ const Message = require('../models/messageModel');
 
 const sendMessage = async (req,res)=>{
     try {
+        
         const {message} = req.body;
         const {id:receiverId} = req.params;
         const senderId = req.user.userId;
@@ -27,9 +28,6 @@ const sendMessage = async (req,res)=>{
         if(newMessage) {
             conversation.messages.push(newMessage._id);
         }
-
-      /*   await newMessage.save();
-        await conversation.save(); */
 
         await Promise.all([newMessage.save(),conversation.save()]);
 
