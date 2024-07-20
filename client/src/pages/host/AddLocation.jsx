@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
-import { useLoadScript, GoogleMap, Marker } from '@react-google-maps/api';
+import { GoogleMap, Marker } from '@react-google-maps/api';
 import usePlacesAutocomplete, { getGeocode, getLatLng } from 'use-places-autocomplete';
 import { useProperty } from '../../context/PropertyContext';
 
@@ -27,11 +27,7 @@ const AddLocation = () => {
     zipcode: ''
   });
   const [googleResponse, setGoogleResponse] = useState(null);
-
-  const { isLoaded, loadError } = useLoadScript({
-    googleMapsApiKey: import.meta.env.VITE_GOOGLE_MAPS_API_KEY,
-    libraries,
-  });
+  const [isMapsApiLoaded, setIsMapsApiLoaded] = useState(false);
 
   const {
     ready,
@@ -51,6 +47,15 @@ const AddLocation = () => {
       setValue(propertyLocation.address, false);
     }
   }, [propertyLocation.address, setValue]);
+
+  useEffect(() => {
+    const intervalId = setInterval(() => {
+      if (window.google && window.google.maps && window.google.maps.places) {
+        setIsMapsApiLoaded(true);
+        clearInterval(intervalId);
+      }
+    }, 100);
+  }, []);
 
   const handleLocationChange = (e) => {
     const { name, value } = e.target;
@@ -131,8 +136,7 @@ const AddLocation = () => {
     navigate('/host/add-property', { state: { ...location.state, location: propertyLocation, stage: 6 } });
   };
 
-  if (loadError) return <div>Error loading maps</div>;
-  if (!isLoaded) return <div>Loading Maps</div>;
+  if (!isMapsApiLoaded) return <div>Loading Maps...</div>;
 
   return (
     <div className='p-8 bg-white shadow-md rounded-lg'>
@@ -261,4 +265,3 @@ const AddLocation = () => {
 };
 
 export default AddLocation;
-
