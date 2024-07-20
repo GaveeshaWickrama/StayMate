@@ -57,25 +57,51 @@ const AddProperty = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     const formData = new FormData();
-    
-    if(property.total_unique_sections == -1 ){
-    // Serialize the sections array as a JSON string
-    formData.append('sections', JSON.stringify(property.sections));
   
-    // Append other fields
-    Object.keys(property).forEach(key => {
-      if (key === 'images') {
-        property.images.forEach((image, index) => {
-          formData.append('images', image.file); // Assuming image.file is the File object
+    const appendPropertyFieldsToFormData = () => {
+      Object.keys(property).forEach(key => {
+        if (key === 'images') {
+          property.images.forEach(image => {
+            formData.append('images', image.file); // Assuming image.file is the File object
+          });
+        } else if (key === 'location') {
+          Object.keys(property.location).forEach(locKey => {
+            formData.append(`location[${locKey}]`, property.location[locKey]);
+          });
+        } else if (key !== 'sections') {
+          formData.append(key, property[key]);
+        }
+      });
+    };
+  
+    const handleEntireProperty = () => {
+      formData.append('sections', JSON.stringify(property.sections));
+      appendPropertyFieldsToFormData();
+    };
+  
+    const handleMultipleSectionsProperty = () => {
+      const sections = property.sections.map(section => {
+        const updatedImages = section.images.map(image => {
+          formData.append('section_images', image.file); // Append file to FormData with a specific key
+          return { url: image.file.name }; // You can store the file name or any other identifier
         });
-      } else if (key === 'location') {
-        Object.keys(property.location).forEach(locKey => {
-          formData.append(`location[${locKey}]`, property.location[locKey]);
-        });
-      } else if (key !== 'sections') {
-        formData.append(key, property[key]);
-      }
-    });
+        return { ...section, images: updatedImages };
+      });
+  
+      formData.append('sections', JSON.stringify(sections));
+      appendPropertyFieldsToFormData();
+    };
+  
+    if (property.total_unique_sections === "-1") {
+      handleEntireProperty();
+    } else {
+      handleMultipleSectionsProperty();
+    }
+  
+    // Log the FormData entries to inspect them
+    for (const pair of formData.entries()) {
+      console.log(`${pair[0]}: ${pair[1]}`);
+    }
   
     try {
       const response = await axios.post(`${import.meta.env.VITE_API_URL}/properties/add`, formData, {
@@ -90,62 +116,7 @@ const AddProperty = () => {
     } catch (error) {
       console.error('There was an error adding the property:', error);
     }
-    }else{
-      const sections = property.sections.map(section => {
-        // Map the section images to only contain URLs, and append the file to FormData
-        const updatedImages = section.images.map((image, index) => {
-          const file = image.file;
-          formData.append('section_images', file); // Append file to FormData with a specific key
-          return { url: file.name }; // You can store the file name or any other identifier
-        });
-        return { ...section, images: updatedImages };
-      });
-    
-      formData.append('sections', JSON.stringify(sections));
-    
-      // Append other fields
-      Object.keys(property).forEach(key => {
-        if (key === 'images') {
-          property.images.forEach((image, index) => {
-            formData.append('images', image.file); // Assuming image.file is the File object
-          });
-        } else if (key === 'location') {
-          Object.keys(property.location).forEach(locKey => {
-            formData.append(`location[${locKey}]`, property.location[locKey]);
-          });
-        } else if (key !== 'sections') {
-          formData.append(key, property[key]);
-        }
-      });
-    
-      // Log the FormData entries to inspect them
-      for (const pair of formData.entries()) {
-        console.log(`${pair[0]}: ${pair[1]}`);
-      }
-    
-      try {
-        const response = await axios.post(`${import.meta.env.VITE_API_URL}/properties/add`, formData, {
-          headers: {
-            'Authorization': `Bearer ${token}`,
-            'Content-Type': 'multipart/form-data'
-          }
-        });
-        console.log('Property added:', response.data);
-        resetProperty(); // Reset context after successful submit
-        navigate('/host/your-listings'); // Redirect to Your Listings
-      } catch (error) {
-        console.error('There was an error adding the property:', error);
-      }
-    }
-
-
   };
-  
-  
-  
-  
-  
-
   
   const validateForm = () => {
     switch (stage) {
