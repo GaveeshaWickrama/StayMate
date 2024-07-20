@@ -9,6 +9,20 @@ router.get('/moderators', authToken, requireRole('admin'), adminController.getMo
 //create a new moderator
 router.post('/moderators', authToken, requireRole('admin'), adminController.createModerator);
 
+//delete a new moderator
+router.delete('/moderators/:id', authToken, requireRole('admin'), adminController.deleteModerator);
+
+
+
+
+
+
+
+
+
+
+
+
 // get all users 
 router.get('/users', authToken, requireRole('admin'), adminController.getAllUsers); 
 

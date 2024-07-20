@@ -5,7 +5,7 @@ const mongoose = require('mongoose')
 const getUsers = async (req,res)=>{
 
     try{
-        const user = await User.find({}).sort({createdAt: -1})
+        const user = await User.find()
         res.status(200).json(user)
     }catch(error){
         res.status(400).json({error: error.message})
@@ -31,10 +31,11 @@ const getUser = async (req, res) => {
 
 
 
-//this is same as the above function here on;y change is I;m getting the id by the token not from the URL
+//this is same as the above function here only change is I'm getting the id by the token not from the URL
+//used twice in ViewProfile and in Header to get the name & role
 const viewProfile = async (req, res) => {
 
-    
+    console.log(req.user)
     const id  = req.user.userId;
     
     console.log(id);
@@ -52,33 +53,46 @@ const viewProfile = async (req, res) => {
     
 }
 
-
-
-
-
-
-
-//update user
-const updateUser = async (req,res)=>{
-
-    const { id } = req.params
-    // console.log("came")
+/// Edit profile
+const editProfile = async (req, res) => {
+    const id = req.user.userId;
+    console.log("User ID:", id);
+    console.log("Uploaded file:", req.file);  // Log the file object
   
     if (!mongoose.Types.ObjectId.isValid(id)) {
-      return res.status(400).json({error: 'No such user'})
+      return res.status(400).json({ error: 'Invalid user ID' });
     }
   
-    const user = await User.findOneAndUpdate({_id: id}, {
-      ...req.body
-    })
+    try {
+      const updateData = { ...req.body };
+      if (req.file && req.file.path) {
+        updateData.picture = req.file.path.replace(/\\/g, '/'); 
+      }
   
-    if (!user) {
-      return res.status(400).json({error: 'No such user'})
+      const user = await User.findOneAndUpdate(
+        { _id: id },
+        { $set: updateData },
+        { new: true, runValidators: true }
+      );
+  
+      if (!user) {
+        return res.status(400).json({ error: 'No such user' });
+      }
+  
+      res.status(200).json(user);
+    } catch (error) {
+      console.error('Error updating user profile:', error);
+      res.status(500).json({ error: 'Internal server error' });
     }
+  };
   
-    res.status(200).json(user)
+  
 
-}
+
+
+
+
+
 
 //delete user
 const deleteUser = async (req,res)=>{
@@ -101,13 +115,9 @@ const deleteUser = async (req,res)=>{
 
 async function getUserSachin(req, res) {
     try {
-        const userId = req.params.id; // Get the user ID from the request parameters
+        const userId = req.user.userId;
         const user = await User.findById(userId);
-        
-        if (!user) {
-            return res.status(404).json({ message: 'User not found' });
-        }
-
+        if (!user) return res.status(404).json({ message: 'Not found' });
         res.json(user);
     } catch (err) {
         res.status(500).json({ message: err.message });
@@ -116,10 +126,18 @@ async function getUserSachin(req, res) {
 
 async function updateUserbySachin(req, res) {
     try {
-        const users = await User.find({});
-        res.json(users);
+        const userId = req.user.userId;
+        const user = await User.findById(userId);
+        if (!user) return res.status(404).json({ message: 'Not found' });
+
+        Object.keys(req.body).forEach(key => {
+            user[key] = req.body[key];
+        });
+
+        const updatedUser = await user.save();
+        res.json(updatedUser);
     } catch (err) {
-        res.status(500).json({ message: err.message });
+        res.status(400).json({ message: err.message });
     }
 }
 
@@ -127,7 +145,7 @@ async function updateUserbySachin(req, res) {
 module.exports = {
     getUser,
     getUsers,
-    updateUser,
+    editProfile,
     deleteUser,
     viewProfile,
 };

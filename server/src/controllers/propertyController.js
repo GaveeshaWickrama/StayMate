@@ -143,7 +143,7 @@ async function getPropertyHostById(req, res) {
 }
 
 async function getAllProperties(req, res) {
-  const { latitude, longitude, radius, page = 1, limit = 10 } = req.query;
+  const { latitude, longitude, radius, page = 1, limit = 1000 } = req.query;
 
   let query = {};
   if (latitude && longitude && radius) {

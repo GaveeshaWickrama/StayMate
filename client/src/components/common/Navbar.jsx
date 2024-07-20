@@ -8,7 +8,7 @@ import { RiLogoutBoxRLine } from "react-icons/ri"; // Example of using React Ico
 const iconMap = {
   Home: "home",
   "Admin Dashboard": "admin_panel_settings",
-  "User Center": "account_circle",
+  "Manage Moderators": "account_circle",
   "User Page": "account_circle",
   Reviews: "rate_review",
   Reservations: "event_available",
@@ -69,6 +69,8 @@ function Navbar() {
     { path: "/admin/PropertyOwners", label: "PropertyOwners" },
     { path: "/admin/Tenants", label: "Tenants" },
     { path: "/admin/Technicians", label: "Technicians" },
+    // { path: "/admin/MyProfile", label: "My Profile" },
+    { path: "/admin/managemoderators", label: "Manage Moderators" },
   ];
 
   const guestLinks = [
