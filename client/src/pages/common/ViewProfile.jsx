@@ -43,10 +43,11 @@ const ViewProfile = () => {
           <div className="flex items-center justify-between">
             <div className="flex items-center">
               <img
-                src={ profile.picture }
+                src={`${import.meta.env.VITE_API_URL}/${profile.picture}`}
                 alt="Profile"
                 className="w-32 h-32 rounded-full"
               />
+          
               <div className="ml-4">
                 <h1 className="text-2xl font-bold">{profile.firstName} {profile.lastName}</h1>
                 <p className="text-gray-600">{profile.role}</p>
@@ -70,20 +71,17 @@ const ViewProfile = () => {
               <p>{ profile.phone }</p>
             </div>
             <div className="bg-white p-4 rounded-lg shadow">
-              <h2 className="text-lg font-semibold">NIC</h2>
+              <h2 className="text-lg font-semibold">NIC/Passport</h2>
               <p>{ profile.nicPassport }</p>
             </div>
             <div className="bg-white p-4 rounded-lg shadow">
               <h2 className="text-lg font-semibold">Gender</h2>
               <p>{ profile.gender }</p>
             </div>
-            <div className="bg-white p-4 rounded-lg shadow col-span-2">
-              <h2 className="text-lg font-semibold">Address</h2>
-              <p>{ profile.address }</p>
-            </div>
+           
             
             <div className="flex justify-end col-span-2">
-                <Link to="/admin/EditProfile">
+                <Link to="/users/EditProfile">
                     <button className="bg-blue-500 text-white px-4 py-2 rounded-lg shadow-md flex items-center">
                         <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 mr-2" viewBox="0 0 20 20" fill="currentColor">
                             <path d="M17.414 2.586a2 2 0 00-2.828 0L8 9.172V11h1.828l6.586-6.586a2 2 0 000-2.828z" />
