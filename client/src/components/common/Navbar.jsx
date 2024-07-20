@@ -64,7 +64,7 @@ function Navbar() {
     { path: "/", label: "Home" },
     { path: "/admin", label: "Admin Dashboard" },
     { path: "/admin/MyProfile", label: "My Profile" },
-    { path: "/admin/UserCenter", label: "User Center" },
+    { path: "/admin/Moderator", label: "Moderator" },
     { path: "/admin/report", label: "Report" },
     { path: "/admin/PropertyOwners", label: "PropertyOwners" },
     { path: "/admin/Tenants", label: "Tenants" },

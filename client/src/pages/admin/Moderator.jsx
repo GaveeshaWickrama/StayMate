@@ -7,12 +7,12 @@ const Moderators = () => {
 
   const [searchQuery, setSearchQuery] = useState("");
   const [users, setUsers] = useState([
-    { id: 1, name: "John Doe", email: "John@gmail.com", role: "Admin", address: "123 Main St", phone: "123-456-7890" },
-    { id: 2, name: "Jane Smith", email: "Jane@gmail.com", role: "Moderator", address: "456 Elm St", phone: "987-654-3210" },
-    { id: 3, name: "Alice Johnson", email: "Alice@gmail.com", role: "Property Owner", address: "789 Oak St", phone: "555-555-5555" },
-    { id: 4, name: "John Doe", email: "John@gmail.com", role: "Tenant", address: "123 Main St", phone: "123-456-7890" },
-    { id: 5, name: "Jane Smith", email: "Jane@gmail.com", role: "Technician", address: "456 Elm St", phone: "987-654-3210" },
-    { id: 6, name: "Alice Johnson", email: "Alice@gmail.com", role: "Property Owner", address: "789 Oak St", phone: "555-555-5555" },
+    { id: 1, name: "John Doe", email: "John@gmail.com", address: "123 Main St", phone: "123-456-7890" },
+    { id: 2, name: "Jane Smith", email: "Jane@gmail.com", address: "456 Elm St", phone: "987-654-3210" },
+    { id: 3, name: "Alice Johnson", email: "Alice@gmail.com", address: "789 Oak St", phone: "555-555-5555" },
+    { id: 4, name: "John Doe", email: "John@gmail.com", address: "123 Main St", phone: "123-456-7890" },
+    { id: 5, name: "Jane Smith", email: "Jane@gmail.com", address: "456 Elm St", phone: "987-654-3210" },
+    { id: 6, name: "Alice Johnson", email: "Alice@gmail.com", address: "789 Oak St", phone: "555-555-5555" },
   ]);
 
   const handleEdit = (id) => {
@@ -39,7 +39,6 @@ const Moderators = () => {
     (user) =>
       user.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
       user.email.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      user.role.toLowerCase().includes(searchQuery.toLowerCase()) ||
       user.address.toLowerCase().includes(searchQuery.toLowerCase()) ||
       user.phone.includes(searchQuery)
   );
@@ -63,7 +62,7 @@ const Moderators = () => {
           className="flex items-center bg-gradient-to-r from-blue-500 to-blue-700 text-white px-6 py-2 rounded-md shadow-lg hover:shadow-xl transition duration-200"
         >
           <FaUserPlus className="mr-2" />
-          Add User
+          Add Moderator
         </button>
       </div>
       <table className="min-w-full bg-white rounded-lg shadow-md overflow-hidden border border-gray-200">
@@ -72,7 +71,6 @@ const Moderators = () => {
             <th className="py-3 px-4 border-b">ID</th>
             <th className="py-3 px-4 border-b">Name</th>
             <th className="py-3 px-4 border-b">Email</th>
-            <th className="py-3 px-4 border-b">Role</th>
             <th className="py-3 px-4 border-b">Address</th>
             <th className="py-3 px-4 border-b">Phone Number</th>
             <th className="py-3 px-4 border-b">Actions</th>
@@ -84,7 +82,6 @@ const Moderators = () => {
               <td className="py-3 px-4 border-b text-center">{user.id}</td>
               <td className="py-3 px-4 border-b">{user.name}</td>
               <td className="py-3 px-4 border-b">{user.email}</td>
-              <td className="py-3 px-4 border-b">{user.role}</td>
               <td className="py-3 px-4 border-b">{user.address}</td>
               <td className="py-3 px-4 border-b">{user.phone}</td>
               <td className="py-3 px-4 border-b flex space-x-2 justify-center">

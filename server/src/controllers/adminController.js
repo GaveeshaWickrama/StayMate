@@ -1,5 +1,7 @@
 const User = require('../models/userModel')
+const Technicians = require('../models/technicianModel')
 const mongoose = require('mongoose')
+
 
 //get all users
 const getModerators = async (req,res)=>{
@@ -143,6 +145,25 @@ async function updateProfile(req, res) {
 
     
 }
+async function getAllTechnicians(req, res) {
+
+    
+
+    try {
+
+        const technicians = await Technicians.find();
+        if (!technicians) return res.status(404).json({ message: 'technicians Not found' });
+
+        console.log(technicians);
+        res.json(technicians);
+
+
+    } catch (err) {
+        res.status(500).json({ message: err.message });
+    }
+
+    
+}
 
 module.exports = {
     getAllUsers,
@@ -152,6 +173,7 @@ module.exports = {
     deleteUser,
     viewProfile,
     updateProfile,
+    getAllTechnicians,
     getModerators,
     createModerator,
 };

@@ -19,6 +19,7 @@ router.post('/users', authToken, requireRole('admin'), adminController.createUse
 
 // get single user 
 router.get('/users/:id', authToken, requireRole('admin'), adminController.getUser);
+router.get('/view-technicians/', authToken, requireRole('admin'), adminController.getUser);
 
 //get details for admin dashboard-------------------------------------
 //router.get('/admin/dashboard', authToken, requireRole('admin'), adminController.getAdminDashboard);
