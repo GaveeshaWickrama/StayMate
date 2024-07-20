@@ -35,6 +35,7 @@ app.use(express.json());
 app.use("/auth", authRoutes);
 app.use("/users", userRoutes);
 app.use("/admin", adminRoutes);
+app.use("/moderator", moderatorRoutes);
 app.use("/properties", propertyRoutes);
 app.use("/reservation", reservationRoutes);
 app.use("/complaints", complaintRoutes);
