@@ -18,7 +18,7 @@ const iconMap = {
   "New Listing": "add_box",
   Login: "login",
   Signup: "person_add",
-  "View New Properties": <BsFillHousesFill/>,
+  "View New Properties":<BsFillHousesFill/>,
 };
 
 // Sidebar component with updated styling and icons
