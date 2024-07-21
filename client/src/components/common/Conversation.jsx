@@ -6,12 +6,14 @@ const Conversation = ({conversation,lastIdx,emoji}) => {
     const {selectedConversation, setSelectedConversation}= useConversation();
 
     const isSelected = selectedConversation?._id === conversation._id 
-    console.log("isSelected",isSelected);
-    console.log("conversation",conversation);
+   
+    console.log("Selected conversation",selectedConversation);
 
-    const imageUrl = conversation.picture
-    ? conversation.picture  
-    : 'https://img.daisyui.com/images/stock/photo-1534528741775-53994a69daeb.webp';
+
+    const DefaultPic = selectedConversation?.gender == 'male' ? `${import.meta.env.VITE_API_URL}/uploads/profilepictures/maleDefaultPic.png` : `${import.meta.env.VITE_API_URL}/uploads/profilepictures/femaleDefaultPic.png`;
+
+    const imageUrl = selectedConversation?.picture ? `${import.meta.env.VITE_API_URL}/${selectedConversation.picture}` :  DefaultPic;
+   
 
   return <>
     <div className={`flex gap-2 items-center hover:bg-sky-500 rounded p-2 py-1 cursor-pointer
