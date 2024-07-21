@@ -20,7 +20,7 @@ const EditProfile = () => {
   useEffect(() => {
     const fetchProfile = async () => {
       try {
-        const response = await axios.get(`${import.meta.env.VITE_API_URL}/users/`, {
+        const response = await axios.get(`${import.meta.env.VITE_API_URL}/users/myProfile`, {
           headers: {
             Authorization: `Bearer ${token}`,
           },
@@ -84,7 +84,7 @@ const EditProfile = () => {
 
       if (response.status === 200) {
         alert('Profile Updated successfully');
-        window.location.href = './viewProfile'; // Redirect to the profile page or any other desired page
+        window.location.href = './viewProfile/${currentUser.id}'; // Redirect to the profile page or any other desired page
       } else {
         alert('Failed to submit updated details');
       }
@@ -121,19 +121,6 @@ const EditProfile = () => {
               />
             </div>
           </div>
-
-          <div>
-            <label className="block text-gray-700">Email</label>
-            <input
-              type="email"
-              name="email"
-              className="w-full px-4 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-              value={profile.email}
-              onChange={handleChange}
-              placeholder="Email"
-            />
-          </div>
-
           <div>
             <label className="block text-gray-700">Phone</label>
             <input

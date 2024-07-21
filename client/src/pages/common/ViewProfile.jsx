@@ -1,5 +1,5 @@
 import React, { useState, useEffect,useContext } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useParams } from 'react-router-dom';
 import axios from 'axios';
 import { useAuth } from '../../context/auth';
 
@@ -7,11 +7,12 @@ const ViewProfile = () => {
 
     const { token } = useAuth();
     const [profile, setProfile] = useState('null');
+    const { id } = useParams();
 
     useEffect(() => {
         const fetchProfile = async () => {
             try {
-                const response = await axios.get(`${import.meta.env.VITE_API_URL}/users/`, {
+                const response = await axios.get(`${import.meta.env.VITE_API_URL}/users/${id}`, {
                     headers: {
                         Authorization: `Bearer ${token}`,
                     },
@@ -30,7 +31,7 @@ const ViewProfile = () => {
 
     
         fetchProfile();
-    }, [token]);
+    }, [id,token]);
 
     
 

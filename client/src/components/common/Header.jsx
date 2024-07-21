@@ -23,7 +23,7 @@ const Header = () => {
         </div>
       </div>
       {currentUser ? (
-        <Link to="/users/ViewProfile">
+        <Link to={`/users/ViewProfile/${currentUser.id}`}>
         <div className="flex items-center">
           <div className="text-right mr-4">
             <p className="text-lg font-bold">
