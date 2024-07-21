@@ -1,15 +1,50 @@
-// Header.js
 import React from 'react';
+import { useAuth } from '../../context/auth';
+import logo from '../../assets/icons/logo.png'; 
+import { Link } from "react-router-dom";
 
 const Header = () => {
+
+  const { currentUser, loading } = useAuth();
+  console.log("Inside Header");
+  console.log(currentUser);
+
+  if (loading) {
+    return <div>Loading...</div>; // Show a loading spinner or message
+  }
+    
   return (
-    <div className="flex justify-between items-center bg-blue-200 p-4">
-      <div className="text-xl font-bold">STAYMATE</div>
+    <div className="bg-blue-200 p-4 flex justify-between items-center fixed top-0 left-0 w-[calc(100%-16rem)] h-20" style={{ marginLeft: '16rem' }}>
       <div className="flex items-center">
-        <span className="mr-2">Sanuka</span>
-        <span className="mr-2">Tenant</span>
-        <img src="profile-pic-url" alt="Profile" className="w-10 h-10 rounded-full" />
+        <img src={logo} alt="Staymate Logo" className="h-16" />
+        <div className="ml-4">
+          <h1 className="text-2xl font-bold">STAYMATE</h1>
+          <p className="text-sm">Your Satisfaction, Our Priority</p>
+        </div>
       </div>
+      {currentUser ? (
+        <Link to="/users/ViewProfile">
+        <div className="flex items-center">
+          <div className="text-right mr-4">
+            <p className="text-lg font-bold">
+              {currentUser.gender === "male" ? "Mr. " : currentUser.gender === "female" ? "Ms. " : ""}
+              {currentUser.firstName} {currentUser.lastName}
+            </p>
+            <p className="text-blue-500">{currentUser.role}</p>
+          </div>
+          <img
+            src={`${import.meta.env.VITE_API_URL}/${currentUser.picture}`}
+            alt="Profile"
+            className="h-12 w-12 rounded-full"
+          />
+        </div>
+        </Link>
+      ) : (
+        <div className="flex space-x-4">
+          <a href="/login" className="text-blue-500 hover:underline">Login</a>
+          <a href="/signup/guest" className="text-blue-500 hover:underline">Signup</a>
+        </div>
+      )}
     </div>
   );
 };

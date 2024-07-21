@@ -3,12 +3,13 @@ import { Link, useNavigate } from "react-router-dom";
 import { useAuth } from "../../context/auth";
 import { IconContext } from "react-icons";
 import { RiLogoutBoxRLine } from "react-icons/ri"; // Example of using React Icons for logout icon
+import { BsFillHousesFill } from "react-icons/bs"; // for the view new properties
 
 // Define icons for each link type (customize as needed)
 const iconMap = {
   Home: "home",
   "Admin Dashboard": "admin_panel_settings",
-  "User Center": "account_circle",
+  "Manage Moderators": "account_circle",
   "User Page": "account_circle",
   Reviews: "rate_review",
   Reservations: "event_available",
@@ -17,6 +18,7 @@ const iconMap = {
   "New Listing": "add_box",
   Login: "login",
   Signup: "person_add",
+  "View New Properties": <BsFillHousesFill/>,
 };
 
 // Sidebar component with updated styling and icons
@@ -62,9 +64,16 @@ function Navbar() {
   const adminLinks = [
     { path: "/", label: "Home" },
     { path: "/admin", label: "Admin Dashboard" },
-    { path: "/admin/MyProfile", label: "My Profile" },
-    { path: "/admin/UserCenter", label: "User Center" },
-    { path: "/admin/Payments", label: "Payments" },
+    // { path: "/admin/MyProfile", label: "My Profile" },
+    { path: "/admin/managemoderators", label: "Manage Moderators" },
+  ];
+
+  const moderatorLinks = [
+    { path: "/", label: "Home" },
+    { path: "/moderator", label: "Moderator Dashboard" },
+    { path: "/moderator/viewNewProperties", label: "View New Properties" },
+    // { path: "/admin/managemoderators", label: "Manage Moderators" },
+
   ];
 
   const guestLinks = [
@@ -107,6 +116,10 @@ function Navbar() {
 
   if (currentUser.role === "host") {
     return <Sidebar title="Host Nav" links={hostLinks} logout={handleLogout} />;
+  }
+
+  if (currentUser.role === "moderator") {
+    return <Sidebar title="Moderator Nav" links={moderatorLinks} logout={handleLogout} />;
   }
 
   return null;

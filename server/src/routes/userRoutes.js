@@ -1,14 +1,15 @@
 const express = require('express');
 const router = express.Router();
+const upload = require('../middleware/multer');
 const userController = require('../controllers/userController');
 const { authToken, requireRole } = require('../middleware/authProvider');
 
 
 //get the profile of a single user
-router.get('/:id',authToken, requireRole('user', 'admin', 'guest', 'host', 'technician'), userController.viewProfile)
+router.get('/',authToken, requireRole('user', 'admin', 'guest', 'host', 'technician', 'moderator'), userController.viewProfile)
 
-
-
+//update profile
+router.patch('/editProfile',authToken, requireRole('user', 'admin', 'guest', 'host', 'technician', 'moderator'), upload.single('photo'),userController.editProfile)
 
 
 
@@ -22,19 +23,17 @@ router.get('/:id',authToken, requireRole('user', 'admin', 'guest', 'host', 'tech
 //haven't used the below
 
 //get all users
-router.get('/',userController.getUsers)
+router.get('/',authToken, requireRole('admin'),userController.getUsers)
 
 //get a single user
-router.get('/:id',userController.getUser)
+router.get('/:id',authToken, requireRole('user', 'admin', 'guest', 'host', 'technician'),userController.getUser)
 
 //delete a user
 router.delete('/:id',userController.deleteUser)
 
-//update a user
-router.patch('/:id',userController.updateUser)
 
 
-// patch self user info (id stored in jwt token)
-router.patch('/:id', authToken, requireRole('user', 'admin', 'guest', 'host', 'technician'), userController.updateUser);
+// // patch self user info (id stored in jwt token)
+// router.patch('/:id', authToken, requireRole('user', 'admin', 'guest', 'host', 'technician'), userController.updateUser);
 
 module.exports = router;
