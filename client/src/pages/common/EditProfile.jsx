@@ -29,6 +29,9 @@ const EditProfile = () => {
         if (response.status === 200) {
           const json = response.data;
           setProfile(json);
+          if (json.picture) {
+            setPreviewUrl(`${import.meta.env.VITE_API_URL}/${json.picture}`);
+          }
         } else {
           console.error('Failed to fetch profile. Status:', response.status);
         }
@@ -84,7 +87,7 @@ const EditProfile = () => {
 
       if (response.status === 200) {
         alert('Profile Updated successfully');
-        window.location.href = './viewProfile/${currentUser.id}'; // Redirect to the profile page or any other desired page
+        window.location.href = "viewProfile/${currentUser.id}"; // Redirect to the profile page or any other desired page
       } else {
         alert('Failed to submit updated details');
       }
