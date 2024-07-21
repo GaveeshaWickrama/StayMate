@@ -38,7 +38,8 @@ const ReservationForm = ({ propertyId, pricePerNight, property }) => {
   return (
     <form onSubmit={onSubmit} className="bg-white p-6 rounded-lg shadow-md">
       <div className="text-2xl font-bold mb-4">
-        {pricePerNight} <span className="text-sm font-normal">per night</span>
+        Rs {pricePerNight}{" "}
+        <span className="text-sm font-normal">per night</span>
       </div>
       <div className="grid grid-cols-2 gap-4 mb-4">
         <div>

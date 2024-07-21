@@ -73,12 +73,12 @@ function Navbar() {
     { path: "/moderator", label: "Moderator Dashboard" },
     { path: "/moderator/viewNewProperties", label: "View New Properties" },
     // { path: "/admin/managemoderators", label: "Manage Moderators" },
+
   ];
 
   const guestLinks = [
     { path: "/", label: "Home" },
-    { path: "/user", label: "User Page" },
-    { path: "/user/reviews/add", label: "Reviews" },
+    { path: "/user/viewreviews", label: "Reviews" },
     { path: "/user/reservations", label: "Reservations" },
   ];
 
@@ -89,6 +89,7 @@ function Navbar() {
     { path: "/host/add-property", label: "New Listing" },
     { path: "/host/reservations", label: "Reservations" },
     { path: "/host/property-details", label: "Test" },
+    { path: "/host/viewReviews", label: "Reviews" },
   ];
 
   const publicLinks = [
