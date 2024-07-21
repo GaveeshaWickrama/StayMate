@@ -2,6 +2,8 @@
 
 const Technician = require("../models/technicianModel");
 const Complaint = require("../models/complaintModel");
+const ComplaintController = require("../controllers/complaintController");
+const TechnicianReview = require("../models/technicianReviewModel")
 const path = require("path");
 
 const createTechnician = async (req, res) => {
@@ -63,11 +65,32 @@ const getTechnicianById = async (req, res) => {
   }
 };
 
+
+const getReviews = async (req, res) => {
+  const {id} = req.params;
+  console.log(id);
+  console.log("technician review collection name:", TechnicianReview.collection.name)
+  try{
+    console.log(res.data)
+    // const review = await TechnicianReview.findById(id);
+    const review = await TechnicianReview.find();
+    if(!review.length){
+      console.log("no reviews found")
+    }
+    res.status(200).json(review);
+  }
+  catch(error){
+    console.error(error);
+    res.status(500).json({message:"server error"});
+  }
+};
+
+
 console.log("Technician collection name:", Technician.collection.name);
 
 module.exports = {
   createTechnician,
-
+  getReviews,
   getTechnicianById,
 
   getAllTechnicians,

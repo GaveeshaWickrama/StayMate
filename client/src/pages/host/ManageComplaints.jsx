@@ -113,6 +113,8 @@ fetchComplaints();
 <h1 className="text-4xl font-extrabold text-black-600 mb-8 border-b-4 border-blue-600 p-6 bg-gray-100 rounded-md shadow-sm">
   Complaints
       </h1>
+
+     
         <div className="flex flex-col">
         
           {complaints.map((complaint) => (

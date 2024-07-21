@@ -22,7 +22,7 @@ export default function ActiveTasks() {
       prevTaskState.map(task => task.state === 'active' ? { ...task, state: 'completed' } : task)
     );
 
-    navigate('../requests/completion');
+    navigate('/tasks/proof');
 
   }
 

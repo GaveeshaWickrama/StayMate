@@ -38,8 +38,8 @@ const complaintSchema = new mongoose.Schema({
   images : [{ type : String }],
   status: {
     type: String,
-    enum: ['pendingHostApproval', 'pendingTechnicianApproval','resolved'],
-    default: 'pendingHostApproval',
+    enum: ['pendingHostDecision', 'pendingTechnicianApproval','active','technicianCompleted', 'jobCompleted'],
+    default: 'pendingHostDecision',
   },
   timestamp: {
     type: Date,

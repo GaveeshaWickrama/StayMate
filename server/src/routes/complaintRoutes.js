@@ -19,7 +19,7 @@ const upload = require('../middleware/multer'); // Import the upload configurati
 router.get('/complaints',complaintController.hello);
 router.get('/complaint-details/:id',complaintController.getComplaintById);
 router.get('/:id',complaintController.getAllComplaintsByHostId);
-router.post('/assign-complaint/:id', complaintController.assignComplaintToTechnician);
+router.post('/assign-complaint', complaintController.assignComplaintToTechnician);
 
 
 

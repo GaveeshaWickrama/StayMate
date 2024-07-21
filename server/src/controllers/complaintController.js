@@ -37,37 +37,32 @@ const raiseComplaint = async (req,res) => {
 //complaint placed by the host to the technician
 
 async function assignComplaintToTechnician(req, res) {
-  // const { complaintId} = req.body;
-  const complaintId = '66816171f5cc3175ad262a37';
-  const technicianId = req.params.id;
+  const { complaintId, technicianId } = req.query;
 
 
   try {
     // Check if the complaint exists
-    console.log("receive complaint id",complaintId);
-    console.log("received technician id", technicianId);
-    console.log("Received request body:", req.body);
-    console.log("Received request params:", req.params);
+   
+    console.log("Received complaint ID:", complaintId);
+    console.log("Received technician ID:", technicianId);
 
-    console.log("hello");
-    const complaint = await Complaint.findById(complaintId);
+    // Check if the complaint exists and its status is pendingHostDecision
+    const complaint = await Complaint.findOne({ _id: complaintId, status: 'pendingHostDecision' });
+   
     if (!complaint) {
-      return res.status(404).json({ message: 'Complaint not found' });
+      return res.status(404).json({ message: 'Complaint not found or status is not pendingHostDecision' });
     }
 
-  
+    // Update the complaint to assign it to the technician and change status
     const updatedComplaint = await Complaint.findOneAndUpdate(
-      { _id: complaintId },
-
-      { $set: { status: 'active', technician: technicianId } },
+      { _id: complaintId, status: 'pendingHostDecision' },
+      { $set: { status: 'pendingTechnicianApproval', technician: technicianId } },
       { new: true } // Return the updated document
     );
 
+    console.log("Assigned to a technician successfully");
+    res.status(200).json({ message: 'Complaint assigned to technician successfully', complaint: updatedComplaint });
 
-
-
-    console.log("assigned to a technician successfully");
-    res.status(200).json({ message: 'Complaint assigned to technician successfully', complaint:updatedComplaint });
   } catch (error) {
     console.error('Error assigning complaint to technician:', error);
     res.status(500).json({ message: 'An error occurred while assigning the complaint to technician', error });
@@ -121,11 +116,114 @@ async function getAllComplaintsByHostId(req,res){
   }
 
 }
+//following function is in the technician routes
+const getNoOfJobsCompleted = async(req,res) => {
+  const {id} = req.params;
+  console.log(id); //log technician id
+ try{
+  const noOfJobs = await Complaint.countDocuments({technician:id,status:'jobCompleted'});
+  res.status(200).json(noOfJobs);
+
+ 
+ }
+ catch(error){
+    console.error(error);
+    res.status(500).json({message:"server error"});
+ }
+}
+
+
+const getAllJobsByTechnicianId = async(req, res) => {
+  const  id = req.params.id;
+
+  try {
+    const jobs = await Complaint.find({technician:id, status: { $in: ['pendingTechnicianApproval', 'active', 'technicianCompleted', 'jobCompleted'] }});
+    if(!jobs.length) {
+      return res.status(404).json({ message: 'no jobs found' });
+  }
+    res.status(200).json(jobs);
+
+  }
+
+  catch(error){
+    console.error(error); // Log the error
+    res.status(500).json({ message: 'An error occurred while fetching jobs', error }); // Send error response
+
+  }
+}
+
+
+const getActiveJobs = async(req,res) => {
+  const id = req.params.id;
+  try{
+    const jobs = await Complaint.find({technician:id, status: 'active'});
+    if(!jobs.length) {
+      return res.status(404).json({ message: 'no active jobs found' });
+  }
+    res.status(200).json(jobs);
+
+  }catch(error){
+    console.error(error); // Log the error
+    res.status(500).json({ message: 'An error occurred while fetching jobs', error }); // Send error response
+  }
+}
+
+const getPendingJobs = async(req,res) => {
+  const id = req.params.id;
+  try{
+    const jobs = await Complaint.find({technician:id, status: 'pendingTechnicianApproval'});
+    if(!jobs.length) {
+      return res.status(404).json({ message: 'no pending jobs' });
+  }
+    res.status(200).json(jobs);
+
+  }catch(error){
+    console.error(error); // Log the error
+    res.status(500).json({ message: 'An error occurred while fetching jobs', error }); // Send error response
+  }
+}
+
+const getCompletedJobs = async(req,res) => {
+  const id = req.params.id;
+  try{
+    const jobs = await Complaint.find({technician:id, status: 'jobCompleted'});
+    if(!jobs.length) {
+      return res.status(404).json({ message: 'no completed jobs' });
+  }
+    res.status(200).json(jobs);
+
+  }catch(error){
+    console.error(error); // Log the error
+    res.status(500).json({ message: 'An error occurred while fetching completed jobs', error }); // Send error response
+  }
+}
+
+//following is for host
+const markAsResolved = async(req,res) => {
+  const id = req.params.id; //host id
+  try{
+    await Complaint.updateMany(
+      { host: id, status: { $ne: 'pendingHostDecision' } }, // Ensure only non-resolved complaints are updated
+      { $set: { status: 'hostCompleted' } }
+    );
+    
+    res.status(200).json({message: "complaint marked as resolved"});
+
+  }catch(error){
+    console.error(error); // Log the error
+    res.status(500).json({ message: 'couldnt save changes', error }); // Send error response
+  }
+}
 
 module.exports = {
-  getComplaintById,
-  assignComplaintToTechnician,
-  getAllComplaintsByHostId,
+  getComplaintById, //host
+  assignComplaintToTechnician, //host
+  getNoOfJobsCompleted, //technician
+  getAllComplaintsByHostId, //host
+  getAllJobsByTechnicianId, //technician
+  getActiveJobs, //technician
+  getPendingJobs, //technician
+  getCompletedJobs, //technician
   hello
 };
 

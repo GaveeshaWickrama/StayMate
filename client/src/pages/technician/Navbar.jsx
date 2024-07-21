@@ -3,7 +3,6 @@ import { Link, useNavigate } from "react-router-dom";
 import { useAuth } from "../../context/auth";
 import { IconContext } from "react-icons";
 import { RiLogoutBoxRLine } from "react-icons/ri"; // Example of using React Icons for logout icon
-import { RxDashboard } from "react-icons/rx";
 
 
 // Define icons for each link type (customize as needed)
@@ -82,19 +81,6 @@ function Navbar() {
     { path: "/host/add-property", label: "New Listing" },
     { path: "/host/reservations", label: "Reservations" },
     { path: "/host/property-details", label: "Test" },
-    { path: "/host/view-complaints", label: "Complaints" },
-    { path: "/host/manage-complaints", label: "Complaints" },
-    { path: "/host/view-technicians", label: "Technicians" },
-  ];
-  const technicianLinks = [
-    { path: "/technician/dashboard", label: "Home" },
-    { path: "/technician/dashboard", label: "dashboard" },
-    { path: "/technician/MyProfile", label: "My Profile" },
-
-    { path: "/technician/requests/pending-tasks", label: "Pending Tasks" },
-    { path: "/technician/requests/active-tasks", label: "Active Tasks" },
-    { path: "/technician/tasks", label: "Tasks" },
-   
   ];
 
   const publicLinks = [
@@ -122,11 +108,9 @@ function Navbar() {
   if (currentUser.role === "host") {
     return <Sidebar title="Host Nav" links={hostLinks} logout={handleLogout} />;
   }
-  if (currentUser.role === "technician") {
-    return <Sidebar title="Technician Nav" links={technicianLinks} logout={handleLogout} />;
-  }
 
   return null;
+
 }
 
 export default Navbar;

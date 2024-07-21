@@ -10,7 +10,7 @@ import Caraousel from './components/Caraousel';
 function TechnicianCard({technician}){
   return(
     // <Link to={{pathname:`/technician/${technician._id}`, state: {complaintID}}}>
-    <Link to={{pathname:`/technician/${technician._id}`}}>
+    <Link to={{pathname:`/host/technician-details/${technician._id}`}}>
 
 
     
@@ -74,7 +74,7 @@ function TechnicianExplore(){
 
       await axios.get(`${import.meta.env.VITE_API_URL}/technicians/all`)
       .then((res)=>{
-        alert("these are the data",res.data);
+        // alert("these are the data",res.data);
 
         setTechnicians(res.data);
       })
