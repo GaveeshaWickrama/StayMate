@@ -17,6 +17,7 @@ const iconMap = {
   "New Listing": "add_box",
   Login: "login",
   Signup: "person_add",
+  Chat: "chat", 
 };
 
 // Sidebar component with updated styling and icons
@@ -71,6 +72,7 @@ function Navbar() {
     { path: "/user", label: "User Page" },
     { path: "/user/reviews/add", label: "Reviews" },
     { path: "/user/reservations", label: "Reservations" },
+    { path: "/user/chat", label: "Chat" },
   ];
 
   const hostLinks = [
