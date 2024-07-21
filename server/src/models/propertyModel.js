@@ -177,5 +177,25 @@ const propertySchema = new Schema({
 
 propertySchema.index({ 'location.coordinates': '2dsphere' });
 
+
+
+//in order to add a document to propertyVerifiedModel
+// Post-save hook to create a PropertyVerified document
+propertySchema.post('save', async function(doc, next) {
+    const PropertyVerified = mongoose.model('PropertyVerified');
+    
+    try {
+        await PropertyVerified.create({
+            propertyID: doc._id,
+            status: 'pending'
+        });
+        next();
+    } catch (error) {
+        next(error);
+    }
+});
+
+
+
 module.exports = mongoose.model('Property', propertySchema);
 

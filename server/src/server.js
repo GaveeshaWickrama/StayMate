@@ -4,14 +4,24 @@ const cors = require("cors");
 const morgan = require("morgan"); // Logging HTTP requests
 const mongoose = require("mongoose");
 const path = require("path"); // Import the path module
+const defaultImageMiddleware = require('./middleware/defaultImageMiddleware'); // Adjust the path as necessary
 
 // Correct path example
 
 const app = express();
 
 
-// Middleware
+
+// Middleware to serve static files
 app.use("/uploads", express.static(path.join(__dirname, "../uploads")));
+
+// Use custom middleware to serve default images if the requested image is not found
+app.use("/uploads/profilepictures", defaultImageMiddleware('profilepictures', 'default.jpg'));
+app.use("/uploads/properties", defaultImageMiddleware('properties', 'default.jpg'));
+
+// Use custom middleware to serve default images if the requested image is not found
+app.use("/uploads/profilepictures", defaultImageMiddleware('profilepictures', 'default.jpg'));
+app.use("/uploads/properties", defaultImageMiddleware('properties', 'default.jpg'));
 
 // Allow requests from the frontend origin
 const allowedOrigins = ['http://localhost:5173'];
@@ -40,6 +50,7 @@ app.use(
 const userRoutes = require("./routes/userRoutes");
 const authRoutes = require("./routes/authRoutes");
 const adminRoutes = require("./routes/adminRoutes");
+const moderatorRoutes = require("./routes/moderatorRoutes");
 const propertyRoutes = require("./routes/propertyRoutes");
 const reservationRoutes = require("./routes/reservationRoutes");
 const complaintRoutes = require("./routes/complaintRoutes");
@@ -57,6 +68,7 @@ app.use(express.json());
 app.use("/auth", authRoutes);
 app.use("/users", userRoutes);
 app.use("/admin", adminRoutes);
+app.use("/moderator", moderatorRoutes);
 app.use("/properties", propertyRoutes);
 app.use("/reservation", reservationRoutes);
 app.use("/complaints", complaintRoutes);

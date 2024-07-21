@@ -4,7 +4,7 @@ const TabButtons = ({ activeTab, setActiveTab }) => (
   <div className="flex flex-col md:flex-row space-y-2 md:space-y-0 md:space-x-4 mb-4">
     <button
       className={`py-2 px-4 ${
-        activeTab === "upcoming" ? "text-red-500 underline" : "text-gray-500"
+        activeTab === "upcoming" ? "text-green-500 underline" : "text-gray-500"
       }`}
       onClick={() => setActiveTab("upcoming")}
     >
@@ -12,7 +12,7 @@ const TabButtons = ({ activeTab, setActiveTab }) => (
     </button>
     <button
       className={`py-2 px-4 ${
-        activeTab === "ongoing" ? "text-red-500 underline" : "text-gray-500"
+        activeTab === "ongoing" ? "text-green-500 underline" : "text-gray-500"
       }`}
       onClick={() => setActiveTab("ongoing")}
     >
@@ -20,7 +20,7 @@ const TabButtons = ({ activeTab, setActiveTab }) => (
     </button>
     <button
       className={`py-2 px-4 ${
-        activeTab === "completed" ? "text-red-500 underline" : "text-gray-500"
+        activeTab === "completed" ? "text-green-500 underline" : "text-gray-500"
       }`}
       onClick={() => setActiveTab("completed")}
     >

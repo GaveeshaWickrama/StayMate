@@ -1,4 +1,13 @@
-.env
+# Ignore all files in the following directories
 node_modules
 uploads/complaints/*
+
 uploads/properties/*
+!uploads/properties/default.jpg
+
+# Ignore all files in the profilepictures directory except for default.jpg
+uploads/profilepictures/*
+!uploads/profilepictures/default.jpg
+
+# Environment file
+.env

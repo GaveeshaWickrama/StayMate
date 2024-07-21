@@ -4,17 +4,17 @@ const path = require('path');
 // Set up storage engine
 const storage = multer.diskStorage({
   destination: (req, file, cb) => {
+    let uploadPath = 'uploads/';
 
-    if(req.url.includes('/raisecomplaint')) {
-      cb(null, 'uploads/complaints');
+    if (req.url.includes('/raisecomplaint')) {
+      uploadPath = 'uploads/complaints';
+    } else if (req.url.includes('/add')) {
+      uploadPath = 'uploads/properties/';
+    } else if (req.url.includes('/editProfile')) {
+      uploadPath = 'uploads/profilepictures/';
     }
-    else if(req.url.includes('/add')) {
-      cb(null, 'uploads/properties/');
-    }
-    else {
-      cb(null, 'uploads/');
-    }
-    
+
+    cb(null, uploadPath);
   },
   filename: (req, file, cb) => {
     cb(null, `${Date.now()}-${file.originalname}`);
