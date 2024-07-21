@@ -5,11 +5,18 @@ const Property = require('../models/propertyModel');
 const viewPendingProperties = async (req, res) => {
     try {
         const properties = await PendingProperty.find({ status: 'pending' })
-            .populate('propertyID', 'title description type')
+            .populate({
+                path: 'propertyID',
+                populate: {
+                    path: 'host_id',
+                    model: 'User'
+                }
+            })
+            
             .sort({ createdAt: -1 });
 
         console.log("Inside the controller checking data");
-        console.log(properties);
+        //console.log(properties);
 
         res.status(200).json(properties);
     } catch (error) {
