@@ -8,6 +8,13 @@ const ViewProfile = () => {
     const { token } = useAuth();
     const [profile, setProfile] = useState('null');
     const { id } = useParams();
+    console.log("Insideprofile")
+    console.log(id)
+
+    const { currentUser, loading } = useAuth();
+    if (loading) {
+      return <div>Loading...</div>; // Show a loading spinner or message
+    }
 
     useEffect(() => {
         const fetchProfile = async () => {
@@ -80,7 +87,9 @@ const ViewProfile = () => {
               <p>{ profile.gender }</p>
             </div>
            
-            
+           
+           
+            {currentUser && id === currentUser.id && ( 
             <div className="flex justify-end col-span-2">
                 <Link to="/users/EditProfile">
                     <button className="bg-blue-500 text-white px-4 py-2 rounded-lg shadow-md flex items-center">
@@ -93,6 +102,7 @@ const ViewProfile = () => {
                 </Link>
                 
             </div>
+            )}
            
           </div>
         </div>

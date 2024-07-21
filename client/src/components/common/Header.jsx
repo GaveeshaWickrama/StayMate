@@ -6,9 +6,7 @@ import { Link } from "react-router-dom";
 const Header = () => {
 
   const { currentUser, loading } = useAuth();
-  console.log("Inside Header");
-  console.log(currentUser);
-
+  
   if (loading) {
     return <div>Loading...</div>; // Show a loading spinner or message
   }

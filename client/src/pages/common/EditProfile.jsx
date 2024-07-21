@@ -16,11 +16,15 @@ const EditProfile = () => {
   });
   const [photo, setPhoto] = useState(null);
   const [previewUrl, setPreviewUrl] = useState('');
+  const { currentUser, loading } = useAuth();
+    if (loading) {
+      return <div>Loading...</div>; // Show a loading spinner or message
+    }
 
   useEffect(() => {
     const fetchProfile = async () => {
       try {
-        const response = await axios.get(`${import.meta.env.VITE_API_URL}/users/myProfile`, {
+        const response = await axios.get(`${import.meta.env.VITE_API_URL}/users/${currentUser.id}`, {
           headers: {
             Authorization: `Bearer ${token}`,
           },
@@ -87,7 +91,10 @@ const EditProfile = () => {
 
       if (response.status === 200) {
         alert('Profile Updated successfully');
-        window.location.href = "viewProfile/${currentUser.id}"; // Redirect to the profile page or any other desired page
+        setTimeout(() => {
+          window.location.href = `viewProfile/${currentUser.id}`; // Redirect to the profile page or any other desired page
+        }, 0); // Set a timeout to ensure the redirect happens after the alert
+        // window.location.href = `viewProfile/${currentUser.id}`; // Redirect to the profile page or any other desired page
       } else {
         alert('Failed to submit updated details');
       }
