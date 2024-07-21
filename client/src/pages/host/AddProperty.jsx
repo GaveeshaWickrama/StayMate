@@ -1,4 +1,3 @@
-// src/pages/AddProperty.js
 import React, { useEffect, useState } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import axios from 'axios';
@@ -13,11 +12,13 @@ import LocationInformation from './components/LocationInformation';
 import PropertyAmenities from './components/PropertyAmenities';
 import ProgressBar from './components/ProgressBar';
 import Publish from './components/Publish';
+import { ToastContainer, toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 
 const AddProperty = () => {
   const navigate = useNavigate();
   const location = useLocation();
-  const { currentUser, token } = useAuth();
+  const { token } = useAuth();
   const { property, setProperty, stage, setStage, resetProperty } = useProperty();
   const totalStages = 7;
   const sidebarWidth = "250px";
@@ -48,6 +49,9 @@ const AddProperty = () => {
   const handleNext = () => {
     if (isFormValid) {
       setStage(prevStage => prevStage + 1);
+      toast.dismiss(); // Clear any existing toast notifications
+    } else {
+      toast.error('Please complete all required fields.');
     }
   };
 
@@ -59,23 +63,50 @@ const AddProperty = () => {
     e.preventDefault();
     const formData = new FormData();
   
-    // Serialize the sections array as a JSON string
-    formData.append('sections', JSON.stringify(property.sections));
+    const appendPropertyFieldsToFormData = () => {
+      Object.keys(property).forEach(key => {
+        if (key === 'images') {
+          property.images.forEach(image => {
+            formData.append('images', image.file); // Assuming image.file is the File object
+          });
+        } else if (key === 'location') {
+          Object.keys(property.location).forEach(locKey => {
+            formData.append(`location[${locKey}]`, property.location[locKey]);
+          });
+        } else if (key !== 'sections') {
+          formData.append(key, property[key]);
+        }
+      });
+    };
   
-    // Append other fields
-    Object.keys(property).forEach(key => {
-      if (key === 'images') {
-        property.images.forEach((image, index) => {
-          formData.append('images', image.file); // Assuming image.file is the File object
+    const handleEntireProperty = () => {
+      formData.append('sections', JSON.stringify(property.sections));
+      appendPropertyFieldsToFormData();
+    };
+  
+    const handleMultipleSectionsProperty = () => {
+      const sections = property.sections.map(section => {
+        const updatedImages = section.images.map(image => {
+          formData.append('section_images', image.file); // Append file to FormData with a specific key
+          return { url: image.file.name }; // You can store the file name or any other identifier
         });
-      } else if (key === 'location') {
-        Object.keys(property.location).forEach(locKey => {
-          formData.append(`location[${locKey}]`, property.location[locKey]);
-        });
-      } else if (key !== 'sections') {
-        formData.append(key, property[key]);
-      }
-    });
+        return { ...section, images: updatedImages };
+      });
+  
+      formData.append('sections', JSON.stringify(sections));
+      appendPropertyFieldsToFormData();
+    };
+  
+    if (property.total_unique_sections === "-1") {
+      handleEntireProperty();
+    } else {
+      handleMultipleSectionsProperty();
+    }
+  
+    // Log the FormData entries to inspect them
+    for (const pair of formData.entries()) {
+      console.log(`${pair[0]}: ${pair[1]}`);
+    }
   
     try {
       const response = await axios.post(`${import.meta.env.VITE_API_URL}/properties/add`, formData, {
@@ -92,31 +123,32 @@ const AddProperty = () => {
     }
   };
   
-  
-
   const validateForm = () => {
+    let valid = false;
     switch (stage) {
       case 1:
-        setIsFormValid(validatePropertyDetails());
+        valid = validatePropertyDetails();
         break;
       case 2:
-        setIsFormValid(validatePropertyDetailsSection());
+        valid = validatePropertyDetailsSection();
         break;
       case 3:
-        setIsFormValid(validatePropertySections());
+        valid = validatePropertySections() && validatePrice();
         break;
       case 4:
-        setIsFormValid(validateAmenities());
+        valid = validateAmenities();
         break;
       case 5:
-        setIsFormValid(validatePropertyImages());
+        valid = validatePropertyImages();
         break;
       case 6:
-        setIsFormValid(validateLocationInformation());
+        valid = validateLocationInformation();
         break;
       default:
-        setIsFormValid(false);
+        valid = false;
     }
+    setIsFormValid(valid);
+    return valid;
   };
 
   const validatePropertyDetails = () => {
@@ -133,6 +165,14 @@ const AddProperty = () => {
     return property.sections.length > 0;
   };
 
+  const validatePrice = () => {
+    if (property.total_unique_sections === '-1') {
+      return property.sections[0]?.price_per_night > 0;
+    } else {
+      return property.sections.every(section => section.price_per_night > 0);
+    }
+  };
+
   const validateAmenities = () => {
     return property.amenities.length > 0;
   };
@@ -146,14 +186,14 @@ const AddProperty = () => {
     return property.location.address?.trim() !== '' &&
            property.location.latitude !== 0 &&
            property.location.longitude !== 0 &&
-           property.location.city?.trim() !== '' &&
            property.location.district?.trim() !== '' &&
            property.location.province?.trim() !== '' &&
            property.location.zipcode?.trim() !== '';
   };
 
   return (
-    <div className='flex flex-col h-screen justify-between bg-white overflow-auto'>
+    <div className='flex flex-col h-[calc(100vh-80px)] justify-between bg-white overflow-auto'>
+      <ToastContainer position="top-right" autoClose={5000} hideProgressBar={false} newestOnTop={false} closeOnClick rtl={false} pauseOnFocusLoss draggable pauseOnHover />
       <div className="m-0 p-10 rounded bg-white overflow-auto">
         <form onSubmit={handleSubmit} onKeyDown={(e) => { if (e.key === 'Enter') e.preventDefault(); }} className="mb-8">
           {stage === 1 && (
@@ -177,7 +217,7 @@ const AddProperty = () => {
             <LocationInformation property={property} handleChange={handleChange} navigate={navigate} />
           )}
           {stage === 7 && (
-            <Publish handleSubmit={handleSubmit} />
+            <Publish handleSubmit={handleSubmit} property={property} />
           )}
         </form>
       </div>
@@ -194,5 +234,8 @@ const AddProperty = () => {
 };
 
 export default AddProperty;
+
+
+
 
 

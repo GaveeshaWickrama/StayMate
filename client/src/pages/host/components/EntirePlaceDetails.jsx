@@ -1,4 +1,3 @@
-// src/components/EntirePlaceDetails.js
 import React, { useEffect } from 'react';
 
 const EntirePlaceDetails = ({ property, setProperty }) => {

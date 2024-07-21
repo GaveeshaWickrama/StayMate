@@ -1,10 +1,10 @@
 require("dotenv").config();
 const express = require("express");
 const cors = require("cors");
-const morgan = require("morgan"); // Logging HTTP requests
+const morgan = require("morgan");
 const mongoose = require("mongoose");
-const path = require("path"); // Import the path module
-const defaultImageMiddleware = require('./middleware/defaultImageMiddleware'); // Adjust the path as necessary
+const path = require("path");
+const defaultImageMiddleware = require('./middleware/defaultImageMiddleware');
 
 const app = express();
 
@@ -32,7 +32,7 @@ const complaintRoutes = require("./routes/complaintRoutes");
 const reviewRoutes = require("./routes/reviewRoutes");
 const messageRoutes = require("./routes/messageRoutes");
 
-mongoose.connect(process.env.DATABASE_URL); // Use 127.0.0.1 instead of localhost to fix conversion issues with IPV6
+mongoose.connect(process.env.DATABASE_URL);
 const db = mongoose.connection;
 db.on("error", (error) => console.error(error));
 db.once("open", () => console.log("Connected to Database"));
@@ -52,7 +52,6 @@ app.get("/", (req, res) => {
   res.send("Hello World!");
 });
 
-// Start Server
 const port = process.env.PORT || 3000;
 app.listen(port, () => {
   console.log(`Server running at http://localhost:${port}/`);
