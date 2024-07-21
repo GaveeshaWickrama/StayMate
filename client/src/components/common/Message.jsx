@@ -3,15 +3,25 @@ import { useAuth } from '../../context/auth'
 import useConversation from '../../zustand/useConversation';
 
 const Message = ({message}) => {
-  console.log("inside Message.jsx",message);
+
   const {currentUser} = useAuth();
-  console.log(currentUser);
   const {selectedConversation} = useConversation();
-  const fromMe = message._id === currentUser.id;
+
+  const fromMe = message.senderId == currentUser.id;
+
   const chatClassName = fromMe ? 'chat-end' : 'chat-start';
-  //const profilePic = fromMe ? ( `{${import.meta.env.VITE_API_URL}/uploads/${currentUser?.picture}}` || `{${import.meta.env.VITE_API_URL}/uploads/defaultPic.jpg}` ) :(`{${import.meta.env.VITE_API_URL}/uploads/${selectedConversation?.picture}}` ||`{${import.meta.env.VITE_API_URL}/uploads/defaultPic.jpg}`) ; 
-  const profilePic = `${import.meta.env.VITE_API_URL}/uploads/defaultPic.jpg`;
-  const bubbleBgColor = fromMe ? "bg-blue-500" : "bg-blue-500";
+
+  const myDefaultPic = currentUser.gender == 'male' ? `${import.meta.env.VITE_API_URL}/uploads/profilepictures/maleDefaultPic.png` : `${import.meta.env.VITE_API_URL}/uploads/profilepictures/femaleDefaultPic.png`;
+
+  const otherUserDefaultPic = selectedConversation.gender == 'male' ? `${import.meta.env.VITE_API_URL}/uploads/profilepictures/maleDefaultPic.png` : `${import.meta.env.VITE_API_URL}/uploads/profilepictures/femaleDefaultPic.png`;
+
+  const myProfilePic = currentUser.picture ? `${import.meta.env.VITE_API_URL}/${currentUser.picture}` :  myDefaultPic;
+
+  const otherUserProfilePic = selectedConversation.picture ? `${import.meta.env.VITE_API_URL}/${selectedConversation.picture}` :  otherUserDefaultPic;
+
+  const profilePic = fromMe ? myProfilePic : otherUserProfilePic;
+  
+  const bubbleBgColor = fromMe ? "bg-blue-500" : "";
   return (
     <div className={`chat ${chatClassName}`}>
         <div className='chat-image avatar'>
