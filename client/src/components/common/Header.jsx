@@ -3,6 +3,8 @@ import { useAuth } from '../../context/auth';
 import logo from '../../assets/icons/logo.png'; 
 import { Link } from "react-router-dom";
 
+import { FaBars, FaTimes } from 'react-icons/fa';
+
 const Header = ({ toggleNavbar }) => {
   const { currentUser, loading } = useAuth();
   console.log("Inside Header");
@@ -15,9 +17,7 @@ const Header = ({ toggleNavbar }) => {
   return (
     <div className="header bg-gradient-to-r from-blue-400 via-blue-600 to-blue-700 p-4 flex justify-between items-center fixed top-0 left-0 w-full h-20 shadow-lg">
       <div className="flex items-center">
-        <button onClick={toggleNavbar} className="mr-4 p-2 bg-white text-2xl rounded-md">
-          ☰
-        </button>
+      <button onClick={toggleNavbar} className="bg-blue-500 text-white rounded-full p-4 my-4 flex items-center justify-center shadow-md hover:bg-blue-600 transition duration-200" > <FaBars size={24} /> </button>
         <div className="flex items-center  p-0 rounded">
           <img src={logo} alt="Staymate Logo" className="h-20" />
         </div>
@@ -54,3 +54,4 @@ const Header = ({ toggleNavbar }) => {
 };
 
 export default Header;
+

@@ -88,5 +88,3 @@ const LocationSearchBar = ({ onSearch }) => {
 export default LocationSearchBar;
 
 
-
-
