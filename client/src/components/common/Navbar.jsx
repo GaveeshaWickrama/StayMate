@@ -20,6 +20,7 @@ const iconMap = {
   "New Listing": "add_box",
   Login: "login",
   Signup: "person_add",
+  Chat: "chat", 
   "View New Properties": <BsFillHousesFill/>,
 };
 
@@ -82,6 +83,7 @@ function Navbar() {
     { path: "/", label: "Home" },
     { path: "/user/viewreviews", label: "Reviews" },
     { path: "/user/reservations", label: "Reservations" },
+    { path: "/user/chat", label: "Chat" },
   ];
 
   const hostLinks = [
