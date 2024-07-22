@@ -3,179 +3,188 @@ const Schema = mongoose.Schema;
 
 // Define the schema for location
 const locationSchema = new Schema({
-    address: {
-        type: String,
-        required: true,
-        trim: true
-    },
-    latitude: {
-        type: Number,
-        required: true
-    },
-    longitude: {
-        type: Number,
-        required: true
-    },
-    // city: {
-    //     type: String,
-    //     required: true,
-    //     trim: true
-    // },
-    district: {
-        type: String,
-        required: true,
-        trim: true
-    },
-    province: {
-        type: String,
-        required: true,
-        trim: true
-    },
-    zipcode: {
-        type: String,
-        required: true,
-        trim: true
-    },
-    geocoding_response: {
-        type: Object
+  address: {
+    type: String,
+    required: true,
+    trim: true
+  },
+  latitude: {
+    type: Number,
+    required: true
+  },
+  longitude: {
+    type: Number,
+    required: true
+  },
+  district: {
+    type: String,
+    required: true,
+    trim: true
+  },
+  province: {
+    type: String,
+    required: true,
+    trim: true
+  },
+  zipcode: {
+    type: String,
+    required: true,
+    trim: true
+  },
+  geocoding_response: {
+    type: Object
+  },
+  coordinates: {  // Coordinates directly in the document for geospatial indexing
+    type: { type: String, enum: ['Point'], default: 'Point' },
+    coordinates: {
+      type: [Number],
+      index: '2dsphere'
     }
-}, { 
-    toJSON: { virtuals: true },
-    toObject: { virtuals: true }
+  }
 });
 
-// Adding a geospatial index
-locationSchema.index({ latitude: 1, longitude: 1 });
-
-locationSchema.virtual('coordinates').get(function() {
-    return {
-        type: "Point",
-        coordinates: [this.longitude, this.latitude]
-    };
+// Pre-save middleware to set the coordinates from latitude and longitude
+locationSchema.pre('save', function(next) {
+  this.coordinates.coordinates = [this.longitude, this.latitude];
+  next();
 });
 
 // Define the schema for availability
 const availabilitySchema = new Schema({
-    start_date: {
-        type: Date,
-        required: true
-    },
-    end_date: {
-        type: Date,
-        required: true
-    }
+  start_date: {
+    type: Date,
+    required: true
+  },
+  end_date: {
+    type: Date,
+    required: true
+  }
 });
 
 // Define the schema for individual sections
 const individualSectionSchema = new Schema({
-    individual_section_id: {
-        type: Schema.Types.ObjectId,
-        required: true,
-        auto: true
-    },
-    availability: [availabilitySchema]
+  individual_section_id: {
+    type: Schema.Types.ObjectId,
+    required: true,
+    auto: true
+  },
+  availability: [availabilitySchema]
 });
 
 // Define the schema for sections
 const sectionSchema = new Schema({
-    section_id: {
-        type: Schema.Types.ObjectId,
-        required: true,
-        auto: true
+  section_id: {
+    type: Schema.Types.ObjectId,
+    required: true,
+    auto: true
+  },
+  section_name: {
+    type: String,
+    required: true,
+    trim: true
+  },
+  count: {
+    type: Number,
+    required: true
+  },
+  individual_sections: [individualSectionSchema],
+  plan: {
+    beds: {
+      type: Number,
+      required: true
     },
-    section_name: {
+    guests: {
+      type: Number,
+      required: true
+    },
+    bathrooms: {
+      type: Number,
+      required: true
+    },
+    bedrooms: {
+      type: Number,
+      required: true
+    }
+  },
+  price_per_night: {
+    type: Number,
+    required: true
+  },
+  images: [
+    {
+      url: {
         type: String,
         required: true,
         trim: true
-    },
-    count: {
-        type: Number,
-        required: true
-    },
-    individual_sections: [individualSectionSchema],
-    plan: {
-        beds: {
-            type: Number,
-            required: true
-        },
-        guests: { // Corrected field name
-            type: Number,
-            required: true
-        },
-        bathrooms: {
-            type: Number,
-            required: true
-        },
-        bedrooms: {
-            type: Number,
-            required: true
-        }
-    },
-    price_per_night: {
-        type: Number,
-        required: true
-    },
-    images: [
-        {
-            url: {
-                type: String,
-                required: true,
-                trim: true
-            }
-        }
-    ],
-    amenities: [String]
+      }
+    }
+  ],
+  amenities: [String]
 });
 
 // Define the schema for properties
 const propertySchema = new Schema({
-    host_id: {
-        type: Schema.Types.ObjectId,
-        required: true,
-        ref: 'User' // Assuming you have a User model
-    },
-    title: {
+  host_id: {
+    type: Schema.Types.ObjectId,
+    required: true,
+    ref: 'User'
+  },
+  title: {
+    type: String,
+    required: true,
+    trim: true
+  },
+  description: {
+    type: String,
+    required: true,
+    trim: true
+  },
+  type: {
+    type: String,
+    required: true,
+    enum: ['House', 'Apartment', 'Villa', 'Cottage', 'Cabin']
+  },
+  total_unique_sections: {
+    type: Number,
+    required: true
+  },
+  sections: [sectionSchema],
+  amenities: [String],
+  images: [
+    {
+      url: {
         type: String,
         required: true,
         trim: true
-    },
-    description: {
-        type: String,
-        required: true,
-        trim: true
-    },
-    type: {
-        type: String,
-        required: true,
-        enum: ['House', 'Apartment', 'Villa', 'Cottage', 'Cabin'] // Add more as needed
-    },
-    total_unique_sections: {
-        type: Number,
-        required: true
-    },
-    sections: [sectionSchema],
-    amenities: [String], 
-    images: [ // General images for the property
-        {
-            url: {
-                type: String,
-                required: true,
-                trim: true
-            }
-        }
-    ],
-    location: locationSchema,
-    created_at: {
-        type: Date,
-        default: Date.now
-    },
-    updated_at: {
-        type: Date,
-        default: Date.now
+      }
     }
+  ],
+  location: locationSchema,
+  created_at: {
+    type: Date,
+    default: Date.now
+  },
+  updated_at: {
+    type: Date,
+    default: Date.now
+  }
 });
 
+// Ensure 'location.coordinates' uses the 2dsphere index for geospatial queries
 propertySchema.index({ 'location.coordinates': '2dsphere' });
 
-module.exports = mongoose.model('Property', propertySchema);
+// Post-save hook to create a PropertyVerified document
+propertySchema.post('save', async function(doc, next) {
+  const PropertyVerified = mongoose.model('PropertyVerified');
+  try {
+    await PropertyVerified.create({
+      propertyID: doc._id,
+      status: 'pending'
+    });
+    next();
+  } catch (error) {
+    next(error);
+  }
+});
 
+module.exports = mongoose.model('Property', propertySchema);

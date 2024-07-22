@@ -1,8 +1,7 @@
 const mongoose = require('mongoose');
 const Schema = mongoose.Schema;
 
-// Define the schema for PropertyVerifiedModel
-const propertyVerifiedSchema = new Schema({
+const propertyverifiedSchema = new Schema({
     propertyID: {
         type: Schema.Types.ObjectId,
         required: true,
@@ -14,6 +13,10 @@ const propertyVerifiedSchema = new Schema({
         default: 'pending',
         enum: ['pending', 'verified', 'rejected']
     },
+    moderator: {
+        type: String,
+        default: ''
+    },
     created_at: {
         type: Date,
         default: Date.now
@@ -24,4 +27,4 @@ const propertyVerifiedSchema = new Schema({
     }
 });
 
-module.exports = mongoose.model('PropertyVerified', propertyVerifiedSchema);
+module.exports = mongoose.model('PropertyVerified', propertyverifiedSchema);
