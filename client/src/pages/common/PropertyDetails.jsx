@@ -167,7 +167,7 @@ const PropertySectionsList = ({ property }) => {
   };
 
   return (
-    <div className="bg-gray-100 mx-auto py-2 px-8">
+    <div className="mx-auto py-2 px-8">
       <PropertyHeader title={property.title} createdAt={property.created_at} />
       <PropertyImages images={property.images} />
       <div className="flex flex-col md:flex-row gap-4">
@@ -196,7 +196,7 @@ const PropertySectionsList = ({ property }) => {
 };
 const DetailedPropertyView = ({ property, id }) => {
   return (
-    <div className="bg-gray-100 mx-auto py-2 px-8">
+    <div className=" mx-auto py-2 px-8">
       <PropertyHeader title={property.title} createdAt={property.created_at} />
       <PropertyImages images={property.images} />
       <div className="flex flex-col md:flex-row gap-4">
