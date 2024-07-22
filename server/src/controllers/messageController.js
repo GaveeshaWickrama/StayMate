@@ -1,4 +1,5 @@
 const Conversation = require('../models/conversationModel');
+const User = require('../models/userModel');
 const Message = require('../models/messageModel');
 
 const sendMessage = async (req,res)=>{
@@ -87,6 +88,34 @@ const getContacts = async (req, res) => {
     }
   };
   
+const createOrSelectConversation = async (req, res) => {
+    console.log("inside createOrSelectConversation")
+    try {
+        const { id: otherUserId } = req.params;
+        const currentUserId = req.user.userId;
 
+        const conversation = await Conversation.findOne({
+            participants: { $all: [currentUserId, otherUserId] }
+        });
 
-module.exports = { sendMessage,getMessages, getContacts };
+        if (!conversation) {
+            conversation = await Conversation.create({
+                participants: [currentUserId, otherUserId]
+            });
+        }
+
+        // Fetch the other user's details
+        const otherUser = await User.findById(otherUserId).select('-password'); // Exclude password field
+
+        if (!otherUser) {
+            return res.status(404).json({ error: "User not found" });
+        }
+        console.log("user found in the controller : ",otherUser);
+        res.status(201).json(otherUser);
+    } catch (error) {
+        console.log("Error in createOrSelectConversation Function: ", error.message);
+        res.status(500).json({ error: "Internal server error" });
+    }
+};
+
+module.exports = { sendMessage,getMessages, getContacts,createOrSelectConversation };
