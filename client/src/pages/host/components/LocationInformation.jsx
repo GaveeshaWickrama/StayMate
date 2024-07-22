@@ -6,7 +6,7 @@ const LocationInformation = ({ property, navigate }) => {
   const location = property.location;
 
   return (
-    <div className='container mx-auto px-8 py-12'>
+    <div className='container mx-auto px-8'>
       <h2 className="text-4xl font-extrabold text-gray-800 mb-8 border-b-4 border-blue-600 p-6 rounded-md shadow-sm">
         Location Information
       </h2>
@@ -69,8 +69,8 @@ const LocationInformation = ({ property, navigate }) => {
           )}
         </div>
       ) : (
-        <div className="flex flex-col items-center bg-white p-6 rounded-lg shadow-lg">
-          <img src={addLocationImage} alt="Add Location" className="mb-4 w-1/2" />
+        <div className="flex flex-col items-center bg-white p-2 rounded-lg mb-40">
+          <img src={addLocationImage} alt="Add Location" className="w-1/4" />
           <button
             type="button"
             onClick={() => navigate('/host/add-location', { state: { ...property, stage: 4 } })}

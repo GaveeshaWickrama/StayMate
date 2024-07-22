@@ -6,7 +6,7 @@ import EditProfile from '../pages/common/EditProfile';
 
 function UserRoutes() {
   const { currentUser, loading } = useAuth();
-  const allowedRoles = ['admin', 'technician', 'moderator', 'host' ];
+  const allowedRoles = ['admin', 'technician', 'moderator', 'host', 'moderator' ];
   // console.log(currentUser);
 
   if (loading) {

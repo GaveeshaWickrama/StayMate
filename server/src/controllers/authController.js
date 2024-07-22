@@ -6,7 +6,7 @@ const User = require('../models/userModel');
 const OTP = require('../models/otpModel');
 const transporter = require('../config/emailConfig');
 
-const ALLOWED_ROLES = ['guest', 'host', 'technician'];
+const ALLOWED_ROLES = ['guest', 'host', 'technician', 'moderator'];
 
 async function loginUser(req, res) {
     const { email, password } = req.body;

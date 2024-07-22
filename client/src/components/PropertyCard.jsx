@@ -1,4 +1,3 @@
-// src/components/PropertyCard.jsx
 import React from 'react';
 import { Link } from 'react-router-dom';
 import { FaMapMarkerAlt, FaBed, FaBath } from 'react-icons/fa';
@@ -11,13 +10,12 @@ const PropertyCard = ({ property }) => {
     : 'N/A';
 
   return (
-    <Link to={`/property-details/${property._id}`} className="max-w-sm rounded overflow-hidden shadow-lg bg-white no-underline text-black m-4 transition-transform transform hover:scale-105 hover:border">
+    <Link 
+      to={`/property-details/${property._id}`} 
+      className="max-w-sm rounded overflow-hidden shadow-lg bg-white no-underline text-black m-4 transform transition duration-300 hover:scale-105 hover:shadow-2xl"
+    >
       <div className="relative">
         <img className="w-full h-48 object-cover" src={imageUrl} alt={property.title} />
-        {/* <div className="absolute top-2 left-2 flex space-x-2">
-          <span className="bg-red-500 text-white text-xs font-semibold px-2 py-1 rounded">FEATURED</span>
-          <span className="bg-blue-500 text-white text-xs font-semibold px-2 py-1 rounded">FOR SALE</span>
-        </div> */}
       </div>
       <div className="px-4 py-4">
         <div className="font-bold text-lg mb-2">{property.title}</div>
@@ -38,6 +36,7 @@ const PropertyCard = ({ property }) => {
 };
 
 export default PropertyCard;
+
 
 
 

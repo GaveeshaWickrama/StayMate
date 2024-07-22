@@ -1,7 +1,36 @@
-import React from "react";
+import React, { useState, useEffect } from "react";
+import { useLocation } from "react-router-dom";
+import { useStore } from "../../context/StoreContext";
 import img1 from "../../assets/img1.jpeg";
 
 const ReviewAdd = () => {
+  const { addReview } = useStore();
+  const [rating, setRating] = useState(0);
+  const [comment, setComment] = useState("");
+  const [reservationId, setReservationId] = useState("");
+
+  const location = useLocation();
+
+  useEffect(() => {
+    const queryParams = new URLSearchParams(location.search);
+    const id = queryParams.get("reservationId");
+    setReservationId(id);
+  }, [location]);
+
+  const handleRating = (value) => {
+    setRating(value);
+  };
+
+  const handleSubmit = async () => {
+    const reviewData = {
+      reservationId,
+      rating,
+      comment,
+    };
+    console.log("Submitting review", reviewData);
+    await addReview(reviewData);
+  };
+
   return (
     <div className="flex justify-center p-10 mt-[100px]">
       <div className="flex max-w-4xl w-full bg-white shadow-md rounded-lg">
@@ -16,10 +45,18 @@ const ReviewAdd = () => {
           <h1 className="text-2xl font-semibold mb-4">
             Describe your experience
           </h1>
-          <form className="flex flex-col">
+          <form
+            className="flex flex-col"
+            onSubmit={(e) => {
+              e.preventDefault();
+              handleSubmit();
+            }}
+          >
             <textarea
               className="w-full h-40 p-6 border border-gray-300 rounded-lg mb-2"
               placeholder="Describe your experience"
+              value={comment}
+              onChange={(e) => setComment(e.target.value)}
             />
             <p className="text-xs text-gray-500 mb-4">
               * Your review will be public on your guest profile
@@ -30,7 +67,10 @@ const ReviewAdd = () => {
                 {[1, 2, 3, 4, 5].map((star) => (
                   <span
                     key={star}
-                    className="text-3xl cursor-pointer text-gray-400"
+                    className={`text-3xl cursor-pointer ${
+                      rating >= star ? "text-yellow-500" : "text-gray-400"
+                    }`}
+                    onClick={() => handleRating(star)}
                   >
                     &#9733;
                   </span>
@@ -40,7 +80,7 @@ const ReviewAdd = () => {
             <div>
               <span className="ml-[300px] font-semibold">Go Back</span>
               <button
-                type="button"
+                type="submit"
                 className="ml-[50px] py-2 px-4 bg-green-500 text-white font-semibold rounded-lg hover:bg-red-600"
               >
                 Submit
