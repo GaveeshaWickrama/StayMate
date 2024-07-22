@@ -3,43 +3,66 @@ const express = require("express");
 const cors = require("cors");
 const morgan = require("morgan");
 const mongoose = require("mongoose");
-const path = require("path");
-const defaultImageMiddleware = require('./middleware/defaultImageMiddleware');
+const defaultImageMiddleware = require("./middleware/defaultImageMiddleware");
 
 // Correct path example
+const path = require("path"); // Import the path module
+const {
+  updateReservationStatuses,
+} = require("./controllers/reservationController");
+const cron = require("node-cron");
 
 const app = express();
-
-
 
 // Middleware to serve static files
 app.use("/uploads", express.static(path.join(__dirname, "../uploads")));
 
-// Use custom middleware to serve default images if the requested image is not found
-app.use("/uploads/profilepictures", defaultImageMiddleware('profilepictures', 'default.jpg'));
-app.use("/uploads/properties", defaultImageMiddleware('properties', 'default.jpg'));
+// Call updateReservationStatuses on server startup
+updateReservationStatuses();
+
+// Schedule periodic status update task to run every hour
+setInterval(() => {
+  console.log("Running periodic reservation status update job...");
+  updateReservationStatuses();
+}, 60 * 60 * 1000); // Every hour
 
 // Use custom middleware to serve default images if the requested image is not found
-app.use("/uploads/profilepictures", defaultImageMiddleware('profilepictures', 'default.jpg'));
-app.use("/uploads/properties", defaultImageMiddleware('properties', 'default.jpg'));
+app.use(
+  "/uploads/profilepictures",
+  defaultImageMiddleware("profilepictures", "default.jpg")
+);
+app.use(
+  "/uploads/properties",
+  defaultImageMiddleware("properties", "default.jpg")
+);
+
+// Use custom middleware to serve default images if the requested image is not found
+app.use(
+  "/uploads/profilepictures",
+  defaultImageMiddleware("profilepictures", "default.jpg")
+);
+app.use(
+  "/uploads/properties",
+  defaultImageMiddleware("properties", "default.jpg")
+);
 
 // Allow requests from the frontend origin
-const allowedOrigins = ['http://localhost:5173'];
+const allowedOrigins = ["http://localhost:5173"];
 
-
-app.use(cors({
-  origin: function (origin, callback) {
-    // Allow requests with no origin (like mobile apps or curl requests)
-    if (!origin) return callback(null, true);
-    if (allowedOrigins.indexOf(origin) === -1) {
-      const msg = 'The CORS policy for this site does not allow access from the specified origin.';
-      return callback(new Error(msg), false);
-    }
-    return callback(null, true);
-  },
-
-}));
-
+app.use(
+  cors({
+    origin: function (origin, callback) {
+      // Allow requests with no origin (like mobile apps or curl requests)
+      if (!origin) return callback(null, true);
+      if (allowedOrigins.indexOf(origin) === -1) {
+        const msg =
+          "The CORS policy for this site does not allow access from the specified origin.";
+        return callback(new Error(msg), false);
+      }
+      return callback(null, true);
+    },
+  })
+);
 
 app.use(morgan("dev"));
 morgan.token("body", (req) => JSON.stringify(req.body));
