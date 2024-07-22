@@ -1,7 +1,7 @@
 import React from "react";
 import { Routes, Route, Navigate } from "react-router-dom";
 import { useAuth } from "../context/auth";
-import GuestPage from "../pages/guest/GuestPage";
+// import GuestPage from "../pages/guest/GuestPage";
 import ReviewAdd from "../pages/guest/ReviewAdd";
 import Reservations from "../pages/guest/Reservations";
 import RaiseComplaintPage from "../pages/guest/RaiseComplaintPage";

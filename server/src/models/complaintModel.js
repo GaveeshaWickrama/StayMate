@@ -7,7 +7,23 @@ const complaintSchema = new mongoose.Schema({
     ref: 'reservation', // Reference to the Tenant model (if you have one)
     //required: true,
   },
+
+  hostId:{
+    type:String,
+    required:true
+  },
+
+  technician:{
+    type: mongoose.Schema.Types.ObjectId,
+    ref:'technician',
+    required:false
+  },
+
   category: {
+    type: String,
+    required: true,
+  },
+  propertyName:{
     type: String,
     required: true,
   },
@@ -22,8 +38,8 @@ const complaintSchema = new mongoose.Schema({
   images : [{ type : String }],
   status: {
     type: String,
-    enum: ['pending', 'resolved'],
-    default: 'pending',
+    enum: ['pendingHostDecision', 'pendingTechnicianApproval','active','technicianCompleted', 'jobCompleted'],
+    default: 'pendingHostDecision',
   },
   timestamp: {
     type: Date,

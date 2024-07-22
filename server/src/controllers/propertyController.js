@@ -2,52 +2,68 @@ const Property = require("../models/propertyModel");
 const path = require("path");
 
 async function createProperty(req, res) {
-  console.log('Decoded user:', req.user); // Log decoded user
-  console.log('User role:', req.user.role); // Log user role
-  console.log('Request body:', req.body); // Log request body
-  console.log('Request files:', req.files); // Log request files
-
-  const { 
-    title, 
-    description, 
-    type, 
-    total_unique_sections, 
-    sections: sectionsString, 
-    location, 
-    amenities 
-  } = req.body;
-
-  // Extract host_id from the token payload
-  const host_id = req.user.userId;
-
-  if (!host_id || !title || !description || !type || !total_unique_sections || !sectionsString || !location || !amenities) {
-    return res.status(400).json({ message: 'All fields are required' });
-  }
-  
-  console.log(amenities);
-  
-  // Parse sections string back into an object
-  let sections;
   try {
-    sections = JSON.parse(sectionsString);
-  } catch (error) {
-    return res.status(400).json({ message: 'Invalid sections format' });
-  }
+    console.log('Decoded user:', req.user);
+    console.log('User role:', req.user.role);
+    console.log('Request body:', JSON.stringify(req.body, null, 2));
 
-  // Handle file uploads
-  const images = req.files ? req.files.map(file => ({ url: path.join('uploads/properties', file.filename) })) : [];
+    // Check if req.files is an object
+    if (req.files && typeof req.files === 'object') {
+      console.log('Request files:', Object.keys(req.files).map(key => {
+        return req.files[key].map(file => ({
+          originalname: file.originalname,
+          filename: file.filename,
+          mimetype: file.mimetype,
+          size: file.size,
+          path: file.path
+        }));
+      }));
+    }
 
-  // Associate images with their respective sections
-  sections = sections.map((section, index) => ({
-    ...section,
-    images: section.images
-      ? section.images.map((img, imgIndex) => ({
-          url: images[imgIndex]?.url || img.url,
-        }))
-      : [],
-  }));
+    const { 
+      title, 
+      description, 
+      type, 
+      total_unique_sections, 
+      sections: sectionsString, 
+      location, 
+      amenities 
+    } = req.body;
 
-  try {
+    const host_id = req.user.userId;
+
+    if (!host_id || !title || !description || !type || !total_unique_sections || !sectionsString || !location || !amenities) {
+      return res.status(400).json({ message: 'All fields are required' });
+    }
+
+    console.log('Amenities:', amenities);
+
+    let sections;
+    try {
+      sections = JSON.parse(sectionsString);
+    } catch (error) {
+      return res.status(400).json({ message: 'Invalid sections format' });
+    }
+
+    const images = req.files.images ? req.files.images.map(file => ({ url: path.join('uploads/properties', file.filename) })) : [];
+    const sectionImages = req.files.section_images ? req.files.section_images.map(file => ({ url: path.join('uploads/properties', file.filename) })) : [];
+    
+    let imageIndex = 0;
+
+    sections = sections.map((section) => {
+      if (section.images && section.images.length > 0) {
+        section.images = section.images.map(() => {
+          const img = sectionImages[imageIndex];
+          console.log(`Assigning image to section ${section.section_name}:`, img.url);
+          imageIndex++;
+          return { url: img.url };
+        });
+      } else {
+        section.images = images;
+      }
+      return section;
+    });
+
     const property = new Property({
       host_id,
       title,
@@ -57,7 +73,7 @@ async function createProperty(req, res) {
       sections,
       location,
       images,
-      amenities: Array.isArray(amenities) ? amenities : amenities.split(',').map(a => a.trim()) // Ensure amenities is an array
+      amenities: Array.isArray(amenities) ? amenities : amenities.split(',').map(a => a.trim())
     });
 
     const newProperty = await property.save();
@@ -67,6 +83,10 @@ async function createProperty(req, res) {
     res.status(500).json({ message: 'Server error' });
   }
 }
+
+
+
+
 
 async function getPropertiesByHostId(req, res) {
   const hostId = req.user.userId;
@@ -143,7 +163,7 @@ async function getPropertyHostById(req, res) {
 }
 
 async function getAllProperties(req, res) {
-  const { latitude, longitude, radius, page = 1, limit = 10 } = req.query;
+  const { latitude, longitude, radius, page = 1, limit = 1000 } = req.query;
 
   let query = {};
   if (latitude && longitude && radius) {

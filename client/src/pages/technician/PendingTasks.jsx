@@ -20,7 +20,7 @@ export default function PendingTasks() {
     );
 
 
-    navigate('../requests/ActiveTasks');
+    navigate('../requests/active-tasks');
     
   };
 
