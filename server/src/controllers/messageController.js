@@ -94,7 +94,7 @@ const createOrSelectConversation = async (req, res) => {
         const { id: otherUserId } = req.params;
         const currentUserId = req.user.userId;
 
-        const conversation = await Conversation.findOne({
+        let conversation = await Conversation.findOne({
             participants: { $all: [currentUserId, otherUserId] }
         });
 
@@ -105,7 +105,7 @@ const createOrSelectConversation = async (req, res) => {
         }
 
         // Fetch the other user's details
-        const otherUser = await User.findById(otherUserId).select('-password'); // Exclude password field
+        const otherUser = await User.findById(otherUserId); // Exclude password field
 
         if (!otherUser) {
             return res.status(404).json({ error: "User not found" });
