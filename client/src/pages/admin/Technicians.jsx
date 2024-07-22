@@ -7,25 +7,38 @@ const Technicians = () => {
   const navigate = useNavigate();
   const [searchQuery, setSearchQuery] = useState("");
   const [technicians, setTechnicians] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
 
   useEffect(() => {
     const fetchTechnicians = async () => {
       try {
-        const response = await axios.get('http://localhost:5000/api/technicians'); // Ensure this matches your backend route
-        setTechnicians(response.data);
+        const response = await axios.get(`${import.meta.env.VITE_API_URL}/technicians`);
+        console.log(response.data); // Log the response data
+        if (Array.isArray(response.data)) {
+          setTechnicians(response.data);
+        } else {
+          setError("Unexpected response format");
+        }
       } catch (error) {
-        console.error("Error fetching technicians:", error);
+        setError("Error fetching technicians: " + error.message);
+      } finally {
+        setLoading(false);
       }
     };
 
     fetchTechnicians();
   }, []);
 
-  const handleDelete = (id) => {
+  const handleDelete = async (id) => {
     const confirmDelete = window.confirm("Are you sure you want to delete this technician?");
     if (confirmDelete) {
-      console.log("Delete technician with ID:", id);
-      // Implement delete logic here
+      try {
+        await axios.delete(`${import.meta.env.VITE_API_URL}/technicians/${id}`);
+        setTechnicians(technicians.filter((technician) => technician._id !== id));
+      } catch (error) {
+        console.error("Error deleting technician:", error);
+      }
     }
   };
 
@@ -33,18 +46,25 @@ const Technicians = () => {
     setSearchQuery(e.target.value);
   };
 
-  const filteredTechnicians = technicians.filter(
-    (technician) =>
-      technician.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      technician.email.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      technician.location.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      technician.mobile.includes(searchQuery) ||
-      technician.skill.toLowerCase().includes(searchQuery.toLowerCase())
+  const filteredTechnicians = technicians.filter((technician) =>
+    Object.values(technician).some((value) =>
+      value.toString().toLowerCase().includes(searchQuery.toLowerCase())
+    )
   );
+
+  if (loading) {
+    return <div>Loading...</div>;
+  }
+
+  if (error) {
+    return <div>Error: {error}</div>;
+  }
 
   return (
     <div className="container mx-auto p-10">
-      <h2 className="text-4xl font-extrabold text-blue-600 mb-6 border-b-2 border-blue-200 pb-2">Technicians</h2>
+      <h2 className="text-4xl font-extrabold text-blue-600 mb-6 border-b-2 border-blue-200 pb-2">
+        Technicians
+      </h2>
       <div className="flex justify-between mb-4">
         <div className="relative">
           <input
@@ -60,24 +80,22 @@ const Technicians = () => {
       <table className="min-w-full bg-white rounded-lg shadow-md overflow-hidden border border-gray-200">
         <thead>
           <tr className="bg-blue-200 text-gray-700">
-            <th className="py-3 px-4 border-b">ID</th>
-            <th className="py-3 px-4 border-b">Name</th>
-            <th className="py-3 px-4 border-b">Email</th>
-            <th className="py-3 px-4 border-b">Location</th>
-            <th className="py-3 px-4 border-b">Mobile</th>
-            <th className="py-3 px-4 border-b">Skill</th>
+            {technicians.length > 0 && Object.keys(technicians[0]).map((key) => (
+              <th key={key} className="py-3 px-4 border-b capitalize">
+                {key}
+              </th>
+            ))}
             <th className="py-3 px-4 border-b">Actions</th>
           </tr>
         </thead>
         <tbody>
           {filteredTechnicians.map((technician) => (
             <tr key={technician._id} className="hover:bg-gray-100 transition duration-200">
-              <td className="py-3 px-4 border-b text-center">{technician._id}</td>
-              <td className="py-3 px-4 border-b">{technician.name}</td>
-              <td className="py-3 px-4 border-b">{technician.email}</td>
-              <td className="py-3 px-4 border-b">{technician.location}</td>
-              <td className="py-3 px-4 border-b">{technician.mobile}</td>
-              <td className="py-3 px-4 border-b">{technician.skill}</td>
+              {Object.values(technician).map((value, index) => (
+                <td key={index} className="py-3 px-4 border-b text-center">
+                  {value}
+                </td>
+              ))}
               <td className="py-3 px-4 border-b flex space-x-2 justify-center">
                 <button
                   onClick={() => handleDelete(technician._id)}
@@ -96,3 +114,4 @@ const Technicians = () => {
 };
 
 export default Technicians;
+
