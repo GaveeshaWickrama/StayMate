@@ -1,4 +1,5 @@
 const User = require('../models/userModel')
+const Technician = require('../models/technicianModel');
 
 const mongoose = require('mongoose')
 
@@ -185,25 +186,35 @@ async function updateProfile(req, res) {
 
     
 }
-async function getAllTechnicians(req, res) {
+// async function getAllTechnicians(req, res) {
 
     
 
+//     try {
+
+//         const technicians = await Technicians.find();
+//         if (!technicians) return res.status(404).json({ message: 'technicians Not found' });
+
+//         console.log(technicians);
+//         res.json(technicians);
+
+
+//     } catch (err) {
+//         res.status(500).json({ message: err.message });
+//     }
+
+    
+// }
+
+// Get all technicians
+const getAllTechnicians = async (req, res) => {
     try {
-
-        const technicians = await Technicians.find();
-        if (!technicians) return res.status(404).json({ message: 'technicians Not found' });
-
-        console.log(technicians);
-        res.json(technicians);
-
-
-    } catch (err) {
-        res.status(500).json({ message: err.message });
+      const technicians = await Technician.find();
+      res.status(200).json(technicians);
+    } catch (error) {
+      res.status(400).json({ error: error.message });
     }
-
-    
-}
+  };
 
 module.exports = {
     getAllUsers,

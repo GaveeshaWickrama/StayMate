@@ -1,5 +1,3 @@
-// admin.model.js
-
 const mongoose = require('mongoose');
 
 const adminSchema = new mongoose.Schema({
@@ -26,11 +24,11 @@ const adminSchema = new mongoose.Schema({
     type: Date,
     default: Date.now,
   },
-
-  
+  technicians: [{
+    type: mongoose.Schema.Types.ObjectId,
+    ref: 'Technician'
+  }]
 });
-
-
 
 const Admin = mongoose.model('Admin', adminSchema);
 

@@ -2,6 +2,7 @@ const express = require('express');
 const router = express.Router();
 const adminController = require('../controllers/adminController');
 const { authToken, requireRole } = require('../middleware/authProvider');
+const { getAllTechnicians } = require('../controllers/adminController');
 
 //get all moderators
 router.get('/moderators', authToken, requireRole('admin'), adminController.getModerators);
@@ -39,6 +40,13 @@ router.get('/viewProfile', authToken, requireRole('admin'), adminController.view
 
 //update profile details
 router.put('/viewProfile', authToken, requireRole('admin'), adminController.updateProfile);
+
+// Get all technicians
+router.get('/technicians', authToken, requireRole('admin'), adminController.getAllTechnicians);
+
+router.get('/technicians', getAllTechnicians);
+
+
 
 
 

@@ -6,6 +6,9 @@ const path = require('path');
 const dotenv = require('dotenv');
 const defaultImageMiddleware = require('./middleware/defaultImageMiddleware'); // Adjust the path as necessary
 
+
+
+
 dotenv.config();
 
 const app = express();
@@ -32,12 +35,24 @@ db.once('open', () => console.log('Connected to Database'));
 
 // Import the bookingRoutes
 const bookingRoutes = require('./routes/hostRoutes');
-
 app.use('/bookings', bookingRoutes);
+
+// Import the authRoutes
+const authRoutes = require('./routes/authRoutes');
+app.use('/auth', authRoutes);
 
 app.get('/', (req, res) => {
   res.send('Hello World!');
 });
+
+//get technician data for admin
+app.get('/technicians', (req, res) => {
+  res.send('Technicians data for admin');
+  app.use('/api', adminRoutes);
+});
+
+
+
 
 // Start Server
 const port = process.env.PORT || 3000;

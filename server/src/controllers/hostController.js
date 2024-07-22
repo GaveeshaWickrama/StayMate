@@ -12,6 +12,7 @@ exports.getRecentBookings = async (req, res) => {
     }
 };
 
+
 // Fetch total monthly income
 exports.getTotalMonthlyIncome = async (req, res) => {
     try {

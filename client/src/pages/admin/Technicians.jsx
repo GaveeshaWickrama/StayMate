@@ -1,19 +1,25 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
+import axios from "axios";
 import { useNavigate } from "react-router-dom";
 import { FaTrash, FaSearch } from "react-icons/fa";
 
 const Technicians = () => {
   const navigate = useNavigate();
-
   const [searchQuery, setSearchQuery] = useState("");
-  const [technicians, setTechnicians] = useState([
-    { id: 1, name: "John Doe", email: "John@gmail.com", address: "123 Main St", phone: "123-456-7890", type: "Electrician" },
-    { id: 2, name: "Jane Smith", email: "Jane@gmail.com", address: "456 Elm St", phone: "987-654-3210", type: "Plumber" },
-    { id: 3, name: "Alice Johnson", email: "Alice@gmail.com", address: "789 Oak St", phone: "555-555-5555", type: "Electrician" },
-    { id: 4, name: "Michael Brown", email: "Michael@gmail.com", address: "321 Pine St", phone: "444-555-6666", type: "HVAC Technician" },
-    { id: 5, name: "Emily Davis", email: "Emily@gmail.com", address: "654 Maple St", phone: "777-888-9999", type: "Electrician" },
-    { id: 6, name: "William Wilson", email: "William@gmail.com", address: "987 Cedar St", phone: "222-333-4444", type: "Plumber" },
-  ]);
+  const [technicians, setTechnicians] = useState([]);
+
+  useEffect(() => {
+    const fetchTechnicians = async () => {
+      try {
+        const response = await axios.get('http://localhost:5000/api/technicians'); // Ensure this matches your backend route
+        setTechnicians(response.data);
+      } catch (error) {
+        console.error("Error fetching technicians:", error);
+      }
+    };
+
+    fetchTechnicians();
+  }, []);
 
   const handleDelete = (id) => {
     const confirmDelete = window.confirm("Are you sure you want to delete this technician?");
@@ -31,9 +37,9 @@ const Technicians = () => {
     (technician) =>
       technician.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
       technician.email.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      technician.address.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      technician.phone.includes(searchQuery) ||
-      technician.type.toLowerCase().includes(searchQuery.toLowerCase())
+      technician.location.toLowerCase().includes(searchQuery.toLowerCase()) ||
+      technician.mobile.includes(searchQuery) ||
+      technician.skill.toLowerCase().includes(searchQuery.toLowerCase())
   );
 
   return (
@@ -57,24 +63,24 @@ const Technicians = () => {
             <th className="py-3 px-4 border-b">ID</th>
             <th className="py-3 px-4 border-b">Name</th>
             <th className="py-3 px-4 border-b">Email</th>
-            <th className="py-3 px-4 border-b">Address</th>
-            <th className="py-3 px-4 border-b">Phone Number</th>
-            <th className="py-3 px-4 border-b">Type</th>
+            <th className="py-3 px-4 border-b">Location</th>
+            <th className="py-3 px-4 border-b">Mobile</th>
+            <th className="py-3 px-4 border-b">Skill</th>
             <th className="py-3 px-4 border-b">Actions</th>
           </tr>
         </thead>
         <tbody>
           {filteredTechnicians.map((technician) => (
-            <tr key={technician.id} className="hover:bg-gray-100 transition duration-200">
-              <td className="py-3 px-4 border-b text-center">{technician.id}</td>
+            <tr key={technician._id} className="hover:bg-gray-100 transition duration-200">
+              <td className="py-3 px-4 border-b text-center">{technician._id}</td>
               <td className="py-3 px-4 border-b">{technician.name}</td>
               <td className="py-3 px-4 border-b">{technician.email}</td>
-              <td className="py-3 px-4 border-b">{technician.address}</td>
-              <td className="py-3 px-4 border-b">{technician.phone}</td>
-              <td className="py-3 px-4 border-b">{technician.type}</td>
+              <td className="py-3 px-4 border-b">{technician.location}</td>
+              <td className="py-3 px-4 border-b">{technician.mobile}</td>
+              <td className="py-3 px-4 border-b">{technician.skill}</td>
               <td className="py-3 px-4 border-b flex space-x-2 justify-center">
                 <button
-                  onClick={() => handleDelete(technician.id)}
+                  onClick={() => handleDelete(technician._id)}
                   className="text-blue-500 hover:text-blue-700 transition duration-200"
                   aria-label="Delete"
                 >
