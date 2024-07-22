@@ -13,7 +13,7 @@ const Technicians = () => {
   useEffect(() => {
     const fetchTechnicians = async () => {
       try {
-        const response = await axios.get(`${import.meta.env.VITE_API_URL}/technicians`);
+        const response = await axios.get(`${import.meta.env.VITE_API_URL}/technicians/all`);
         console.log(response.data); // Log the response data
         if (Array.isArray(response.data)) {
           setTechnicians(response.data);
@@ -80,22 +80,22 @@ const Technicians = () => {
       <table className="min-w-full bg-white rounded-lg shadow-md overflow-hidden border border-gray-200">
         <thead>
           <tr className="bg-blue-200 text-gray-700">
-            {technicians.length > 0 && Object.keys(technicians[0]).map((key) => (
-              <th key={key} className="py-3 px-4 border-b capitalize">
-                {key}
-              </th>
-            ))}
+            <th className="py-3 px-4 border-b">First Name</th>
+            <th className="py-3 px-4 border-b">Last Name</th>
+            <th className="py-3 px-4 border-b">Location</th>
+            <th className="py-3 px-4 border-b">Email</th>
+            <th className="py-3 px-4 border-b">Role</th>
             <th className="py-3 px-4 border-b">Actions</th>
           </tr>
         </thead>
         <tbody>
           {filteredTechnicians.map((technician) => (
             <tr key={technician._id} className="hover:bg-gray-100 transition duration-200">
-              {Object.values(technician).map((value, index) => (
-                <td key={index} className="py-3 px-4 border-b text-center">
-                  {value}
-                </td>
-              ))}
+              <td className="py-3 px-4 border-b text-center">{technician.firstName}</td>
+              <td className="py-3 px-4 border-b text-center">{technician.lastName}</td>
+              <td className="py-3 px-4 border-b text-center">{technician.location}</td>
+              <td className="py-3 px-4 border-b text-center">{technician.email}</td>
+              <td className="py-3 px-4 border-b text-center">{technician.role}</td>
               <td className="py-3 px-4 border-b flex space-x-2 justify-center">
                 <button
                   onClick={() => handleDelete(technician._id)}
@@ -114,4 +114,3 @@ const Technicians = () => {
 };
 
 export default Technicians;
-
