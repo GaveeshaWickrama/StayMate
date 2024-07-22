@@ -9,7 +9,6 @@ Content-Type: application/json
 }
 
 
-
 ### Get user (Self) info // Signin using auth routes and replace the token
 GET http://localhost:3000/properties/host-properties
 Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiI2NjczZTJjNWMzZTAzYWE1MTcwYWExNjQiLCJlbWFpbCI6Im1AZ21haWwuY29tIiwicm9sZSI6ImFkbWluIiwiaWF0IjoxNzE5NzI1NDExLCJleHAiOjE3MTk4MTE4MTF9.UDeqP9fz9qtdWc0sDviYaSJ73aODXadeOU8l1E8FveU

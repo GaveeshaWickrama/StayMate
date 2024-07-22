@@ -1,8 +1,5 @@
 const User = require('../models/userModel')
-const Technician = require('../models/technicianModel');
-
 const mongoose = require('mongoose')
-
 
 //get all users
 const getModerators = async (req,res)=>{
@@ -109,7 +106,7 @@ async function getUser(req, res) {
     try {
         const userId = req.params.id;
         const user = await User.findById(userId);
-        if (!user) return res.status(404).json({ message: 'User not found' });
+        if (!user) return res.status(404).json({ message: 'Not found' });
         res.json(user);
     } catch (err) {
         res.status(500).json({ message: err.message });
@@ -119,11 +116,12 @@ async function getUser(req, res) {
 async function updateUser(req, res) {
     try {
         const userId = req.params.id;
-        let user = await User.findById(userId);
-        if (!user) return res.status(404).json({ message: 'User not found' });
+        const user = await User.findById(userId);
+        if (!user) return res.status(404).json({ message: 'Not found' });
 
-        // Update user fields
-        Object.assign(user, req.body);
+        Object.keys(req.body).forEach(key => {
+            user[key] = req.body[key];
+        });
 
         const updatedUser = await user.save();
         res.json(updatedUser);
@@ -135,8 +133,8 @@ async function updateUser(req, res) {
 async function deleteUser(req, res) {
     try {
         const user = await User.findByIdAndDelete(req.params.id);
-        if (!user) return res.status(404).json({ message: 'User not found' });
-        res.json({ message: 'User deleted successfully' });
+        if (!user) return res.status(404).json({ message: 'Not found' });
+        res.json({ message: 'Deleted successfully' });
     } catch (err) {
         res.status(500).json({ message: err.message });
     }
@@ -186,35 +184,6 @@ async function updateProfile(req, res) {
 
     
 }
-// async function getAllTechnicians(req, res) {
-
-    
-
-//     try {
-
-//         const technicians = await Technicians.find();
-//         if (!technicians) return res.status(404).json({ message: 'technicians Not found' });
-
-//         console.log(technicians);
-//         res.json(technicians);
-
-
-//     } catch (err) {
-//         res.status(500).json({ message: err.message });
-//     }
-
-    
-// }
-
-// Get all technicians
-const getAllTechnicians = async (req, res) => {
-    try {
-      const technicians = await Technician.find();
-      res.status(200).json(technicians);
-    } catch (error) {
-      res.status(400).json({ error: error.message });
-    }
-  };
 
 module.exports = {
     getAllUsers,
@@ -224,7 +193,6 @@ module.exports = {
     deleteUser,
     viewProfile,
     updateProfile,
-    getAllTechnicians,
     getModerators,
     createModerator,
     deleteModerator,

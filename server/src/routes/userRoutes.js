@@ -1,4 +1,3 @@
-// In userController.js
 const express = require('express');
 const router = express.Router();
 const upload = require('../middleware/multer');
@@ -37,3 +36,4 @@ router.delete('/:id',userController.deleteUser)
 // // patch self user info (id stored in jwt token)
 // router.patch('/:id', authToken, requireRole('user', 'admin', 'guest', 'host', 'technician'), userController.updateUser);
 
+module.exports = router;
