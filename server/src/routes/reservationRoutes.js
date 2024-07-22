@@ -13,7 +13,7 @@ router.post(
 router.get(
   "/get",
   authToken,
-  requireRole("guest", "host"),
+  requireRole("guest", "host", "admin"),
   reservationController.getReservations
 );
 
