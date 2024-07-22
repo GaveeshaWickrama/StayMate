@@ -6,10 +6,10 @@ const { authToken, requireRole } = require('../middleware/authProvider');
 
 
 //get the profile of a single user
-router.get('/',authToken, requireRole('user', 'admin', 'guest', 'host', 'technician'), userController.viewProfile)
+router.get('/',authToken, requireRole('user', 'admin', 'guest', 'host', 'technician', 'moderator'), userController.viewProfile)
 
 //update profile
-router.patch('/editProfile',authToken, requireRole('user', 'admin', 'guest', 'host', 'technician'), upload.single('photo'),userController.editProfile)
+router.patch('/editProfile',authToken, requireRole('user', 'admin', 'guest', 'host', 'technician', 'moderator'), upload.single('photo'),userController.editProfile)
 
 
 
