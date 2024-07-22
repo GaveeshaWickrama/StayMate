@@ -43,9 +43,9 @@ app.use(cors({
 
 app.use(morgan("dev"));
 morgan.token("body", (req) => JSON.stringify(req.body));
-app.use(
-  morgan(":method :url :status :res[content-length] - :response-time ms :body")
-);
+// app.use(
+//   morgan(":method :url :status :res[content-length] - :response-time ms :body")
+// );
 
 const userRoutes = require("./routes/userRoutes");
 const authRoutes = require("./routes/authRoutes");

@@ -165,45 +165,52 @@ async function getPropertyHostById(req, res) {
 async function getAllProperties(req, res) {
   const { latitude, longitude, radius, page = 1, limit = 1000 } = req.query;
 
+  console.log('Search parameters:');
+  console.log('Latitude:', latitude);
+  console.log('Longitude:', longitude);
+  console.log('Radius:', radius);
+
   let query = {};
-  if (latitude && longitude && radius) {
+
+  if (latitude && longitude && radius && !isNaN(latitude) && !isNaN(longitude) && !isNaN(radius)) {
     query = {
-      "location.coordinates": {
+      'location.coordinates': {
         $geoWithin: {
-          $centerSphere: [[parseFloat(longitude), parseFloat(latitude)], parseFloat(radius) / 3963.2] // Convert radius to radians
+          $centerSphere: [
+            [parseFloat(longitude), parseFloat(latitude)],
+            parseFloat(radius) / 3963.2 // Radius in radians, assuming radius in miles
+          ]
         }
       }
     };
   }
+
+  console.log('Constructed query:', JSON.stringify(query, null, 2));
 
   try {
     const properties = await Property.find(query)
       .skip((page - 1) * limit)
       .limit(parseInt(limit));
 
-    const totalProperties = await Property.countDocuments(query);
-
     if (!properties.length) {
-      return res.status(404).json({ message: 'No properties found.' });
+      console.log('No properties found.');
+      return res.status(200).json([]); // Returns an empty array directly
     }
 
-    console.log('Properties found:', properties); // Log the properties
-
-    res.status(200).json({
-      properties,
-      totalPages: Math.ceil(totalProperties / limit),
-      currentPage: parseInt(page)
-    });
+    console.log('Properties found:', properties);
+    res.status(200).json(properties); // Simplified response without pagination
   } catch (error) {
-    console.error(error);
+    console.error('Server error fetching properties:', error);
     res.status(500).json({ message: 'Server error' });
   }
 }
+
+
 
 module.exports = {
   createProperty,
   getPropertiesByHostId,
   getPropertyById,
   getAllProperties,
-  getPropertyHostById, // Add this line
+  getPropertyHostById, 
 };
