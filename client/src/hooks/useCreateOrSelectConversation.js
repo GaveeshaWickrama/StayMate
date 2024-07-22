@@ -27,6 +27,7 @@ const useCreateOrSelectConversation = () => {
             setSelectedConversation(conversation);
         } catch (error) {
             toast.error(error.message);
+            console.log(error);
         }
         return;
     };
