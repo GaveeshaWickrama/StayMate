@@ -1,5 +1,5 @@
 const User = require('../models/userModel')
-const Technicians = require('../models/technicianModel')
+
 const mongoose = require('mongoose')
 
 

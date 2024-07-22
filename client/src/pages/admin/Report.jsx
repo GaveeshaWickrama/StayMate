@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import {
   BarChart,
   Bar,
@@ -16,7 +16,7 @@ import {
 } from 'recharts';
 
 function Report() {
-  const data = [
+  const monthlyData = [
     { name: 'January', income: 4000, expenses: 2400 },
     { name: 'February', income: 3000, expenses: 1398 },
     { name: 'March', income: 2000, expenses: 9800 },
@@ -24,6 +24,14 @@ function Report() {
     { name: 'May', income: 1890, expenses: 4800 },
     { name: 'June', income: 2390, expenses: 3800 },
     { name: 'July', income: 3490, expenses: 4300 },
+  ];
+
+  const yearlyData = [
+    { name: '2019', income: 50000, expenses: 32000 },
+    { name: '2020', income: 60000, expenses: 40000 },
+    { name: '2021', income: 70000, expenses: 45000 },
+    { name: '2022', income: 80000, expenses: 50000 },
+    { name: '2023', income: 90000, expenses: 60000 },
   ];
 
   const pieData = [
@@ -35,11 +43,15 @@ function Report() {
 
   const COLORS = ['#0088FE', '#00C49F', '#FFBB28', '#FF8042'];
 
+  const [view, setView] = useState('monthly');
+
+  const data = view === 'monthly' ? monthlyData : yearlyData;
+
   const downloadReportData = (reportType) => {
     let csvRows;
     if (reportType === 'bar' || reportType === 'line') {
       csvRows = [
-        ['Month', 'Income', 'Expenses'],
+        ['Name', 'Income', 'Expenses'],
         ...data.map(row => [row.name, row.income, row.expenses]),
       ];
     } else if (reportType === 'pie') {
@@ -62,9 +74,23 @@ function Report() {
   return (
     <main className="p-5 text-gray-900 bg-gray-100 min-h-screen">
       <h3 className="text-4xl font-bold py-4 text-left">Reports</h3>
+      <div className="flex justify-start mb-5">
+        <button 
+          onClick={() => setView('monthly')}
+          className={`mx-2 px-4 py-2 rounded ${view === 'monthly' ? 'bg-blue-500 text-white' : 'bg-white text-blue-500 border border-blue-500'}`}
+        >
+          Monthly
+        </button>
+        <button 
+          onClick={() => setView('yearly')}
+          className={`mx-2 px-4 py-2 rounded ${view === 'yearly' ? 'bg-blue-500 text-white' : 'bg-white text-blue-500 border border-blue-500'}`}
+        >
+          Yearly
+        </button>
+      </div>
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-5 mt-10">
         <div className="bg-white shadow-md p-5 rounded-md">
-          <h3 className="text-xl font-bold py-4 text-center">Monthly Income (Bar Chart)</h3>
+          <h3 className="text-xl font-bold py-4 text-center">Income vs Expenses ({view.charAt(0).toUpperCase() + view.slice(1)})</h3>
           <ResponsiveContainer width="100%" height={250}>
             <BarChart data={data} margin={{ top: 5, right: 30, left: 20, bottom: 5 }}>
               <CartesianGrid strokeDasharray="3 3" />
@@ -87,7 +113,7 @@ function Report() {
         </div>
 
         <div className="bg-white shadow-md p-5 rounded-md">
-          <h3 className="text-xl font-bold py-4 text-center">Monthly Income (Line Chart)</h3>
+          <h3 className="text-xl font-bold py-4 text-center">Income vs Expenses ({view.charAt(0).toUpperCase() + view.slice(1)})</h3>
           <ResponsiveContainer width="100%" height={250}>
             <LineChart data={data} margin={{ top: 5, right: 30, left: 20, bottom: 5 }}>
               <CartesianGrid strokeDasharray="3 3" />

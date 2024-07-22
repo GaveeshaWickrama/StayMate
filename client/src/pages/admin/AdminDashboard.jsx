@@ -6,7 +6,7 @@ import axios from 'axios';
 import { useAuth } from '../../context/auth';
 
 function AdminDashboard() {
-  const data = [
+  const monthlyData = [
     { name: 'January', customers: 300, propertyOwners: 150 },
     { name: 'February', customers: 280, propertyOwners: 140 },
     { name: 'March', customers: 350, propertyOwners: 180 },
@@ -16,9 +16,18 @@ function AdminDashboard() {
     { name: 'July', customers: 420, propertyOwners: 210 },
   ];
 
+  const yearlyData = [
+    { name: '2019', customers: 2400, propertyOwners: 1200 },
+    { name: '2020', customers: 2600, propertyOwners: 1300 },
+    { name: '2021', customers: 2800, propertyOwners: 1400 },
+    { name: '2022', customers: 3000, propertyOwners: 1500 },
+    { name: '2023', customers: 3200, propertyOwners: 1600 },
+  ];
+
   const totalSales = 28740; // Use a fixed value for demonstration
   const { token } = useAuth();
   const [profile, setProfile] = useState({ firstname: '', lastname: '', role: '' });
+  const [view, setView] = useState('monthly');
 
   useEffect(() => {
     const fetchProfile = async () => {
@@ -37,25 +46,14 @@ function AdminDashboard() {
     fetchProfile();
   }, [token]);
 
+  const handleViewChange = (newView) => {
+    setView(newView);
+  };
+
+  const data = view === 'monthly' ? monthlyData : yearlyData;
+
   return (
     <main className="p-2 text-gray-900 bg-gray-100 min-h-screen">
-      <header className="bg-white shadow-md p-2 rounded-md flex items-center justify-between mb-4 shadow-outline">
-        <div className="flex items-center">
-          <div className="relative">
-            <img src={adminprofilepic} alt="Profile" className="w-12 h-12 rounded-full" />
-            <div className="absolute bottom-0 left-0 bg-white text-center rounded-full p-1 text-xs">
-              <p>{profile.firstname}</p>
-              <p>{profile.lastname}</p>
-              <p className="text-gray-600">{profile.role}</p>
-            </div>
-          </div>
-          <div className="ml-4">
-            <h1 className="text-sm font-medium">Raweesha Wickrama</h1>
-            <p className="text-xs text-gray-600">admin</p>
-          </div>
-        </div>
-      </header>
-
       <div className="flex flex-col items-start mb-4">
         <h3 className="text-3xl font-bold py-2">DASHBOARD</h3>
         <div className="bg-white rounded-md p-10 mb-4 w-full shadow-outline">
@@ -92,6 +90,15 @@ function AdminDashboard() {
           </div>
           <h1 className="text-2xl font-bold">${totalSales}</h1>
         </div>
+      </div>
+
+      <div className="flex justify-end mb-4">
+        <button onClick={() => handleViewChange('monthly')} className={`px-4 py-2 rounded-md ${view === 'monthly' ? 'bg-blue-500 text-white' : 'bg-white text-blue-500 border border-blue-500'}`}>
+          Monthly
+        </button>
+        <button onClick={() => handleViewChange('yearly')} className={`ml-2 px-4 py-2 rounded-md ${view === 'yearly' ? 'bg-blue-500 text-white' : 'bg-white text-blue-500 border border-blue-500'}`}>
+          Yearly
+        </button>
       </div>
 
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-5">

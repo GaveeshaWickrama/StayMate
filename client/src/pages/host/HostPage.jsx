@@ -1,53 +1,50 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
+import axios from 'axios';
 import { Link } from 'react-router-dom';
 import { BsFillArchiveFill, BsFillGrid3X3GapFill, BsPeopleFill, BsFillBellFill } from 'react-icons/bs';
+import { useAuth } from "../../context/auth";
 
-const recentBookingData = [
-    {
-        id: '1',
-        property_id: '4324',
-        user_name: 'Shirley A.Lape',
-        booking_date: '2024-05-10',
-        income: '$2000',
-        property_status: 'BOOKED',
-    },
-    {
-        id: '2',
-        property_id: '4325',
-        user_name: 'John Doe',
-        booking_date: '2024-05-11',
-        income: '$1500',
-        property_status: 'AVAILABLE',
-    },
-    {
-        id: '3',
-        property_id: '4326',
-        user_name: 'Jane Smith',
-        booking_date: '2024-05-12',
-        income: '$1800',
-        property_status: 'BOOKED',
-    },
-    {
-        id: '4',
-        property_id: '4327',
-        user_name: 'Alice Brown',
-        booking_date: '2024-05-13',
-        income: '$2200',
-        property_status: 'CANCELLED',
-    },
-    {
-        id: '5',
-        property_id: '4328',
-        user_name: 'Bob White',
-        booking_date: '2024-05-14',
-        income: '$2500',
-        property_status: 'P',
-    },
-];
+function getStatusColor(status) {
+    switch (status) {
+        case 'BOOKED':
+            return 'bg-blue-200 text-blue-800';
+        case 'AVAILABLE':
+            return 'bg-green-200 text-green-800';
+        case 'CANCELLED':
+            return 'bg-red-200 text-red-800';
+        case 'PENDING':
+            return 'bg-yellow-200 text-yellow-800';
+        default:
+            return 'bg-gray-200 text-gray-800';
+    }
+}
 
 function RecentBookings() {
+    const { token } = useAuth();
     const [searchTerm, setSearchTerm] = useState('');
-    const [filteredData, setFilteredData] = useState(recentBookingData);
+    const [filteredData, setFilteredData] = useState([]);
+    const [recentBookingData, setRecentBookingData] = useState([]);
+
+    useEffect(() => {
+        const fetchRecentBookings = async () => {
+            try {
+                const response = await axios.get(
+                    `${import.meta.env.VITE_API_URL}/bookings/recent`,
+                    {
+                        headers: {
+                            Authorization: `Bearer ${token}`,
+                        },
+                    }
+                );
+                setRecentBookingData(response.data);
+                setFilteredData(response.data);
+            } catch (error) {
+                console.error('Error fetching recent bookings:', error);
+            }
+        };
+
+        fetchRecentBookings();
+    }, [token]);
 
     const handleSearchChange = (event) => {
         setSearchTerm(event.target.value);
@@ -118,79 +115,92 @@ function RecentBookings() {
     );
 }
 
-function getStatusColor(status) {
-    switch (status) {
-        case 'BOOKED':
-            return 'bg-blue-200 text-blue-800';
-        case 'AVAILABLE':
-            return 'bg-green-200 text-green-800';
-        case 'CANCELLED':
-            return 'bg-red-200 text-red-800';
-        case 'RETURNED':
-            return 'bg-yellow-200 text-yellow-800';
-        default:
-            return 'bg-gray-200 text-gray-800';
-    }
-}
-
 const Analysis = () => {
-    const [selectedPeriod, setSelectedPeriod] = useState('This Month'); // State to manage selected period
+    const { token } = useAuth();
+    const [selectedPeriod, setSelectedPeriod] = useState('This Month');
+    const [incomeData, setIncomeData] = useState(null);
+    const [totalBookings, setTotalBookings] = useState(0);
+    const [totalProperties, setTotalProperties] = useState(0);
 
-    // Dummy data for total monthly income for different periods
-    const incomeData = {
-        'This Month': '$6,766',
-        'Last Month': '$7,200',
-        'Last 3 Months': '$20,500',
-        'Last 6 Months': '$42,300',
-    };
+    useEffect(() => {
+        const fetchTotalMonthlyIncome = async () => {
+            try {
+                const response = await axios.get(`${import.meta.env.VITE_API_URL}/bookings/total-income`, {
+                    headers: {
+                        Authorization: `Bearer ${token}`,
+                    },
+                });
 
-    // Function to handle dropdown change
-    const handlePeriodChange = (event) => {
-        setSelectedPeriod(event.target.value);
-    };
+                const monthlyIncome = response.data.find(income => income._id === new Date().getMonth() + 1);
+                setIncomeData(monthlyIncome ? monthlyIncome.totalIncome : 0);
+            } catch (error) {
+                console.error('Error fetching total monthly income:', error);
+            }
+        };
+
+        const fetchTotalBookings = async () => {
+            try {
+                const response = await axios.get(`${import.meta.env.VITE_API_URL}/bookings/total-bookings`, {
+                    headers: {
+                        Authorization: `Bearer ${token}`,
+                    },
+                });
+
+                setTotalBookings(response.data.totalBookings);
+            } catch (error) {
+                console.error('Error fetching total bookings:', error);
+            }
+        };
+
+        const fetchTotalProperties = async () => {
+            try {
+                const response = await axios.get(`${import.meta.env.VITE_API_URL}/properties/total-properties`, {
+                    headers: {
+                        Authorization: `Bearer ${token}`,
+                    },
+                });
+
+                setTotalProperties(response.data.totalProperties);
+            } catch (error) {
+                console.error('Error fetching total properties:', error);
+            }
+        };
+
+        fetchTotalMonthlyIncome();
+        fetchTotalBookings();
+        fetchTotalProperties();
+    }, [token]);
 
     return (
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5 my-5">
-            <div className="bg-white shadow-md p-3 rounded-md flex flex-col justify-around items-center border-l-4 border-blue-500">
-                <div className="flex items-center justify-between w-full mb-2">
-                    <h3 className="text-lg font-medium">Paid Bookings</h3>
-                    <BsFillArchiveFill className="text-2xl text-blue-500" />
-                </div>
-                <h1 className="text-2xl font-bold text-center">1,074</h1>
-            </div>
-            <div className="bg-white shadow-md p-3 rounded-md flex flex-col justify-around items-center border-l-4 border-blue-500">
-                <div className="flex items-center justify-between w-full mb-2">
-                    <h3 className="text-lg font-medium">Site Visit</h3>
-                    <BsFillGrid3X3GapFill className="text-2xl text-blue-500" />
-                </div>
-                <h1 className="text-2xl font-bold text-center">3,944</h1>
-            </div>
-            <div className="bg-white shadow-md p-3 rounded-md flex flex-col justify-around items-center border-l-4 border-blue-500">
-                <div className="flex items-center justify-between w-full mb-2">
-                    <h3 className="text-lg font-medium">Searchers</h3>
-                    <BsPeopleFill className="text-2xl text-blue-500" />
-                </div>
-                <h1 className="text-2xl font-bold text-center">14,743</h1>
-            </div>
-            <div className="bg-white shadow-md p-3 rounded-md flex flex-col justify-around items-center border-l-4 border-blue-500">
-                <div className="flex items-center justify-between w-full mb-2">
-                    <h3 className="text-lg font-medium">Total Monthly Income</h3>
-                    <BsFillBellFill className="text-2xl text-blue-500" />
-                </div>
-                <div className="flex items-center justify-center mb-2">
+        <div className="grid grid-cols-1 gap-4 md:grid-cols-3 mt-8">
+            <div className="bg-white p-4 rounded-sm border border-gray-200 shadow-md">
+                <h2 className="text-lg font-medium text-gray-700">Monthly Income</h2>
+                <div className="flex justify-between items-center mt-4">
+                    <p className="text-3xl font-bold text-green-500">${incomeData ? incomeData.toFixed(2) : '0.00'}</p>
                     <select
-                        className="border border-gray-300 p-2 rounded-md focus:outline-none"
+                        className="border border-gray-300 rounded-md p-2"
                         value={selectedPeriod}
-                        onChange={handlePeriodChange}
+                        onChange={(e) => setSelectedPeriod(e.target.value)}
                     >
-                        {Object.keys(incomeData).map((period) => (
-                            <option key={period} value={period}>
-                                {period}
-                            </option>
-                        ))}
+                        <option value="This Month">This Month</option>
+                        <option value="Last Month">Last Month</option>
+                        <option value="This Year">This Year</option>
                     </select>
                 </div>
-                <h1 className="text-2xl font-bold text-center">{incomeData[selectedPeriod]}</h1>
+            </div>
+
+            <div className="bg-white p-4 rounded-sm border border-gray-200 shadow-md">
+                <h2 className="text-lg font-medium text-gray-700">Total Bookings</h2>
+                <div className="flex justify-between items-center mt-4">
+                    <p className="text-3xl font-bold text-blue-500">{totalBookings}</p>
+                </div>
+            </div>
+
+            <div className="bg-white p-4 rounded-sm border border-gray-200 shadow-md">
+                <h2 className="text-lg font-medium text-gray-700">Total Properties</h2>
+                <div className="flex justify-between items-center mt-4">
+                    <p className="text-3xl font-bold text-purple-500">{totalProperties}</p>
+                </div>
             </div>
         </div>
     );
@@ -198,13 +208,14 @@ const Analysis = () => {
 
 function HostPage() {
     return (
-        <div className="p-8">
-            <h1 className="text-3xl font-bold mb-4">Dashboard</h1>
-            <div className="bg-blue-100 rounded-md p-4 mb-4">
-                <h1 className="text-4xl font-bold">Hello, Raveesha Wickrama!</h1>
+        <div className="p-4">
+            <header className="bg-white p-4 rounded-sm border border-gray-200 shadow-md">
+                <h1 className="text-2xl font-bold text-gray-700">Dashboard</h1>
+            </header>
+            <div className="mt-8">
+                <RecentBookings />
+                <Analysis />
             </div>
-            <Analysis />
-            <RecentBookings />
         </div>
     );
 }

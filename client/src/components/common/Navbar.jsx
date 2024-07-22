@@ -62,7 +62,7 @@ function Navbar() {
 
   const adminLinks = [
     { path: "/", label: "Home" },
-    { path: "/admin", label: "Admin Dashboard" },
+    { path: "/admin/AdminDashboard", label: "AdminDashboard" },
     { path: "/admin/MyProfile", label: "My Profile" },
     { path: "/admin/Moderator", label: "Moderator" },
     { path: "/admin/report", label: "Report" },
@@ -87,7 +87,7 @@ function Navbar() {
     { path: "/host/add-property", label: "New Listing" },
     { path: "/host/reservations", label: "Reservations" },
     { path: "/host/property-details", label: "Test" },
-    { path: "/host/viewReviews", label: "Reviews" },
+    { path: "/host/Reviews", label: "Reviews" },
   ];
 
   const publicLinks = [
