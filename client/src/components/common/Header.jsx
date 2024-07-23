@@ -7,9 +7,7 @@ import { FaBars, FaTimes } from 'react-icons/fa';
 
 const Header = ({ toggleNavbar }) => {
   const { currentUser, loading } = useAuth();
-  console.log("Inside Header");
-  console.log(currentUser);
-
+  
   if (loading) {
     return <div>Loading...</div>; // Show a loading spinner or message
   }

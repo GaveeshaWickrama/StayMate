@@ -53,12 +53,12 @@ function Sidebar({ title, links, logout, isVisible }) {
 function Navbar({ isVisible }) {
   const { currentUser, logout } = useAuth();
   const navigate = useNavigate();
-
+  
   const handleLogout = () => {
     logout();
     navigate("/");
   };
-
+  
   const adminLinks = [
     { path: "/", label: "Home" },
     { path: "/admin", label: "Admin Dashboard" },
@@ -73,10 +73,11 @@ function Navbar({ isVisible }) {
 
   const guestLinks = [
     { path: "/", label: "Home" },
-    { path: "/user/viewreviews", label: "Reviews" },
+    { path: "/user", label: "User Page" },
+    { path: "/user/reviews/add", label: "Reviews" },
     { path: "/user/reservations", label: "Reservations" },
   ];
-
+  
   const hostLinks = [
     { path: "/", label: "Home" },
     { path: "/host", label: "Host Dashboard" },
@@ -98,25 +99,25 @@ function Navbar({ isVisible }) {
     { path: "/technician/tasks", label: "Tasks" },
     { path: "/host/viewReviews", label: "Reviews" },
   ];
-
+  
   const publicLinks = [
     { path: "/", label: "Home" },
     { path: "/login", label: "Login" },
     { path: "/signup/guest", label: "Signup" },
   ];
-
+  
   if (!currentUser) {
     return <Sidebar title="Public Nav" links={publicLinks} isVisible={isVisible} />;
   }
-
+  
   if (currentUser.role === "admin") {
     return <Sidebar title="Admin Nav" links={adminLinks} logout={handleLogout} isVisible={isVisible} />;
   }
-
+  
   if (currentUser.role === "guest") {
     return <Sidebar title="User Nav" links={guestLinks} logout={handleLogout} isVisible={isVisible} />;
   }
-
+  
   if (currentUser.role === "host") {
     return <Sidebar title="Host Nav" links={hostLinks} logout={handleLogout} isVisible={isVisible} />;
   }
