@@ -1,23 +1,45 @@
-import React from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { useAuth } from '../../context/auth';
-import logo from '../../assets/icons/logo.png'; 
-import { Link } from "react-router-dom";
-
-import { FaBars, FaTimes } from 'react-icons/fa';
+import logo from '../../assets/icons/logo.png';
+import { Link, useNavigate } from "react-router-dom";
+import { FaBars, FaUser, FaSignOutAlt } from 'react-icons/fa';
 
 const Header = ({ toggleNavbar }) => {
-  const { currentUser, loading } = useAuth();
-  
+  const { currentUser, loading, logout } = useAuth();
+  const navigate = useNavigate();
+  const [dropdownOpen, setDropdownOpen] = useState(false);
+  const dropdownRef = useRef(null);
+
+  useEffect(() => {
+    const handleClickOutside = (event) => {
+      if (dropdownRef.current && !dropdownRef.current.contains(event.target)) {
+        setDropdownOpen(false);
+      }
+    };
+    document.addEventListener('mousedown', handleClickOutside);
+    return () => {
+      document.removeEventListener('mousedown', handleClickOutside);
+    };
+  }, [dropdownRef]);
+
   if (loading) {
     return <div>Loading...</div>; // Show a loading spinner or message
   }
 
+  const handleLogout = async () => {
+    setDropdownOpen(false); // Close the dropdown
+    await logout();
+    navigate('/'); // Redirect to the home page after logout
+  };
+
   return (
-    <div className="header bg-gradient-to-r from-blue-400 via-blue-600 to-blue-700 p-4 flex justify-between items-center fixed top-0 left-0 w-full h-20 shadow-lg">
+    <div className="header bg-gradient-to-r from-blue-400 via-blue-600 to-blue-700 p-4 flex justify-between items-center fixed top-0 left-0 w-full h-20 shadow-lg z-50">
       <div className="flex items-center">
-      <button onClick={toggleNavbar} className="bg-blue-500 text-white rounded-full p-4 my-4 flex items-center justify-center shadow-md hover:bg-blue-600 transition duration-200" > <FaBars size={24} /> </button>
-        <div className="flex items-center  p-0 rounded">
-          <img src={logo} alt="Staymate Logo" className="h-20" />
+        <button onClick={toggleNavbar} className="bg-blue-500 text-white rounded-full p-2 flex items-center justify-center shadow-md hover:bg-blue-600 transition duration-200">
+          <FaBars size={24} />
+        </button>
+        <div className="flex items-center p-0 rounded ml-4">
+          <img src={logo} alt="Staymate Logo" className="h-12" />
         </div>
         <div className="ml-4 text-white">
           <h1 className="text-2xl font-bold">STAYMATE</h1>
@@ -25,11 +47,10 @@ const Header = ({ toggleNavbar }) => {
         </div>
       </div>
       {currentUser ? (
-        <Link to={`/users/ViewProfile/${currentUser.id}`}>
-          <div className="flex items-center">
+        <div className="relative flex items-center" ref={dropdownRef}>
+          <div className="flex items-center cursor-pointer" onClick={() => setDropdownOpen(!dropdownOpen)}>
             <div className="text-right mr-4">
               <p className="text-lg font-bold text-white">
-                {currentUser.gender === "male" ? "Mr. " : currentUser.gender === "female" ? "Ms. " : ""}
                 {currentUser.firstName} {currentUser.lastName}
               </p>
               <p className="text-blue-200">{currentUser.role}</p>
@@ -40,11 +61,27 @@ const Header = ({ toggleNavbar }) => {
               className="h-12 w-12 rounded-full border-2 border-white"
             />
           </div>
-        </Link>
+          {dropdownOpen && (
+            <div className="absolute top-12 right-0 mt-2 w-56 bg-white rounded-md shadow-lg z-50">
+              <Link to={`/users/ViewProfile/${currentUser.id}`} className="block px-4 py-4 text-gray-800 hover:bg-gray-100 rounded-t-md flex items-center">
+                <FaUser className="text-blue-500 mr-2" />
+                View Profile
+              </Link>
+              <hr className="border-gray-300" />
+              <button
+                onClick={handleLogout}
+                className="block w-full text-left px-4 py-4 text-gray-800 hover:bg-gray-100 rounded-b-md flex items-center"
+              >
+                <FaSignOutAlt className="text-blue-500 mr-2" />
+                Logout
+              </button>
+            </div>
+          )}
+        </div>
       ) : (
         <div className="flex space-x-4">
-          <a href="/login" className="text-white hover:underline">Login</a>
-          <a href="/signup/guest" className="text-white hover:underline">Signup</a>
+          <Link to="/login" className="text-white hover:underline">Login</Link>
+          <Link to="/signup/guest" className="text-white hover:underline">Signup</Link>
         </div>
       )}
     </div>
@@ -52,4 +89,3 @@ const Header = ({ toggleNavbar }) => {
 };
 
 export default Header;
-
