@@ -63,6 +63,24 @@ export const StoreProvider = ({ children }) => {
     });
   };
 
+  const fetchPropertyById = async (propertyId) => {
+    // Mock fetch function, replace with actual API call
+    try {
+      const response = await axios.get(
+        `${import.meta.env.VITE_API_URL}/properties/${propertyId}`,
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      );
+      return response.data; // Return the property data from the API response
+    } catch (error) {
+      console.log("Error fetching property details:", error);
+      toast.error("Failed to fetch property details.");
+      return null; // Return null or handle the error as appropriate
+    }
+  };
   const handleSubmit = async (reservationData) => {
     try {
       const response = await axios.post(
@@ -116,6 +134,7 @@ export const StoreProvider = ({ children }) => {
         userReservations,
         loading,
         addReview,
+        fetchPropertyById,
       }}
     >
       {children}

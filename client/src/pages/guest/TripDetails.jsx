@@ -1,10 +1,22 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { useLocation } from "react-router-dom";
 import { useStore } from "../../context/StoreContext";
 
 const TripDetails = () => {
   const { state } = useLocation();
-  const { handleSubmit } = useStore();
+  const { handleSubmit, fetchPropertyById } = useStore(); // Ensure fetchPropertyById is implemented in StoreContext
+  const [property, setProperty] = useState(null);
+
+  useEffect(() => {
+    if (state && state.propertyId && !state.property) {
+      fetchPropertyById(state.propertyId).then((data) => {
+        console.log("Fetched property data:", data); // Debugging the response data
+        setProperty(data);
+      });
+    } else {
+      setProperty(state.property);
+    }
+  }, [state, fetchPropertyById]);
 
   if (!state) {
     return (
@@ -14,12 +26,12 @@ const TripDetails = () => {
     );
   }
 
-  // Debugging: Log the state and property details
-  console.log("TripDetails state:", state);
-  console.log("Property details:", state.property);
+  if (!property) {
+    return <div className="container mx-auto p-10">Loading...</div>;
+  }
 
   const {
-    property,
+    sectionId,
     propertyId,
     checkInDate,
     checkOutDate,
@@ -30,6 +42,7 @@ const TripDetails = () => {
   const handleConfirmBooking = (e) => {
     e.preventDefault();
     const reservationData = {
+      sectionId,
       propertyId,
       checkInDate,
       checkOutDate,
@@ -43,7 +56,7 @@ const TripDetails = () => {
 
   return (
     <div className="container mx-auto p-10">
-      <h1 className="text-4xl font-extrabold text-gray-800 mb-8">
+      <h1 className="text-4xl font-extrabold text-gray-800 mb-8 text-center">
         Confirm Your Trip
       </h1>
       <div className="bg-white p-6 rounded-lg shadow-md">
@@ -76,8 +89,6 @@ const TripDetails = () => {
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
               {property.images.map((image, index) => {
                 const imageUrl = `${import.meta.env.VITE_API_URL}/${image.url}`;
-                console.log(`Image ${index + 1} URL:`, imageUrl); // Debugging: Log the image URL
-
                 return (
                   <div key={image._id} className="relative">
                     <img
