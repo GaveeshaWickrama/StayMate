@@ -94,7 +94,7 @@ const EditProfile = () => {
         setTimeout(() => {
           window.location.href = `viewProfile/${currentUser.id}`; // Redirect to the profile page or any other desired page
         }, 0); // Set a timeout to ensure the redirect happens after the alert
-        // window.location.href = `viewProfile/${currentUser.id}`; // Redirect to the profile page or any other desired page
+    
       } else {
         alert('Failed to submit updated details');
       }

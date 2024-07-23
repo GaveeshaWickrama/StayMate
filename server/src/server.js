@@ -31,6 +31,7 @@ const reservationRoutes = require("./routes/reservationRoutes");
 const complaintRoutes = require("./routes/complaintRoutes");
 const reviewRoutes = require("./routes/reviewRoutes");
 const messageRoutes = require("./routes/messageRoutes");
+// const propertyverficationRoutes = require("./routes/propertyverificationRoutes")
 
 mongoose.connect(process.env.DATABASE_URL); // Use 127.0.0.1 instead of localhost to fix conversion issues with IPV6
 const db = mongoose.connection;
@@ -47,6 +48,7 @@ app.use("/reservation", reservationRoutes);
 app.use("/complaints", complaintRoutes);
 app.use("/reviews", reviewRoutes);
 app.use("/message", messageRoutes);
+// app.use("/propertyverification, propertyverficationRoutes")
 
 app.get("/", (req, res) => {
   res.send("Hello World!");
