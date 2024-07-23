@@ -1,26 +1,74 @@
-require("dotenv").config();
+const dotenv = require("dotenv").config();
 const express = require("express");
 const cors = require("cors");
-const morgan = require("morgan"); // Logging HTTP requests
+const morgan = require("morgan");
 const mongoose = require("mongoose");
+const defaultImageMiddleware = require("./middleware/defaultImageMiddleware");
+
+// Correct path example
 const path = require("path"); // Import the path module
-const defaultImageMiddleware = require('./middleware/defaultImageMiddleware'); // Adjust the path as necessary
+const {
+  updateReservationStatuses,
+} = require("./controllers/reservationController");
+const cron = require("node-cron");
 
 const app = express();
 
 // Middleware to serve static files
 app.use("/uploads", express.static(path.join(__dirname, "../uploads")));
 
-// Use custom middleware to serve default images if the requested image is not found
-app.use("/uploads/profilepictures", defaultImageMiddleware('profilepictures', 'default.jpg'));
-app.use("/uploads/properties", defaultImageMiddleware('properties', 'default.jpg'));
+// Call updateReservationStatuses on server startup
+updateReservationStatuses();
 
-app.use(cors());
+// Schedule periodic status update task to run every hour
+setInterval(() => {
+  console.log("Running periodic reservation status update job...");
+  updateReservationStatuses();
+}, 60 * 60 * 1000); // Every hour
+
+// Use custom middleware to serve default images if the requested image is not found
+app.use(
+  "/uploads/profilepictures",
+  defaultImageMiddleware("profilepictures", "default.jpg")
+);
+app.use(
+  "/uploads/properties",
+  defaultImageMiddleware("properties", "default.jpg")
+);
+
+// Use custom middleware to serve default images if the requested image is not found
+app.use(
+  "/uploads/profilepictures",
+  defaultImageMiddleware("profilepictures", "default.jpg")
+);
+app.use(
+  "/uploads/properties",
+  defaultImageMiddleware("properties", "default.jpg")
+);
+
+// Allow requests from the frontend origin
+const allowedOrigins = ["http://localhost:5173"];
+
+app.use(
+  cors({
+    origin: function (origin, callback) {
+      // Allow requests with no origin (like mobile apps or curl requests)
+      if (!origin) return callback(null, true);
+      if (allowedOrigins.indexOf(origin) === -1) {
+        const msg =
+          "The CORS policy for this site does not allow access from the specified origin.";
+        return callback(new Error(msg), false);
+      }
+      return callback(null, true);
+    },
+  })
+);
+
 app.use(morgan("dev"));
 morgan.token("body", (req) => JSON.stringify(req.body));
-app.use(
-  morgan(":method :url :status :res[content-length] - :response-time ms :body")
-);
+// app.use(
+//   morgan(":method :url :status :res[content-length] - :response-time ms :body")
+// );
 
 const userRoutes = require("./routes/userRoutes");
 const authRoutes = require("./routes/authRoutes");
@@ -31,9 +79,14 @@ const reservationRoutes = require("./routes/reservationRoutes");
 const complaintRoutes = require("./routes/complaintRoutes");
 const reviewRoutes = require("./routes/reviewRoutes");
 const messageRoutes = require("./routes/messageRoutes");
+
 // const propertyverficationRoutes = require("./routes/propertyverificationRoutes")
 
-mongoose.connect(process.env.DATABASE_URL); // Use 127.0.0.1 instead of localhost to fix conversion issues with IPV6
+const taskRoutes = require("./routes/taskRoutes");
+const technicianRoutes = require("./routes/technicianRoutes");
+
+
+mongoose.connect(process.env.DATABASE_URL);
 const db = mongoose.connection;
 db.on("error", (error) => console.error(error));
 db.once("open", () => console.log("Connected to Database"));
@@ -47,14 +100,19 @@ app.use("/properties", propertyRoutes);
 app.use("/reservation", reservationRoutes);
 app.use("/complaints", complaintRoutes);
 app.use("/reviews", reviewRoutes);
+
 app.use("/message", messageRoutes);
+
 // app.use("/propertyverification, propertyverficationRoutes")
+
+app.use("/tasks", taskRoutes);
+app.use("/technicians", technicianRoutes);
+
 
 app.get("/", (req, res) => {
   res.send("Hello World!");
 });
 
-// Start Server
 const port = process.env.PORT || 3000;
 app.listen(port, () => {
   console.log(`Server running at http://localhost:${port}/`);

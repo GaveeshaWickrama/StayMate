@@ -58,7 +58,7 @@ const TripDetails = ({ trip, isUpcoming, isOngoing, isCompleted }) => {
               </button>
               <button
                 onClick={() => (window.location.href = "#")}
-                className="font-semibold text-white text-sm px-10 py-2 bg-yellow-500 border border-yellow-500 rounded "
+                className="font-semibold text-white text-sm px-5 py-2 bg-yellow-500 border border-yellow-500 rounded "
               >
                 View Complaints
               </button>
