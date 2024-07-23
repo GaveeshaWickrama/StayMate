@@ -3,6 +3,7 @@ import { Routes, Route, Navigate } from 'react-router-dom';
 import { useAuth } from '../context/auth';
 // import ModeratorDashboard from '../pages/moderator/ModeratorDashboard';
 import ViewNewProperties from '../pages/moderator/ViewNewProperties';
+import NewPropertySeemore from '../pages/moderator/NewPropertySeemore';
 
 
 function ModeratorRoutes() {
@@ -17,6 +18,7 @@ function ModeratorRoutes() {
     <Routes>
       {/* <Route path="/" element={currentUser && currentUser.role === 'moderator' ? <ModeratorDashboard /> : <Navigate to="/Unauthorized" />} /> */}
       <Route path="/viewNewProperties" element={currentUser && currentUser.role === 'moderator' ? <ViewNewProperties /> : <Navigate to="/Unauthorized" />} />
+      <Route path="/newPropertySeemore/:id" element={currentUser && currentUser.role === 'moderator' ? <NewPropertySeemore /> : <Navigate to="/Unauthorized" />} />
       
     </Routes>
   );

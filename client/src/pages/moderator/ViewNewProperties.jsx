@@ -39,7 +39,7 @@ const ViewNewProperties = () => {
 
         <div className="container mx-auto p-4">
             <SearchProperty />
-            <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
+            <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-[15rem]">
                 {properties && properties.length > 0 ? (
                     properties.map(property => (
                         <PendingPropertyCard key={property._id} property={property} />
