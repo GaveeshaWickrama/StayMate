@@ -8,6 +8,7 @@ function HomePage() {
   const [properties, setProperties] = useState([]);
   const [searchParams, setSearchParams] = useState({ location: '', radius: '' });
   const [showMap, setShowMap] = useState(false);
+  const [searchPerformed, setSearchPerformed] = useState(false); // Track if a search has been performed
 
   const fetchProperties = async (params = {}) => {
     const { location = {}, radius = '' } = params;
@@ -20,9 +21,6 @@ function HomePage() {
       });
       setProperties(response.data);
       console.log('Fetched properties:', response.data);
-      if (response.data.length > 0) {
-        setShowMap(true);
-      }
     } catch (error) {
       console.error('Error fetching properties:', error);
     }
@@ -36,7 +34,8 @@ function HomePage() {
     console.log('Search params:', params);
     setSearchParams(params);
     fetchProperties(params);
-    setShowMap(true);
+    setShowMap(true); // Automatically show the map after a search
+    setSearchPerformed(true); // Mark that a search has been performed
   };
 
   const toggleMap = () => {
@@ -47,7 +46,7 @@ function HomePage() {
     <div className="container mx-auto p-4">
       <div className="flex justify-between items-center mb-4">
         <LocationSearchBar onSearch={handleSearch} />
-        {!showMap && (
+        {searchPerformed && !showMap && (
           <button
             onClick={toggleMap}
             className="bg-black text-white rounded-md p-3 ml-4 shadow-md hover:bg-blue-600 transition duration-200"
@@ -60,7 +59,10 @@ function HomePage() {
         <div className={`flex flex-wrap ${showMap ? 'w-full md:w-2/3' : 'w-full'} -mx-2`}>
           {properties.length > 0 ? (
             properties.map(property => (
-              <div key={property._id} className="w-full sm:w-1/2 md:w-1/2 lg:w-1/4 px-2 mb-4 shadow-md">
+              <div
+                key={property._id}
+                className={`w-full sm:w-1/2 ${showMap ? 'md:w-1/3' : 'md:w-1/4'} px-2 mb-4 shadow-md`}
+              >
                 <PropertyCard property={property} />
               </div>
             ))
@@ -87,4 +89,3 @@ function HomePage() {
 }
 
 export default HomePage;
-
