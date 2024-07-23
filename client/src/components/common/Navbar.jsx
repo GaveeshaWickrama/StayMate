@@ -10,6 +10,7 @@ import { GiHouse, GiChat } from "react-icons/gi";
 
 // Define icons for each link type
 const iconMap = {
+
   Home: <RxDashboard />,
   "Admin Dashboard": <MdAccountCircle />,
   "Manage Moderators": <MdAccountCircle />,
@@ -25,6 +26,7 @@ const iconMap = {
   Signup: <MdPersonAdd />,
   "View New Properties": <BsFillHousesFill />,
   Chat: <GiChat />,
+
 };
 
 // Sidebar component

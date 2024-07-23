@@ -143,7 +143,7 @@ async function getPropertyHostById(req, res) {
 
   try {
     // Find the property by its ID
-    const property = await Property.findById(propertyId).populate('host_id', 'nicPassport phone gender firstName lastName createdOn');
+    const property = await Property.findById(propertyId).populate('host_id', 'nicPassport phone gender firstName lastName createdOn picture');
     if (!property) {
       return res.status(404).json({ message: 'Property not found.' });
     }

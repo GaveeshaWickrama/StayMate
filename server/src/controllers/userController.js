@@ -13,7 +13,7 @@ const getUsers = async (req,res)=>{
 
 }
 
-//get a single user
+//get a single user :means my profile
 const getUser = async (req, res) => {
 
     const { id } = req.params
@@ -31,15 +31,12 @@ const getUser = async (req, res) => {
 
 
 
-//this is same as the above function here only change is I'm getting the id by the token not from the URL
-//used twice in ViewProfile and in Header to get the name & role
+//this is same as the above function here only change is I'm getting the id by the URL
 const viewProfile = async (req, res) => {
 
-    console.log(req.user)
-    const id  = req.user.userId;
+  const { id } = req.params  
+  // console.log(req.user)
     
-    console.log(id);
-
     if (!mongoose.Types.ObjectId.isValid(id)) {
         return res.status(400).json({ error: 'Invalid user ID' });
     }
