@@ -10,9 +10,9 @@ const Conversation = ({conversation,lastIdx,emoji}) => {
     console.log("Selected conversation",selectedConversation);
 
 
-    const DefaultPic = selectedConversation?.gender == 'male' ? `${import.meta.env.VITE_API_URL}/uploads/profilepictures/maleDefaultPic.png` : `${import.meta.env.VITE_API_URL}/uploads/profilepictures/femaleDefaultPic.png`;
+    const DefaultPic = conversation?.gender == 'male' ? `${import.meta.env.VITE_API_URL}/uploads/profilepictures/maleDefaultPic.png` : `${import.meta.env.VITE_API_URL}/uploads/profilepictures/femaleDefaultPic.png`;
 
-    const imageUrl = selectedConversation?.picture ? `${import.meta.env.VITE_API_URL}/${selectedConversation.picture}` :  DefaultPic;
+    const imageUrl = conversation?.picture ? `${import.meta.env.VITE_API_URL}/${selectedConversation.picture}` :  DefaultPic;
    
 
   return <>
