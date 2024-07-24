@@ -5,14 +5,6 @@ import { IconContext } from "react-icons";
 import { RiLogoutBoxRLine } from "react-icons/ri"; // Example of using React Icons for logout icon
 import { BsFillHousesFill } from "react-icons/bs"; // for the view new properties
 
-// Define icons for each link type (customize as needed)
-import React from 'react';
-import { Link, useNavigate } from 'react-router-dom';
-import { useAuth } from '../../context/auth';
-import { IconContext } from 'react-icons';
-import { RiLogoutBoxRLine } from 'react-icons/ri'; 
-import { RxDashboard } from 'react-icons/rx';
-import { BsFillHousesFill } from 'react-icons/bs'; 
 
 const iconMap = {
   Home: "home",
@@ -81,13 +73,6 @@ function Navbar({ isVisible }) {
     // { path: "/admin/managemoderators", label: "Manage Moderators" },
   ];
   
-
-  const moderatorLinks = [
-    { path: "/", label: "Home" },
-    { path: "/moderator", label: "Moderator Dashboard" },
-    { path: "/moderator/viewNewProperties", label: "View New Properties" },
-  ];
-
   const guestLinks = [
     { path: "/", label: "Home" },
     { path: "/user", label: "User Page" },
