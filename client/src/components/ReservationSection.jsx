@@ -5,6 +5,7 @@ import { FaCalendarAlt, FaMoneyBillWave, FaInfoCircle } from "react-icons/fa";
 const ReservationSection = ({
   property,
   propertyId,
+  sectionId,
   nightlyRate,
   initialCheckInDate,
   initialCheckOutDate,
@@ -37,6 +38,7 @@ const ReservationSection = ({
       state: {
         property,
         propertyId,
+        sectionId,
         checkInDate,
         checkOutDate,
         noOfGuests,

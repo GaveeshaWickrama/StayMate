@@ -17,6 +17,11 @@ const propertyverifiedSchema = new Schema({
         type: String,
         default: ''
     },
+    rejectionReasons: {
+        type: [String],
+        default: [],
+        enum: ['', 'Misleading Description', 'Proof of Amneties Misiing', 'Proof of Facilities Missing', 'Property Not Belonging to you', 'Other']       
+    },
     created_at: {
         type: Date,
         default: Date.now

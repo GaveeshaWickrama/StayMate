@@ -1,10 +1,10 @@
 ###Route for testing send message functionality
-POST http://localhost:3000/message/send/6698ba2d1203100f98fe84de
-Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiI2NjhlNDc0YzZmMjQ3MTRkOGUxY2M0NzYiLCJlbWFpbCI6Imd1ZXN0dGVzdEBnbWFpbC5jb20iLCJyb2xlIjoiZ3Vlc3QiLCJpYXQiOjE3MjEzNTY5MzAsImV4cCI6MTcyMTQ0MzMzMH0.AlsJiX_iq-UhwPtae2r6ZCxJmcg0fLOLqe_V9TDqtog
+POST http://localhost:3000/message/send/668e474c6f24714d8e1cc476
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiI2NjllMmU1MDAwY2U5NTliYWNjMWU4N2MiLCJlbWFpbCI6IndnY2xha3NoYW5AZ21haWwuY29tIiwicm9sZSI6Imhvc3QiLCJmaXJzdE5hbWUiOiJjaGFyaXRoIiwibGFzdE5hbWUiOiJsYWtzaGFuIiwiZ2VuZGVyIjoibWFsZSIsImlhdCI6MTcyMTY0Mjc3NCwiZXhwIjoxNzIxNzI5MTc0fQ.DqxmN2FALVkgsjWCRb2RL-D9_SrJ37GewHdyhaKc_Ig
 Content-Type: application/json
 
 {
-    "message" : "Test"
+    "message" : "3rd message"
 }
 
 
