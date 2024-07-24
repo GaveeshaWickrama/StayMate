@@ -2,7 +2,12 @@ import React, { useState, useEffect, useRef } from "react";
 import { useAuth } from "../../context/auth";
 import logo from "../../assets/icons/logo.png";
 import { Link, useNavigate } from "react-router-dom";
-import { FaBars, FaUser, FaSignOutAlt } from "react-icons/fa";
+
+
+
+import { FaBars, FaUser, FaSignOutAlt } from 'react-icons/fa';
+import defaultProfilePic from '../../assets/profile2.png'
+
 
 const Header = ({ toggleNavbar }) => {
   const { currentUser, loading, logout } = useAuth();
@@ -59,12 +64,14 @@ const Header = ({ toggleNavbar }) => {
               <p className="text-lg font-bold text-white">
                 {currentUser.firstName} {currentUser.lastName}
               </p>
+
               <p className="text-blue-200">
                 {currentUser.role === "guest" ? "Tenant" : currentUser.role}
               </p>
+
             </div>
             <img
-              src={`${import.meta.env.VITE_API_URL}/${currentUser.picture}`}
+              src={currentUser.picture ? `${import.meta.env.VITE_API_URL}/${currentUser.picture}` : defaultProfilePic}
               alt="Profile"
               className="h-12 w-12 rounded-full border-2 border-white"
             />
