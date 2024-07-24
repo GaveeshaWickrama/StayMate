@@ -4,16 +4,15 @@ import { toast } from "react-toastify";
 import axios from "axios";
 
 const useCreateOrSelectConversation = () => {
-    const { setSelectedConversation } = useConversation();
+    const { setSelectedConversation,setTempConversation } = useConversation();
     const { token } = useAuth();
 
     const createOrSelectConversation = async (otherUserId) => {
         try {
             console.log("Inside try before api request",otherUserId);
             console.log(`${import.meta.env.VITE_API_URL}/message/createOrSelectConversation/${otherUserId}`);
-            const res = await axios.post(
+            const res = await axios.get(
                 `${import.meta.env.VITE_API_URL}/message/createOrSelectConversation/${otherUserId}`,
-                {},
                 {
                     headers: {
                         Authorization: `Bearer ${token}`,
@@ -21,10 +20,15 @@ const useCreateOrSelectConversation = () => {
                     },
                 }
             );
+
+            const { conversation , otherUser } = res.data;
             console.log("Inside try after api request");
-            const conversation = res.data;
-            console.log("the returned conversation from createOrSelectConversation: ", conversation);
-            setSelectedConversation(conversation);
+            if(!conversation) {
+                setTempConversation(otherUser);
+            }
+            console.log("the returned conversation from createOrSelectConversation: ", otherUser);
+            setSelectedConversation(otherUser);
+        
         } catch (error) {
             toast.error(error.message);
             console.log(error);
