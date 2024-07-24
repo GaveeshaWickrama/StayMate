@@ -51,7 +51,8 @@ const getMessages = async (req,res) => {
             participants : {$all: [senderId,userToChatId]}
         }).populate("messages");
 
-        if(!conversation) return res.status()
+         // Return an empty array if no conversation is found
+        if(!conversation) return res.status(200).json([]);
 
         res.status(200).json(conversation.messages);
         
@@ -67,7 +68,7 @@ const getContacts = async (req, res) => {
   
       // Find conversations where the participants array contains the current user's ID
       const conversations = await Conversation.find({ participants: { $in: [loggedInUser] } })
-        .populate('participants'); // Adjust fields as necessary
+        .populate('participants') .sort({ updatedAt: -1 });  // Adjust fields as necessary
   
       // Extract user objects from the populated conversations
       const users = conversations.flatMap(conversation => 
@@ -88,30 +89,29 @@ const getContacts = async (req, res) => {
     }
   };
   
-const createOrSelectConversation = async (req, res) => {
-    console.log("inside createOrSelectConversation")
+  const createOrSelectConversation = async (req, res) => {
+    console.log("inside createOrSelectConversation");
     try {
         const { id: otherUserId } = req.params;
         const currentUserId = req.user.userId;
+
+        // Fetch the other user's details excluding sensitive information
+        const otherUser = await User.findById(otherUserId).select('-password');
+
+        if (!otherUser) {
+            return res.status(404).json({ error: "User not found" });
+        }
 
         let conversation = await Conversation.findOne({
             participants: { $all: [currentUserId, otherUserId] }
         });
 
-        if (!conversation) {
-            conversation = await Conversation.create({
-                participants: [currentUserId, otherUserId]
-            });
+        if (conversation) {
+            return res.status(200).json({ conversation, otherUser });
+        } else {
+            return res.status(200).json({ conversation: null, otherUser });
         }
 
-        // Fetch the other user's details
-        const otherUser = await User.findById(otherUserId); // Exclude password field
-
-        if (!otherUser) {
-            return res.status(404).json({ error: "User not found" });
-        }
-        console.log("user found in the controller : ",otherUser);
-        res.status(201).json(otherUser);
     } catch (error) {
         console.log("Error in createOrSelectConversation Function: ", error.message);
         res.status(500).json({ error: "Internal server error" });
