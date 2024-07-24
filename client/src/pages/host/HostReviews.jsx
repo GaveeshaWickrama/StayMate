@@ -1,69 +1,96 @@
 import React, { useEffect, useState } from "react";
 import axios from "axios";
+import { useAuth } from "../../context/auth";
 import defaultProfileImg from "../../assets/profile.jpg";
 
 const HostReviews = () => {
-  const [hostReviews, setHostReviews] = useState([]);
+  const { token } = useAuth();
+  const [guestReviews, setGuestReviews] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [averageRating, setAverageRating] = useState(0);
 
   useEffect(() => {
-    // Fetch reviews from the backend
-    const fetchReviews = async () => {
+    const fetchUserReviews = async () => {
       try {
-        const response = await axios.get("http://localhost:5000/api/host-reviews");
-        setHostReviews(response.data);
-        setLoading(false);
+        const { data } = await axios.get(
+          `${import.meta.env.VITE_API_URL}/reviews/userreviews`,
+          {
+            headers: {
+              Authorization: `Bearer ${token}`,
+            },
+          }
+        );
+        setGuestReviews(data);
+        const avgRating = data.reduce((acc, review) => acc + review.rating, 0) / data.length;
+        setAverageRating(avgRating.toFixed(2));
       } catch (error) {
-        console.error("Error fetching host reviews:", error);
+        console.error("Error fetching guest reviews:", error);
+      } finally {
         setLoading(false);
       }
     };
 
-    fetchReviews();
-  }, []);
+    if (token) {
+      fetchUserReviews();
+    }
+  }, [token]);
+
+  const extractNameFromEmail = (email) =>
+    email.substring(0, email.indexOf("@")) || email;
+
+  const renderStars = (rating) =>
+    Array.from({ length: rating }, (_, i) => (
+      <span key={i} className="text-xl text-yellow-400">⭐</span>
+    ));
 
   if (loading) {
-    return <div>Loading...</div>;
+    return <p>Loading reviews...</p>;
   }
 
   return (
-    <div className="container mx-auto p-10">
-      <h2 className="text-4xl font-extrabold text-blue-600 mb-6">Host Reviews</h2>
-      <ul className="space-y-6">
-        {hostReviews.map((review) => (
-          <li key={review._id} className="flex items-start border border-gray-300 rounded-lg p-4 bg-white shadow-md hover:shadow-lg transition-shadow duration-200">
-            <img
-              src={defaultProfileImg}
-              alt="Profile"
-              className="w-16 h-16 rounded-full mr-4"
-            />
-            <div className="flex-1">
-              <div className="flex items-center mb-2">
-                <h3 className="text-gray-800 font-semibold">{review.user.email}</h3>
-                <div className="ml-3 flex">
-                  {[...Array(5)].map((_, index) => (
-                    <svg
-                      key={index}
-                      xmlns="http://www.w3.org/2000/svg"
-                      className={`h-5 w-5 ${index < review.rating ? "text-yellow-400" : "text-gray-300"}`}
-                      viewBox="0 0 20 20"
-                      fill="currentColor"
-                    >
-                      <path
-                        fillRule="evenodd"
-                        d="M10 1a.75.75 0 0 1 .67.41l1.85 3.78 4.15.6a.75.75 0 0 1 .42 1.28l-3 2.93.71 4.13a.75.75 0 0 1-1.09.79L10 14.24l-3.72 1.96a.75.75 0 0 1-1.09-.79l.71-4.13-3-2.93a.75.75 0 0 1 .42-1.28l4.15-.6L9.33 1.41A.75.75 0 0 1 10 1zm0 2.27L8.33 6.05a.75.75 0 0 1-.22.41l-3 2.93a.75.75 0 0 1 .42 1.28l2.17 2.12-.51 2.98a.75.75 0 0 1-1.09.79L10 14.24l-2.67 1.41a.75.75 0 0 1-1.09-.79l-.51-2.98L2.47 9.67a.75.75 0 0 1 .42-1.28l3-2.93a.75.75 0 0 1-.22-.41L5 3.27 3.34 1.86a.75.75 0 0 1 1.09-.79l2.17 2.12L9.32 1.7a.75.75 0 0 1 .66 0l2.17 2.12 2.17-2.12a.75.75 0 0 1 1.09.79L14 3.27l-1.66 1.41a.75.75 0 0 1-.22.41L10 5.27V3.27z"
-                        clipRule="evenodd"
-                      />
-                    </svg>
-                  ))}
+    <div className="container mx-auto py-8 px-4 md:px-8">
+      <section className="mb-8">
+        <div className="flex justify-between items-center bg-white p-6 rounded-lg shadow-md">
+          <div className="text-gray-700">
+            <h2 className="text-2xl font-bold">Total Reviews</h2>
+            <p className="text-3xl font-semibold">{guestReviews.length}</p>
+          </div>
+          <div className="text-gray-700">
+            <h2 className="text-2xl font-bold">Average Rating</h2>
+            <p className="text-3xl font-semibold">{averageRating}</p>
+            <div className="flex">{renderStars(Math.round(averageRating))}</div>
+          </div>
+        </div>
+      </section>
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+        {guestReviews.map(
+          ({ _id, user, rating, comment, property, createdAt }) => (
+            <div
+              key={_id}
+              className="bg-white border rounded-lg shadow-md p-6 flex flex-col"
+            >
+              <div className="flex items-center mb-4">
+                <img
+                  src={defaultProfileImg}
+                  alt="Profile"
+                  className="w-12 h-12 rounded-full mr-4"
+                />
+                <div>
+                  <h3 className="text-gray-900 font-semibold">
+                    {extractNameFromEmail(user.email)}
+                  </h3>
+                  <div className="flex mt-1">{renderStars(rating)}</div>
                 </div>
               </div>
-              <p className="text-gray-700">{review.comment}</p>
-              <p className="text-gray-600 italic">{review.property.title}</p>
+              <p className="text-gray-700 mb-4">{comment}</p>
+              <p className="text-gray-600 font-semibold mb-2">{property.title}</p>
+              <div className="text-sm text-gray-500">
+                {new Date(createdAt).toLocaleDateString()}
+              </div>
             </div>
-          </li>
-        ))}
-      </ul>
+          )
+        )}
+      </div>
     </div>
   );
 };

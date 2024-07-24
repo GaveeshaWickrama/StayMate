@@ -16,7 +16,7 @@ import ComplaintDetails from "../pages/host/ComplaintDetails";
 import TechnicianExplore from "../pages/technician/ExploreTechnicians";
 import TechnicianDetails from "../pages/technician/TechnicianDetails";
 import ComplaintsManage from "../pages/host/ComplaintsManage";
-// import HostReviews from  "../pages/host/hzostReviews";
+import HostReviews from  "../pages/host/HostReviews";
 
 function HostRoutes() {
   const { currentUser, loading } = useAuth();
@@ -58,6 +58,18 @@ function HostRoutes() {
             )
           }
         />
+
+<Route
+          path="/HostReviews"
+          element={
+            currentUser && currentUser.role === "host" ? (
+              <HostReviews />
+            ) : (
+              <Navigate to="/Unauthorized" />
+            )
+          }
+        />
+
         <Route
           path="/add-property"
           element={
