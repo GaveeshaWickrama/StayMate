@@ -68,7 +68,7 @@ const getContacts = async (req, res) => {
   
       // Find conversations where the participants array contains the current user's ID
       const conversations = await Conversation.find({ participants: { $in: [loggedInUser] } })
-        .populate('participants'); // Adjust fields as necessary
+        .populate('participants') .sort({ updatedAt: -1 });  // Adjust fields as necessary
   
       // Extract user objects from the populated conversations
       const users = conversations.flatMap(conversation => 
