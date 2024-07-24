@@ -31,7 +31,7 @@ const Message = ({message}) => {
             </div>
         </div>
 
-        <div className={`chat-bubble text-black ${bubbleBgColor}`} >{message.message}</div>
+        <div className={`chat-bubble text-black ${bubbleBgColor} pb-2`} >{message.message}</div>
         <div className='chat-footer opacity-50 text-xs flex gap-1 items-center'>{extractTime(message.createdAt)}</div>
       
     </div>
