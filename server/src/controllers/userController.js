@@ -1,4 +1,5 @@
 const User = require('../models/userModel')
+const Technician = require('../models/technicianModel')
 const mongoose = require('mongoose')
 
 //get all users
@@ -41,6 +42,11 @@ const viewProfile = async (req, res) => {
         return res.status(400).json({ error: 'Invalid user ID' });
     }
 
+    if(req.user.role==='moderator'){
+      const user = await Technician.findById(id);
+    }else{ 
+      const user = await User.findById(id);
+    }
     const user = await User.findById(id);
     if (!user) {
         return res.status(404).json({ error: 'No such user' });
