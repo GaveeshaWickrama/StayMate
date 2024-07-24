@@ -1,42 +1,30 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
+import axios from "axios";
 import defaultProfileImg from "../../assets/profile.jpg";
 
 const HostReviews = () => {
-  const hostReviews = [
-    {
-      _id: "1",
-      user: {
-        email: "SanandiSithumya@example.com",
-      },
-      rating: 4,
-      comment: "Great stay! Very clean and comfortable.",
-      property: {
-        title: "Cozy Apartment in City Center",
-      },
-    },
-    {
-      _id: "2",
-      user: {
-        email: "user2@example.com",
-      },
-      rating: 5,
-      comment: "Amazing experience! Highly recommended.",
-      property: {
-        title: "Luxury Condo with Sea View",
-      },
-    },
-    {
-      _id: "3",
-      user: {
-        email: "user3@example.com",
-      },
-      rating: 3,
-      comment: "Decent place, but a bit noisy at night.",
-      property: {
-        title: "Budget Room near Downtown",
-      },
-    },
-  ];
+  const [hostReviews, setHostReviews] = useState([]);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    // Fetch reviews from the backend
+    const fetchReviews = async () => {
+      try {
+        const response = await axios.get("http://localhost:5000/api/host-reviews");
+        setHostReviews(response.data);
+        setLoading(false);
+      } catch (error) {
+        console.error("Error fetching host reviews:", error);
+        setLoading(false);
+      }
+    };
+
+    fetchReviews();
+  }, []);
+
+  if (loading) {
+    return <div>Loading...</div>;
+  }
 
   return (
     <div className="container mx-auto p-10">

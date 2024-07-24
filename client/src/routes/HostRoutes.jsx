@@ -16,7 +16,7 @@ import ComplaintDetails from "../pages/host/ComplaintDetails";
 import TechnicianExplore from "../pages/technician/ExploreTechnicians";
 import TechnicianDetails from "../pages/technician/TechnicianDetails";
 import ComplaintsManage from "../pages/host/ComplaintsManage";
-// import HostReviews from  "../pages/host/hostReviews";
+// import HostReviews from  "../pages/host/hzostReviews";
 
 function HostRoutes() {
   const { currentUser, loading } = useAuth();

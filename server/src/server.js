@@ -6,6 +6,7 @@ const mongoose = require("mongoose");
 const path = require("path");
 const defaultImageMiddleware = require('./middleware/defaultImageMiddleware');
 
+
 // Correct path example
 
 const app = express();
@@ -81,6 +82,18 @@ app.use("/technicians", technicianRoutes);
 app.get("/", (req, res) => {
   res.send("Hello World!");
 });
+
+// Define User schema and model
+const userSchema = new mongoose.Schema({
+  name: String,
+  email: String,
+  address: String,
+  phone: String,
+  role: String,
+});
+
+
+
 
 const port = process.env.PORT || 3000;
 app.listen(port, () => {

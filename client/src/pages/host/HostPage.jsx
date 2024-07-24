@@ -4,6 +4,7 @@ import { Link } from 'react-router-dom';
 import { BsFillArchiveFill, BsFillGrid3X3GapFill, BsPeopleFill, BsFillBellFill } from 'react-icons/bs';
 import { useAuth } from "../../context/auth";
 
+// Function to get status color based on property status
 function getStatusColor(status) {
     switch (status) {
         case 'BOOKED':
@@ -19,12 +20,14 @@ function getStatusColor(status) {
     }
 }
 
+// RecentBookings Component
 function RecentBookings() {
     const { token } = useAuth();
     const [searchTerm, setSearchTerm] = useState('');
     const [filteredData, setFilteredData] = useState([]);
     const [recentBookingData, setRecentBookingData] = useState([]);
 
+    // Fetch recent bookings from backend
     useEffect(() => {
         const fetchRecentBookings = async () => {
             try {
@@ -46,11 +49,13 @@ function RecentBookings() {
         fetchRecentBookings();
     }, [token]);
 
+    // Handle search term change
     const handleSearchChange = (event) => {
         setSearchTerm(event.target.value);
         filterData(event.target.value);
     };
 
+    // Filter data based on search term
     const filterData = (term) => {
         if (!term) {
             setFilteredData(recentBookingData);
@@ -75,7 +80,6 @@ function RecentBookings() {
                     value={searchTerm}
                     onChange={handleSearchChange}
                 />
-                {/* You can add more filters here if needed */}
             </div>
             <div className="overflow-x-auto">
                 <table className="min-w-full bg-white border border-gray-200">
@@ -115,6 +119,7 @@ function RecentBookings() {
     );
 }
 
+// Analysis Component
 const Analysis = () => {
     const { token } = useAuth();
     const [selectedPeriod, setSelectedPeriod] = useState('This Month');
@@ -122,6 +127,7 @@ const Analysis = () => {
     const [totalBookings, setTotalBookings] = useState(0);
     const [totalProperties, setTotalProperties] = useState(0);
 
+    // Fetch data for analysis from backend
     useEffect(() => {
         const fetchTotalMonthlyIncome = async () => {
             try {
@@ -206,15 +212,16 @@ const Analysis = () => {
     );
 };
 
+// HostPage Component
 function HostPage() {
     return (
         <div className="p-4">
-            <header className="bg-white p-4 rounded-sm border border-gray-200 shadow-md">
-                <h1 className="text-2xl font-bold text-gray-700">Dashboard</h1>
+            <header className="bg-white p-10 rounded-sm border border-gray-200 shadow-md">
+                <h1 className="text-4xl font-bold text-gray-700">Hello! Harry Potter</h1>
             </header>
             <div className="mt-8">
-                <RecentBookings />
                 <Analysis />
+                <RecentBookings />
             </div>
         </div>
     );

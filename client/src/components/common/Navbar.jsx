@@ -73,6 +73,7 @@ function Navbar() {
     { path: "/admin/PropertyOwners", label: "PropertyOwners" },
     { path: "/admin/Tenants", label: "Tenants" },
     { path: "/admin/Technicians", label: "Technicians" },
+   
     // { path: "/admin/MyProfile", label: "My Profile" },
     { path: "/admin/managemoderators", label: "Manage Moderators" },
   ];
