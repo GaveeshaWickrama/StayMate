@@ -1,8 +1,8 @@
 import React, { useEffect, useState } from "react";
-import axios from "axios";
 import { useAuth } from "../../context/auth";
 import { FaMoneyBillWave, FaUserTie } from "react-icons/fa";
-import DateFilterForm from "../common/DateFiterForm"; // Import the DateFilterForm component
+import DateFilterForm from "../common/DateFiterForm";
+import { fetchPaymentsAndTotals } from "../../services/paymentService";
 
 const PaymentDetails = () => {
   const { token } = useAuth();
@@ -15,43 +15,19 @@ const PaymentDetails = () => {
 
   useEffect(() => {
     const fetchPayments = async () => {
-      try {
-        const response = await axios.get(
-          `${import.meta.env.VITE_API_URL}/admin/payments`,
-          {
-            headers: {
-              Authorization: `Bearer ${token}`,
-            },
-          }
-        );
-        const { data } = response;
-        setPayments(data);
-        setFilteredPayments(data);
-        calculateTotals(data);
-        setLoading(false);
-      } catch (error) {
-        console.error("Error fetching payments:", error);
-        setLoading(false);
-      }
+      const { payments, totalRevenue, totalAmountToHosts } =
+        await fetchPaymentsAndTotals(token);
+      setPayments(payments);
+      setFilteredPayments(payments);
+      setTotalRevenue(totalRevenue);
+      setTotalAmountToHosts(totalAmountToHosts);
+      setLoading(false);
     };
 
     if (token) {
       fetchPayments();
     }
   }, [token]);
-
-  const calculateTotals = (payments) => {
-    let totalRev = 0;
-    let totalToHosts = 0;
-
-    payments.forEach((payment) => {
-      totalRev += payment.serviceFee;
-      totalToHosts += payment.amountToHost;
-    });
-
-    setTotalRevenue(totalRev);
-    setTotalAmountToHosts(totalToHosts);
-  };
 
   const handleRowClick = (index) => {
     setExpandedRow(expandedRow === index ? null : index);
@@ -82,7 +58,26 @@ const PaymentDetails = () => {
       );
     });
     setFilteredPayments(filtered);
-    calculateTotals(filtered);
+
+    let totalRev = 0;
+    let totalToHosts = 0;
+
+    filtered.forEach((payment) => {
+      totalRev += payment.serviceFee;
+      totalToHosts += payment.amountToHost;
+    });
+
+    setTotalRevenue(totalRev);
+    setTotalAmountToHosts(totalToHosts);
+  };
+
+  const formatCurrency = (amount) => {
+    return new Intl.NumberFormat("en-LK", {
+      style: "currency",
+      currency: "LKR",
+      minimumFractionDigits: 2,
+      maximumFractionDigits: 2,
+    }).format(amount);
   };
 
   if (loading) {
@@ -95,7 +90,6 @@ const PaymentDetails = () => {
         Payment Details
       </h2>
 
-      {/* Date Filter Form */}
       <div className="mb-6">
         <DateFilterForm
           onDateFilterChange={handleFilter}
@@ -138,13 +132,13 @@ const PaymentDetails = () => {
                     {4200 + index}
                   </td>
                   <td className="py-3 px-4 text-sm text-gray-700">
-                    RS {payment.totalAmount.toFixed(2)}
+                    {formatCurrency(payment.totalAmount)}
                   </td>
                   <td className="py-3 px-4 text-sm text-gray-700">
-                    RS {payment.serviceFee.toFixed(2)}
+                    {formatCurrency(payment.serviceFee)}
                   </td>
                   <td className="py-3 px-4 text-sm text-gray-700">
-                    RS {payment.amountToHost.toFixed(2)}
+                    {formatCurrency(payment.amountToHost)}
                   </td>
                   <td className="py-3 px-4 text-sm text-gray-700">
                     {payment.paymentStatus ? (
@@ -168,16 +162,16 @@ const PaymentDetails = () => {
                           <strong>Property Title:</strong> {payment.title}
                         </div>
                         <div className="w-full md:w-1/2 lg:w-1/3 mb-2">
-                          <strong>Total Amount:</strong> RS{" "}
-                          {payment.totalAmount.toFixed(2)}
+                          <strong>Total Amount:</strong>{" "}
+                          {formatCurrency(payment.totalAmount)}
                         </div>
                         <div className="w-full md:w-1/2 lg:w-1/3 mb-2">
-                          <strong>Service Fee:</strong> RS{" "}
-                          {payment.serviceFee.toFixed(2)}
+                          <strong>Service Fee:</strong>{" "}
+                          {formatCurrency(payment.serviceFee)}
                         </div>
                         <div className="w-full md:w-1/2 lg:w-1/3 mb-2">
-                          <strong>Amount to Host:</strong> RS{" "}
-                          {payment.amountToHost.toFixed(2)}
+                          <strong>Amount to Host:</strong>{" "}
+                          {formatCurrency(payment.amountToHost)}
                         </div>
                         <div className="w-full md:w-1/2 lg:w-1/3 mb-2">
                           <strong>Payment Status:</strong>{" "}
@@ -202,25 +196,31 @@ const PaymentDetails = () => {
           </tbody>
         </table>
       </div>
-      {/* Revenue and Amount to Hosts Summary */}
-      <div className="mt-8 grid grid-cols-1 md:grid-cols-2 gap-4">
-        <div className="bg-white border border-gray-200 rounded-lg shadow p-6 flex items-center justify-between">
-          <div className="flex items-center">
-            <FaMoneyBillWave className="text-3xl text-green-500 mr-4" />
-            <h3 className="text-lg font-semibold">Total Revenue</h3>
+
+      <div className="mt-8 grid grid-cols-1 sm:grid-cols-2 gap-6">
+        <div className="bg-white shadow rounded-lg p-4 flex items-center">
+          <div className="flex-shrink-0 bg-green-100 p-3 rounded-full">
+            <FaMoneyBillWave className="text-green-500" size={24} />
           </div>
-          <p className="text-xl font-bold text-gray-800">
-            RS {totalRevenue.toFixed(2)}
-          </p>
+          <div className="ml-4">
+            <p className="text-sm font-medium text-gray-700">Total Revenue</p>
+            <p className="text-lg font-semibold text-gray-900">
+              {formatCurrency(totalRevenue)}
+            </p>
+          </div>
         </div>
-        <div className="bg-white border border-gray-200 rounded-lg shadow p-6 flex items-center justify-between">
-          <div className="flex items-center">
-            <FaUserTie className="text-3xl text-blue-500 mr-4" />
-            <h3 className="text-lg font-semibold">Total Payout to Hosts</h3>
+        <div className="bg-white shadow rounded-lg p-4 flex items-center">
+          <div className="flex-shrink-0 bg-blue-100 p-3 rounded-full">
+            <FaUserTie className="text-blue-500" size={24} />
           </div>
-          <p className="text-xl font-bold text-gray-800">
-            RS {totalAmountToHosts.toFixed(2)}
-          </p>
+          <div className="ml-4">
+            <p className="text-sm font-medium text-gray-700">
+              Total Amount to Hosts
+            </p>
+            <p className="text-lg font-semibold text-gray-900">
+              {formatCurrency(totalAmountToHosts)}
+            </p>
+          </div>
         </div>
       </div>
     </div>
