@@ -79,8 +79,12 @@ const reservationRoutes = require("./routes/reservationRoutes");
 const complaintRoutes = require("./routes/complaintRoutes");
 const reviewRoutes = require("./routes/reviewRoutes");
 const messageRoutes = require("./routes/messageRoutes");
+
+// const propertyverficationRoutes = require("./routes/propertyverificationRoutes")
+
 const taskRoutes = require("./routes/taskRoutes");
 const technicianRoutes = require("./routes/technicianRoutes");
+
 
 mongoose.connect(process.env.DATABASE_URL);
 const db = mongoose.connection;
@@ -98,8 +102,12 @@ app.use("/complaints", complaintRoutes);
 app.use("/reviews", reviewRoutes);
 
 app.use("/message", messageRoutes);
+
+// app.use("/propertyverification, propertyverficationRoutes")
+
 app.use("/tasks", taskRoutes);
 app.use("/technicians", technicianRoutes);
+
 
 app.get("/", (req, res) => {
   res.send("Hello World!");

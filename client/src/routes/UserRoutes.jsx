@@ -15,7 +15,7 @@ function UserRoutes() {
 
   return (
     <Routes>
-      <Route path="/ViewProfile" element={currentUser && allowedRoles.includes(currentUser.role) ? <ViewProfile /> : <Navigate to="/Unauthorized" />} />
+      <Route path="/ViewProfile/:id" element={currentUser && allowedRoles.includes(currentUser.role) ? <ViewProfile /> : <Navigate to="/Unauthorized" />} />
       <Route path="/EditProfile" element={currentUser && allowedRoles.includes(currentUser.role) ? <EditProfile /> : <Navigate to="/Unauthorized" />} />
      
     </Routes>
