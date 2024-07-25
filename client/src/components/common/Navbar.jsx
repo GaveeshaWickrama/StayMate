@@ -19,7 +19,6 @@ const iconMap = {
   Login: "login",
   Signup: "person_add",
   Chat : "chat",
-  "View New Properties": <BsFillHousesFill/>,
   "View New Properties": <BsFillHousesFill />,
 };
 
