@@ -86,9 +86,12 @@ const PaymentDetails = () => {
 
   return (
     <div className="container mx-auto px-4 py-8">
-      <h2 className="text-2xl font-semibold mb-6 text-center">
-        Payment Details
-      </h2>
+      <div className="flex mb-6 border-b-4 border-blue-600 p-6 rounded-md shadow-sm bg-white">
+        <h2 className="flex items-center text-3xl font-bold text-gray-800">
+          <FaMoneyBillWave className="mr-4 text-blue-500 text-3xl" />
+          Payments Overview
+        </h2>
+      </div>
 
       <div className="mb-6">
         <DateFilterForm
