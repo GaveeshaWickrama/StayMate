@@ -25,6 +25,7 @@ const iconMap = {
   "New Listing": "add_box",
   Login: "login",
   Signup: "person_add",
+  Chat : "chat",
   "View New Properties": <BsFillHousesFill/>,
   "View New Properties": <BsFillHousesFill />,
   Payments: <FaCreditCard />,
@@ -91,6 +92,7 @@ function Navbar({ isVisible }) {
     { path: "/", label: "Home" },
     { path: "/user/viewreviews", label: "Reviews" },
     { path: "/user/reservations", label: "Reservations" },
+    { path: "/user/chat", label: "Chat" },
   ];
 
   const hostLinks = [

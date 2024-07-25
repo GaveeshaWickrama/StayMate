@@ -1,37 +1,48 @@
-import React from 'react'
-import Conversation from './Conversation'
-import useGetConversations from '../../hooks/useGetConversations'
+import React from 'react';
+import Conversation from './Conversation';
+import useGetConversations from '../../hooks/useGetConversations';
 import { getRandomEmoji } from '../../utils/emojis';
+import useConversation from '../../zustand/useConversation';
 
 const Conversations = () => {
-  const {loading,conversations} = useGetConversations();
-  console.log("Conversations : ",conversations);
-
+  const { loading, conversations } = useGetConversations();
+  const { tempConversation } = useConversation();
+  
+  console.log("Conversations:", conversations);
+  console.log("Temp Conversation:", tempConversation);
 
   return (
-    <div className='py-2 flex flex-grow flex-col overflow-auto '>
+    <div className='py-2 flex flex-grow flex-col overflow-auto'>
+
+      {tempConversation && (
+        <Conversation
+          key={tempConversation._id}
+          conversation={tempConversation}
+          emoji={getRandomEmoji()}
+          lastIdx={true}
+        />
+      )}
+
       {conversations.length ? (
-        conversations.map(( conversation, idx ) => (
+        conversations.map((conversation, idx) => (
           <Conversation
-            key={conversation._id} /* Each conversation in given unique id(id of whome you are chatting with) */
-            conversation = {conversation}
-            emoji = {getRandomEmoji()}
-            lastIdx = {idx == conversations.length-1}
+            key={conversation._id}
+            conversation={conversation}
+            emoji={getRandomEmoji()}
+            lastIdx={idx === conversations.length - 1 && !tempConversation}
           />
         ))
-      ) : (
-    /*     <div className='flex flex-grow items-center justify-center'>
+      ) : null}
+      
+      {!conversations.length && !tempConversation && (
+        <div className='flex flex-grow items-center justify-center'>
           <p className='px-4 text-center sm:text-lg md:text-xl text-black font-semibold'>No chat yet</p>
-        </div> */
-        null
-      )
-      }
+        </div>
+      )}
 
-
-
-      {loading ? <span className='loading loading-spinner mx-auto'></span> : null }
+      {loading && <span className='loading loading-spinner mx-auto'></span>}
     </div>
-  )
-}
+  );
+};
 
-export default Conversations
+export default Conversations;

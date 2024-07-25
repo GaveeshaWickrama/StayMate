@@ -80,7 +80,7 @@ const PropertyHost = ({ propertyId }) => {
           disabled={isLoading}
         >
           <FaEnvelope className="mr-2" size={24} />
-          <span>{isLoading ? 'Sending...' : 'Message Host'}</span>
+          <span>{isLoading ? <span className='loading loading-spinner mx-auto'></span> : 'Message Host'}</span>
         </button>
       </div>
     </div>
