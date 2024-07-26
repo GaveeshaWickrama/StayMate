@@ -2,10 +2,9 @@ import React from 'react';
 import entirePlaceIcon from '../../../assets/buildingTypes/home.png';
 import partitionIcon from '../../../assets/buildingTypes/part.png';
 
-
 const PartitionTypeButton = ({ value, label, description, icon, isSelected, handleChange }) => (
   <label
-    className={` text-2xl flex items-center justify-between cursor-pointer border-4 rounded-lg px-12 w-full h-28 ${
+    className={`text-2xl flex items-center justify-between cursor-pointer border-4 rounded-lg px-12 w-full h-28 ${
       isSelected ? 'border-blue-500 bg-blue-200' : 'bg-gray-100 text-black border-gray-300 hover:bg-gray-200'
     }`}
   >
@@ -18,7 +17,7 @@ const PartitionTypeButton = ({ value, label, description, icon, isSelected, hand
       className="hidden"
     />
     <div className="flex flex-col">
-      <span className="font-semibold ">{label}</span>
+      <span className="font-semibold">{label}</span>
       <span className="text-sm pt-2">{description}</span>
     </div>
     <img src={icon} alt={label} className="w-10 h-10" />
@@ -42,32 +41,32 @@ const PropertyDetailsSection = ({ property, handleChange, setProperty }) => {
   ];
 
   return (
-    <div className='container mx-auto px-8'>
+    <div className='container mx-auto px-8 mb-32'>
       <h2 className="text-4xl font-extrabold text-black-600 mb-8 border-b-4 border-blue-600 p-6 rounded-md shadow-sm">Property Section Info</h2>
       <div className="flex-col p-10 bg-gray-50 rounded-lg shadow-lg">
-      <div className="mb-4">
-        <label className="text-3xl block mb-2 font-semibold">Are you listing an entire place or a partition?</label>
-        <div className="mt-8 space-y-4">
-          {partitionTypes.map((type) => (
-            <div className="w-1/2">
-              <PartitionTypeButton
-                key={type.value}
-                value={type.value}
-                label={type.label}
-                description={type.description}
-                icon={type.icon}
-                isSelected={property.total_unique_sections === type.value}
-                handleChange={handleSelectChange}
-              />
-            </div>
-          ))}
+        <div className="mb-4">
+          <label className="text-3xl block mb-2 font-semibold">Are you listing an entire place or a partition?</label>
+          <div className="mt-8 space-y-4">
+            {partitionTypes.map((type) => (
+              <div className="w-1/2" key={type.value}>
+                <PartitionTypeButton
+                  value={type.value}
+                  label={type.label}
+                  description={type.description}
+                  icon={type.icon}
+                  isSelected={property.total_unique_sections === type.value}
+                  handleChange={handleSelectChange}
+                />
+              </div>
+            ))}
+          </div>
         </div>
-      </div>
       </div>
     </div>
   );
 };
 
 export default PropertyDetailsSection;
+
 
 

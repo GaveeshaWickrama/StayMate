@@ -12,9 +12,9 @@ import {
   FaPlus,
 } from "react-icons/fa";
 
-function ListingCard({ technician, handleEdit, handleDelete }) {
+function ListingCard({ property, handleEdit, handleDelete }) {
   return (
-    <Link to={`/host/technician-details/${technician._id}`}>
+    <Link to={`/host/property-details/${property._id}`}>
       <div className="bg-white shadow-lg rounded-lg overflow-hidden border border-transparent transform transition-transform duration-300 hover:scale-105 relative card-hover-border">
         <div className="flex w-full">
           <img
@@ -98,10 +98,10 @@ function NoListings() {
 
 function HostListings() {
   const { token } = useAuth();
-  const [technicians, settechnicians] = useState([]);
+  const [properties, setProperties] = useState([]);
 
   useEffect(() => {
-    const fetchtechnicians = async () => {
+    const fetchProperties = async () => {
       try {
         const response = await axios.get(
           `${import.meta.env.VITE_API_URL}/properties/host-properties`,
@@ -117,15 +117,15 @@ function HostListings() {
       }
     };
 
-    fetchtechnicians();
+    fetchProperties();
   }, [token]);
 
-  const handleEdit = (technicianId) => {
+  const handleEdit = (propertyId) => {
     //TODO:
     console.log("Edit property:", propertyId);
   };
 
-  const handleDelete = (technicianId) => {
+  const handleDelete = (propertyId) => {
     //TODO:
     console.log("Delete property:", propertyId);
   };
@@ -139,10 +139,10 @@ function HostListings() {
         <NoListings />
       ) : (
         <div className="flex flex-col gap-8">
-          {technicians.map((technician) => (
+          {properties.map((property) => (
             <ListingCard
-              key={technician._id}
-              technician={technician}
+              key={property._id}
+              property={property}
               handleEdit={handleEdit}
               handleDelete={handleDelete}
             />

@@ -4,6 +4,7 @@ import { FaHouse } from "react-icons/fa6";
 import { BsDiamondHalf } from "react-icons/bs";
 import { FaMapMarkerAlt, FaUser,FaStar, FaStarHalfAlt, FaRegStar } from "react-icons/fa";
 import { BsCalendarDate } from "react-icons/bs";
+import { Link } from 'react-router-dom';
 
 const PendingPropertyCard = ({ property }) => {
     const imageUrl =  property.propertyID.images[0]?.url ? `${import.meta.env.VITE_API_URL}/${ property.propertyID.images[0].url}` : 'path/to/default/image.jpg';
@@ -56,12 +57,12 @@ const PendingPropertyCard = ({ property }) => {
         <span className="text-xl font-bold mb-2">{property.propertyID.location.province} | {property.propertyID.location.district}</span> 
       </div>
       <div className="px-4 py-2 flex justify-center">
-        <a
-            href="#"
-            className="font-semibold text-white text-sm px-10 py-2 bg-blue-500 border border-blue-500 rounded mt-2 md:mt-0 md:ml-2 inline-block text-center"
+        <Link
+          to={`/moderator/NewPropertySeemore/${property.propertyID._id}`}
+          className="font-semibold text-white text-sm px-10 py-2 bg-blue-500 border border-blue-500 rounded mt-2 md:mt-0 md:ml-2 inline-block text-center"
         >
-            See more
-        </a>
+          See more
+        </Link>
       </div>
      
    

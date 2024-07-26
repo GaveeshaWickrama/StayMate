@@ -1,12 +1,15 @@
 import React from "react";
 import { Routes, Route, Navigate } from "react-router-dom";
 import { useAuth } from "../context/auth";
+
 import GuestPage from "../pages/guest/GuestPage";
+
 import ReviewAdd from "../pages/guest/ReviewAdd";
 import Reservations from "../pages/guest/Reservations";
 import RaiseComplaintPage from "../pages/guest/RaiseComplaintPage";
 import ChatHomePage from "../pages/common/ChatHomePage";
 import TripDetails from "../pages/guest/TripDetails";
+import GuestReviews from "../pages/guest/guestReviews";
 
 function UserRoutes() {
   const { currentUser, loading } = useAuth();
@@ -18,16 +21,6 @@ function UserRoutes() {
 
   return (
     <Routes>
-      <Route
-        path="/"
-        element={
-          currentUser && currentUser.role === "guest" ? (
-            <GuestPage />
-          ) : (
-            <Navigate to="/Unauthorized" />
-          )
-        }
-      />
       {/* route for add review */}
       <Route
         path="/reviews/add"
@@ -63,7 +56,7 @@ function UserRoutes() {
       />
       {/* route for View Booking Info */}
       <Route
-        path="/tripdetails"
+        path="/reserve/:propertyId"
         element={
           currentUser && currentUser.role === "guest" ? (
             <TripDetails />
@@ -77,6 +70,16 @@ function UserRoutes() {
         element={
           currentUser && currentUser.role === "guest" ? (
             <ChatHomePage />
+          ) : (
+            <Navigate to="/Unauthorized" />
+          )
+        }
+      />
+      <Route
+        path="/viewreviews"
+        element={
+          currentUser && currentUser.role === "guest" ? (
+            <GuestReviews />
           ) : (
             <Navigate to="/Unauthorized" />
           )

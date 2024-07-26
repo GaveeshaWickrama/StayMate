@@ -4,11 +4,15 @@ import { useNavigate } from 'react-router-dom';
 import { FaStar, FaPhone, FaEnvelope } from 'react-icons/fa';
 import defaultProfilePic from '../assets/profile.jpg'; // Adjust the path as necessary
 import { useAuth } from '../context/auth'; // Adjust the path as necessary
+import useCreateOrSelectConversation from '../hooks/useCreateOrSelectConversation';
+import { toast } from 'react-toastify';
 
 const PropertyHost = ({ propertyId }) => {
   const [host, setHost] = useState(null);
   const { currentUser } = useAuth();
   const navigate = useNavigate();
+  const { createOrSelectConversation } = useCreateOrSelectConversation();
+  const [isLoading, setIsLoading] = useState(false);
 
   useEffect(() => {
     const fetchHost = async () => {
@@ -37,12 +41,19 @@ const PropertyHost = ({ propertyId }) => {
     phone: host.phone
   };
 
-  const handleMessageHost = () => {
+  const handleMessageHost = async () => {
     if (currentUser) {
-      navigate(`/chat?currentUserId=${currentUser.id}&hostId=${host._id}`);
+      setIsLoading(true);
+      try {
+        await createOrSelectConversation(host._id);
+        navigate(`/user/chat`);
+      } catch (error) {
+        toast.error('Failed to create or select conversation.');
+      } finally {
+        setIsLoading(false);
+      }
     } else {
-      // Handle case where user is not logged in
-      console.error('User is not logged in');
+      toast.error('User is not logged in');
     }
   };
 
@@ -66,9 +77,10 @@ const PropertyHost = ({ propertyId }) => {
         <button
           className="bg-blue-600 text-white p-2 rounded font-bold flex items-center"
           onClick={handleMessageHost}
+          disabled={isLoading}
         >
           <FaEnvelope className="mr-2" size={24} />
-          <span>Message Host</span>
+          <span>{isLoading ? <span className='loading loading-spinner mx-auto'></span> : 'Message Host'}</span>
         </button>
       </div>
     </div>

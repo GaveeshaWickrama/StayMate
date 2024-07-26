@@ -1,8 +1,10 @@
 const Conversation = require('../models/conversationModel');
+const User = require('../models/userModel');
 const Message = require('../models/messageModel');
 
 const sendMessage = async (req,res)=>{
     try {
+        
         const {message} = req.body;
         const {id:receiverId} = req.params;
         const senderId = req.user.userId;
@@ -28,9 +30,6 @@ const sendMessage = async (req,res)=>{
             conversation.messages.push(newMessage._id);
         }
 
-      /*   await newMessage.save();
-        await conversation.save(); */
-
         await Promise.all([newMessage.save(),conversation.save()]);
 
         res.status(201).json(newMessage);
@@ -52,7 +51,8 @@ const getMessages = async (req,res) => {
             participants : {$all: [senderId,userToChatId]}
         }).populate("messages");
 
-        if(!conversation) return res.status()
+         // Return an empty array if no conversation is found
+        if(!conversation) return res.status(200).json([]);
 
         res.status(200).json(conversation.messages);
         
@@ -64,25 +64,58 @@ const getMessages = async (req,res) => {
 
 const getContacts = async (req, res) => {
     try {
-        const loggedInUser = req.user.userId;
+      const loggedInUser = req.user.userId;
+  
+      // Find conversations where the participants array contains the current user's ID
+      const conversations = await Conversation.find({ participants: { $in: [loggedInUser] } })
+        .populate('participants') .sort({ updatedAt: -1 });  // Adjust fields as necessary
+  
+      // Extract user objects from the populated conversations
+      const users = conversations.flatMap(conversation => 
+        conversation.participants.filter(participant => participant._id.toString() !== loggedInUser)
+      );
 
-        // Find conversations where the participants array contains the current user's ID
-        const conversations = await Conversation.find({ participants: { $in: [loggedInUser] } });
+      console.log(users);
+  
+      // Remove duplicates based on user IDs
+      const uniqueUsers = Array.from(new Map(users.map(user => [user._id.toString(), user])).values());
 
-        // Extract user IDs from the conversations
-        const userIds = conversations.flatMap(conversation =>
-            conversation.participants.map(participant => participant.toString())
-        ).filter(userId => userId !== loggedInUser);
-
-        // Remove duplicates (if any)
-        const uniqueUserIds = [...new Set(userIds)];
-
-        res.status(200).json(uniqueUserIds);
+      console.log("Users : " ,uniqueUsers);
+  
+      res.status(200).json(uniqueUsers);
     } catch (err) {
-        console.error("Error Fetching Conversations: ", err.message);
-        res.status(500).json({ error: "Internal Server Error" });
+      console.error("Error Fetching Conversations: ", err.message);
+      res.status(500).json({ error: "Internal Server Error" });
+    }
+  };
+  
+  const createOrSelectConversation = async (req, res) => {
+    console.log("inside createOrSelectConversation");
+    try {
+        const { id: otherUserId } = req.params;
+        const currentUserId = req.user.userId;
+
+        // Fetch the other user's details excluding sensitive information
+        const otherUser = await User.findById(otherUserId).select('-password');
+
+        if (!otherUser) {
+            return res.status(404).json({ error: "User not found" });
+        }
+
+        let conversation = await Conversation.findOne({
+            participants: { $all: [currentUserId, otherUserId] }
+        });
+
+        if (conversation) {
+            return res.status(200).json({ conversation, otherUser });
+        } else {
+            return res.status(200).json({ conversation: null, otherUser });
+        }
+
+    } catch (error) {
+        console.log("Error in createOrSelectConversation Function: ", error.message);
+        res.status(500).json({ error: "Internal server error" });
     }
 };
 
-
-module.exports = { sendMessage,getMessages, getContacts };
+module.exports = { sendMessage,getMessages, getContacts,createOrSelectConversation };
