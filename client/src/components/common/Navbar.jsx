@@ -8,11 +8,6 @@ import { RxDashboard } from "react-icons/rx";
 import { BsFillHousesFill } from "react-icons/bs";
 import { FaCreditCard } from "react-icons/fa";
 
-import { RiLogoutBoxRLine } from "react-icons/ri"; // Example of using React Icons for logout icon
-
-
-
-
 const iconMap = {
   Home: "home",
   "Admin Dashboard": "admin_panel_settings",
@@ -25,8 +20,8 @@ const iconMap = {
   "New Listing": "add_box",
   Login: "login",
   Signup: "person_add",
-  Chat : "chat",
-  "View New Properties": <BsFillHousesFill/>,
+  Chat: "chat",
+  "View New Properties": <BsFillHousesFill />,
   "View New Properties": <BsFillHousesFill />,
   Payments: <FaCreditCard />,
 };
@@ -87,7 +82,7 @@ function Navbar({ isVisible }) {
     { path: "/moderator/viewNewProperties", label: "View New Properties" },
     // { path: "/admin/managemoderators", label: "Manage Moderators" },
   ];
-  
+
   const guestLinks = [
     { path: "/", label: "Home" },
     { path: "/user/viewreviews", label: "Reviews" },
@@ -183,11 +178,16 @@ function Navbar({ isVisible }) {
       />
     );
   }
-  
-  if (currentUser.role === "moderator") {
-    return <Sidebar title="Moderator Nav" links={moderatorLinks} logout={handleLogout} />;
-  }
 
+  if (currentUser.role === "moderator") {
+    return (
+      <Sidebar
+        title="Moderator Nav"
+        links={moderatorLinks}
+        logout={handleLogout}
+      />
+    );
+  }
 
   return null;
 }
