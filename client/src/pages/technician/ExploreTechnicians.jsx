@@ -1,43 +1,36 @@
 import React, { useEffect, useState } from "react";
 import axios from "axios";
 import { Link, useNavigate, useLocation } from "react-router-dom";
-import { FaInfoCircle, FaPlus } from "react-icons/fa";
+import { FaInfoCircle, FaPlus, FaArrowRight, FaArrowLeft } from "react-icons/fa";
 import SearchBar from "./SearchBar";
-import { IoFilterOutline } from "react-icons/io5";
-import Caraousel from "./components/Caraousel";
 import SearchTechnician from "./components/SearchTechnician";
-import { FaArrowRight, FaArrowLeft } from "react-icons/fa";
 
-function TechnicianCard({ technician, index , complaint }) {
+function TechnicianCard({ technician, index, complaint }) {
   console.log(`../../assets/${technician.proPic}`);
-  console.log(`complaint id is received to the technician cards ${complaint}`)
+  console.log(`complaint id is received to the technician cards ${complaint}`);
   console.log(`Navigating to: /host/technician-details/${technician._id}?complaintID=${complaint}`);
 
   return (
     <Link to={{
-      pathname: `/host/technician-details/${technician._id}`,
-    search: `?complaintID=${complaint}`,
-     }}>
-      <div className="bg-white shadow-lg  overflow-hidden border border-transparent transform transition-transform duration-300 hover:scale-105 relative card-hover-border rounded-lg w-auto">
-        <div className="flex w-full ">
+      pathname: `/host/technician-details/${technician.userDetails._id}`,
+      search: `?complaintID=${complaint}`,
+    }}>
+      <div className="bg-white shadow-lg overflow-hidden border border-transparent transform transition-transform duration-300 hover:scale-105 relative card-hover-border rounded-lg w-auto">
+        <div className="flex w-full">
           <div className="flex flex-col justify-between pl-3 w-auto overflow-hidden">
             <div>
               <div className="flex flex-row items-baseline gap-1">
-                <div className=" p-1 self-center">
-                  
-                <img src={`../../assets/${technician.proPic}`} alt="" className="w-7 h-7 rounded-full bg-blue-500 p-1 self-center"/>
-                {/* <img src="client\src\assets\technician_profile_picture.jpeg" alt="" className="w-7 h-7 rounded-full bg-blue-500 p-1 self-center"/> */}
-               
-
+                <div className="p-1 self-center">
+                  <img src={`../../assets/${technician.proPic}`} alt="" className="w-7 h-7 rounded-full bg-blue-500 p-1 self-center" />
                 </div>
-                <div className=" font-semibold text-black-500  flex flex-col gap-y-[-0.5rem] ">
-                  <span className="text-lg"> {technician.firstName}</span>
-                  <span className="text-m"> {technician.lastName}</span>
+                <div className="font-semibold text-black-500 flex flex-col gap-y-[-0.5rem]">
+                  <span className="text-lg">{technician.userDetails.firstName}</span>
+                  <span className="text-m">{technician.userDetails.lastName}</span>
                 </div>
               </div>
-              <div className="flex  flex-col">
+              <div className="flex flex-col">
                 <p className="text-gray-500 overflow-hidden text-ellipsis whitespace-nowrap">
-                  {technician.skill}
+                  {technician.subRole}
                 </p>
                 <p className="text-gray-700 overflow-hidden text-ellipsis whitespace-nowrap items-center">
                   <div className="rating w-2/5">
@@ -79,17 +72,15 @@ function TechnicianCard({ technician, index , complaint }) {
   );
 }
 
-
-
-function DisplayAllList(){
-return(
-  <div className="bg-blue-500 grid grid-cols-5">
-    <div className="bg-yellow-500"> heyy</div>
-    <div className="bg-pink-500"> heyy</div>
-    <div className="bg-purple-500"> heyy</div>
-    <div className="bg-violet-500"> heyy</div>
-  </div>
-)
+function DisplayAllList() {
+  return (
+    <div className="bg-blue-500 grid grid-cols-5">
+      <div className="bg-yellow-500"> heyy</div>
+      <div className="bg-pink-500"> heyy</div>
+      <div className="bg-purple-500"> heyy</div>
+      <div className="bg-violet-500"> heyy</div>
+    </div>
+  );
 }
 
 function NoTechnicians() {
@@ -147,7 +138,7 @@ function TechnicianExplore() {
         const res = await axios.get(`${import.meta.env.VITE_API_URL}/technicians/all`);
         setTechnicians(res.data);
 
-        console.log(`complaint id received from query parameter is ${complaintID} it will be passed to the technician card`)
+        console.log(`complaint id received from query parameter is ${complaintID} it will be passed to the technician card`);
 
       } catch (error) {
         alert(`Error fetching technicians: ${error.message}`);
@@ -157,19 +148,17 @@ function TechnicianExplore() {
     fetchTechnicians();
   }, []);
 
-  
-
   return (
     <div className="container mx-auto p-10">
       <h1 className="text-4xl font-extrabold text-black-600 mb-8 border-b-4 border-blue-600 p-6 bg-gray-100 rounded-md shadow-sm">
-        Find a technician 
+        Find a technician
       </h1>
       <div className="bg-gray-100 h-5/6 p-8">
         <div className="flex flex-row gap-0.5"></div>
 
         <SearchTechnician />
-        
-        <DisplayAllList/>
+
+        <DisplayAllList />
         <div className="bg-gray-200 p-1">
           <h1 className="text-xl font-bold text-black-300 p-3 border-b-4 border-blue-600 m-5">
             Top Rated
@@ -189,6 +178,7 @@ function TechnicianExplore() {
                   <TechnicianCard
                     key={technician._id}
                     technician={technician}
+                    complaint={complaintID}
                     index={index + currentPage * ITEMS_PER_PAGE}
                   />
                 ))}
@@ -209,7 +199,7 @@ function TechnicianExplore() {
 
         <div className="bg-gray-200 p-1">
           <h1 className="text-xl font-bold text-black-300 p-3 border-b-4 border-blue-600 m-5">
-           Nearby
+            Nearby
           </h1>
           <div className="flex flex-row">
             <button
@@ -226,7 +216,7 @@ function TechnicianExplore() {
                   <TechnicianCard
                     key={technician._id}
                     technician={technician}
-                    complaint = {complaintID}
+                    complaint={complaintID}
                     index={index + currentPage * ITEMS_PER_PAGE}
                   />
                 ))}
@@ -244,10 +234,7 @@ function TechnicianExplore() {
             </button>
           </div>
         </div>
-
       </div>
-
-      
     </div>
   );
 }
