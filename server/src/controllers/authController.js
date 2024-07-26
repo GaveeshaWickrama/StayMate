@@ -3,6 +3,7 @@ const jwt = require('jsonwebtoken');
 const validator = require('validator');
 const otpGenerator = require('otp-generator');
 const User = require('../models/userModel');
+const Technician = require('../models/technicianModel');
 const OTP = require('../models/otpModel');
 const transporter = require('../config/emailConfig');
 
@@ -67,6 +68,27 @@ async function verifyOtp(req, res) {
         const user = new User(otpEntry.userDetails);
         await user.save();
 
+        if (role === 'technician') {
+            const { location, subRole } = otpEntry.userDetails.technicianDetails;
+
+            const newTechnician = new Technician({
+                userId: user._id,
+                location: {
+                    address: location.address,
+                    latitude: location.latitude,
+                    longitude: location.longitude,
+                    district: location.district,
+                    province: location.province,
+                    zipcode: location.zipcode,
+                    geocoding_response: location.geocoding_response
+                },
+                subRole,
+                rating: 0 // Initial rating
+            });
+
+            await newTechnician.save();
+        }
+
         await OTP.deleteOne({ email, otp });
 
         const accessToken = jwt.sign(
@@ -85,6 +107,7 @@ async function verifyOtp(req, res) {
         res.status(500).json({ message: 'Internal server error' });
     }
 }
+
 
 async function requestRegisterTechnician(req, res) {
     try {
@@ -114,6 +137,22 @@ async function requestRegisterTechnician(req, res) {
         }
 
         const hashedPassword = await bcrypt.hash(password, 10);
+
+        const newTechnician = new Technician({
+            userId: null, // will be set after the user is created
+            location: {
+                address: location.address,
+                latitude: location.latitude,
+                longitude: location.longitude,
+                district: location.district,
+                province: location.province,
+                zipcode: location.zipcode,
+                geocoding_response: location.geocoding_response
+            },
+            subRole,
+            rating: 0 // Initial rating
+        });
+
         const newUserDetails = {
             email: normalizedEmail,
             password: hashedPassword,
@@ -122,7 +161,8 @@ async function requestRegisterTechnician(req, res) {
             phone,
             gender,
             firstName,
-            lastName
+            lastName,
+            technicianDetails: newTechnician
         };
 
         const existingOtp = await OTP.findOne({ email: normalizedEmail });
@@ -184,11 +224,15 @@ async function requestRegisterTechnician(req, res) {
                 }
             });
         }
+
     } catch (error) {
         console.error(error);
         return res.status(500).json({ message: 'Internal server error' });
     }
 }
+
+
+
 
 async function requestRegisterUser(req, res) {
     try {
