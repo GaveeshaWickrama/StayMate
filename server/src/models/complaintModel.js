@@ -16,7 +16,7 @@ const complaintSchema = new mongoose.Schema({
 
   technician:{
     type: mongoose.Schema.Types.ObjectId,
-    ref:'technician',
+    ref:'Technician',
     required:false
   },
   proofImages: [{ type: String }],
