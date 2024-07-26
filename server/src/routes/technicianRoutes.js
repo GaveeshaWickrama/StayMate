@@ -23,8 +23,8 @@ router.get('/:id', technicianController.getTechnicianById);
 router.get('/reviews/', technicianController.getReviews);
 router.get('/:id/noOfJobsCompleted/', complaintController.getNoOfJobsCompleted);
 router.get('/:id/jobs/', complaintController.getAllJobsByTechnicianId);
-router.get('/:id/activeJobs/', complaintController.getActiveJobs);
-router.get('/:id/pendingJobs/', complaintController.getPendingJobs);
+router.get('/:id/activeJobs/', complaintController.getActiveJobsByTechnicianId);
+router.get('/:id/pendingJobs/', complaintController.getPendingJobsByTechnicianId);
 router.get('/:id/completedJobs/', complaintController.getCompletedJobs);
 
 

@@ -7,11 +7,15 @@ const storage = multer.diskStorage({
     let uploadPath = 'uploads/';
 
     if (req.url.includes('/raisecomplaint')) {
-      uploadPath = 'uploads/complaints';
+      uploadPath = 'uploads/complaints/';
     } else if (req.url.includes('/add')) {
       uploadPath = 'uploads/properties/';
     } else if (req.url.includes('/editProfile')) {
       uploadPath = 'uploads/profilepictures/';
+    } else if (req.url.includes('/uploadProof')) {
+      uploadPath = 'uploads/taskProof/';
+    } else if (req.url.includes('/complaint-details')) {
+      uploadPath = 'uploads/complaints/';
     }
 
     cb(null, uploadPath);

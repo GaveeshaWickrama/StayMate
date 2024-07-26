@@ -16,6 +16,9 @@ import ComplaintDetails from "../pages/host/ComplaintDetails";
 import TechnicianExplore from "../pages/technician/ExploreTechnicians";
 import TechnicianDetails from "../pages/technician/TechnicianDetails";
 import ComplaintsManage from "../pages/host/ComplaintsManage";
+import HostResolveComplaint from "../pages/host/HostResolveComplaint";
+import PendingComplaints from "../pages/host/PendingComplaints";
+import ActiveComplaints from "../pages/host/ActiveComplaints";
 // import HostReviews from  "../pages/host/hostReviews";
 
 function HostRoutes() {
@@ -98,21 +101,22 @@ function HostRoutes() {
             )
           }
         />
+      
        <Route
-          path="/view-complaints"
+          path="/complaint-details/:id"
           element={
             currentUser && currentUser.role === "host" ? (
-              <ManageComplaints/>
+              <ComplaintDetails/>
             ) : (
               <Navigate to="/Unauthorized" />
             )
           }
           />
        <Route
-          path="/complaint-details/:id"
+          path="/complaint-details/:id/resolve"
           element={
             currentUser && currentUser.role === "host" ? (
-              <ComplaintDetails/>
+              <HostResolveComplaint/>
             ) : (
               <Navigate to="/Unauthorized" />
             )
@@ -148,6 +152,27 @@ function HostRoutes() {
             )
           }
           />
+       <Route
+          path="/manage-complaints/pending/"
+          element={
+            currentUser && currentUser.role === "host" ? (
+              <PendingComplaints/>
+            ) : (
+              <Navigate to="/Unauthorized" />
+            )
+          }
+          />
+       <Route
+          path="/manage-complaints/active/"
+          element={
+            currentUser && currentUser.role === "host" ? (
+              <ActiveComplaints/>
+            ) : (
+              <Navigate to="/Unauthorized" />
+            )
+          }
+          />
+     
       </Routes>
     </PropertyProvider>
   );

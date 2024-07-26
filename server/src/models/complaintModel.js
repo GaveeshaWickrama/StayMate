@@ -8,9 +8,10 @@ const complaintSchema = new mongoose.Schema({
     //required: true,
   },
 
-  hostId:{
-    type:String,
-    required:true
+  hostID:{
+    type: mongoose.Schema.Types.ObjectId,
+    ref:'user',
+    required:false
   },
 
   technician:{
@@ -18,6 +19,8 @@ const complaintSchema = new mongoose.Schema({
     ref:'technician',
     required:false
   },
+  proofImages: [{ type: String }],
+
 
   category: {
     type: String,

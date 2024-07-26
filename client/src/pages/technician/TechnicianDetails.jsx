@@ -5,16 +5,17 @@ import { FaHome, FaMapPin, FaClock, FaMapMarkerAlt, FaShower } from 'react-icons
 import { MdOutlineMeetingRoom } from "react-icons/md";
 import { IoBedSharp } from "react-icons/io5";
 import { GoPersonFill } from "react-icons/go";
+import { useAuth } from "../../context/auth";
 
 
-function HandleSendRequest({ complaintId, technicianID }) {
-  const sendRequest = async (complaintId, technicianID) => {
+function HandleSendRequest({ complaintId, technicianID , hostID }) {
+  const sendRequest = async (complaintId, technicianID ,hostID) => {
     try {
-      console.log("complaint id is received in the send requet function", complaintId);
+      console.log(`complaint id is received in the send requet function : ${complaintId}` );
+      console.log(`host id is received in the send requet function : ${hostID}` );
       // await axios.post(`${import.meta.env.VITE_API_URL}/complaints/assign-complaint/${technicianID}`, { complaintID });
-      await axios.post(`${import.meta.env.VITE_API_URL}/complaints/assign-complaint/${technicianID}`,{
-        complaintId: complaintId
-
+      await axios.post(`${import.meta.env.VITE_API_URL}/complaints/assign-complaint/${technicianID}`,null,{
+        params:{complaintId, hostID}
       });
       navigate('/host/manage-complaints');
       alert("Request successfully sent!");
@@ -25,22 +26,26 @@ function HandleSendRequest({ complaintId, technicianID }) {
 
   const handleButtonClick = () => {
     console.log("handleButtonClick");
-    console.log(complaintId,technicianID);
-    sendRequest(complaintId, technicianID);
+    console.log(complaintId,technicianID, hostID);
+    sendRequest(complaintId, technicianID, hostID);
   };
 
   return (
     <div>
-      <button className="font-semibold text-white text-sm px-10 py-2 bg-blue-950 rounded-xl ml-[150px] mt-[50px]" onClick={handleButtonClick}>Send Request</button>
+      <button className="bg-blue-600 text-white p-4 rounded font-bold w-50 my-10 m-4" onClick={handleButtonClick}>Send Request</button>
     </div>
   );
 }
 
 function TechnicianDetails() {
   const { id } = useParams();
-  // const location = useLocation();
-  // const { complaintID } = location.state;
-  const {complaintId, setComplaintId}  = useState('');
+  const { currentUser, loading } = useAuth();
+
+  const location = useLocation();
+  const queryParams = new URLSearchParams(location.search);
+  const complaintID = queryParams.get('complaintID');
+  const hostID  = currentUser.id
+  const [complaint, setComplaint] = useState(null);
   const [technician, setTechnician] = useState(null);
   const navigate = useNavigate();
 
@@ -49,13 +54,14 @@ function TechnicianDetails() {
       try {
         const response = await axios.get(`${import.meta.env.VITE_API_URL}/technicians/${id}`);
         setTechnician(response.data);
+        console.log(`complaint id received here  in the complaint details is ${complaintID}`)
       } catch (error) {
         console.error('Error fetching technician:', error);
       }
     };
 
     fetchTechnician();
-  }, [id]);
+  }, [id, complaintID]);
 
   if (!technician) {
     return <div>Loading...</div>;
@@ -127,13 +133,23 @@ function TechnicianDetails() {
         </div>
 
         <div className="w-full md:w-1/3 bg-white p-4 rounded-lg shadow">
-          <h2 className="text-xl font-bold mb-2">Date Joined</h2>
-         <div>2022-05-02</div>
-          <h2 className="text-xl font-bold mb-2">Jobs done</h2>
-         <div>7</div>
+        <div>
+        <h2 className="text-xl font-bold mb-2">Date Joined</h2>
+        <div>2022-05-02</div>
+        </div>
+        
 
-         <h2 className="text-xl font-bold">Rating: 4.5</h2>
-         <p className='ml-4'>great!</p>
+
+         <div>
+         <h2 className="text-xl font-bold mb-2">Jobs done</h2>
+         <div>7</div>
+         </div>
+         
+          <div>
+          <h2 className="text-xl font-bold">Rating: 4.5</h2>
+          <p className='ml-4'>great!</p>
+          </div>
+        
         </div>
        
       </div>
@@ -142,7 +158,7 @@ function TechnicianDetails() {
         <h2 className="text-xl font-bold mb-2">Reviews</h2>
         <p className='text-lg'>reviews come here</p>
       </div>
-     <HandleSendRequest complaintId='66823d0abbcb757d9c5668e9' technicianID={id}  />
+     <HandleSendRequest complaintId={complaintID} technicianID={id}  hostID={hostID}/>
 
      
     </div>
