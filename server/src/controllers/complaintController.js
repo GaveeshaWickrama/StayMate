@@ -1,6 +1,7 @@
 const Complaint = require("../models/complaintModel");
 // const TaskController = require('./taskController'); // Import task controller
 const path = require("path");
+const mongoose = require('mongoose');
 
 
 const raiseComplaint = async (req,res) => {
@@ -31,33 +32,20 @@ const raiseComplaint = async (req,res) => {
 }
 
 
-  
-
-
-
-//complaint placed by the host to the technician
-
 async function assignComplaintToTechnician(req, res) {
   const { technicianId } = req.params;  // Route parameter
-  const { complaintId } = req.query;  // Query parameter
-  const {hostID } = req.query;  // Query parameter
-
-
+  const { complaintId, hostID } = req.query;  // Query parameters
 
   try {
-    // Check if the complaint exists
-   
     console.log("Received complaint ID:", complaintId);
     console.log("Received technician ID:", technicianId);
-    console.log("Received technician ID:", hostID);
+    console.log("Received host ID:", hostID);
 
-
-
-    const complaintId = mongoose.Types.ObjectId(complaintId);
-
+    // Convert complaintId to ObjectId
+    const complaintObjectId = mongoose.Types.ObjectId(complaintId);
 
     // Check if the complaint exists and its status is pendingHostDecision
-    const complaint = await Complaint.findOne({ _id: complaintId, status: 'pendingHostDecision' });
+    const complaint = await Complaint.findOne({ _id: complaintObjectId, status: 'pendingHostDecision' });
    
     console.log("Found complaint:", complaint); // Log the complaint object
     if (!complaint) {
@@ -66,7 +54,7 @@ async function assignComplaintToTechnician(req, res) {
 
     // Update the complaint to assign it to the technician and change status
     const updatedComplaint = await Complaint.findOneAndUpdate(
-      { _id: complaintId, status: 'pendingHostDecision' },
+      { _id: complaintObjectId, status: 'pendingHostDecision' },
       { $set: { status: 'pendingTechnicianApproval', technician: technicianId, host: hostID } },
       { new: true } // Return the updated document
     );

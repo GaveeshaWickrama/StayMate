@@ -45,7 +45,7 @@ const getTechnicianById = async (req, res) => {
   }
 
   try {
-    const technician = await getTechnicianWithUserDetails({ userId: mongoose.Types.ObjectId(id) });
+    const technician = await getTechnicianWithUserDetails({ userId: new mongoose.Types.ObjectId(id) });
 
     if (!technician.length) {
       return res.status(404).json({ message: "Technician not found" });
