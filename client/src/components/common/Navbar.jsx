@@ -79,7 +79,7 @@ function Navbar({ isVisible }) {
     { path: "/moderator", label: "Moderator Dashboard" },
     { path: "/moderator/viewNewProperties", label: "View New Properties" },
   ];
-  
+
   const guestLinks = [
     { path: "/", label: "Home" },
     { path: "/user/viewreviews", label: "Reviews" },
