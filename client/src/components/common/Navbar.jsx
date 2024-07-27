@@ -1,12 +1,11 @@
-import React from "react";
-import { Link, useNavigate } from "react-router-dom";
-import { useAuth } from "../../context/auth";
-import { IconContext } from "react-icons";
-
-import { RiLogoutBoxRLine } from "react-icons/ri";
-import { RxDashboard } from "react-icons/rx";
-import { BsFillHousesFill } from "react-icons/bs";
-import { FaCreditCard } from "react-icons/fa";
+import React from 'react';
+import { Link, useNavigate } from 'react-router-dom';
+import { useAuth } from '../../context/auth';
+import { IconContext } from 'react-icons';
+import { RiLogoutBoxRLine } from 'react-icons/ri'; 
+import { RxDashboard } from 'react-icons/rx';
+import { BsFillHousesFill } from 'react-icons/bs';
+import { FaCreditCard } from 'react-icons/fa'; 
 
 const iconMap = {
   Home: "home",
@@ -20,8 +19,7 @@ const iconMap = {
   "New Listing": "add_box",
   Login: "login",
   Signup: "person_add",
-  Chat: "chat",
-  "View New Properties": <BsFillHousesFill />,
+  Chat : "chat",
   "View New Properties": <BsFillHousesFill />,
   Payments: <FaCreditCard />,
 };
@@ -70,7 +68,14 @@ function Navbar({ isVisible }) {
 
   const adminLinks = [
     { path: "/", label: "Home" },
-    { path: "/admin", label: "Admin Dashboard" },
+    { path: "/admin/AdminDashboard", label: "AdminDashboard" },
+    { path: "/admin/MyProfile", label: "My Profile" },
+    { path: "/admin/Moderator", label: "Moderator" },
+    { path: "/admin/report", label: "Report" },
+    { path: "/admin/PropertyOwners", label: "PropertyOwners" },
+    { path: "/admin/Tenants", label: "Tenants" },
+    { path: "/admin/Technicians", label: "Technicians" },
+    // { path: "/admin/MyProfile", label: "My Profile" },
     { path: "/admin/managemoderators", label: "Manage Moderators" },
     { path: "/admin/reservations", label: "Reservations" },
     { path: "/admin/Payments", label: "Payments" },
@@ -80,7 +85,6 @@ function Navbar({ isVisible }) {
     { path: "/", label: "Home" },
     { path: "/moderator", label: "Moderator Dashboard" },
     { path: "/moderator/viewNewProperties", label: "View New Properties" },
-    // { path: "/admin/managemoderators", label: "Manage Moderators" },
   ];
 
   const guestLinks = [
@@ -100,6 +104,7 @@ function Navbar({ isVisible }) {
     { path: "/host/view-complaints", label: "Complaints" },
     { path: "/host/manage-complaints", label: "Complaints" },
     { path: "/host/view-technicians", label: "Technicians" },
+    { path: "/host/HostReviews", label: "Reviews" },
   ];
 
   const technicianLinks = [
@@ -175,16 +180,6 @@ function Navbar({ isVisible }) {
         links={moderatorLinks}
         logout={handleLogout}
         isVisible={isVisible}
-      />
-    );
-  }
-
-  if (currentUser.role === "moderator") {
-    return (
-      <Sidebar
-        title="Moderator Nav"
-        links={moderatorLinks}
-        logout={handleLogout}
       />
     );
   }

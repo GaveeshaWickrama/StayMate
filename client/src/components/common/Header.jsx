@@ -28,7 +28,8 @@ const Header = ({ toggleNavbar }) => {
   }, [dropdownRef]);
 
   if (loading) {
-    return <div>Loading...</div>; // Show a loading spinner or message
+    return <div><span className="loading loading-spinner text-info"></span>
+</div>; // Show a loading spinner or message
   }
 
   const handleLogout = async () => {
