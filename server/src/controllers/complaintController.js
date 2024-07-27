@@ -2,34 +2,41 @@ const Complaint = require("../models/complaintModel");
 // const TaskController = require('./taskController'); // Import task controller
 
 
-const raiseComplaint = async (req,res) => {
+const raiseComplaint = async (req, res) => {
+  const { reservationId, title, description, category } = req.body;
 
-    const { reservationId, title, description, category } = req.body;
-    const images = req.files.map(file => file.path); // Get the file paths
+  // Log the files to the console to check if they are being received correctly
+  console.log('Uploaded Files:', req.files);
 
-    //complaint placed by the user to the host
-    try {
-        // Create a new complaint document
-        const newComplaint = new Complaint({
-            reservationId,
-            title,
-            description,
-            category,
-            images
-        });
+  // Check if files are received and if not, respond with an error
+  if (!req.files || req.files.length === 0) {
+    return res.status(400).json({ message: 'No files uploaded' });
+  }
 
-        // Save the complaint document to the database
-        await newComplaint.save();
+  // Get the file paths
+  const images = req.files.map(file => file.path);
 
-        res.status(200).json({ message: 'Complaint submitted successfully', complaint: newComplaint });
-    } catch (error) {
-        console.error('Error creating complaint:', error);
-        res.status(500).json({ message: 'An error occurred while submitting your complaint', error });
-    }
+  // Complaint placed by the user to the host
+  try {
+    // Create a new complaint document
+    const newComplaint = new Complaint({
+      reservationId,
+      title,
+      description,
+      category,
+      images
+    });
+
+    // Save the complaint document to the database
+    await newComplaint.save();
+
+    res.status(200).json({ message: 'Complaint submitted successfully', complaint: newComplaint });
+  } catch (error) {
+    console.error('Error creating complaint:', error);
+    res.status(500).json({ message: 'An error occurred while submitting your complaint', error });
+  }
 }
 
-
-  
 
 
 
