@@ -22,6 +22,7 @@ router.get('/complaints',complaintController.hello);
 //     authToken,
 //     requireRole("technician"),
 // complaintController.getActiveJobs);
+router.get('/raiseComplaint',complaintController.raiseComplaint);
 router.get('/:id/tasks',complaintController.getAllJobsByTechnicianId);
 // router.get('/:id/active/tech',complaintController.getActiveJobsByTechnicianId);
 router.get('/:id/pending/tech',complaintController.getPendingJobsByTechnicianId);
@@ -32,6 +33,7 @@ router.get('/complaint-details/:id',complaintController.getComplaintById);
 router.get('/:id',complaintController.getAllComplaintsByHostId);
 router.post('/assign-complaint/:id', complaintController.assignComplaintToTechnician);
 router.post('/complaint/:id/review', complaintController.reviewTask);
+router.post('/complaint/:id/acceptJob', complaintController.acceptJob);
 router.post('/complaint/:id/uploadProof',upload.array('proofImages',5), complaintController.uploadProof);
 
 

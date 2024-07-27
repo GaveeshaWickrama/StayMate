@@ -6,15 +6,28 @@ const mongoose = require('mongoose');
 
 const raiseComplaint = async (req,res) => {
 
+
+  const { reservationId } = req.query;
+  console.log(`received reservation id ${reservationId}`)
+
+      if (!reservationId) {
+          return res.status(400).json({ message: 'Reservation ID is required' });
+      }
+
     const { title, description, category } = req.body;
     const images = req.files.map(file => file.path); // Get the file paths
 
     //complaint placed by the user to the host
     try {
+
+
+       
+  
         // Create a new complaint document
         const newComplaint = new Complaint({
             //Need to wait untill Nimsara creates the current booking page to get the reservation id
             //reservation: req.user._id,
+            reservation : reservationId,
             title,
             description,
             category,
@@ -24,7 +37,11 @@ const raiseComplaint = async (req,res) => {
         // Save the complaint document to the database
         await newComplaint.save();
 
-        res.status(200).json({ message: 'Complaint submitted successfully', complaint: newComplaint });
+
+        const populatedComplaint = await Complaint.findById(newComplaint._id).populate('reservation');
+
+
+        res.status(200).json({ message: 'Complaint submitted successfully', complaint: populatedComplaint });
     } catch (error) {
         console.error('Error creating complaint:', error);
         res.status(500).json({ message: 'An error occurred while submitting your complaint', error });
@@ -42,7 +59,8 @@ async function assignComplaintToTechnician(req, res) {
     console.log("Received host ID:", hostID);
 
     // Convert complaintId to ObjectId
-    const complaintObjectId = mongoose.Types.ObjectId(complaintId);
+    const complaintObjectId = new mongoose.Types.ObjectId(complaintId);
+
 
     // Check if the complaint exists and its status is pendingHostDecision
     const complaint = await Complaint.findOne({ _id: complaintObjectId, status: 'pendingHostDecision' });
@@ -67,6 +85,41 @@ async function assignComplaintToTechnician(req, res) {
     res.status(500).json({ message: 'An error occurred while assigning the complaint to technician', error });
   }
 }
+async function acceptJob(req, res) {
+  const { complaintId } = req.params;  // Route parameter
+
+  try {
+    console.log("Received complaint ID:", complaintId);
+    
+
+    // Convert complaintId to ObjectId
+    const complaintObjectId = mongoose.Types.ObjectId(complaintId);
+
+    // Check if the complaint exists and its status is pendingHostDecision
+    const complaint = await Complaint.findOne({ _id: complaintObjectId, status: 'pendingTechnicianApproval' });
+   
+    console.log("Found complaint:", complaint); // Log the complaint object
+    if (!complaint) {
+      return res.status(404).json({ message: 'Complaint not found or status is not pendingTechnicianApproval' });
+    }
+
+    // Update the complaint to assign it to the technician and change status
+    const updatedComplaint = await Complaint.findOneAndUpdate(
+      { _id: complaintObjectId, status: 'pendingTechnicianApproval' },
+      { $set: { status: 'active' } },
+      { new: true } // Return the updated document
+    );
+
+    console.log("Assigned to a technician successfully");
+    res.status(200).json({ message: 'job accepted by  technician successfully', complaint: updatedComplaint });
+
+  } catch (error) {
+    console.error('Error accepting job:', error);
+    res.status(500).json({ message: 'An error occurred while accepting job', error });
+  }
+}
+
+
 
 
 function hello(req,res){
@@ -224,10 +277,7 @@ const getAllJobsByTechnicianId = async(req, res) => {
 
 
 const getActiveJobsByTechnicianId = async(req,res) => {
-  // const id = req.user.userId;
-  // console.log('Decoded user:', req.user); // Log decoded user
-  // console.log('User role:', req.user.role); // Log user role
-
+  
   const id = req.params.id;
 
   console.log(id);
@@ -323,6 +373,7 @@ const markAsResolved = async(req,res) => {
 }
 
 module.exports = {
+  raiseComplaint,   //user
   getComplaintById, //host
   assignComplaintToTechnician, //host
   getNoOfJobsCompleted, //technician
@@ -333,6 +384,7 @@ module.exports = {
   getPendingComplaintsByHostId, //host
   getActiveComplaintsByHostId, //host
   getCompletedJobs, //technician
+  acceptJob,
   hello,
   reviewTask,
   uploadProof

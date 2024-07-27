@@ -20,6 +20,7 @@ import PendingComplaints from "../pages/host/PendingComplaints";
 import ActiveComplaints from "../pages/host/ActiveComplaints";
 // import HostReviews from "../pages/host/HostReviews";
 import HostReviews from "../pages/host/HostReviews";
+import ReviewTask from "../pages/host/ReviewTask";
 
 function HostRoutes() {
   const { currentUser, loading } = useAuth();
@@ -90,7 +91,12 @@ function HostRoutes() {
         <Route path="/manage-complaints" element={ isHost ? <ComplaintsManage /> : <Navigate to="/Unauthorized" /> } />
         {/* <Route path="/viewReviews" element={isHost ? <HostReviews /> : <Navigate to="/Unauthorized" />} /> */}
        <Route path="/manage-complaints/pending/" element={ currentUser && currentUser.role === "host" ? ( <PendingComplaints/> ) : ( <Navigate to="/Unauthorized" /> ) } />
-       <Route path="/manage-complaints/active/" element={ currentUser && currentUser.role === "host" ? ( <ActiveComplaints/> ) : ( <Navigate to="/Unauthorized" /> ) } /> </Routes>
+       <Route path="/manage-complaints/active/" element={ currentUser && currentUser.role === "host" ? ( <ActiveComplaints/> ) : ( <Navigate to="/Unauthorized" /> ) } /> 
+       <Route path="/complaint/review/" element={ currentUser && currentUser.role === "host" ? ( <ReviewTask/> ) : ( <Navigate to="/Unauthorized" /> ) } /> 
+       
+       
+       
+       </Routes>
     </PropertyProvider>
   );
 }
