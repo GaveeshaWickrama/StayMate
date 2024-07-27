@@ -40,11 +40,6 @@ const TripDetails = ({ trip, isUpcoming, isOngoing, isCompleted }) => {
     navigate(`/user/complaints/add?reservationId=${trip._id}`);
   }
 
-  const raiseComplaint = () => {
-    navigate(`/user/raisecomplaints?reservationId=${trip._id}`);
-  };
-
-
   // Construct the image URL using the API base URL and the image path
   const imageUrl =
     trip.property.images.length > 0
@@ -87,12 +82,9 @@ const TripDetails = ({ trip, isUpcoming, isOngoing, isCompleted }) => {
               >
                 Chat
               </button>
+
               <button
-
                 onClick={handleAddComplaint}
-
-                onClick={raiseComplaint}
-
                 className="font-semibold text-white text-sm px-6 py-2 bg-yellow-500 border border-yellow-500 rounded mt-2 md:mt-0 md:ml-2"
                 disabled={isLoading}
               >
