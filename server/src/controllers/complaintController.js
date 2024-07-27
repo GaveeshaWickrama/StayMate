@@ -14,7 +14,6 @@ const raiseComplaint = async (req, res) => {
     return res.status(400).json({ message: 'No files uploaded' });
   }
 
-
   // Get the file paths
   const images = req.files.map(file => file.path);
 
@@ -38,9 +37,6 @@ const raiseComplaint = async (req, res) => {
     res.status(500).json({ message: 'An error occurred while submitting your complaint', error });
   }
 }
-
-
-
 
 
 //complaint placed by the host to the technician
