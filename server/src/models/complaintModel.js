@@ -13,11 +13,14 @@ const complaintSchema = new mongoose.Schema({
     required:true
   }, */
 
+
   technician:{
     type: mongoose.Schema.Types.ObjectId,
-    ref:'technician',
+    ref:'Technician',
     required:false
   },
+  proofImages: [{ type: String }],
+
 
   category: {
     type: String,

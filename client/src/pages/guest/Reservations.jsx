@@ -1,7 +1,8 @@
-import React, { useState, useEffect } from "react";
+import React, { useState } from "react";
 import TripDetails from "../../components/guest/TripDetails";
 import TabButtons from "../../components/guest/TabButtons";
 import { useStore } from "../../context/StoreContext";
+import { MdEventAvailable } from "react-icons/md";
 
 const Reservation = () => {
   const { userReservations } = useStore();
@@ -17,8 +18,16 @@ const Reservation = () => {
   console.log(sortedReservations);
 
   return (
-    <div className="container mx-auto p-4 mt-24 ml-4">
-      <div className="mx-4 ml-[50px]">
+    <div className="container mx-auto p-4 mt-1 ml-4">
+      {/* Title Section */}
+      <div className="flex mb-1 border-b-4 border-blue-600 p-6 rounded-md shadow-sm bg-white">
+        <h1 className="flex items-center text-4xl font-extrabold text-black-600">
+          <MdEventAvailable className="mr-4" />
+          Reservations
+        </h1>
+      </div>
+
+      <div className="mx-4 mt-7 ml-[50px]">
         <TabButtons activeTab={activeTab} setActiveTab={setActiveTab} />
         <div className="mt-6">
           {activeTab === "upcoming" &&

@@ -41,10 +41,12 @@ const viewProfile = async (req, res) => {
     if (!mongoose.Types.ObjectId.isValid(id)) {
         return res.status(400).json({ error: 'Invalid user ID' });
     }
-
-    if(req.user.role==='moderator'){
+console.log("VVVVVVVVVVVVVVVVVVVVVVVVVVVV came here")
+    if(req.user.role==='technician'){
+      console.log("Inside techhhh pro")
       const user = await Technician.findById(id);
     }else{ 
+      console.log("Inside normal contt")
       const user = await User.findById(id);
     }
     const user = await User.findById(id);

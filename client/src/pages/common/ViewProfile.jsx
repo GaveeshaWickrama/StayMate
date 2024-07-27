@@ -3,13 +3,11 @@ import { Link, useParams } from 'react-router-dom';
 import axios from 'axios';
 import { useAuth } from '../../context/auth';
 import { FaEdit } from 'react-icons/fa';
-import pic2 from '../../assets/1721533878657-3.webp';
-import pic1 from '../../assets/1721480638430-2.webp';
-import pic3 from '../../assets/1721715104858-8.webp';
 import profpic from '../../assets/adminprofilepic.png';
 import HostProfile from './HostProfile';
 import AdminModProfile from './AdminModProfile';
 import GuestProfile from './GuestProfile';
+// import TechnicianProfile from './TechnicianProfile';
 
 const ViewProfile = () => {
 
@@ -56,7 +54,11 @@ const ViewProfile = () => {
       ProfileComponent = <AdminModProfile profile={profile} currentUser={currentUser} id={id} />;
     } else if (profile.role === 'guest'){
       ProfileComponent = <GuestProfile profile={profile} currentUser={currentUser} id={id} />;
-    }
+    } 
+    // else if (profile.role === 'technician'){
+    //   ProfileComponent = <TechnicianProfile profile={profile} currentUser={currentUser} id={id} />;
+    // }
+
 
 
 

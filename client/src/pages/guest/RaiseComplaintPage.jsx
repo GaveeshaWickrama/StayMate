@@ -1,7 +1,9 @@
+
 import React, { useState, useEffect } from "react";
 import axios from "axios";
 import { useAuth } from "../../context/auth";
 import { useSearchParams } from "react-router-dom";
+
 import Title from '../../components/common/Title';
 import DropDown from '../../components/common/DropDown';
 import InputField from '../../components/guest/InputField';
@@ -25,12 +27,17 @@ const RaiseComplaint = () => {
     const [searchParams] = useSearchParams();
     const reservationId = searchParams.get('reservationId');
 
+    const location = useLocation();
+    const [reservationId, setReservationId] = useState('');
+
+
     const [title, setTitle] = useState('');
     const [description, setDescription] = useState('');
     const [category, setCategory] = useState('');
     const [photos, setPhotos] = useState([]);
 
     useEffect(() => {
+
         console.log('Photos state updated:', photos);
     }, [photos]);
 
@@ -39,12 +46,15 @@ const RaiseComplaint = () => {
         setPhotos((prevPhotos) => [...prevPhotos, ...files]);
     };
 
+
     const handleSubmit = async () => {
         const formData = new FormData();
         formData.append('reservationId', reservationId);
         formData.append('title', title);
         formData.append('description', description);
         formData.append('category', category);
+        formData.append('reservationId', reservationId);
+
         for (let i = 0; i < photos.length; i++) {
             formData.append('photos', photos[i]);
         }
@@ -57,7 +67,7 @@ const RaiseComplaint = () => {
 
         try {
             const response = await axios.post(
-                `${import.meta.env.VITE_API_URL}/complaints/raisecomplaint`,
+                `${import.meta.env.VITE_API_URL}/complaints/raiseComplaint?reservationId=${reservationId}`,
                 formData,
                 {
                     headers: {

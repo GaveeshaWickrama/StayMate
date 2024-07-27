@@ -3,7 +3,11 @@ module.exports = {
     "./src/**/*.{js,jsx,ts,tsx}", // Adjust according to your project structure
   ],
   theme: {
-    extend: {},
+    extend: {
+      fontSize: {
+        'xxs': '0.6rem', // Custom size smaller than 'xs'
+      },
+    },
   },
   plugins: [
     require('daisyui')

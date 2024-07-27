@@ -1,79 +1,120 @@
 import React from 'react';
+import { FaEdit } from 'react-icons/fa';
 
 const ProfilePage = () => {
+  // return (
+
+    // This is the profile Test
+
+    // <div className="min-h-screen bg-blue-50 flex items-center justify-center">
+    //   <div className="bg-white shadow-lg rounded-lg p-8 max-w-md w-full">
+    //     <div className="flex items-center justify-center">
+    //       <img
+    //         src="https://via.placeholder.com/150"
+    //         alt="Profile"
+    //         className="rounded-full w-32 h-32 object-cover border-4 border-blue-500"
+    //       />
+    //     </div>
+    //     <div className="mt-4 text-center">
+    //       <h1 className="text-2xl font-bold text-blue-700">John Doe</h1>
+    //       <p className="text-gray-600">john.doe@example.com</p>
+    //       <p className="text-gray-600">NIC: 123456789V</p>
+    //     </div>
+    //     <div className="mt-6">
+    //       <div className="text-gray-600">
+    //         <p><strong>Joined Date:</strong> January 1, 2020</p>
+    //         <p><strong>Position:</strong> Software Engineer</p>
+    //         <p><strong>Address:</strong> 1234 Main St, Anytown, USA</p>
+    //       </div>
+    //     </div>
+    //     <div className="mt-6 flex justify-center">
+    //       <button className="bg-blue-500 text-white py-2 px-4 rounded-full flex items-center hover:bg-blue-600">
+    //         <FaEdit className="mr-2" />
+    //         Edit Profile
+    //       </button>
+    //     </div>
+    //   </div>
+    // </div>
+  // );
+
+
+    // This is for the Wallet
+
+  
+
+  const transactions = [
+    { id: 1, description: 'Payment to John Doe', amount: '-Rs: 200.00', type: 'expense' },
+    { id: 2, description: 'Received from Jane Smith', amount: '+Rs: 150.00', type: 'income' },
+    { id: 3, description: 'Payment to Amazon', amount: '-Rs: 50.00', type: 'expense' },
+    { id: 4, description: 'Received from PayPal', amount: '+Rs: 300.00', type: 'income' },
+  ];
+
   return (
-    <div className="min-h-screen bg-gradient-to-r from-blue-500 to-indigo-600 flex items-center justify-center">
-      <div className="bg-white rounded-lg shadow-2xl p-10 w-3/4 max-w-4xl">
-        <div className="flex flex-col md:flex-row items-center md:items-start">
-          <div className="w-40 h-40 rounded-full overflow-hidden shadow-md mb-6 md:mb-0 md:mr-6">
-            <img src="https://via.placeholder.com/150" alt="Profile" className="w-full h-full object-cover" />
-          </div>
-          <div className="flex-1">
-            <h1 className="text-3xl font-bold text-blue-600 mb-2">John Doe</h1>
-            <p className="text-gray-600 mb-2">johndoe@example.com</p>
-            <p className="text-gray-600 mb-2">NIC: 123456789V</p>
-            <p className="text-gray-600 mb-4">Phone: (123) 456-7890</p>
-            <div className="flex space-x-4 mb-6">
-              <button className="bg-blue-500 text-white py-2 px-6 rounded-full shadow-lg hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-400">Follow</button>
-              <button className="bg-gray-200 text-gray-700 py-2 px-6 rounded-full shadow-lg hover:bg-gray-300 focus:outline-none focus:ring-2 focus:ring-gray-300">Message</button>
-            </div>
-            <div className="mb-6">
-              <h2 className="text-xl font-semibold text-gray-700 mb-2">Contact Information</h2>
-              <div className="flex flex-wrap">
-                <span className="bg-blue-100 text-blue-600 py-1 px-3 rounded-full text-sm font-medium mr-2 mb-2">Email: johndoe@example.com</span>
-                <span className="bg-blue-100 text-blue-600 py-1 px-3 rounded-full text-sm font-medium mr-2 mb-2">NIC: 123456789V</span>
-                <span className="bg-blue-100 text-blue-600 py-1 px-3 rounded-full text-sm font-medium mr-2 mb-2">Phone: (123) 456-7890</span>
-              </div>
-            </div>
-          </div>
+    <div className="bg-gradient-to-b from-gray-100 to-gray-200 text-gray-800 min-h-screen p-6">
+  <div className="max-w-7xl mx-auto py-10 px-6">
+    {/* Header */}
+    <div className="flex justify-between items-center mb-8">
+      <h1 className="text-3xl font-bold text-blue-600">My Wallet</h1>
+      <button className="bg-blue-600 text-white px-6 py-2 rounded-lg shadow-md hover:bg-blue-700 transform transition-transform duration-200 hover:scale-105">
+        Add Funds
+      </button>
+    </div>
+
+    {/* Balance Overview */}
+    <div className="bg-white rounded-lg shadow-lg p-6 mb-8 transform transition-transform duration-200 hover:scale-105">
+      <h2 className="text-xl font-semibold mb-4 text-blue-600">Balance Overview</h2>
+      <div className="flex items-center justify-between">
+        <div>
+          <p className="text-gray-500">Current Points Balance</p>
+          <p className="text-3xl font-bold text-blue-600">Rs: 1,230.50</p>
         </div>
-        <div className="mt-6">
-          <h2 className="text-2xl font-bold text-gray-700 mb-4">Ratings</h2>
-          <div className="space-y-4">
-            <div className="bg-gray-100 rounded-lg p-4 shadow">
-              <div className="flex items-center">
-                <div className="text-yellow-500 mr-2">★★★★★</div>
-                <p className="text-gray-700">Great host! Very responsive and the place was exactly as described.</p>
-              </div>
-              <p className="text-gray-500 text-sm mt-2">- Guest Name</p>
-            </div>
-            <div className="bg-gray-100 rounded-lg p-4 shadow">
-              <div className="flex items-center">
-                <div className="text-yellow-500 mr-2">★★★★☆</div>
-                <p className="text-gray-700">Nice place, had a good time. Could improve on cleanliness.</p>
-              </div>
-              <p className="text-gray-500 text-sm mt-2">- Guest Name</p>
-            </div>
-          </div>
-        </div>
-        <div className="mt-6">
-          <h2 className="text-2xl font-bold text-gray-700 mb-4">Listed Properties</h2>
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-            <div className="bg-gray-100 rounded-lg overflow-hidden shadow-lg">
-              <img src="https://via.placeholder.com/150" alt="Property 1" className="w-full h-32 sm:h-48 object-cover" />
-              <div className="p-4">
-                <h3 className="text-lg font-semibold text-gray-700">Cozy Apartment</h3>
-                <p className="text-gray-600 mt-2">Located in the heart of the city, this cozy apartment offers all amenities for a comfortable stay.</p>
-              </div>
-            </div>
-            <div className="bg-gray-100 rounded-lg overflow-hidden shadow-lg">
-              <img src="https://via.placeholder.com/150" alt="Property 2" className="w-full h-32 sm:h-48 object-cover" />
-              <div className="p-4">
-                <h3 className="text-lg font-semibold text-gray-700">Beachside Villa</h3>
-                <p className="text-gray-600 mt-2">Enjoy the beach views from this beautiful villa, perfect for a relaxing vacation.</p>
-              </div>
-            </div>
-            <div className="bg-gray-100 rounded-lg overflow-hidden shadow-lg">
-              <img src="https://via.placeholder.com/150" alt="Property 3" className="w-full h-32 sm:h-48 object-cover" />
-              <div className="p-4">
-                <h3 className="text-lg font-semibold text-gray-700">Mountain Cabin</h3>
-                <p className="text-gray-600 mt-2">Escape to the mountains in this cozy cabin, ideal for nature lovers and adventurers.</p>
-              </div>
-            </div>
-          </div>
+        <div>
+          <p className="text-gray-500">Last Transaction</p>
+          <p className="text-2xl font-bold text-gray-800">Rs: 50.00</p>
         </div>
       </div>
     </div>
+
+    {/* Recent Transactions */}
+    <div className="bg-white rounded-lg shadow-lg p-6 mb-8 transform transition-transform duration-200 hover:scale-105">
+      <h2 className="text-xl font-semibold mb-4 text-blue-600">Points Earned from Previous Reservations</h2>
+      <ul>
+        {transactions.map(transaction => (
+          <li
+            key={transaction.id}
+            className="flex justify-between items-center border-b py-2 hover:bg-gray-100 transition-colors duration-200"
+          >
+            <span className="font-medium">{transaction.description}</span>
+            <span
+              className={
+                transaction.type === 'income' ? 'text-green-500 font-semibold' : 'text-red-500 font-semibold'
+              }
+            >
+              {transaction.amount}
+            </span>
+          </li>
+        ))}
+      </ul>
+    </div>
+
+    {/* Quick Actions */}
+    <div className="bg-white rounded-lg shadow-lg p-6 transform transition-transform duration-200 hover:scale-105">
+      <h2 className="text-xl font-semibold mb-4 text-blue-600">Quick Actions</h2>
+      <div className="flex justify-around">
+        <button className="bg-blue-600 text-white px-6 py-3 rounded-lg shadow-md hover:bg-blue-700 transform transition-transform duration-200 hover:scale-105">
+          Redeem Points
+        </button>
+        <button className="bg-blue-600 text-white px-6 py-3 rounded-lg shadow-md hover:bg-blue-700 transform transition-transform duration-200 hover:scale-105">
+           Request Money
+        </button>
+        <button className="bg-blue-600 text-white px-6 py-3 rounded-lg shadow-md hover:bg-blue-700 transform transition-transform duration-200 hover:scale-105">
+          View Statements
+        </button>
+      </div>
+    </div>
+  </div>
+</div>
+
   );
 };
 

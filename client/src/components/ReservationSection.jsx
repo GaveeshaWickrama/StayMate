@@ -13,10 +13,11 @@ const ReservationSection = ({
 }) => {
   const [checkInDate, setCheckInDate] = useState(initialCheckInDate);
   const [checkOutDate, setCheckOutDate] = useState(initialCheckOutDate);
-  const [noOfGuests, setNoOfGuests] = useState(1); // Add state for number of guests
+  const [noOfGuests, setNoOfGuests] = useState(1);
   const [nights, setNights] = useState(0);
   const [totalPrice, setTotalPrice] = useState(0);
   const [serviceFee, setServiceFee] = useState(0);
+  const [errors, setErrors] = useState({});
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -25,26 +26,82 @@ const ReservationSection = ({
     const calculateServiceFee = (rate, nights, percentage) =>
       rate * nights * (percentage / 100);
 
-    const nights = calculateNights(checkInDate, checkOutDate);
-    const fee = calculateServiceFee(nightlyRate, nights, serviceFeePercentage);
+    if (
+      checkInDate &&
+      checkOutDate &&
+      !errors.checkInDate &&
+      !errors.checkOutDate
+    ) {
+      const nights = calculateNights(checkInDate, checkOutDate);
+      const fee = calculateServiceFee(
+        nightlyRate,
+        nights,
+        serviceFeePercentage
+      );
 
-    setNights(nights);
-    setServiceFee(fee);
-    setTotalPrice(nightlyRate * nights + fee);
-  }, [checkInDate, checkOutDate, nightlyRate, serviceFeePercentage]);
+      setNights(nights);
+      setServiceFee(fee);
+      setTotalPrice(nightlyRate * nights + fee);
+    }
+  }, [checkInDate, checkOutDate, nightlyRate, serviceFeePercentage, errors]);
+
+  const validateDates = () => {
+    let errors = {};
+    const now = new Date();
+    const checkIn = new Date(checkInDate);
+    const checkOut = new Date(checkOutDate);
+
+    if (checkIn < now) {
+      errors.checkInDate = "Check-in date cannot be in the past.";
+    }
+    if (checkOut <= checkIn) {
+      errors.checkOutDate = "Check-out date must be after check-in date.";
+    }
+    if (isNaN(checkIn.getTime()) || isNaN(checkOut.getTime())) {
+      errors.checkInDate = "Invalid check-in date.";
+      errors.checkOutDate = "Invalid check-out date.";
+    }
+    if (errors.checkInDate || errors.checkOutDate) {
+      setErrors(errors);
+      return false;
+    }
+
+    setErrors({});
+    return true;
+  };
+
+  const validateGuests = () => {
+    let errors = {};
+    if (noOfGuests < 1 || noOfGuests > 100) {
+      // Assuming 100 as a reasonable upper limit
+      errors.noOfGuests = "Number of guests must be between 1 and 100.";
+    }
+    if (errors.noOfGuests) {
+      setErrors((prevErrors) => ({
+        ...prevErrors,
+        noOfGuests: errors.noOfGuests,
+      }));
+      return false;
+    }
+
+    setErrors((prevErrors) => ({ ...prevErrors, noOfGuests: undefined }));
+    return true;
+  };
 
   const handleReserve = () => {
-    navigate(`/user/reserve/${propertyId}`, {
-      state: {
-        property,
-        propertyId,
-        sectionId,
-        checkInDate,
-        checkOutDate,
-        noOfGuests,
-        totalPrice,
-      },
-    });
+    if (validateDates() && validateGuests()) {
+      navigate(`/user/reserve/${propertyId}`, {
+        state: {
+          property,
+          propertyId,
+          sectionId,
+          checkInDate,
+          checkOutDate,
+          noOfGuests,
+          totalPrice,
+        },
+      });
+    }
   };
 
   return (
@@ -59,10 +116,16 @@ const ReservationSection = ({
           </label>
           <input
             type="date"
-            className="p-2 border rounded"
+            className={`p-2 border rounded ${
+              errors.checkInDate ? "border-red-500" : ""
+            }`}
             value={checkInDate}
             onChange={(e) => setCheckInDate(e.target.value)}
+            min={new Date().toISOString().split("T")[0]} // Prevent past dates
           />
+          {errors.checkInDate && (
+            <p className="text-red-500 text-sm">{errors.checkInDate}</p>
+          )}
         </div>
         <div className="flex flex-col w-1/2">
           <label className="mb-2 flex items-center">
@@ -70,10 +133,16 @@ const ReservationSection = ({
           </label>
           <input
             type="date"
-            className="p-2 border rounded"
+            className={`p-2 border rounded ${
+              errors.checkOutDate ? "border-red-500" : ""
+            }`}
             value={checkOutDate}
             onChange={(e) => setCheckOutDate(e.target.value)}
+            min={checkInDate} // Ensure check-out is after check-in
           />
+          {errors.checkOutDate && (
+            <p className="text-red-500 text-sm">{errors.checkOutDate}</p>
+          )}
         </div>
       </div>
       <div className="flex mb-4 space-x-4">
@@ -81,10 +150,16 @@ const ReservationSection = ({
           <label className="mb-2">Number of Guests</label>
           <input
             type="number"
-            className="p-2 border rounded"
+            className={`p-2 border rounded ${
+              errors.noOfGuests ? "border-red-500" : ""
+            }`}
             value={noOfGuests}
-            onChange={(e) => setNoOfGuests(e.target.value)}
+            onChange={(e) => setNoOfGuests(parseInt(e.target.value, 10))}
+            min={1}
           />
+          {errors.noOfGuests && (
+            <p className="text-red-500 text-sm">{errors.noOfGuests}</p>
+          )}
         </div>
       </div>
       <div className="flex justify-between items-start mb-4">
