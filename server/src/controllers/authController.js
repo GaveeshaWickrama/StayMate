@@ -6,7 +6,6 @@ const User = require('../models/userModel');
 const Technician = require('../models/technicianModel');
 const OTP = require('../models/otpModel');
 const transporter = require('../config/emailConfig');
-
 const ALLOWED_ROLES = ['guest', 'host', 'technician', 'moderator'];
 
 async function loginUser(req, res) {
@@ -52,22 +51,27 @@ async function verifyOtp(req, res) {
         return res.status(400).json({ message: "Invalid role" });
     }
 
+    const normalizedEmail = email.toLowerCase().trim();
+    let userCreated = false;
+    let technicianCreated = false;
+
     try {
-        const emailfound = await OTP.findOne({ email });
-
-        if (!emailfound) {
-            return res.status(400).json({ message: 'Registration request not found' });
-        }
-
-        const otpEntry = await OTP.findOne({ email, otp });
+        // Find the OTP entry
+        const otpEntry = await OTP.findOne({ email: normalizedEmail, otp });
 
         if (!otpEntry) {
-            return res.status(400).json({ message: 'Invalid OTP' });
+            return res.status(400).json({ message: 'Invalid OTP or registration request not found' });
         }
 
-        const user = new User(otpEntry.userDetails);
+        // Create new user
+        const user = new User({
+            ...otpEntry.userDetails,
+            email: normalizedEmail
+        });
         await user.save();
+        userCreated = true; // Flag indicating user creation success
 
+        // Create Technician if role is 'technician'
         if (role === 'technician') {
             const { location, subRole } = otpEntry.userDetails.technicianDetails;
 
@@ -87,26 +91,66 @@ async function verifyOtp(req, res) {
             });
 
             await newTechnician.save();
+            technicianCreated = true; // Flag indicating technician creation success
         }
 
-        await OTP.deleteOne({ email, otp });
+        // Delete the OTP entry
+        await OTP.deleteOne({ email: normalizedEmail, otp });
 
+        // Generate access token
         const accessToken = jwt.sign(
-            { userId: user._id, email: user.email, role: user.role },
+            {
+                userId: user._id,
+                email: user.email,
+                role: user.role,
+                firstName: user.firstName,
+                lastName: user.lastName,
+                gender: user.gender,
+                picture: user.picture
+            },
             process.env.ACCESS_TOKEN_SECRET,
             { expiresIn: '24h' }
         );
 
+        // Respond with the new user and token
         res.status(200).json({
             message: 'Email verified and user account created successfully',
             accessToken: accessToken,
-            user: { id: user._id, email: user.email, role: user.role }
+            user: {
+                id: user._id,
+                email: user.email,
+                role: user.role,
+                firstName: user.firstName,
+                lastName: user.lastName,
+                gender: user.gender,
+                picture: user.picture
+            }
         });
     } catch (error) {
         console.error(error);
+
+        // Manual rollback if any operation fails
+        if (userCreated) {
+            try {
+                await User.deleteOne({ email: normalizedEmail });
+            } catch (deleteUserError) {
+                console.error('Failed to rollback user creation:', deleteUserError);
+            }
+        }
+
+        if (technicianCreated) {
+            try {
+                await Technician.deleteOne({ userId: user._id });
+            } catch (deleteTechnicianError) {
+                console.error('Failed to rollback technician creation:', deleteTechnicianError);
+            }
+        }
+
         res.status(500).json({ message: 'Internal server error' });
     }
 }
+
+
 
 
 async function requestRegisterTechnician(req, res) {

@@ -33,7 +33,7 @@ const locationSchema = new Schema({
   geocoding_response: {
     type: Object
   },
-  coordinates: {  // Coordinates directly in the document for geospatial indexing
+  coordinates: {
     type: { type: String, enum: ['Point'], default: 'Point' },
     coordinates: {
       type: [Number],
@@ -54,14 +54,6 @@ const technicianSchema = new Schema({
     type: Schema.Types.ObjectId,
     ref: 'User',
     required: true,
-    unique: true,
-    validate: {
-      validator: async function (value) {
-        const user = await mongoose.model('User').findOne({ _id: value, role: 'technician' });
-        return !!user;
-      },
-      message: 'The provided user ID does not exist as a technician in the User collection'
-    }
   },
   location: {
     type: locationSchema,
