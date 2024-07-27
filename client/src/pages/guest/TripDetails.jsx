@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { useLocation } from "react-router-dom";
 import { useStore } from "../../context/StoreContext";
+import { FaCalendarCheck } from "react-icons/fa";
 
 const TripDetails = () => {
   const { state } = useLocation();
@@ -56,9 +57,14 @@ const TripDetails = () => {
 
   return (
     <div className="container mx-auto p-10">
-      <h1 className="text-4xl font-extrabold text-gray-800 mb-8 text-center">
-        Confirm Your Trip
-      </h1>
+      {/* Title Section */}
+      <div className="flex mb-6 border-b-4 border-blue-600 p-6 rounded-md shadow-sm bg-white">
+        <h1 className="flex items-center text-4xl font-extrabold text-black-600">
+          <FaCalendarCheck className="mr-4" />
+          Confirm Your Trip
+        </h1>
+      </div>
+
       <div className="bg-white p-6 rounded-lg shadow-md">
         <h2 className="text-2xl font-bold mb-4">Trip Details</h2>
 
