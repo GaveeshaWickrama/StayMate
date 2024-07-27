@@ -2,9 +2,11 @@ import React from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { useAuth } from "../../context/auth";
 import { IconContext } from "react-icons";
-import { RiLogoutBoxRLine } from "react-icons/ri"; // Example of using React Icons for logout icon
-import { BsFillHousesFill } from "react-icons/bs"; // for the view new properties
 
+import { RiLogoutBoxRLine } from "react-icons/ri";
+import { RxDashboard } from "react-icons/rx";
+import { BsFillHousesFill } from "react-icons/bs";
+import { FaCreditCard } from "react-icons/fa";
 
 const iconMap = {
   Home: "home",
@@ -18,13 +20,19 @@ const iconMap = {
   "New Listing": "add_box",
   Login: "login",
   Signup: "person_add",
-  "View New Properties": <BsFillHousesFill/>,
+  Chat: "chat",
   "View New Properties": <BsFillHousesFill />,
+  "View New Properties": <BsFillHousesFill />,
+  Payments: <FaCreditCard />,
 };
 
 function Sidebar({ title, links, logout, isVisible }) {
   return (
-    <nav className={`sidebar ${isVisible ? 'visible' : ''} h-full w-64 fixed top-20 left-0 bg-gray-800 z-2 text-white flex flex-col p-4`}>
+    <nav
+      className={`sidebar ${
+        isVisible ? "visible" : ""
+      } h-full w-64 fixed top-20 left-0 bg-gray-800 z-2 text-white flex flex-col p-4`}
+    >
       <h1 className="text-2xl font-bold mb-6">{title}</h1>
       <IconContext.Provider value={{ className: "inline-block mr-2" }}>
         {links.map((link, index) => (
@@ -54,16 +62,18 @@ function Sidebar({ title, links, logout, isVisible }) {
 function Navbar({ isVisible }) {
   const { currentUser, logout } = useAuth();
   const navigate = useNavigate();
-  
+
   const handleLogout = () => {
     logout();
     navigate("/");
   };
-  
+
   const adminLinks = [
     { path: "/", label: "Home" },
     { path: "/admin", label: "Admin Dashboard" },
     { path: "/admin/managemoderators", label: "Manage Moderators" },
+    { path: "/admin/reservations", label: "Reservations" },
+    { path: "/admin/Payments", label: "Payments" },
   ];
 
   const moderatorLinks = [
@@ -72,14 +82,14 @@ function Navbar({ isVisible }) {
     { path: "/moderator/viewNewProperties", label: "View New Properties" },
     // { path: "/admin/managemoderators", label: "Manage Moderators" },
   ];
-  
+
   const guestLinks = [
     { path: "/", label: "Home" },
-    { path: "/user", label: "User Page" },
-    { path: "/user/reviews/add", label: "Reviews" },
+    { path: "/user/viewreviews", label: "Reviews" },
     { path: "/user/reservations", label: "Reservations" },
+    { path: "/user/chat", label: "Chat" },
   ];
-  
+
   const hostLinks = [
     { path: "/", label: "Home" },
     { path: "/host", label: "Host Dashboard" },
@@ -101,41 +111,83 @@ function Navbar({ isVisible }) {
     { path: "/technician/tasks", label: "Tasks" },
     { path: "/host/viewReviews", label: "Reviews" },
   ];
-  
+
   const publicLinks = [
     { path: "/", label: "Home" },
     { path: "/login", label: "Login" },
     { path: "/signup/guest", label: "Signup" },
   ];
-  
+
   if (!currentUser) {
-    return <Sidebar title="Public Nav" links={publicLinks} isVisible={isVisible} />;
+    return (
+      <Sidebar title="Public Nav" links={publicLinks} isVisible={isVisible} />
+    );
   }
-  
+
   if (currentUser.role === "admin") {
-    return <Sidebar title="Admin Nav" links={adminLinks} logout={handleLogout} isVisible={isVisible} />;
+    return (
+      <Sidebar
+        title="Admin Nav"
+        links={adminLinks}
+        logout={handleLogout}
+        isVisible={isVisible}
+      />
+    );
   }
-  
+
   if (currentUser.role === "guest") {
-    return <Sidebar title="User Nav" links={guestLinks} logout={handleLogout} isVisible={isVisible} />;
+    return (
+      <Sidebar
+        title="User Nav"
+        links={guestLinks}
+        logout={handleLogout}
+        isVisible={isVisible}
+      />
+    );
   }
-  
+
   if (currentUser.role === "host") {
-    return <Sidebar title="Host Nav" links={hostLinks} logout={handleLogout} isVisible={isVisible} />;
+    return (
+      <Sidebar
+        title="Host Nav"
+        links={hostLinks}
+        logout={handleLogout}
+        isVisible={isVisible}
+      />
+    );
   }
 
   if (currentUser.role === "technician") {
-    return <Sidebar title="Technician Nav" links={technicianLinks} logout={handleLogout} isVisible={isVisible} />;
+    return (
+      <Sidebar
+        title="Technician Nav"
+        links={technicianLinks}
+        logout={handleLogout}
+        isVisible={isVisible}
+      />
+    );
   }
 
   if (currentUser.role === "moderator") {
-    return <Sidebar title="Moderator Nav" links={moderatorLinks} logout={handleLogout} isVisible={isVisible} />;
-  }
-  
-  if (currentUser.role === "moderator") {
-    return <Sidebar title="Moderator Nav" links={moderatorLinks} logout={handleLogout} />;
+    return (
+      <Sidebar
+        title="Moderator Nav"
+        links={moderatorLinks}
+        logout={handleLogout}
+        isVisible={isVisible}
+      />
+    );
   }
 
+  if (currentUser.role === "moderator") {
+    return (
+      <Sidebar
+        title="Moderator Nav"
+        links={moderatorLinks}
+        logout={handleLogout}
+      />
+    );
+  }
 
   return null;
 }
