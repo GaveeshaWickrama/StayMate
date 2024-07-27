@@ -70,6 +70,11 @@ const technicianSchema = new Schema({
     max: 5,
     default: 0
   },
+  about: {
+    type: String,
+    default: 'No description provided',
+    trim: true
+  }
 }, {
   timestamps: true, // Adds createdAt and updatedAt timestamps
   collection: 'technicians' // Explicitly set the collection name
