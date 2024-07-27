@@ -92,7 +92,10 @@ const RaiseComplaint = () => {
             <DropDown 
                 categories={complaintCategories} 
                 value={category}
-                onChange={e => setCategory(e.target.value)}
+                onChange={e => {
+                    console.log("Category selected:", e.target.value); // This will log the selected category
+                    setCategory(e.target.value);
+                }}
             />
 
             <InputField 
