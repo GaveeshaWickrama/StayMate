@@ -3,50 +3,47 @@ const Complaint = require("../models/complaintModel");
 const path = require("path");
 const mongoose = require('mongoose');
 
+const raiseComplaint = async (req, res) => {
+  const { reservationId, title, description, category } = req.body;
 
-const raiseComplaint = async (req,res) => {
+  // Log the files to the console to check if they are being received correctly
+  console.log('Uploaded Files:', req.files);
 
-
-  const { reservationId } = req.query;
-  console.log(`received reservation id ${reservationId}`)
-
-      if (!reservationId) {
-          return res.status(400).json({ message: 'Reservation ID is required' });
-      }
-
-    const { title, description, category } = req.body;
-    const images = req.files.map(file => file.path); // Get the file paths
-
-    //complaint placed by the user to the host
-    try {
+  // Check if files are received and if not, respond with an error
+  if (!req.files || req.files.length === 0) {
+    return res.status(400).json({ message: 'No files uploaded' });
+  }
 
 
-       
-  
-        // Create a new complaint document
-        const newComplaint = new Complaint({
-            //Need to wait untill Nimsara creates the current booking page to get the reservation id
-            //reservation: req.user._id,
-            reservation : reservationId,
-            title,
-            description,
-            category,
-            images
-        });
+  // Get the file paths
+  const images = req.files.map(file => file.path);
 
-        // Save the complaint document to the database
-        await newComplaint.save();
+  // Complaint placed by the user to the host
+  try {
+    // Create a new complaint document
+    const newComplaint = new Complaint({
+      reservationId,
+      title,
+      description,
+      category,
+      images
+    });
 
+    // Save the complaint document to the database
+    await newComplaint.save();
 
-        const populatedComplaint = await Complaint.findById(newComplaint._id).populate('reservation');
-
-
-        res.status(200).json({ message: 'Complaint submitted successfully', complaint: populatedComplaint });
-    } catch (error) {
-        console.error('Error creating complaint:', error);
-        res.status(500).json({ message: 'An error occurred while submitting your complaint', error });
-    }
+    res.status(200).json({ message: 'Complaint submitted successfully', complaint: newComplaint });
+  } catch (error) {
+    console.error('Error creating complaint:', error);
+    res.status(500).json({ message: 'An error occurred while submitting your complaint', error });
+  }
 }
+
+
+
+
+
+//complaint placed by the host to the technician
 
 
 async function assignComplaintToTechnician(req, res) {
@@ -373,7 +370,8 @@ const markAsResolved = async(req,res) => {
 }
 
 module.exports = {
-  raiseComplaint,   //user
+
+  raiseComplaint,
   getComplaintById, //host
   assignComplaintToTechnician, //host
   getNoOfJobsCompleted, //technician
