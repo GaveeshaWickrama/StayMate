@@ -8,15 +8,16 @@ import Contact from "../../components/guest/Contact";
 import Button from "../common/Button";
 import axios from "axios";
 import { useAuth } from "../../context/auth";
+import { useSearchParams } from "react-router-dom";
 
 
 
 const complaintCategories = [
-    'Electrical Issues',
-    'HVAC',
-    'Plumbing Issues',
-    'Appliance Repairs',
-    'Structural Maintenance',
+    'Plumbing issues (leaks, clogged drains)',
+    'Electrical problems (power outages, faulty wiring)',
+    'Broken or malfunctioning appliances',
+    'Structural problems (cracks in walls, damaged doors or windows)',
+    'Pest control (insects, rodents)',
     'Safety and Security Concerns',
     'Other',
   ];
@@ -25,6 +26,8 @@ const Raisecomplaint = () => {
 
     const currentUser = useAuth();
     const token = currentUser.token
+    const [searchParams] = useSearchParams();
+    const reservationId = searchParams.get('reservationId');
 
     const [title, setTitle] = useState('');
     const [description, setDescription] = useState('');
@@ -33,6 +36,7 @@ const Raisecomplaint = () => {
 
     const handleSubmit = async () => {
         const formData = new FormData();
+        formData.append('reservationId',reservationId);
         formData.append('title', title);
         formData.append('description', description);
         formData.append('category', category);

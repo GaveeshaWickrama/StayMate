@@ -45,7 +45,7 @@ function UserRoutes() {
       />
       {/* route for raising Complaint */}
       <Route
-        path="/raisecomplaints"
+        path="/complaints/add"
         element={
           currentUser && currentUser.role === "guest" ? (
             <RaiseComplaintPage />

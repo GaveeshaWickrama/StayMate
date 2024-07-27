@@ -4,15 +4,14 @@ const Complaint = require("../models/complaintModel");
 
 const raiseComplaint = async (req,res) => {
 
-    const { title, description, category } = req.body;
+    const { reservationId, title, description, category } = req.body;
     const images = req.files.map(file => file.path); // Get the file paths
 
     //complaint placed by the user to the host
     try {
         // Create a new complaint document
         const newComplaint = new Complaint({
-            //Need to wait untill Nimsara creates the current booking page to get the reservation id
-            //reservation: req.user._id,
+            reservationId,
             title,
             description,
             category,
@@ -216,6 +215,7 @@ const markAsResolved = async(req,res) => {
 }
 
 module.exports = {
+  raiseComplaint,
   getComplaintById, //host
   assignComplaintToTechnician, //host
   getNoOfJobsCompleted, //technician

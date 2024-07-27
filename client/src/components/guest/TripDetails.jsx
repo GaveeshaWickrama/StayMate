@@ -36,7 +36,7 @@ const TripDetails = ({ trip, isUpcoming, isOngoing, isCompleted }) => {
   };
 
   const handleAddComplaint = async () => {
-
+    navigate(`/user/complaints/add?reservationId=${trip._id}`);
   }
 
   // Construct the image URL using the API base URL and the image path
