@@ -22,6 +22,8 @@ import ActiveComplaints from "../pages/host/ActiveComplaints";
 import HostReviews from "../pages/host/HostReviews";
 import ReviewTask from "../pages/host/ReviewTask";
 
+import ChatHomePage from "../pages/common/ChatHomePage";
+
 function HostRoutes() {
   const { currentUser, loading } = useAuth();
 
@@ -94,7 +96,12 @@ function HostRoutes() {
        <Route path="/manage-complaints/active/" element={ currentUser && currentUser.role === "host" ? ( <ActiveComplaints/> ) : ( <Navigate to="/Unauthorized" /> ) } /> 
        <Route path="/complaint/review/" element={ currentUser && currentUser.role === "host" ? ( <ReviewTask/> ) : ( <Navigate to="/Unauthorized" /> ) } /> 
        
-       
+       <Route
+          path="/chat"
+          element={
+            isHost ? <ChatHomePage/> : <Navigate to="/Unauthorized" />
+          }
+        />
        
        </Routes>
     </PropertyProvider>
