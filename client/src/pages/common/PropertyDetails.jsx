@@ -190,7 +190,8 @@ const PropertySection = ({ section, isExpanded, onExpand, propertyId }) => {
             ))}
           </div>
           <ReservationSection
-            sectionId={section._id}
+            sectionId={section.section_id}
+            propertyId={propertyId} // Pass the propertyId to ReservationSection
             nightlyRate={section.price_per_night}
             initialCheckInDate="2024-07-11"
             initialCheckOutDate="2024-07-16"
