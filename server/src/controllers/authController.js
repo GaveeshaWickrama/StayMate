@@ -6,7 +6,7 @@ const User = require('../models/userModel');
 const Technician = require('../models/technicianModel');
 const OTP = require('../models/otpModel');
 const transporter = require('../config/emailConfig');
-
+const mongoose = require('mongoose');
 const ALLOWED_ROLES = ['guest', 'host', 'technician', 'moderator'];
 
 async function loginUser(req, res) {
@@ -52,21 +52,32 @@ async function verifyOtp(req, res) {
         return res.status(400).json({ message: "Invalid role" });
     }
 
+    const normalizedEmail = email.toLowerCase().trim();
+    const session = await mongoose.startSession();
+    session.startTransaction();
+
     try {
-        const emailfound = await OTP.findOne({ email });
+        const emailfound = await OTP.findOne({ email: normalizedEmail });
 
         if (!emailfound) {
+            await session.abortTransaction();
+            session.endSession();
             return res.status(400).json({ message: 'Registration request not found' });
         }
 
-        const otpEntry = await OTP.findOne({ email, otp });
+        const otpEntry = await OTP.findOne({ email: normalizedEmail, otp });
 
         if (!otpEntry) {
+            await session.abortTransaction();
+            session.endSession();
             return res.status(400).json({ message: 'Invalid OTP' });
         }
 
-        const user = new User(otpEntry.userDetails);
-        await user.save();
+        const user = new User({
+            ...otpEntry.userDetails,
+            email: normalizedEmail
+        });
+        await user.save({ session });
 
         if (role === 'technician') {
             const { location, subRole } = otpEntry.userDetails.technicianDetails;
@@ -86,13 +97,16 @@ async function verifyOtp(req, res) {
                 rating: 0 // Initial rating
             });
 
-            await newTechnician.save();
+            await newTechnician.save({ session });
         }
 
-        await OTP.deleteOne({ email, otp });
+        await OTP.deleteOne({ email: normalizedEmail, otp }, { session });
+
+        await session.commitTransaction();
+        session.endSession();
 
         const accessToken = jwt.sign(
-            { userId: user._id, email: user.email, role: user.role },
+            { userId: user._id, email: user.email, role: user.role, firstName: user.firstName, lastName: user.lastName, gender: user.gender, picture: user.picture },
             process.env.ACCESS_TOKEN_SECRET,
             { expiresIn: '24h' }
         );
@@ -100,13 +114,16 @@ async function verifyOtp(req, res) {
         res.status(200).json({
             message: 'Email verified and user account created successfully',
             accessToken: accessToken,
-            user: { id: user._id, email: user.email, role: user.role }
+            user: { id: user._id, email: user.email, role: user.role, firstName: user.firstName, lastName: user.lastName, gender: user.gender, picture: user.picture  }
         });
     } catch (error) {
+        await session.abortTransaction();
+        session.endSession();
         console.error(error);
         res.status(500).json({ message: 'Internal server error' });
     }
 }
+
 
 
 async function requestRegisterTechnician(req, res) {
