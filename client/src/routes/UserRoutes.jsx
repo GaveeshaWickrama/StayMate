@@ -1,7 +1,7 @@
 import React from 'react';
 import { Routes, Route, Navigate } from 'react-router-dom';
 import { useAuth } from '../context/auth';
-/* import ViewProfile from '../pages/common/ViewProfile';
+import ViewProfile from '../pages/common/ViewProfile';
 import EditProfile from '../pages/common/EditProfile';
 import Test from '../pages/common/Test'
 
