@@ -11,6 +11,7 @@ import HostSignup from '../pages/auth/HostSignup';
 import VerifyOtp from '../pages/auth/VerifyOtp';
 import PropertyDetails from "../pages/common/PropertyDetails";
 // import Test from '../pages/auth/test';
+// import ViewReviews from '../pages/host/ViewReviews';
 
 function PublicRoutes() {
   return (

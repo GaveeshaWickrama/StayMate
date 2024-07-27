@@ -1,46 +1,26 @@
-const dotenv = require("dotenv").config();
+require("dotenv").config();
 const express = require("express");
 const cors = require("cors");
-const morgan = require("morgan");
+const morgan = require("morgan"); // Logging HTTP requests
 const mongoose = require("mongoose");
-const defaultImageMiddleware = require("./middleware/defaultImageMiddleware");
-const path = require("path");
-const { updateReservationStatuses } = require("./controllers/reservationController");
-const cron = require("node-cron");
+const path = require("path"); // Import the path module
+const defaultImageMiddleware = require('./middleware/defaultImageMiddleware'); // Adjust the path as necessary
 
 const app = express();
 
 // Middleware to serve static files
 app.use("/uploads", express.static(path.join(__dirname, "../uploads")));
 
-// Call updateReservationStatuses on server startup
-updateReservationStatuses();
-
-// Schedule periodic status update task to run every hour
-setInterval(() => {
-  console.log("Running periodic reservation status update job...");
-  updateReservationStatuses();
-}, 60 * 60 * 1000); // Every hour
-
 // Use custom middleware to serve default images if the requested image is not found
-app.use(
-  "/uploads/profilepictures",
-  defaultImageMiddleware("profilepictures", "default.jpg")
-);
-app.use(
-  "/uploads/properties",
-  defaultImageMiddleware("properties", "default.jpg")
-);
+app.use("/uploads/profilepictures", defaultImageMiddleware('profilepictures', 'default.jpg'));
+app.use("/uploads/properties", defaultImageMiddleware('properties', 'default.jpg'));
 
-// Allow any origin
-app.use(
-  cors({
-    origin: '*',
-  })
-);
-
+app.use(cors());
 app.use(morgan("dev"));
 morgan.token("body", (req) => JSON.stringify(req.body));
+app.use(
+  morgan(":method :url :status :res[content-length] - :response-time ms :body")
+);
 
 // Define routes
 const userRoutes = require("./routes/userRoutes");
@@ -55,8 +35,7 @@ const messageRoutes = require("./routes/messageRoutes");
 const taskRoutes = require("./routes/taskRoutes");
 const technicianRoutes = require("./routes/technicianRoutes");
 
-// Connect to MongoDB
-mongoose.connect(process.env.DATABASE_URL, { useNewUrlParser: true, useUnifiedTopology: true });
+mongoose.connect(process.env.DATABASE_URL); // Use 127.0.0.1 instead of localhost to fix conversion issues with IPV6
 const db = mongoose.connection;
 db.on("error", (error) => console.error(error));
 db.once("open", () => console.log("Connected to Database"));
@@ -81,6 +60,7 @@ app.get("/", (req, res) => {
   res.send("Hello World!");
 });
 
+// Start Server
 const port = process.env.PORT || 3000;
 app.listen(port, () => {
   console.log(`Server running at http://localhost:${port}/`);

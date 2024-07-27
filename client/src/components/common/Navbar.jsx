@@ -68,7 +68,14 @@ function Navbar({ isVisible }) {
 
   const adminLinks = [
     { path: "/", label: "Home" },
-    { path: "/admin", label: "Admin Dashboard" },
+    { path: "/admin/AdminDashboard", label: "AdminDashboard" },
+    { path: "/admin/MyProfile", label: "My Profile" },
+    { path: "/admin/Moderator", label: "Moderator" },
+    { path: "/admin/report", label: "Report" },
+    { path: "/admin/PropertyOwners", label: "PropertyOwners" },
+    { path: "/admin/Tenants", label: "Tenants" },
+    { path: "/admin/Technicians", label: "Technicians" },
+    // { path: "/admin/MyProfile", label: "My Profile" },
     { path: "/admin/managemoderators", label: "Manage Moderators" },
     { path: "/admin/reservations", label: "Reservations" },
     { path: "/admin/Payments", label: "Payments" },
@@ -97,6 +104,7 @@ function Navbar({ isVisible }) {
     { path: "/host/view-complaints", label: "Complaints" },
     { path: "/host/manage-complaints", label: "Complaints" },
     { path: "/host/view-technicians", label: "Technicians" },
+    { path: "/host/HostReviews", label: "Reviews" },
   ];
 
   const technicianLinks = [

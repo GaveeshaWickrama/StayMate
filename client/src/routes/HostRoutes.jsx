@@ -18,7 +18,8 @@ import ComplaintsManage from "../pages/host/ComplaintsManage";
 import HostResolveComplaint from "../pages/host/HostResolveComplaint";
 import PendingComplaints from "../pages/host/PendingComplaints";
 import ActiveComplaints from "../pages/host/ActiveComplaints";
-// import HostReviews from "../pages/host/hostReviews";
+// import HostReviews from "../pages/host/HostReviews";
+import HostReviews from "../pages/host/HostReviews";
 
 function HostRoutes() {
   const { currentUser, loading } = useAuth();
@@ -46,6 +47,18 @@ function HostRoutes() {
           path="/listings"
           element={isHost ? <HostListings /> : <Navigate to="/Unauthorized" />}
         />
+
+<Route
+          path="/HostReviews"
+          element={
+            currentUser && currentUser.role === "host" ? (
+              <HostReviews />
+            ) : (
+              <Navigate to="/Unauthorized" />
+            )
+          }
+        />
+
         <Route
           path="/add-property"
           element={isHost ? <AddProperty /> : <Navigate to="/Unauthorized" />}
