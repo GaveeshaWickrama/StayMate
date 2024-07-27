@@ -1,24 +1,22 @@
 import React, { useState, useEffect } from "react";
 import axios from "axios";
 import { useAuth } from "../../context/auth";
-
 import { useSearchParams } from "react-router-dom";
 import Title from '../../components/common/Title';
 import DropDown from '../../components/common/DropDown';
 import InputField from '../../components/guest/InputField';
-
 import DescriptionInput from "../../components/guest/DescriptionInput";
 import Contact from "../../components/guest/Contact";
 import Button from "../common/Button";
 
 const complaintCategories = [
-  "Plumbing issues (leaks, clogged drains)",
-  "Electrical problems (power outages, faulty wiring)",
-  "Broken or malfunctioning appliances",
-  "Structural problems (cracks in walls, damaged doors or windows)",
-  "Pest control (insects, rodents)",
-  "Safety and Security Concerns",
-  "Other",
+    'Plumbing issues (leaks, clogged drains)',
+    'Electrical problems (power outages, faulty wiring)',
+    'Broken or malfunctioning appliances',
+    'Structural problems (cracks in walls, damaged doors or windows)',
+    'Pest control (insects, rodents)',
+    'Safety and Security Concerns',
+    'Other',
 ];
 
 const RaiseComplaint = () => {
@@ -132,33 +130,17 @@ const RaiseComplaint = () => {
                         </label>
                     )}
                 </div>
-
             </div>
-          ))}
-          {photos.length < 3 && (
-            <label className="w-24 h-24 border-2 border-dashed border-gray-400 rounded-lg flex items-center justify-center bg-gray-200 cursor-pointer">
-              <span className="text-2xl font-bold text-gray-500">+</span>
-              <input
-                type="file"
-                className="hidden"
-                accept="image/*"
-                multiple
-                onChange={handlePhotoUpload}
-              />
-            </label>
-          )}
-        </div>
-      </div>
 
-      <div className="flex flex-col items-center justify-center mt-11">
-        <div className="flex flex-col items-center space-y-2 bg-blue-50 p-4 rounded-lg shadow-md">
-          <Button text={"Send"} onClick={handleSubmit} />
-          <p>Or</p>
-          <Contact />
+            <div className="flex flex-col items-center justify-center mt-11">
+                <div className="flex flex-col items-center space-y-2 bg-blue-50 p-4 rounded-lg shadow-md">
+                    <Button text={"Send"} onClick={handleSubmit} />
+                    <p>Or</p>
+                    <Contact />         
+                </div>
+            </div>
         </div>
-      </div>
-    </div>
-  );
+    );
 };
 
 export default RaiseComplaint;
