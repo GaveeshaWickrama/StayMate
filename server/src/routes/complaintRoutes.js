@@ -4,7 +4,7 @@ const complaintController = require('../controllers/complaintController');
 // const taskController = require('../controllers/taskController');
 const { authToken, requireRole } = require('../middleware/authProvider');
 const upload = require('../middleware/multer'); // Import the upload configuration
-const { authToken, requireRole } = require("../middleware/authProvider"); // Adjust as necessary
+
 
 
 
