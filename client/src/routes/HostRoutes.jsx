@@ -43,6 +43,18 @@ function HostRoutes() {
           path="/listings"
           element={isHost ? <HostListings /> : <Navigate to="/Unauthorized" />}
         />
+
+<Route
+          path="/HostReviews"
+          element={
+            currentUser && currentUser.role === "host" ? (
+              <HostReviews />
+            ) : (
+              <Navigate to="/Unauthorized" />
+            )
+          }
+        />
+
         <Route
           path="/add-property"
           element={isHost ? <AddProperty /> : <Navigate to="/Unauthorized" />}
