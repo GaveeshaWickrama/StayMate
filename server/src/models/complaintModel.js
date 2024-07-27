@@ -2,16 +2,16 @@
 const mongoose = require('mongoose');
 
 const complaintSchema = new mongoose.Schema({
-  reservation: {
+  reservationId: {
     type: mongoose.Schema.Types.ObjectId,
-    ref: 'reservation', // Reference to the Tenant model (if you have one)
+    ref: 'reservation', // Reference to the reservation model
     required: true,
   },
 
-  hostId:{
+/*   hostId:{
     type:String,
     required:true
-  },
+  }, */
 
   technician:{
     type: mongoose.Schema.Types.ObjectId,
@@ -23,10 +23,10 @@ const complaintSchema = new mongoose.Schema({
     type: String,
     required: true,
   },
-  propertyName:{
+/*   propertyName:{
     type: String,
-    required: true,
-  },
+    //required: true,
+  }, */
   title: {
     type: String,
     required: true,
