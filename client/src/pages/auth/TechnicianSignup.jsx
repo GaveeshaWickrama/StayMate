@@ -206,6 +206,63 @@ const TechnicianSignup = () => {
                   IconComponent={FaPhone}
                   disabled={loading}
                 />
+                <div className="mb-4">
+                  <label className="block text-gray-700 text-sm font-bold mb-2" htmlFor="gender">
+                    Gender
+                  </label>
+                  <div className="relative">
+                    <select
+                      id="gender"
+                      name="gender"
+                      value={gender}
+                      onChange={(e) => setGender(e.target.value)}
+                      className="block appearance-none w-full bg-white border border-gray-300 text-gray-700 py-2 px-3 pr-8 rounded leading-tight focus:outline-none focus:shadow-outline focus:border-blue-500"
+                      disabled={loading}
+                    >
+                      <option value="" disabled>
+                        Select Gender
+                      </option>
+                      <option value="male">Male</option>
+                      <option value="female">Female</option>
+                      <option value="other">Other</option>
+                    </select>
+                    <div className="pointer-events-none absolute inset-y-0 right-0 flex items-center px-2 text-gray-700">
+                      <svg className="fill-current h-4 w-4" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20">
+                        <path d="M7 10l5 5 5-5H7z" />
+                      </svg>
+                    </div>
+                  </div>
+                </div>
+
+                <div className="mb-4">
+                  <label className="block text-gray-700 text-sm font-bold mb-2" htmlFor="subRole">
+                    Sub-Role
+                  </label>
+                  <div className="relative">
+                    <select
+                      id="subRole"
+                      name="subRole"
+                      value={subRole}
+                      onChange={(e) => setSubRole(e.target.value)}
+                      className="block appearance-none w-full bg-white border border-gray-300 text-gray-700 py-2 px-3 pr-8 rounded leading-tight focus:outline-none focus:shadow-outline focus:border-blue-500"
+                      disabled={loading}
+                    >
+                      <option value="" disabled>
+                        Select Sub-Role
+                      </option>
+                      <option value="plumber">Plumber</option>
+                      <option value="electrician">Electrician</option>
+                      <option value="carpenter">Carpenter</option>
+                      <option value="painter">Painter</option>
+                      <option value="other">Other</option>
+                    </select>
+                    <div className="pointer-events-none absolute inset-y-0 right-0 flex items-center px-2 text-gray-700">
+                      <svg className="fill-current h-4 w-4" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20">
+                        <path d="M7 10l5 5 5-5H7z" />
+                      </svg>
+                    </div>
+                  </div>
+                </div>
                 <button type="button" onClick={handleNext} className="w-full bg-blue-700 text-white p-2 rounded flex items-center justify-center hover:bg-blue-900 transition-colors mt-4" disabled={loading}>
                   Next
                 </button>
@@ -356,64 +413,6 @@ const TechnicianSignup = () => {
                   IconComponent={FaLock}
                   disabled={loading}
                 />
-                <div className="mb-4">
-                  <label className="block text-gray-700 text-sm font-bold mb-2" htmlFor="gender">
-                    Gender
-                  </label>
-                  <div className="relative">
-                    <select
-                      id="gender"
-                      name="gender"
-                      value={gender}
-                      onChange={(e) => setGender(e.target.value)}
-                      className="block appearance-none w-full bg-white border border-gray-300 text-gray-700 py-2 px-3 pr-8 rounded leading-tight focus:outline-none focus:shadow-outline focus:border-blue-500"
-                      disabled={loading}
-                    >
-                      <option value="" disabled>
-                        Select Gender
-                      </option>
-                      <option value="male">Male</option>
-                      <option value="female">Female</option>
-                      <option value="other">Other</option>
-                    </select>
-                    <div className="pointer-events-none absolute inset-y-0 right-0 flex items-center px-2 text-gray-700">
-                      <svg className="fill-current h-4 w-4" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20">
-                        <path d="M7 10l5 5 5-5H7z" />
-                      </svg>
-                    </div>
-                  </div>
-                </div>
-
-                <div className="mb-4">
-                  <label className="block text-gray-700 text-sm font-bold mb-2" htmlFor="subRole">
-                    Sub-Role
-                  </label>
-                  <div className="relative">
-                    <select
-                      id="subRole"
-                      name="subRole"
-                      value={subRole}
-                      onChange={(e) => setSubRole(e.target.value)}
-                      className="block appearance-none w-full bg-white border border-gray-300 text-gray-700 py-2 px-3 pr-8 rounded leading-tight focus:outline-none focus:shadow-outline focus:border-blue-500"
-                      disabled={loading}
-                    >
-                      <option value="" disabled>
-                        Select Sub-Role
-                      </option>
-                      <option value="plumber">Plumber</option>
-                      <option value="electrician">Electrician</option>
-                      <option value="carpenter">Carpenter</option>
-                      <option value="painter">Painter</option>
-                      <option value="other">Other</option>
-                    </select>
-                    <div className="pointer-events-none absolute inset-y-0 right-0 flex items-center px-2 text-gray-700">
-                      <svg className="fill-current h-4 w-4" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20">
-                        <path d="M7 10l5 5 5-5H7z" />
-                      </svg>
-                    </div>
-                  </div>
-                </div>
-
                 <div className="flex justify-between">
                   <button type="button" onClick={handlePrevious} className="w-1/2 bg-gray-700 text-white p-2 rounded flex items-center justify-center hover:bg-gray-900 transition-colors mr-2" disabled={loading}>
                     <FaArrowLeft className="mr-2" /> Back
