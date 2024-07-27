@@ -14,6 +14,7 @@ const Reservation = () => {
 
   // Sort userReservations by booking date descending
   const sortedReservations = [...userReservations].sort(compareByBookingDate);
+  console.log(sortedReservations);
 
   return (
     <div className="container mx-auto p-4 mt-24 ml-4">
