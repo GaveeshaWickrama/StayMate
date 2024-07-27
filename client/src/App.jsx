@@ -13,8 +13,6 @@ import HomePage from './pages/common/HomePage';
 import NotFoundPage from './pages/common/NotFoundPage';
 import Unauthorized from './pages/common/Unauthorized';
 
-
-
 function App() {
   const [isNavbarVisible, setNavbarVisible] = useState(false);
 
