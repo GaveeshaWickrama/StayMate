@@ -22,6 +22,7 @@ app.use(
   morgan(":method :url :status :res[content-length] - :response-time ms :body")
 );
 
+// Define routes
 const userRoutes = require("./routes/userRoutes");
 const authRoutes = require("./routes/authRoutes");
 const adminRoutes = require("./routes/adminRoutes");
@@ -39,7 +40,10 @@ const db = mongoose.connection;
 db.on("error", (error) => console.error(error));
 db.once("open", () => console.log("Connected to Database"));
 
+// Middleware to parse JSON requests
 app.use(express.json());
+
+// Use routes
 app.use("/auth", authRoutes);
 app.use("/users", userRoutes);
 app.use("/admin", adminRoutes);

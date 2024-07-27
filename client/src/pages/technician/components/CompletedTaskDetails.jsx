@@ -1,28 +1,27 @@
+
 import React, { useEffect, useState } from 'react';
 import axios from 'axios';
-import { useParams, useLocation, useNavigate, Link } from 'react-router-dom';
-import { FaHome, FaMapPin, FaClock, FaMapMarkerAlt, FaShower  } from 'react-icons/fa';
+import { Outlet } from 'react-router-dom';
 
-export default function ReviewTask() {
+import { useParams } from 'react-router-dom';
+// import Carousel from '../../components/Carousel';
+import { FaHome, FaClock, FaMapMarkerAlt, FaShower } from 'react-icons/fa';
+import { MdOutlineMeetingRoom } from "react-icons/md";
+import { IoBedSharp } from "react-icons/io5";
+import { GoPersonFill } from "react-icons/go";
+
+// const capitalizeWords = (str) => {
+//   return str.replace(/\b\w/g, char => char.toUpperCase());
+// };
+
+function CompletedTaskDetails() {
+
+
   return (
-    
-    // <div className="bg-gray-100 mx-auto py-2 px-8">
-    //     <div className='flex mb-1 border-b-4 border-blue-600 p-6 rounded-md shadow-sm bg-white'>
-    //     <h1 className="flex items-center text-4xl font-extrabold text-black-600">
-    //      Review Complaint
-    //     </h1>
-    //     <div className="flex items-center text-gray-600 ml-6 mt-3">
-          
-    //     </div>
-    //   </div>
-    // </div>
-
-
-
     <div className="bg-gray-100 mx-auto py-2 px-8">
       <div className='flex mb-1 border-b-4 border-blue-600 p-6 rounded-md shadow-sm bg-white'>
         <h1 className="flex items-center text-4xl font-extrabold text-black-600">
-          <FaHome className="mr-4" /> Review 
+          <FaHome className="mr-4" /> property titile
         </h1>
         <div className="flex items-center text-gray-600 ml-6 mt-3">
           <FaClock className="mr-2" /> <span>Added on: date</span>
@@ -62,7 +61,12 @@ export default function ReviewTask() {
         <p className='text-lg'>description here</p>
       </div>
 
-     
+      <div>
+
+</div>
     </div>
-  )
+  );
 }
+
+export default CompletedTaskDetails;
+
