@@ -1,35 +1,79 @@
 const mongoose = require('mongoose');
-const bcrypt = require('bcrypt'); // Add bcrypt for hashing passwords
+const { Schema } = mongoose;
 
-const technicianSchema = new mongoose.Schema({
-  firstName: {
-    type: String,
-    required: true
-  },
-  lastName: {
-    type: String,
-    required: true
-  },
-  location: {
-    type: String
-  },
-  email: {
+// Define the schema for location
+const locationSchema = new Schema({
+  address: {
     type: String,
     required: true,
-    unique: true,
-    lowercase: true,
     trim: true
   },
-  password: {
-    type: String,
-    required: true,
-    minlength: 8
+  latitude: {
+    type: Number,
+    required: true
   },
-  role: {
+  longitude: {
+    type: Number,
+    required: true
+  },
+  district: {
     type: String,
     required: true,
-    enum: ['guest', 'host', 'technician', 'admin', 'moderator'], // Specifies the allowable roles
-    default: 'technician' // Default role when none is specified
+    trim: true
+  },
+  province: {
+    type: String,
+    required: true,
+    trim: true
+  },
+  zipcode: {
+    type: String,
+    trim: true
+  },
+  geocoding_response: {
+    type: Object
+  },
+  coordinates: {
+    type: { type: String, enum: ['Point'], default: 'Point' },
+    coordinates: {
+      type: [Number],
+      index: '2dsphere'
+    }
+  }
+});
+
+// Pre-save middleware to set the coordinates from latitude and longitude
+locationSchema.pre('save', function(next) {
+  this.coordinates.coordinates = [this.longitude, this.latitude];
+  next();
+});
+
+// Technician Schema
+const technicianSchema = new Schema({
+  userId: {
+    type: Schema.Types.ObjectId,
+    ref: 'User',
+    required: true,
+  },
+  location: {
+    type: locationSchema,
+    required: true
+  },
+  subRole: {
+    type: String,
+    required: true,
+    enum: ['plumber', 'electrician', 'carpenter', 'painter', 'other']
+  },
+  rating: {
+    type: Number,
+    min: 0,
+    max: 5,
+    default: 0
+  },
+  about: {
+    type: String,
+    default: 'No description provided',
+    trim: true
   }
 }, {
   timestamps: true, // Adds createdAt and updatedAt timestamps

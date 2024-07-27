@@ -6,8 +6,10 @@ import { FaHome, FaClock, FaMapMarkerAlt, FaEnvelope , FaShower  } from 'react-i
 import { MdOutlineMeetingRoom } from "react-icons/md";
 import { IoBedSharp } from "react-icons/io5";
 import { GoPersonFill  } from "react-icons/go";
+import ActiveComplaintDetails from './components/ActiveComplaintDetails';
+import PendingComplaintDetails from './components/PendingComplaintDetails';
 
-export default function ComplaintDetails() {
+export default function ComplaintDetails(props) {
     const { id } = useParams();
     const [complaint, setComplaint] = useState(null);
     const navigate = useNavigate();
@@ -17,7 +19,7 @@ export default function ComplaintDetails() {
       const fetchComplaint = async () => {
         try {
           const response = await axios.get(`${import.meta.env.VITE_API_URL}/complaints/complaint-details/${id}`);
-          console.log(`${import.meta.env.VITE_API_URL}/complaints/${id}`);
+          console.log(`${import.meta.env.VITE_API_URL}/complaints/complaint-details/${id}`);
           setComplaint(response.data);
           console.log('this is the response data', complaint);
         } catch (error) {
@@ -35,40 +37,9 @@ export default function ComplaintDetails() {
       return <div>Complaint not found</div>;
     }
   
-const handleFindTechnician = ({complaint}) => {
-  alert("directing t technician explore page");
-  navigate(`/technician/all`);
-};
+
   return (
-//     <div className='bg-gray-100 mx-auto py-2 px-8'>
-     
 
-// <div className='flex mb-1 border-b-4 border-blue-600 p-6 rounded-md shadow-sm bg-white'> 
-//       </div>
-
-// <div className='bg-sky-100 pl-10 pt-5 h-screen'>
-//       <div className='text-lg font-bold mb-10'>{complaint.title}</div>
-//     <div className='flex flex-col gap-5 flex-grow'>
-//     <div>{complaint.description}</div>
-//       <div>{complaint.category}</div>
-//       <div className='flex flex-row'>
-//         <span>Posted By</span> 
-//         <div className='flex flex-row '>
-//         <span>User1</span> <div className='h-10 w-10 rounded-full bg-yellow-100'></div>
-
-//         </div>
-//       </div>
-//       <div>Goldren Rose</div>
-//       <div>Images</div>
-//     </div>
-
-
-
-//         <button onClick={()=>handleFindTechnician(id)} className='font-semibold text-white text-sm px-10 py-2 rounded-xl bg-red-500 border border-red-500 rounded ml-[100px] mt-[50px]'>assign to a technician</button>
-//         <button className='font-semibold text-white text-sm px-10 py-2 bg-blue-950 rounded-xl ml-[100px] mt-[50px]'>mark as resolved</button>
-//         </div>
-
-//     </div>
 
 
 <div className="bg-gray-100 mx-auto py-2 px-8">
@@ -88,18 +59,29 @@ const handleFindTechnician = ({complaint}) => {
 <div className="flex flex-col md:flex-row gap-4">
   <div className="w-full md:w-2/3 rounded-lg p-1 bg-white shadow">
     <div className="bg-white p-8 flex items-center border-b">
-    <h2 className="text-xl font-bold">Rating: </h2>
-      <p className='ml-4'>No reviews yet.</p>
+    <h2 className="text-xl font-bold">status:  </h2>
+      <p className='ml-4 badge badge-ghost'>{complaint.status}</p>
 
     </div>
-    <div className="bg-white p-8 flex items-center text-xl gap-4 border-b">
-      <MdOutlineMeetingRoom className='text-blue-500' /><p>room No 4</p>
+    <div className="bg-white p-8 flex items-center text-xl gap-9  border-b">
+      <MdOutlineMeetingRoom className='text-blue-500' /><p className='text-lg'>room No 4</p>
+      <MdOutlineMeetingRoom className='text-blue-500' /><p className='text-lg'>Checked In : 2024-07-02</p>
       
     </div>
-    <div className="bg-white p-8 flex items-center">
+    <div className="bg-white p-8 flex items-center border-b">
       
       <FaMapMarkerAlt className="mr-2" />
       <p className="font-semibold">UCSC Reid Avenue Colombo 7</p>
+    </div>
+    <div className="bg-white p-8 flex flex-col">
+      
+     
+      <h2 className="text-xl font-bold pb-2">Images  </h2>
+      <p className="flex flex-row gap-3 flex-wrap">
+      {complaint.images && complaint.images.map((image, index) => (
+    <img key={index} src={`${import.meta.env.VITE_API_URL}/${image}`} alt={`Complaint Image ${index + 1}`} className="mt-2 w-13 h-13" />
+  ))}
+      </p>
     </div>
   </div>
 
@@ -107,7 +89,9 @@ const handleFindTechnician = ({complaint}) => {
     <h2 className="text-xl font-bold mb-2">Hosted By </h2>
    <div >Muralitharan</div>
    <div className='flex flex-row items-center mt-5'><h2 className="text-l font-bold mb-2">Posted On: </h2> <FaClock className="mr-2 ml-2" /> 2023-05-04</div>
-    
+   
+
+
    
    
   </div>
@@ -119,10 +103,20 @@ const handleFindTechnician = ({complaint}) => {
 </div>
 
 <div>
-<button onClick={()=>handleFindTechnician(id)} className='bg-blue-600 text-white p-4 rounded font-bold w-50 my-10'>assign to a technician</button>
-<button className='bg-green-600 text-white p-4 rounded font-bold w-50 my-10 m-4'>mark as resolved</button>
-
-</div>
+        {complaint.status === 'active' ? (
+          <ActiveComplaintDetails complaint={complaint} id={id}>
+            {props.children}
+          </ActiveComplaintDetails>
+        ) : complaint.status === 'pendingHostDecision' ?  (
+          <PendingComplaintDetails complaint={complaint} id={id}>
+            {props.children}
+          </PendingComplaintDetails>
+        ) :  (
+          <PendingComplaintDetails complaint={complaint} id={id}>
+            {props.children}
+          </PendingComplaintDetails>
+        )}
+      </div>
 
 </div>
 
