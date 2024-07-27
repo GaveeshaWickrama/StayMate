@@ -4,9 +4,6 @@ import axios from 'axios';
 import { useAuth } from '../../context/auth';
 import { FaEdit } from 'react-icons/fa';
 import defaultProfilePic from '../../assets/profile2.png';
-import pic2 from '../../assets/1721533878657-3.webp';
-import pic1 from '../../assets/1721480638430-2.webp';
-import pic3 from '../../assets/1721715104858-8.webp';
 
 
 
