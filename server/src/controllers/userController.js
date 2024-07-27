@@ -34,29 +34,52 @@ const getUser = async (req, res) => {
 
 //this is same as the above function here only change is I'm getting the id by the URL
 const viewProfile = async (req, res) => {
+  const { id } = req.params;
 
-  const { id } = req.params  
-  // console.log(req.user)
+  if (!mongoose.Types.ObjectId.isValid(id)) {
+    return res.status(400).json({ error: 'Invalid user ID' });
+  }
+
+  let user;
+
+  console.log("VVVVVVVVVVVVVVVVVVVVVVVVVVVV came here");
+
+  if (req.user.role === 'technician') {
+    console.log("Inside techhhh pro");
+
+    // Fetch technician details
+    const technicianDetails = await Technician.findOne({ userId: id });
+    console.log("Technician Details: ", technicianDetails);
     
-    if (!mongoose.Types.ObjectId.isValid(id)) {
-        return res.status(400).json({ error: 'Invalid user ID' });
+    // Fetch user details
+    const userDetails = await User.findById(id);
+    console.log("User Details: ", userDetails);
+
+    if (!technicianDetails || !userDetails) {
+      return res.status(404).json({ error: 'No such user' });
     }
-console.log("VVVVVVVVVVVVVVVVVVVVVVVVVVVV came here")
-    if(req.user.role==='technician'){
-      console.log("Inside techhhh pro")
-      const user = await Technician.findById(id);
-    }else{ 
-      console.log("Inside normal contt")
-      const user = await User.findById(id);
-    }
-    const user = await User.findById(id);
+
+    // Merge details
+    user = {
+      ...userDetails._doc,
+      ...technicianDetails._doc
+    };
+
+    console.log("after merging technician and user details", user);
+  } else {
+    console.log("Inside normal contt");
+    user = await User.findById(id);
+    console.log("User: ", user);
+
     if (!user) {
-        return res.status(404).json({ error: 'No such user' });
+      return res.status(404).json({ error: 'No such user' });
     }
-    res.status(200).json(user);
-    
-    
-}
+  }
+
+  res.status(200).json(user);
+};
+
+
 
 /// Edit profile
 const editProfile = async (req, res) => {
