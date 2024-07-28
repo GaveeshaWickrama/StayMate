@@ -4,7 +4,7 @@ const mongoose = require('mongoose');
 const complaintSchema = new mongoose.Schema({
   reservationId: {
     type: mongoose.Schema.Types.ObjectId,
-    ref: 'reservation', // Reference to the reservation model
+    ref: 'Reservation', // Reference to the reservation model
     required: true,
   },
 

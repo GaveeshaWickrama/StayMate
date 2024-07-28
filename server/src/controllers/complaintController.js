@@ -1,4 +1,5 @@
 const Complaint = require("../models/complaintModel");
+
 // const TaskController = require('./taskController'); // Import task controller
 const path = require("path");
 const mongoose = require('mongoose');
@@ -47,7 +48,7 @@ const raiseComplaint = async (req, res) => {
 
 
 async function assignComplaintToTechnician(req, res) {
-  const { technicianId } = req.params;  // Route parameter
+  const { technicianId } = req.params;  // Route parameter    //technician _id
   const { complaintId, hostID } = req.query;  // Query parameters
 
   try {
@@ -131,9 +132,27 @@ async function getComplaintById(req,res){
     const complaintDetails = await Complaint.findById(id)
     .populate([
       { path: 'technician', select: 'firstName lastName proPic' }, // Specify fields to include if needed
-      { path: 'reservation', select: 'totalPrice' }, // Example for another field
-      { path: 'user', select: 'firstName' } // Example for another field
+      { path: 'reservationId' }, // Example for another field
+      { path: 'reservationId', populate: {path:'user'}}, // Example for another field
+      {path: 'reservationId',
+        populate: {
+          path: 'property',
+          populate: [
+            {path: 'host_id'}
+          ]
+        },
+      }
     ])
+
+
+    
+    
+    
+    // const filteredComplaints = complaints.filter(complaint => {
+    //   return complaint.reservationId && complaint.reservationId.property && complaint.reservationId.property.host_id.toString() === hostId.toString();
+    // })
+    
+  
     .exec();
     if(!complaintDetails) {
       return res.status(404).json({ message: 'Complaint not found' });
@@ -218,24 +237,63 @@ async function uploadProof(req,res){
 }
 
 
-async function getAllComplaintsByHostId(req,res){
+// async function getAllComplaintsByHostId(req,res){
 
-  const  HostId = req.params.id;
+//   const  HostId = req.params.id;
 
 
-  try {
-    const complaints = await Complaint.find({hostId:HostId}).populate('technician');
-    res.status(200).json(complaints);
+//   try {
+//     const complaints = await Complaint.find({hostId:HostId}).populate('technician');
+//     res.status(200).json(complaints);
 
-  }
+//   }
 
-  catch(error){
-    console.error('Error fetching complaints:', error); // Log the error
+//   catch(error){
+//     console.error('Error fetching complaints:', error); // Log the error
+//     res.status(500).json({ message: 'An error occurred while fetching complaints', error }); // Send error response
+
+//   }
+
+// }
+
+
+const getComplaintsByHost = async (req,res) => {
+
+  const hostId = req.params.id;
+
+//complaint -> reservation id -> propertyid-> host_id
+ try{
+const complaints = await Complaint.find().populate({
+  path: 'reservationId',
+  populate:  [
+    {
+      path: 'property',
+    },
+    {
+      path: 'user',
+    },
+  ]}).populate('technician');
+
+
+
+// const filteredComplaints = complaints.filter(complaint => {
+//   return complaint.reservationId && complaint.reservationId.property && complaint.reservationId.property.host_id.toString() === hostId.toString();
+// })
+
+const filteredComplaints = complaints.filter(complaint => {
+  return complaint.reservationId.property.host_id.toString() === hostId.toString();
+})
+
+    res.status(200).json(filteredComplaints);
+ }catch(error){
+      console.error('Error fetching complaints:', error); // Log the error
     res.status(500).json({ message: 'An error occurred while fetching complaints', error }); // Send error response
 
-  }
+ }
 
-}
+};
+
+
 //following function is in the technician routes
 const getNoOfJobsCompleted = async(req,res) => {
   const {id} = req.params;
@@ -308,32 +366,63 @@ const getPendingJobsByTechnicianId = async(req,res) => {
   }
 }
 
-const getPendingComplaintsByHostId = async(req,res) => {
+const getPendingComplaintsByHost = async(req,res) => {
   const id = req.params.id;
-  try{
-    const jobs = await Complaint.find({hostId:id, status: { $in: ['pendingHostDecision', 'pendingTechnicianApproval'] }});
-    if(!jobs.length) {
-      return res.status(404).json({ message: 'no pending jobs' });
-  }
-    res.status(200).json(jobs);
-
-  }catch(error){
+  console.log(id);
+  try {
+    // Find complaints with the desired status
+    let complaints = await Complaint.find({
+      status: { $in: ['pendingHostDecision', 'pendingTechnicianApproval'] }
+    })
+    .populate({
+      path: 'reservationId',
+      populate: {
+        path: 'property',
+        select: 'host_id'
+      }
+    });
+  
+    // Filter complaints where the host ID matches the provided ID
+    complaints = complaints.filter(complaint => { return complaint.reservationId.property.host_id.toString() === id.toString();});
+    
+    console.log(complaints)
+    if (!complaints.length) {
+      return res.status(404).json({ message: 'No pending complaints found' });
+    }
+  
+    res.status(200).json({ complaints });
+  
+  } 
+  catch(error){
     console.error(error); // Log the error
-    res.status(500).json({ message: 'An error occurred while fetching jobs', error }); // Send error response
+    res.status(500).json({ message: 'An error occurred while fetching pending complaints', error }); // Send error response
   }
 }
+
+
 const getActiveComplaintsByHostId = async(req,res) => {
-  const id = req.params.id;
+  const id = req.params.id; //host id
   try{
-    const jobs = await Complaint.find({hostId:id, status: 'active'});
-    if(!jobs.length) {
-      return res.status(404).json({ message: 'no pending jobs' });
+    let complaints = await Complaint.find({ status: 'active' })
+    .populate({
+      path: 'reservationId',
+      populate: {
+        path: 'property',
+        populate: {
+          path: 'host_id',
+        }
+      }
+    });
+     complaints = complaints.filter( complaint => complaint.reservationId.property.host_id.toString() === id.toString())
+
+    if(!complaints.length) {
+      return res.status(404).json({ message: 'no pending complaints' });
   }
-    res.status(200).json(jobs);
+    res.status(200).json(complaints);
 
   }catch(error){
     console.error(error); // Log the error
-    res.status(500).json({ message: 'An error occurred while fetching jobs', error }); // Send error response
+    res.status(500).json({ message: 'An error occurred while fetching jobs', error : error }); // Send error response
   }
 }
 
@@ -375,14 +464,16 @@ module.exports = {
   getComplaintById, //host
   assignComplaintToTechnician, //host
   getNoOfJobsCompleted, //technician
-  getAllComplaintsByHostId, //host
+  // getAllComplaintsByHostId, //host
   getAllJobsByTechnicianId, //technician
   getActiveJobsByTechnicianId, //technician
   getPendingJobsByTechnicianId, //technician
-  getPendingComplaintsByHostId, //host
+  // getPendingComplaintsByHostId, //host
   getActiveComplaintsByHostId, //host
   getCompletedJobs, //technician
   acceptJob,
+  getComplaintsByHost, //working
+  getPendingComplaintsByHost,
   hello,
   reviewTask,
   uploadProof

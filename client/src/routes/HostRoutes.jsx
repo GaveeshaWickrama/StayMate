@@ -21,6 +21,7 @@ import ActiveComplaints from "../pages/host/ActiveComplaints";
 // import HostReviews from "../pages/host/HostReviews";
 import HostReviews from "../pages/host/HostReviews";
 import ReviewTask from "../pages/host/ReviewTask";
+import Test from "../pages/host/Test"
 
 import ChatHomePage from "../pages/common/ChatHomePage";
 
@@ -95,6 +96,7 @@ function HostRoutes() {
        <Route path="/manage-complaints/pending/" element={ currentUser && currentUser.role === "host" ? ( <PendingComplaints/> ) : ( <Navigate to="/Unauthorized" /> ) } />
        <Route path="/manage-complaints/active/" element={ currentUser && currentUser.role === "host" ? ( <ActiveComplaints/> ) : ( <Navigate to="/Unauthorized" /> ) } /> 
        <Route path="/complaint/review/" element={ currentUser && currentUser.role === "host" ? ( <ReviewTask/> ) : ( <Navigate to="/Unauthorized" /> ) } /> 
+       <Route path="/test/" element={ currentUser && currentUser.role === "host" ? ( <Test/> ) : ( <Navigate to="/Unauthorized" /> ) } /> 
        
        <Route
           path="/chat"

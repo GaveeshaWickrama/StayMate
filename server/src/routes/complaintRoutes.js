@@ -20,6 +20,7 @@ router.post(
 // router.post('/assign-complaint/:id', complaintController.assignComplaintToTechnician);
 // router.post('/:id/assign-task', taskController.createTask);
 router.get("/complaints", complaintController.hello);
+router.get("/complaints/:id", complaintController.getComplaintsByHost);
 // router.get('/active',
 //     authToken,
 //     requireRole("technician"),
@@ -31,14 +32,15 @@ router.get(
   "/:id/pending/tech",
   complaintController.getPendingJobsByTechnicianId
 );
-router.get(
-  "/:id/pending/host",
-  complaintController.getPendingComplaintsByHostId
-);
+// router.get(
+//   "/:id/pending/host",
+//   complaintController.getPendingComplaintsByHostId
+// );
 router.get("/:id/active/host", complaintController.getActiveComplaintsByHostId);
 router.get("/:id/completed", complaintController.getCompletedJobs);
 router.get("/complaint-details/:id", complaintController.getComplaintById);
-router.get("/:id", complaintController.getAllComplaintsByHostId);
+router.get("/:id", complaintController.getComplaintsByHost);   //working
+router.get("/:id/pending/host", complaintController.getPendingComplaintsByHost);   //working backend
 router.post(
   "/assign-complaint/:id",
   complaintController.assignComplaintToTechnician

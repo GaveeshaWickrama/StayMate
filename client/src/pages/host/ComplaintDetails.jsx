@@ -44,11 +44,16 @@ export default function ComplaintDetails(props) {
 
 <div className="bg-gray-100 mx-auto py-2 px-8">
 <div className='flex mb-1 border-b-4 border-blue-600 p-6 rounded-md shadow-sm bg-white'>
+  <div className='flex flex-row justify-between'>
   <h1 className="flex items-center text-4xl font-extrabold text-black-600">
      {complaint.title}
   </h1>
+  <p className='bg-blue-300 p-4 rounded-lg text-white'>{complaint.category}</p>
+  </div>
+  
+
   <div className="flex items-center text-gray-600 ml-6 mt-3">
-    <span>Posted By : User1</span>
+    <span>Posted By : {complaint.reservationId.user.firstName}  {complaint.reservationId.user.lastName}</span>
   </div>
 </div>
 
@@ -59,19 +64,22 @@ export default function ComplaintDetails(props) {
 <div className="flex flex-col md:flex-row gap-4">
   <div className="w-full md:w-2/3 rounded-lg p-1 bg-white shadow">
     <div className="bg-white p-8 flex items-center border-b">
+      <div></div>
     <h2 className="text-xl font-bold">status:  </h2>
       <p className='ml-4 badge badge-ghost'>{complaint.status}</p>
 
     </div>
     <div className="bg-white p-8 flex items-center text-xl gap-9  border-b">
-      <MdOutlineMeetingRoom className='text-blue-500' /><p className='text-lg'>room No 4</p>
-      <MdOutlineMeetingRoom className='text-blue-500' /><p className='text-lg'>Checked In : 2024-07-02</p>
+     <p className='text-lg'>room No 4</p>
+     <p className='text-lg'>Checked In : {complaint.reservationId.checkInDate}</p>
+     <p className='text-lg'>Check Out Date : {complaint.reservationId.checkOutDate}</p>
+     <p className='text-lg'>Property : {complaint.reservationId.property.title}</p>
       
     </div>
     <div className="bg-white p-8 flex items-center border-b">
       
       <FaMapMarkerAlt className="mr-2" />
-      <p className="font-semibold">UCSC Reid Avenue Colombo 7</p>
+      <p className="font-semibold">{complaint.reservationId.property.location.address}</p>
     </div>
     <div className="bg-white p-8 flex flex-col">
       
@@ -87,7 +95,7 @@ export default function ComplaintDetails(props) {
 
   <div className="w-full md:w-1/3 bg-white p-4 rounded-lg shadow">
     <h2 className="text-xl font-bold mb-2">Hosted By </h2>
-   <div >Muralitharan</div>
+   <div >{complaint.reservationId.property.host_id.firstName} {complaint.reservationId.property.host_id.lastName}</div>
    <div className='flex flex-row items-center mt-5'><h2 className="text-l font-bold mb-2">Posted On: </h2> <FaClock className="mr-2 ml-2" /> 2023-05-04</div>
    
 
