@@ -17,10 +17,7 @@ router.get(
   reviewController.getHostReviews
 );
 
-router.get(
-  "/userreviews",
-  authToken,
-  requireRole("guest"),
-  reviewController.getUserReviews
-);
+// // view review
+// router.get( "/view", authToken, requireRole("host"), reviewController.getPropertyReviews );
+
 module.exports = router;

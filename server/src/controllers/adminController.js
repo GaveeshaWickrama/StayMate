@@ -1,7 +1,7 @@
 const User = require('../models/userModel')
 const mongoose = require('mongoose')
 
-//get all users
+//get all Moderators
 const getModerators = async (req,res)=>{
 
     try{
@@ -67,30 +67,65 @@ const deleteModerator = async (req, res) => {
    
         
 };
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+// get all users
 async function getAllUsers(req, res) {
     try {
-        const users = await User.find();
-        res.json(users);
+      const aggregation = [
+        {
+          $match: {
+            role: { $in: ["guest", "host"] },
+          },
+        },
+        {
+          $group: {
+            _id: "$role",
+            count: { $sum: 1 },
+          },
+        },
+      ];
+  
+      const roleCounts = await User.aggregate(aggregation);
+  
+      // Format the data to a more readable format
+      const formattedData = roleCounts.reduce((acc, { _id, count }) => {
+        acc[_id] = count;
+        return acc;
+      }, {});
+  
+      // Debug: Log the counts of guests and property owners
+      console.log("Guests:", formattedData.guest || 0);
+      console.log("Property Owners:", formattedData.propertyOwner || 0);
+  
+      res.json(formattedData);
     } catch (err) {
-        res.status(500).json({ message: err.message });
+      res.status(500).json({ message: err.message });
     }
-}
+  }
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+// async function getAllUsers(req, res) {
+//     try {
+//         const users = await User.find();
+//         res.json(users);
+//     } catch (err) {
+//         res.status(500).json({ message: err.message });
+//     }
+// }
 
 async function createUser(req, res) {
     const user = new User(req.body);
