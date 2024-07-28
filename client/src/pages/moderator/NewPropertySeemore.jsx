@@ -170,7 +170,8 @@ function NewPropertySeemore() {
 
       <PropertyAmenitiesDisplay amenities={property.amenities} />
 
-      <div className='flex justify-center my-10'>
+      {/* <div className='p-6 bg-white rounded-lg shadow-md mt-2'> */}
+      <div className="flex justify-center my-10">
         {!showRejectionForm && (
           <>
             <button 
