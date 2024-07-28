@@ -117,7 +117,7 @@ const AddProperty = () => {
       });
       console.log('Property added:', response.data);
       resetProperty(); // Reset context after successful submit
-      navigate('/host/your-listings'); // Redirect to Your Listings
+      navigate('/host/listings', { state: { fromAddProperty: true } });
     } catch (error) {
       console.error('There was an error adding the property:', error);
     }
