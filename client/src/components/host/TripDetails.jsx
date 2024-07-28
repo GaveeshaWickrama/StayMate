@@ -1,9 +1,36 @@
 import React from "react";
 import img1 from "../../assets/profile.jpg";
+import { useState } from "react";
+import { useNavigate } from "react-router-dom";
+import { useAuth } from '../../context/auth';
+import useCreateOrSelectConversation from '../../hooks/useCreateOrSelectConversation';
+import { toast } from 'react-toastify';
 
 const TripDetails = ({ trip, isUpcoming, isOngoing, isCompleted }) => {
+
+  const { currentUser } = useAuth();
+  const navigate = useNavigate();
+  const { createOrSelectConversation } = useCreateOrSelectConversation();
+  const [isLoading, setIsLoading] = useState(false);
+
   const getUsernameFromEmail = (email) => {
     return email.split("@")[0]; // Splitting the email at "@" and taking the first part
+  };
+
+  const handleMessage = async () => {
+    if (currentUser) {
+      setIsLoading(true);
+      try {
+        await createOrSelectConversation(trip.user._id);
+        navigate(`/host/chat`);
+      } catch (error) {
+        toast.error('Failed to create or select conversation.');
+      } finally {
+        setIsLoading(false);
+      }
+    } else {
+      toast.error('User is not logged in');
+    }
   };
 
   return (
@@ -19,8 +46,9 @@ const TripDetails = ({ trip, isUpcoming, isOngoing, isCompleted }) => {
         </p>
         {isUpcoming && (
           <button
-            onClick={() => (window.location.href = "#")}
-            className="font-semibold text-white text-sm px-10 py-2 bg-blue-500 border border-blue-500 rounded ml-[300px] mb-[30px]"
+          onClick={handleMessage}
+          className="font-semibold text-white text-sm px-10 py-2 bg-blue-500 border border-blue-500 rounded mt-2 md:mt-0 md:ml-2"
+          disabled={isLoading}
           >
             Chat
           </button>
@@ -51,8 +79,9 @@ const TripDetails = ({ trip, isUpcoming, isOngoing, isCompleted }) => {
           {isOngoing && (
             <>
               <button
-                onClick={() => (window.location.href = "#")}
-                className="font-semibold text-white text-sm px-10 py-2 bg-blue-500 border border-blue-500 rounded "
+                 onClick={handleMessage}
+                 className="font-semibold text-white text-sm px-10 py-2 bg-blue-500 border border-blue-500 rounded mt-2 md:mt-0 md:ml-2"
+                 disabled={isLoading}
               >
                 Chat
               </button>
