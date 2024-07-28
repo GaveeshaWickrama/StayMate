@@ -392,7 +392,29 @@ async function requestRegister(req, res) {
     }
 }
 
+
+async function checkNicPhone(req, res) {
+    const { nicPassport, phone } = req.body;
+
+    if (!nicPassport || !phone) {
+        return res.status(400).json({ message: 'NIC/Passport and Phone number are required' });
+    }
+
+    const userNic = await User.findOne({ nicPassport: nicPassport.trim() });
+    if (userNic) {
+        return res.status(400).json({ message: 'NIC/Passport is already in use' });
+    }
+
+    const userPhone = await User.findOne({ phone: phone.trim() });
+    if (userPhone) {
+        return res.status(400).json({ message: 'Phone number is already in use' });
+    }
+
+    res.status(200).json({ message: 'NIC/Passport and Phone number are available' });
+}
+
 module.exports = {
+    checkNicPhone,
     loginUser,
     requestRegister,
     verifyOtp

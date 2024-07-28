@@ -3,13 +3,14 @@ import axios from "axios";
 import { useAuth } from "../../context/auth";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faClipboardList } from "@fortawesome/free-solid-svg-icons";
+import { useNavigate } from "react-router-dom";
 
 const ReservationsView = () => {
   const { token } = useAuth();
   const [aggregatedReservations, setAggregatedReservations] = useState([]);
-  const [selectedProperty, setSelectedProperty] = useState(null);
   const [loading, setLoading] = useState(true);
   const [totalReservations, setTotalReservations] = useState(0);
+  const navigate = useNavigate();
 
   useEffect(() => {
     const fetchReservations = async () => {
@@ -54,21 +55,19 @@ const ReservationsView = () => {
           imageUrl,
           count: 0,
           reservations: [],
+          property: { ...property, reservations: [] }, // Add the full property data and initialize reservations array
         };
       }
 
       acc[key].count += 1;
       acc[key].reservations.push(reservation);
+      acc[key].property.reservations.push(reservation); // Add reservation to the property
       return acc;
     }, {});
   };
 
-  const handleRowClick = (propertyId) => {
-    if (selectedProperty === propertyId) {
-      setSelectedProperty(null);
-    } else {
-      setSelectedProperty(propertyId);
-    }
+  const handleViewClick = (property) => {
+    navigate(`/admin/reservations/view`, { state: { property } });
   };
 
   if (loading) {
@@ -77,9 +76,16 @@ const ReservationsView = () => {
 
   return (
     <div className="container mx-auto px-4 py-8">
-      <h2 className="text-2xl font-semibold mb-6 text-center">
-        Reservations Overview
-      </h2>
+      {/* Title Section */}
+      <div className="flex mb-6 border-b-4 border-blue-600 p-6 rounded-md shadow-sm bg-white">
+        <h2 className="flex items-center text-3xl font-bold text-gray-800">
+          <FontAwesomeIcon
+            icon={faClipboardList}
+            className="mr-4 text-blue-500 text-3xl"
+          />
+          Reservations Overview
+        </h2>
+      </div>
 
       {/* Reservations Table */}
       <div className="overflow-x-auto">
@@ -95,18 +101,18 @@ const ReservationsView = () => {
               <th className="py-3 px-4 text-left text-sm font-medium text-gray-700">
                 Number of Reservations
               </th>
+              <th className="py-3 px-4 text-left text-sm font-medium text-gray-700">
+                Action
+              </th>
             </tr>
           </thead>
           <tbody>
             {Object.keys(aggregatedReservations).map((key) => {
-              const { title, hostName, imageUrl, count, reservations } =
+              const { title, hostName, imageUrl, count, property } =
                 aggregatedReservations[key];
               return (
                 <React.Fragment key={key}>
-                  <tr
-                    className="border-b cursor-pointer"
-                    onClick={() => handleRowClick(key)}
-                  >
+                  <tr className="border-b">
                     <td className="py-3 px-4 text-sm text-gray-700">
                       <div className="flex items-center">
                         <div className="flex flex-col items-start">
@@ -125,40 +131,15 @@ const ReservationsView = () => {
                       {hostName}
                     </td>
                     <td className="py-3 px-4 text-sm text-gray-700">{count}</td>
+                    <td className="py-3 px-4 text-sm text-gray-700">
+                      <button
+                        className="text-blue-500 hover:underline"
+                        onClick={() => handleViewClick(property)}
+                      >
+                        View
+                      </button>
+                    </td>
                   </tr>
-                  {selectedProperty === key &&
-                    reservations.map((reservation) => (
-                      <tr key={reservation._id} className="border-b bg-gray-50">
-                        <td
-                          colSpan="3"
-                          className="py-3 px-4 text-sm text-gray-700"
-                        >
-                          <div className="flex flex-wrap space-x-4">
-                            <div className="flex-1">
-                              <strong>Guest:</strong>{" "}
-                              {reservation.user.firstName}{" "}
-                              {reservation.user.lastName}
-                            </div>
-                            <div className="flex-1">
-                              <strong>Check-In:</strong>{" "}
-                              {new Date(
-                                reservation.checkInDate
-                              ).toLocaleDateString()}
-                            </div>
-                            <div className="flex-1">
-                              <strong>Check-Out:</strong>{" "}
-                              {new Date(
-                                reservation.checkOutDate
-                              ).toLocaleDateString()}
-                            </div>
-                            <div className="flex-1">
-                              <strong>Total Price:</strong>{" "}
-                              {reservation.totalPrice}
-                            </div>
-                          </div>
-                        </td>
-                      </tr>
-                    ))}
                 </React.Fragment>
               );
             })}
