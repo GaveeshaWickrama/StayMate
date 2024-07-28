@@ -40,7 +40,7 @@ const TripDetails = () => {
     totalPrice,
   } = state;
 
-  const handleConfirmBooking = (e) => {
+  const handleConfirmBooking = async (e) => {
     e.preventDefault();
     const reservationData = {
       sectionId,
@@ -52,7 +52,14 @@ const TripDetails = () => {
       property,
     };
 
-    handleSubmit(reservationData);
+    console.log("Submitting reservation data:", reservationData); // Log the reservation data
+
+    try {
+      await handleSubmit(reservationData);
+      console.log("Reservation submitted successfully");
+    } catch (error) {
+      console.error("Failed to submit reservation:", error);
+    }
   };
 
   return (

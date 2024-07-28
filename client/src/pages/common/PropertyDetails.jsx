@@ -6,6 +6,7 @@ import PropertyAmenitiesDisplay from "../host/components/PropertyAmenitiesDispla
 import ReservationSection from "../../components/ReservationSection";
 import PropertyHost from "../../components/PropertyHost";
 import {
+  FaCouch,
   FaHome,
   FaClock,
   FaMapMarkerAlt,
@@ -14,6 +15,7 @@ import {
   FaUserFriends,
   FaDoorClosed,
   FaBath,
+  FaImages,
 } from "react-icons/fa";
 import { MdOutlineMeetingRoom } from "react-icons/md";
 import { IoBedSharp } from "react-icons/io5";
@@ -87,12 +89,6 @@ const PropertyInfoSections = ({ location }) => {
           {capitalizeWords(location.province)}
         </p>
       </div>
-      {/* <div className="bg-white p-8 flex items-center text-xl gap-4 border-b">
-        <MdOutlineMeetingRoom className='text-blue-500' /><p>Bedrooms: {section.plan.bedrooms}</p>
-        <IoBedSharp className='ml-3 text-blue-500' /><p>Beds: {section.plan.beds}</p>
-        <FaShower className='ml-3 text-blue-500' /><p>Bathrooms: {section.plan.bathrooms}</p>
-        <GoPersonFill className='ml-3 text-blue-500' /><p>Guests: {section.plan.guests}</p>
-      </div> */}
       <div className="bg-white p-8 flex items-center">
         <h2 className="text-xl font-bold">Rating: </h2>
         <p className="ml-4">No reviews yet.</p>
@@ -119,61 +115,83 @@ const PropertyDescription = ({ description }) => {
   );
 };
 
+const SectionDetails = ({ section }) => {
+  return (
+    <div className="grid grid-cols-2 md:grid-cols-4 mt-4 p-4 rounded-lg shadow-inner w-8/12">
+      <div className="flex items-center mb-4">
+        <FaDoorClosed className="text-2xl text-blue-600 mr-2" />
+        <p className="text-lg">
+          <strong>Bedrooms:</strong> {section.plan.bedrooms}
+        </p>
+      </div>
+      <div className="flex items-center mb-4">
+        <FaBath className="text-2xl text-blue-600 mr-2" />
+        <p className="text-lg">
+          <strong>Bathrooms:</strong> {section.plan.bathrooms}
+        </p>
+      </div>
+      <div className="flex items-center mb-4">
+        <FaUserFriends className="text-2xl text-blue-600 mr-2" />
+        <p className="text-lg">
+          <strong>Guests:</strong> {section.plan.guests}
+        </p>
+      </div>
+      <div className="flex items-center mb-4">
+        <FaBed className="text-2xl text-blue-600 mr-2" />
+        <p className="text-lg">
+          <strong>Beds:</strong> {section.plan.beds}
+        </p>
+      </div>
+    </div>
+  );
+};
+
 const PropertySection = ({ section, isExpanded, onExpand, propertyId }) => {
-  const imageUrl = `${
+  const imageUrl_0 = `${
     import.meta.env.VITE_API_URL
   }/${section.images[0].url.replace(/\\/g, "/")}`;
-  console.log("Section ID:", section._id); // Log the section ID
 
   return (
-    <div className="mb-8 p-2 bg-white rounded-lg shadow-lg border border-gray-200">
+    <div className="mb-8 p-4 bg-white rounded-lg shadow-lg border border-gray-200">
       <div className="flex items-center cursor-pointer" onClick={onExpand}>
         <img
-          src={imageUrl}
+          src={imageUrl_0}
           alt={section.section_name}
-          className="w-40 h-40 object-cover rounded-lg mr-4"
+          className="w-96 h-40 object-cover rounded-lg mr-10 ml-2"
         />
-        <div>
-          <h3 className="text-2xl font-semibold">{section.section_name}</h3>
-          <p className="text-lg">
-            <strong>Price per night:</strong> Rs {section.price_per_night}
-          </p>
-          <p className="text-lg">
-            <strong>Guests:</strong> {section.plan.guests}
-          </p>
+        <div className="flex flex-col justify-around w-full">
+          <div className="flex justify-between items-center">
+            <h3 className="text-2xl font-semibold">{section.section_name}</h3>
+            <p className="text-lg text-white bg-blue-600 rounded-md p-2">
+              <strong>Price Per Night:</strong> Rs {section.price_per_night}
+            </p>
+          </div>
+          <SectionDetails section={section} />
         </div>
       </div>
       {isExpanded && (
         <>
-          <div className="grid grid-cols-4 gap-4 mt-4">
-            <div className="flex items-center mb-4">
-              <FaBed className="text-xl mr-2" />
-              <p className="text-lg">
-                <strong>Beds:</strong> {section.plan.beds}
-              </p>
-            </div>
-            <div className="flex items-center mb-4">
-              <FaDoorClosed className="text-xl mr-2" />
-              <p className="text-lg">
-                <strong>Bedrooms:</strong> {section.plan.bedrooms}
-              </p>
-            </div>
-            <div className="flex items-center mb-4">
-              <FaBath className="text-xl mr-2" />
-              <p className="text-lg">
-                <strong>Bathrooms:</strong> {section.plan.bathrooms}
-              </p>
-            </div>
-            <div className="flex items-center mb-4">
-              <FaUserFriends className="text-xl mr-2" />
-              <p className="text-lg">
-                <strong>Guests:</strong> {section.plan.guests}
-              </p>
-            </div>
+          <div className="flex my-6 bg-gray-100 p-4 border-round font-bold">
+            <h1 className="flex items-center text-2xl text-black-600">
+              <FaImages className="mr-4" /> More Images
+            </h1>
+          </div>
+          <div className="mt-4 grid grid-cols-2 md:grid-cols-4 gap-4">
+            {section.images.slice(1).map((img, index) => (
+              <img
+                key={index}
+                src={`${import.meta.env.VITE_API_URL}/${img.url.replace(
+                  /\\/g,
+                  "/"
+                )}`}
+                alt={`Section image ${index + 1}`}
+                className="w-full h-40 object-cover rounded-lg"
+              />
+            ))}
           </div>
           <ReservationSection
-            propertyId={propertyId}
             sectionId={section.section_id}
+            propertyId={propertyId} // Pass the propertyId to ReservationSection
             nightlyRate={section.price_per_night}
             initialCheckInDate="2024-07-11"
             initialCheckOutDate="2024-07-16"
@@ -194,7 +212,7 @@ const PropertySectionsList = ({ property }) => {
   };
 
   return (
-    <div className="mx-auto py-2 px-8">
+    <div className="bg-gray-100 mx-auto py-2 px-8">
       <PropertyHeader title={property.title} createdAt={property.created_at} />
       <PropertyImages images={property.images} />
       <div className="flex flex-col md:flex-row gap-4">
@@ -202,6 +220,13 @@ const PropertySectionsList = ({ property }) => {
         <PropertyHostInfo propertyId={property._id} />
       </div>
       <PropertyDescription description={property.description} />
+
+      <div className="flex my-6 border-b-4 border-blue-600 p-6 rounded-md shadow-sm bg-white">
+        <h1 className="flex items-center text-3xl font-extrabold text-black-600">
+          <FaCouch className="mr-4" /> Accommodation Types
+        </h1>
+      </div>
+
       {property.sections.map((section, index) => (
         <PropertySection
           key={index}
@@ -217,9 +242,8 @@ const PropertySectionsList = ({ property }) => {
 };
 
 const DetailedPropertyView = ({ property, id }) => {
-  console.log(property.sections[0].section_id);
   return (
-    <div className=" mx-auto py-2 px-8">
+    <div className="bg-gray-100 mx-auto py-2 px-8">
       <PropertyHeader title={property.title} createdAt={property.created_at} />
       <PropertyImages images={property.images} />
       <div className="flex flex-col md:flex-row gap-4">
@@ -231,12 +255,12 @@ const DetailedPropertyView = ({ property, id }) => {
       </div>
       <PropertyDescription description={property.description} />
       <ReservationSection
-        sectionId={property.sections[0].section_id}
         propertyId={id}
+        sectionId={property.sections[0].section_id}
         nightlyRate={property.sections[0].price_per_night}
         initialCheckInDate="2024-07-11"
         initialCheckOutDate="2024-07-16"
-        serviceFeePercentage={10} // Replace with actual service fee percentage
+        serviceFeePercentage={10}
       />
       <PropertyAmenitiesDisplay amenities={property.amenities} />
     </div>
@@ -274,4 +298,3 @@ function PropertyDetails() {
 }
 
 export default PropertyDetails;
-

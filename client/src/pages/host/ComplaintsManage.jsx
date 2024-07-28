@@ -6,17 +6,28 @@ import { MdOutlineMeetingRoom } from "react-icons/md";
 import { IoBedSharp } from "react-icons/io5";
 import { GoPersonFill } from "react-icons/go";
 import { format } from 'date-fns';
+import { useAuth } from "../../context/auth";
+
+
+
 
 
 export default function ComplaintsManage() {
 
    
+  const { currentUser, loading } = useAuth();
+  const hostID = currentUser.id
 
-    const [hostID, setHostID] = useState('6677b440ceb4d10a38fe8d61');
+   
     const [complaints, setComplaints] = useState([]);
     const navigate = useNavigate();
-
     
+    
+
+    const handleStatusChange = (id, newStatus) => {
+      // Handle status change (e.g., update state or make API call)
+      console.log(`Change status of complaint ${id} to ${newStatus}`);
+    };
 
     useEffect(()=>{
 
@@ -25,7 +36,7 @@ export default function ComplaintsManage() {
                console.log("inside the fetchcomplaint");
                console.log(import.meta.env.VITE_API_URL);
        
-       
+              
                try{
                  const response = await axios.get(`${import.meta.env.VITE_API_URL}/complaints/${hostID}`);
                  console.log("Response from backend:", response.data); // Log the actual data
@@ -51,11 +62,19 @@ export default function ComplaintsManage() {
             navigate(`/host/complaint-details/${complaintId}`);
           };
 
+          const [isExpanded, setIsExpanded] = useState(false);
+
+  const handleToggle = (event) => {
+    console.log(event)
+    event.stopPropagation();
+    setIsExpanded(!isExpanded);
+  };
+
   return (
     <div className="bg-gray-100 mx-auto py-2 px-8">
       <div className='flex mb-1 border-b-4 border-blue-600 p-6 rounded-md shadow-sm bg-white'>
         <h1 className="flex items-center text-4xl font-extrabold text-black-600">
-          <FaHome className="mr-4" /> Complaints
+           Complaints
         </h1>
         <div className="flex items-center text-gray-600 ml-6 mt-3">
           
@@ -69,24 +88,25 @@ export default function ComplaintsManage() {
       <div className="w-full">
 
         <div className='flex flex-row gap-10'>
-        <div className='title-l pt-4 pb-2 pl-1 mb-3'> <a href="#" ><span className='transition-colors duration-1000 hover:text-blue-500 hover:underline-animation'>All</span></a> </div>
-        <div className='title-l pt-4 pb-2 pl-1 mb-3'><a href="#" >Pending</a></div>
-        <div className='title-l pt-4 pb-2 pl-1 mb-3'> <a href="#" >Active</a> </div>
+        <div className='title-l pt-4 pb-2 pl-1 mb-3'> <a href="#"  className='text-blue-500 underline hover:underline-offset-4 hover:decoration-wavy transition-all duration-300'>All</a> </div>
+        <div className='title-l pt-4 pb-2 pl-1 mb-3'><a href="/host/manage-complaints/pending" >Pending</a></div>
+        <div className='title-l pt-4 pb-2 pl-1 mb-3'> <a href="/host/manage-complaints/active" >Active</a> </div>
 
         </div>
         <div className="w-full  rounded-lg p-1 bg-white shadow">
           
         <div className="overflow-x-auto w-full">
-  <table className="table auto w-full">
+  <table className="table auto w-full border-black-800">
     {/* head */}
     <thead>
       <tr className='text-blue-800'>
-        <th></th>
-        <th>Property Address</th>
-        <th>Issue Reported</th>
-        <th>Date reported</th>
-        <th>Assigned Technician</th>
-        <th>Action</th>
+        <th className='text-center'></th>
+        <th className='text-center'>Category</th>
+        <th className='text-center'>Issue Reported</th>
+        <th className='text-center'>Date reported</th>
+        <th className='text-center'>Assigned Technician</th>
+        <th className='text-center'>Status</th>
+        <th className='text-center'>Action</th>
       </tr>
     </thead>
     <tbody>
@@ -96,16 +116,77 @@ export default function ComplaintsManage() {
       {complaints.map((complaint, index) => {
         const formattedDate = format(new Date(complaint.timestamp), 'yyyy-MM-dd');
         return(
-            <tr key={complaint._id} className="hover:bg-gray-100"
-            onClick={() => handleRowClick(complaint._id)} >
+            <tr key={complaint._id} className="hover:bg-gray-100 cursor-pointer"
+            onClick={() => handleRowClick(complaint._id)}  >
             
             
-              <th>{index+1}</th>
-              <td>{complaint.category}</td>
-              <td>{complaint.title} : {complaint.description}</td>
-              <td>{formattedDate}</td>
-              <td>{complaint.technician}</td>
-              <td><span>mark as resolved</span></td>
+              <th className='text-center'>{index+1}</th>
+              <td className='text-center'>{complaint.category}</td>
+              <td className='text-left'>
+              {complaint.title} :
+        {isExpanded ? (
+          <div>
+            {complaint.description}
+            <button 
+              onClick={handleToggle} 
+              className='text-blue-500 ml-2'>
+              Read Less
+            </button>
+          </div>
+        ) : (
+          <div>
+            {complaint.description.length > 100 
+              ? `${complaint.description.substring(0, 200)}...` 
+              : complaint.description}
+            {complaint.description.length > 100 && (
+              <button 
+                onClick={handleToggle} 
+                className='text-blue-500 ml-2'>
+                Read More
+              </button>
+            )}
+          </div>
+        )}
+              </td>
+              <td className='text-center'>{formattedDate}</td>
+              <td className='text-center'>
+              {complaint.technician ? (
+    complaint.technician.firstName
+  ) : (
+    'N/A'
+  )}
+              </td>
+              <td className='flex justify-center self-center text-center items-center'>
+              {complaint.status === 'jobCompleted' && (
+          <button  > <span className='badge badge-ghost badge-sm '>Completed</span></button>
+        )}
+        {complaint.status === 'pendingTechnicianApproval' && (
+          <button className=''> <span className='badge badge-ghost badge-sm whitespace-nowrap'>Pending Technician Approval</span></button>
+        )}
+        {complaint.status === 'active' && <span className='badge badge-ghost badge-sm'>active</span>}
+              
+        {complaint.status === 'pendingHostDecision' && (
+          <button className=''> <span className='badge badge-ghost badge-sm whitespace-nowrap'>Pending Host Decision</span></button>
+        )}
+              </td>
+
+              <td className='text-center'>
+        {complaint.status === 'jobCompleted' && (
+
+          <div className='flex flex-row gap-0.5 '>
+            <button className="bg-blue-500 w-15 h-15 rounded-xl text-white text-xs p-2"onClick={() => handleStatusChange(complaint.id, 'in-progress')}> <span className=''>mark as resolved</span></button>
+            <button className="bg-red-500 w-15 h-15 rounded-xl text-white text-xs p-2"onClick={() => handleStatusChange(complaint.id, 'in-progress')}> <span className=''>Terminate</span></button> 
+            </div>
+          
+        )}
+        {complaint.status === 'pendingTechnicianApproval' && (
+          <button className="bg-green-500 rounded-xl text-white text-xs p-3 " onClick={() => handleStatusChange(complaint.id, 'resolved')}> <span className=''>Mark as pending</span></button>
+        )}
+        {complaint.status === 'pendingHostDecision' && (
+          <button className="bg-green-500 rounded-xl text-white text-xs p-3 " onClick={() => handleStatusChange(complaint.id, 'resolved')}> <span className=''>assign to a technician</span></button>
+        )}
+        {complaint.status === 'active' && <button className='bg-green-500 rounded-xl text-white text-xs p-3'><span>mark as pending</span></button> }
+      </td>
              
             </tr>
           );

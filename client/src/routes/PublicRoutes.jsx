@@ -4,7 +4,7 @@ import NotFoundPage from '../pages/common/NotFoundPage';
 // import VerifyOtp from '../components/auth/VerifyOtp';
 // import GuestSignup from '../components/auth/GuestSignup';
 // import HostSignup from '../components/auth/HostSignup';
-import TechnicianSignup from '../components/auth/TechnicianSignup';
+import TechnicianSignup from '../pages/auth/TechnicianSignup';
 import Login from '../pages/auth/Login';
 import GuestSignup from '../pages/auth/GuestSignup';
 import HostSignup from '../pages/auth/HostSignup';
