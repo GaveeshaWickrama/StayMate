@@ -105,6 +105,7 @@ function Navbar({ isVisible }) {
     { path: "/host/manage-complaints", label: "Complaints" },
     { path: "/host/view-technicians", label: "Technicians" },
     { path: "/host/HostReviews", label: "Reviews" },
+    { path: "/host/chat", label: "Chat" },
   ];
 
   const technicianLinks = [
