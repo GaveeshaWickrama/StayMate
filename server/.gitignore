@@ -13,5 +13,8 @@ uploads/profilepictures/*
 uploads/taskProof/*
 !uploads/taskProof/default.jpg
 
+
+uploads/deeds/*
+!uploads/deeds/default.jpg
 # Environment file
 .env

@@ -5,22 +5,36 @@ const mongoose = require('mongoose');
 // Get all pending properties which are to be listed
 const viewPendingProperties = async (req, res) => {
     try {
-        const properties = await PropertyVerified.find({ status: 'pending' })
-            .populate({
-                path: 'propertyID',
-                populate: {
-                    path: 'host_id',
-                    model: 'User'
-                }
-            })
-            .sort({ created_at: -1 });
-
-        console.log(`Fetched ${properties.length} pending properties`);
-        res.status(200).json(properties);
+      const properties = await PropertyVerified.find({ status: 'pending' })
+        .populate({
+          path: 'propertyID',
+          populate: {
+            path: 'host_id',
+            model: 'User'
+          }
+        })
+        .sort({ created_at: -1 });
+  
+      console.log(`Fetched ${properties.length} pending properties`);
+  
+      // Combine Property and PropertyVerified data
+      const combinedProperties = properties.map(propertyVerified => {
+        const property = propertyVerified.propertyID.toObject();
+        return {
+          ...property,
+          deed: propertyVerified.deed,
+          additionalDetails: propertyVerified.additionalDetails,
+          verifiedStatus: propertyVerified.status,
+          propertyVerifiedCreatedAt: propertyVerified.created_at,
+          propertyVerifiedUpdatedAt: propertyVerified.updated_at
+        };
+      });
+  
+      res.status(200).json(combinedProperties);
     } catch (error) {
-        res.status(400).json({ error: error.message });
+      res.status(400).json({ error: error.message });
     }
-};
+  };
 
 // Accepting pending property
 const accept = async (req, res) => {

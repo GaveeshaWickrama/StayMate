@@ -3,7 +3,7 @@ const path = require('path');
 
 const propertyStorage = multer.diskStorage({
   destination: (req, file, cb) => {
-    const uploadPath = 'uploads/properties/';
+    const uploadPath = file.fieldname === 'deed' ? 'uploads/deeds/' : 'uploads/properties/';
     cb(null, uploadPath);
   },
   filename: (req, file, cb) => {
@@ -13,7 +13,8 @@ const propertyStorage = multer.diskStorage({
 
 const uploadPropertyImages = multer({ storage: propertyStorage }).fields([
   { name: 'images', maxCount: 10 },
-  { name: 'section_images', maxCount: 50 }
+  { name: 'section_images', maxCount: 50 },
+  { name: 'deed', maxCount: 1 } // Add this line to handle deed upload
 ]);
 
 module.exports = uploadPropertyImages;
