@@ -133,7 +133,7 @@ const ReservationsView = () => {
                     <td className="py-3 px-4 text-sm text-gray-700">{count}</td>
                     <td className="py-3 px-4 text-sm text-gray-700">
                       <button
-                        className="text-blue-500 hover:underline"
+                        className="bg-blue-500 text-white font-semibold py-2 px-4 rounded hover:bg-blue-600 transition duration-300"
                         onClick={() => handleViewClick(property)}
                       >
                         View
