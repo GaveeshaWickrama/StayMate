@@ -1,10 +1,11 @@
-const PendingProperty = require('../models/propertyverifiedModel');
-const mongoose = require('mongoose')
+const PropertyVerified = require('../models/propertyverifiedModel');
+const Property = require('../models/propertyModel');
+const mongoose = require('mongoose');
 
 // Get all pending properties which are to be listed
 const viewPendingProperties = async (req, res) => {
     try {
-        const properties = await PendingProperty.find({ status: 'pending' })
+        const properties = await PropertyVerified.find({ status: 'pending' })
             .populate({
                 path: 'propertyID',
                 populate: {
@@ -12,93 +13,108 @@ const viewPendingProperties = async (req, res) => {
                     model: 'User'
                 }
             })
-            
-            .sort({ createdAt: -1 });
+            .sort({ created_at: -1 });
 
-        console.log("Inside the controller checking data");
-        //console.log(properties);
-
+        console.log(`Fetched ${properties.length} pending properties`);
         res.status(200).json(properties);
     } catch (error) {
         res.status(400).json({ error: error.message });
     }
 };
 
-//accepting pending property
+// Accepting pending property
 const accept = async (req, res) => {
-
     const mod_id = req.user.userId;
-    const { id } = req.params  //this is the property id
-  
-    if ((!mongoose.Types.ObjectId.isValid(mod_id)) ||(!mongoose.Types.ObjectId.isValid(id))) {
-         
-      return res.status(400).json({ error: 'Invalid ID' });
+    const { id } = req.params;  // this is the property ID
+
+    if (!mongoose.Types.ObjectId.isValid(mod_id) || !mongoose.Types.ObjectId.isValid(id)) {
+        return res.status(400).json({ error: 'Invalid ID' });
     }
-  
+
     try {
-      const property = await PendingProperty.findOneAndUpdate(
-        { propertyID: id }, // Search by propertyId
-        { 
-          moderator: mod_id,
-          status: "verified",
-        },
-        { 
-          new: true, 
-          runValidators: true 
-        }
+        const propertyVerified = await PropertyVerified.findOneAndUpdate(
+            { propertyID: id }, // Search by propertyId
+            { 
+                moderator: mod_id,
+                status: "verified",
+            },
+            { 
+                new: true, 
+                runValidators: true 
+            }
         );
-  
-      if (!property) {
-        return res.status(400).json({ error: 'No such property' });
-      }
-  
-      res.status(200).json(property);
+
+        if (!propertyVerified) {
+            return res.status(400).json({ error: 'No such property' });
+        }
+
+        const property = await Property.findByIdAndUpdate(
+            id,
+            {
+                status: "verified"
+            },
+            { new: true }
+        );
+
+        if (!property) {
+            return res.status(400).json({ error: 'No such property in Property model' });
+        }
+
+        res.status(200).json({ propertyVerified, property });
     } catch (error) {
-      console.error('Error updating property status:', error);
-      res.status(500).json({ error: 'Internal server error' });
+        console.error('Error updating property status:', error);
+        res.status(500).json({ error: 'Internal server error' });
     }
-  };
+};
 
-//rejecting pending property
+// Rejecting pending property
 const reject = async (req, res) => {
-
     const updateData = { ...req.body };
-    console.log("Inside controller4444444444444444")
+    console.log("Inside controller rejecting property");
     console.log(updateData);
     const mod_id = req.user.userId;
-    const { id } = req.params  //this is the property id
-  
-    if ((!mongoose.Types.ObjectId.isValid(mod_id)) ||(!mongoose.Types.ObjectId.isValid(id))) {
-         
-      return res.status(400).json({ error: 'Invalid ID' });
-    }
-  
-    try {
-        
-      const property = await PendingProperty.findOneAndUpdate(
-        { propertyID: id }, // Search by propertyId
-        { 
-          moderator: mod_id,
-          status: "rejected",
-          $set: updateData ,
+    const { id } = req.params;  // this is the property ID
 
-        },
-        { 
-          new: true, 
-          runValidators: true 
-        }
-        );
-  
-      if (!property) {
-        return res.status(400).json({ error: 'No such property' });
-      }
-  
-      res.status(200).json(property);
-    } catch (error) {
-      console.error('Error updating property status:', error);
-      res.status(500).json({ error: 'Internal server error' });
+    if (!mongoose.Types.ObjectId.isValid(mod_id) || !mongoose.Types.ObjectId.isValid(id)) {
+        return res.status(400).json({ error: 'Invalid ID' });
     }
-  };
+
+    try {
+        const propertyVerified = await PropertyVerified.findOneAndUpdate(
+            { propertyID: id }, // Search by propertyId
+            { 
+                moderator: mod_id,
+                status: "rejected",
+                $set: updateData,
+            },
+            { 
+                new: true, 
+                runValidators: true 
+            }
+        );
+
+        if (!propertyVerified) {
+            return res.status(400).json({ error: 'No such property' });
+        }
+
+        const property = await Property.findByIdAndUpdate(
+            id,
+            {
+                status: "rejected"
+            },
+            { new: true }
+        );
+
+        if (!property) {
+            return res.status(400).json({ error: 'No such property in Property model' });
+        }
+
+        res.status(200).json({ propertyVerified, property });
+    } catch (error) {
+        console.error('Error updating property status:', error);
+        res.status(500).json({ error: 'Internal server error' });
+    }
+};
 
 module.exports = {
     viewPendingProperties,
