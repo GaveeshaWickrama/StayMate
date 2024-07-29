@@ -3,6 +3,7 @@ import axios from 'axios';
 import PropertyCard from '../../components/PropertyCard';
 import LocationSearchBar from '../../components/LocationSearch';
 import Map from './Map';
+import FilterBar from '../../components/FilterBar';
 
 function HomePage() {
   const [properties, setProperties] = useState([]);
@@ -38,6 +39,11 @@ function HomePage() {
     setSearchPerformed(true); // Mark that a search has been performed
   };
 
+  const handleFilterChange = (name, value) => {
+    // Implement the logic to handle filter changes
+    // This could involve updating the searchParams state and refetching properties
+  };
+
   const toggleMap = () => {
     setShowMap(!showMap);
   };
@@ -55,6 +61,7 @@ function HomePage() {
           </button>
         )}
       </div>
+      <FilterBar onFilterChange={handleFilterChange} />
       <div className="flex flex-wrap">
         <div className={`flex flex-wrap ${showMap ? 'w-full md:w-2/3' : 'w-full'} -mx-2`}>
           {properties.length > 0 ? (
