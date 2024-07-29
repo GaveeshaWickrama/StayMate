@@ -3,6 +3,7 @@ import axios from 'axios';
 import PropertyCard from '../../components/PropertyCard';
 import LocationSearchBar from '../../components/LocationSearch';
 import Map from './Map';
+import FilterBar from '../../components/FilterBar';
 
 function HomePage() {
   const [properties, setProperties] = useState([]);
@@ -38,6 +39,11 @@ function HomePage() {
     setSearchPerformed(true); // Mark that a search has been performed
   };
 
+  const handleFilterChange = (name, value) => {
+    // Implement the logic to handle filter changes
+    // This could involve updating the searchParams state and refetching properties
+  };
+
   const toggleMap = () => {
     setShowMap(!showMap);
   };
@@ -55,14 +61,12 @@ function HomePage() {
           </button>
         )}
       </div>
+      <FilterBar onFilterChange={handleFilterChange} />
       <div className="flex flex-wrap">
         <div className={`flex flex-wrap ${showMap ? 'w-full md:w-2/3' : 'w-full'} -mx-2`}>
           {properties.length > 0 ? (
             properties.map(property => (
-              <div
-                key={property._id}
-                className={`w-full sm:w-1/2 ${showMap ? 'md:w-1/3' : 'md:w-1/4'} px-2 mb-4 shadow-md`}
-              >
+              <div key={property._id} className={`w-full sm:w-1/2 ${showMap ? 'md:w-1/2 lg:w-1/2' : 'md:w-1/3 lg:w-1/4'} px-2 mb-0`} >
                 <PropertyCard property={property} />
               </div>
             ))
@@ -71,21 +75,16 @@ function HomePage() {
           )}
         </div>
         {showMap && (
-          <div className="w-full md:w-1/3 px-2 md:px-4 my-4 pt-6 md:my-0 relative">
+          <div className="w-full md:w-1/3 px-2 md:px-4 my-4 md:my-0 relative">
             <div className="sticky top-0">
               <Map location={searchParams.location} radius={searchParams.radius} properties={properties} />
-              <button
-                onClick={toggleMap}
-                className="bg-black text-white rounded-md p-3 absolute top-4 right-4 shadow-md hover:bg-blue-600 transition duration-200"
-              >
-                Hide Map
-              </button>
+              <button onClick={toggleMap} className="bg-black text-white rounded-md p-3 absolute top-4 right-4 shadow-md hover:bg-blue-600 transition duration-200" > Hide Map </button>
             </div>
           </div>
         )}
       </div>
     </div>
   );
-};
+}
 
 export default HomePage;

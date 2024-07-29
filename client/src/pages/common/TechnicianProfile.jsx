@@ -41,7 +41,7 @@ const TechnicianProfile = ({ profile, currentUser, id }) => {
           <h1 className="text-4xl font-bold text-blue-600 mb-2">
             {profile.firstName} {profile.lastName}
           </h1>
-          <p className="text-gray-600 mb-2">{profile.email}</p>
+          <p className="text-gray-600 mb-2">{profile.about}</p>
           <div className="flex space-x-4 mb-6">
             {currentUser && id === currentUser.id && (
               <button className="bg-blue-500 text-white py-2 px-6 rounded-full shadow-lg hover:bg-blue-600 transition transform hover:-translate-y-1">
@@ -57,31 +57,35 @@ const TechnicianProfile = ({ profile, currentUser, id }) => {
           <div className="mb-6">
             <h2 className="text-xl font-semibold text-gray-700 mb-2">Contact Information</h2>
             <div className="flex flex-wrap">
-              <span className="bg-blue-100 text-blue-600 py-1 px-3 rounded-full text-sm font-medium mr-2 mb-2">
+              {/* <span className="bg-blue-100 text-blue-600 py-1 px-3 rounded-full text-sm font-medium mr-2 mb-2">
                 Position: {capitalizeFirstLetter(profile?.role || '')}
-              </span>
+              </span> */}
               <span className="bg-blue-100 text-blue-600 py-1 px-3 rounded-full text-sm font-medium mr-2 mb-2">
                 Phone: {profile.phone}
               </span>
               <span className="bg-blue-100 text-blue-600 py-1 px-3 rounded-full text-sm font-medium mr-2 mb-2">
                 NIC/Passport: {profile.nicPassport}
+                
+              </span>
+              <span className="bg-blue-100 text-blue-600 py-1 px-3 rounded-full text-sm font-medium mr-2 mb-2">
+                Email: {profile.email}
               </span>
             </div>
           </div>
-          <div className="mb-6">
+          {/* <div className="mb-6">
             <h2 className="text-xl font-semibold text-gray-700 mb-2">Joined Date</h2>
             <div className="flex flex-wrap">
               <span className="bg-blue-100 text-blue-600 py-1 px-3 rounded-full text-sm font-medium mr-2 mb-2">
                 {new Date(profile.createdOn).toLocaleDateString()}
               </span>
             </div>
-          </div>
-          <div className="mb-6">
+          </div> */}
+          {/* <div className="mb-6">
             <h2 className="text-xl font-semibold text-gray-700 mb-2">About</h2>
             <p className="bg-blue-50 text-blue-800 py-2 px-4 rounded-lg text-sm shadow-inner">
               {profile.about}
             </p>
-          </div>
+          </div> */}
         </div>
       </div>
       <div className="mt-6">
