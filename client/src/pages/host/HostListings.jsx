@@ -100,10 +100,10 @@ function ListingCard({ property, handleHide }) {
             </button>
             <div
               className={`px-2 py-1 rounded-full text-white text-center text-sm ${
-                property.verification_state === "verified" ? "bg-green-300" : "bg-orange-300"
+                property.status === "verified" ? "bg-green-300" : "bg-orange-300"
               }`}
             >
-              {property.verification_state === "verified" ? "Verified" : "Pending"}
+              {property.status === "verified" ? "Verified" : "Pending"}
             </div>
           </div>
         </div>

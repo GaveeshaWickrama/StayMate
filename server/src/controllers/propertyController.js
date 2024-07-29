@@ -172,7 +172,7 @@ async function getAllProperties(req, res) {
 
   let query = {
     visibility: 'visible',
-    verification_state: 'verified'
+    status: 'verified'
   };
 
   if (latitude && longitude && radius && !isNaN(latitude) && !isNaN(longitude) && !isNaN(radius)) {

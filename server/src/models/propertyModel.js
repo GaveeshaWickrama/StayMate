@@ -165,7 +165,7 @@ const propertySchema = new Schema({
     enum: ['visible', 'hidden'],
     default: 'visible'
   },
-  verification_state: {
+  status: {
     type: String,
     enum: ['pending', 'verified', 'rejected'],
     default: 'pending'
