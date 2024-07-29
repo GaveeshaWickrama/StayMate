@@ -47,13 +47,17 @@ async function assignComplaintToTechnician(req, res) {
   const { technicianId } = req.params;  // Route parameter    //technician _id
   const { complaintId, hostID } = req.query;  // Query parameters
 
+  const {comments}  = req.body;
+
   try {
     console.log("Received complaint ID:", complaintId);
     console.log("Received technician ID:", technicianId);
     console.log("Received host ID:", hostID);
 
     // Convert complaintId to ObjectId
-    const complaintObjectId = new mongoose.Types.ObjectId(complaintId);
+
+    const complaintObjectId = mongoose.Types.ObjectId.createFromHexString(complaintId);
+    const technicianUserId = mongoose.Types.ObjectId.createFromHexString(technicianId);
 
 
     // Check if the complaint exists and its status is pendingHostDecision
@@ -67,7 +71,7 @@ async function assignComplaintToTechnician(req, res) {
     // Update the complaint to assign it to the technician and change status
     const updatedComplaint = await Complaint.findOneAndUpdate(
       { _id: complaintObjectId, status: 'pendingHostDecision' },
-      { $set: { status: 'pendingTechnicianApproval', technician: technicianId, host: hostID } },
+      { $set: { status: 'pendingTechnicianApproval', technician: technicianUserId, assignTaskComments: comments } },
       { new: true } // Return the updated document
     );
 
@@ -79,15 +83,21 @@ async function assignComplaintToTechnician(req, res) {
     res.status(500).json({ message: 'An error occurred while assigning the complaint to technician', error });
   }
 }
+
+
+
 async function acceptJob(req, res) {
   const { complaintId } = req.params;  // Route parameter
+
+  const { budget}  = req.body;
 
   try {
     console.log("Received complaint ID:", complaintId);
     
 
     // Convert complaintId to ObjectId
-    const complaintObjectId = mongoose.Types.ObjectId(complaintId);
+    const complaintObjectId = mongoose.Types.ObjectId.createFromHexString(complaintId);
+
 
     // Check if the complaint exists and its status is pendingHostDecision
     const complaint = await Complaint.findOne({ _id: complaintObjectId, status: 'pendingTechnicianApproval' });
@@ -100,12 +110,15 @@ async function acceptJob(req, res) {
     // Update the complaint to assign it to the technician and change status
     const updatedComplaint = await Complaint.findOneAndUpdate(
       { _id: complaintObjectId, status: 'pendingTechnicianApproval' },
-      { $set: { status: 'active' } },
+      { $set: { 
+        estimatedBudget: budget
+       } 
+      },
       { new: true } // Return the updated document
     );
 
-    console.log("Assigned to a technician successfully");
-    res.status(200).json({ message: 'job accepted by  technician successfully', complaint: updatedComplaint });
+    console.log("estimated budget sent to the host successfully");
+    res.status(200).json({ message: 'budget sent successfully', complaint: updatedComplaint });
 
   } catch (error) {
     console.error('Error accepting job:', error);
@@ -122,12 +135,18 @@ function hello(req,res){
 
 }
 async function getComplaintById(req,res){
-  const  id = req.params.id;
+  let  complaintID = req.params.complaintID;
+
+  complaintID = mongoose.Types.ObjectId.createFromHexString(complaintID);
+
+
+
 
   try {
-    const complaintDetails = await Complaint.findById(id)
+    const complaintDetails = await Complaint.findById(complaintID)
     .populate([
-      { path: 'technician', select: 'firstName lastName proPic' }, // Specify fields to include if needed
+      { path: 'technician'
+       }, // Specify fields to include if needed
       { path: 'reservationId' }, // Example for another field
       { path: 'reservationId', populate: {path:'user'}}, // Example for another field
       {path: 'reservationId',
@@ -139,10 +158,6 @@ async function getComplaintById(req,res){
         },
       }
     ])
-
-
-    
-    
     
     // const filteredComplaints = complaints.filter(complaint => {
     //   return complaint.reservationId && complaint.reservationId.property && complaint.reservationId.property.host_id.toString() === hostId.toString();
@@ -308,11 +323,21 @@ const getNoOfJobsCompleted = async(req,res) => {
 
 
 const getAllJobsByTechnicianId = async(req, res) => {
-  const  id = req.params.id;
+  let  technicianID = req.params.technicianID;
+
+  technicianID = mongoose.Types.ObjectId.createFromHexString(technicianID);
 
   try {
-    const jobs = await Complaint.find({technician:id, status: { $in: ['pendingTechnicianApproval', 'active', 'technicianCompleted', 'jobCompleted'] }});
-    if(!jobs.length) {
+    const jobs = await Complaint.find({status: { $in: ['pendingTechnicianApproval', 'active', 'technicianCompleted', 'jobCompleted'] }}).populate('technician');
+    
+
+    console.log(`received technician id ${technicianID}`)
+
+
+     filteredJobs = jobs.filter(job => job.technician && job.technician.userId.toString() === technicianID.toString());
+  
+    
+    if(!filteredJobs.length) {
       return res.status(404).json({ message: 'no jobs found' });
   }
     res.status(200).json(jobs);

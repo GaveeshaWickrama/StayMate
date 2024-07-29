@@ -14,7 +14,7 @@ router.get('/reviews/:id', technicianController.getReviews);
 
 // Complaint-related routes
 router.get('/:id/noOfJobsCompleted/', complaintController.getNoOfJobsCompleted);
-router.get('/:id/jobs/', complaintController.getAllJobsByTechnicianId);
+router.get('/:technicianID/jobs/', complaintController.getAllJobsByTechnicianId);
 router.get('/:id/activeJobs/', complaintController.getActiveJobsByTechnicianId);
 router.get('/:id/pendingJobs/', complaintController.getPendingJobsByTechnicianId);
 router.get('/:id/completedJobs/', complaintController.getCompletedJobs);

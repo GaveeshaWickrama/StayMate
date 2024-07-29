@@ -38,15 +38,15 @@ router.get(
 // );
 router.get("/:id/active/host", complaintController.getActiveComplaintsByHostId);
 router.get("/:id/completed", complaintController.getCompletedJobs);
-router.get("/complaint-details/:id", complaintController.getComplaintById);
+router.get("/complaint-details/:complaintID", complaintController.getComplaintById);
 router.get("/:id", complaintController.getComplaintsByHost);   //working
 router.get("/:id/pending/host", complaintController.getPendingComplaintsByHost);   //working backend
 router.post(
-  "/assign-complaint/:id",
-  complaintController.assignComplaintToTechnician
+  "/assign-complaint/:technicianId",
+  complaintController.assignComplaintToTechnician   //working
 );
 router.post("/complaint/:id/review", complaintController.reviewTask);
-router.post("/complaint/:id/acceptJob", complaintController.acceptJob);
+router.post("/complaint/:complaintId/acceptJob", complaintController.acceptJob); //working
 router.post(
   "/complaint/:id/uploadProof",
   upload.array("proofImages", 5),

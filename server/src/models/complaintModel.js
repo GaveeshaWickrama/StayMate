@@ -13,6 +13,15 @@ const complaintSchema = new mongoose.Schema({
     required:true
   }, */
 
+  estimatedBudget: {
+    type: Number,
+    required: false, // or true if it's mandatory
+  },
+  assignTaskComments:{
+    type:String,
+    required:false
+
+  },
 
   technician:{
     type: mongoose.Schema.Types.ObjectId,
