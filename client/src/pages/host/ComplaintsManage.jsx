@@ -51,8 +51,8 @@ const TableComponent = ({ data }) => {
     }, [data, filters, search, sortDate]);
   
     const handleRowClick = (complaintId) => {
-        alert(complaintId);
-        navigate(`/host/complaint-details/${complaintId}`);
+        // alert(complaintId);
+        navigate(`/host/complaint-details/`);
       };
 
     const handleFilterChange = (e) => {

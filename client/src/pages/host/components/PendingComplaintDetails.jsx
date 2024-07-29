@@ -3,7 +3,7 @@ import { useNavigate } from "react-router-dom";
 import ComplaintDetails from "../ComplaintDetails";
 
 
-export default function PendingComplaintDetails({ complaint, id}) {
+export default function PendingComplaintDetails({ complaint}) {
   const navigate = useNavigate();
 
 

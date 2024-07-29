@@ -10,8 +10,8 @@ import UploadProof from '../pages/technician/Completion';
 import TechnicianExplore from '../pages/technician/ExploreTechnicians'
 import TechnicianDetails from '../pages/technician/TechnicianDetails'
 import Tasks from '../pages/technician/Tasks'
-import {TaskDetails} from '../pages/technician/TaskDetails'
-import TasksProof from '../pages/technician/Proof'
+import TaskDetails from '../pages/technician/TaskDetails'
+import TasksProof from '../pages/technician/UploadProofForm'
 import PendingTaskDetails from '../pages/technician/components/PendingTaskDetails';
 import ActiveTaskDetails from '../pages/technician/components/ActiveTaskDetails';
 
@@ -39,8 +39,7 @@ function TechnicianRoutes() {
               <Route path="/tasks/active" element={<ActiveTasks/>} />
               <Route path="/task/:id/upload-proof" element={<ActiveTaskDetails />} />
               <Route path="/tasks" element={<Tasks />} />
-              <Route path="/:id/task-details" element={<TaskDetails />} />
-              <Route path="/:id/task/estimateBudget" element={<PendingTaskDetails />} />
+              <Route path="/task-details" element={<TaskDetails />} />
             </>
           ) : (
             <Route path="*" element={<Navigate to="/Unauthorized" />} />

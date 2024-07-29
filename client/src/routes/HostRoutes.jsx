@@ -15,9 +15,7 @@ import ComplaintDetails from "../pages/host/ComplaintDetails";
 import TechnicianExplore from "../pages/technician/ExploreTechnicians";
 import TechnicianDetails from "../pages/technician/TechnicianDetails";
 import ComplaintsManage from "../pages/host/ComplaintsManage";
-import HostResolveComplaint from "../pages/host/HostResolveComplaint";
-import PendingComplaints from "../pages/host/PendingComplaints";
-import ActiveComplaints from "../pages/host/ActiveComplaints";
+// import HostResolveComplaint from "../pages/host/HostResolveComplaint";
 // import HostReviews from "../pages/host/HostReviews";
 import HostReviews from "../pages/host/HostReviews";
 import ReviewTask from "../pages/host/ReviewTask";
@@ -83,18 +81,16 @@ function HostRoutes() {
         />
       
        <Route
-          path="/complaint-details/:id"
+          path="/complaint-details/"
           element={
             isHost ? <ComplaintDetails /> : <Navigate to="/Unauthorized" />
           }
         />
-       <Route path="/complaint-details/:id/resolve" element={ currentUser && currentUser.role === "host" ? ( <HostResolveComplaint/> ) : ( <Navigate to="/Unauthorized" /> ) } />
+       {/* <Route path="/complaint-details/resolve" element={ currentUser && currentUser.role === "host" ? ( <HostResolveComplaint/> ) : ( <Navigate to="/Unauthorized" /> ) } /> */}
         <Route path="/view-technicians" element={ isHost ? <TechnicianExplore /> : <Navigate to="/Unauthorized" /> } />
-        <Route path="/technician-details/:id" element={ isHost ? <TechnicianDetails /> : <Navigate to="/Unauthorized" /> } />
+        <Route path="/technician-details/" element={ isHost ? <TechnicianDetails /> : <Navigate to="/Unauthorized" /> } />
         <Route path="/manage-complaints" element={ isHost ? <ComplaintsManage /> : <Navigate to="/Unauthorized" /> } />
         {/* <Route path="/viewReviews" element={isHost ? <HostReviews /> : <Navigate to="/Unauthorized" />} /> */}
-       <Route path="/manage-complaints/pending/" element={ currentUser && currentUser.role === "host" ? ( <PendingComplaints/> ) : ( <Navigate to="/Unauthorized" /> ) } />
-       <Route path="/manage-complaints/active/" element={ currentUser && currentUser.role === "host" ? ( <ActiveComplaints/> ) : ( <Navigate to="/Unauthorized" /> ) } /> 
        <Route path="/complaint/review/" element={ currentUser && currentUser.role === "host" ? ( <ReviewTask/> ) : ( <Navigate to="/Unauthorized" /> ) } /> 
        <Route path="/test/" element={ currentUser && currentUser.role === "host" ? ( <Test/> ) : ( <Navigate to="/Unauthorized" /> ) } /> 
        
