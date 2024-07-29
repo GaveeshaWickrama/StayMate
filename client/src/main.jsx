@@ -13,7 +13,9 @@ ReactDOM.createRoot(document.getElementById("root")).render(
       <AuthProvider>
         <StoreProvider>
           <ModeratorContextProvider>
-            <App />
+            <SocketContext.Provider>
+              <App />
+            </SocketContext.Provider>
           </ModeratorContextProvider>           
         </StoreProvider>
       </AuthProvider>
