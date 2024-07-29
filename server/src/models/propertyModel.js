@@ -160,6 +160,16 @@ const propertySchema = new Schema({
     }
   ],
   location: locationSchema,
+  visibility: {
+    type: String,
+    enum: ['visible', 'hidden'],
+    default: 'visible'
+  },
+  verification_state: {
+    type: String,
+    enum: ['pending', 'verified', 'rejected'],
+    default: 'pending'
+  },
   created_at: {
     type: Date,
     default: Date.now

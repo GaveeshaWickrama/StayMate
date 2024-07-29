@@ -170,17 +170,18 @@ async function getAllProperties(req, res) {
   console.log('Longitude:', longitude);
   console.log('Radius:', radius);
 
-  let query = {};
+  let query = {
+    visibility: 'visible',
+    verification_state: 'verified'
+  };
 
   if (latitude && longitude && radius && !isNaN(latitude) && !isNaN(longitude) && !isNaN(radius)) {
-    query = {
-      'location.coordinates': {
-        $geoWithin: {
-          $centerSphere: [
-            [parseFloat(longitude), parseFloat(latitude)],
-            parseFloat(radius) / 3963.2 // Radius in radians, assuming radius in miles
-          ]
-        }
+    query['location.coordinates'] = {
+      $geoWithin: {
+        $centerSphere: [
+          [parseFloat(longitude), parseFloat(latitude)],
+          parseFloat(radius) / 3963.2 // Radius in radians, assuming radius in miles
+        ]
       }
     };
   }

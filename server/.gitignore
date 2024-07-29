@@ -9,5 +9,9 @@ uploads/properties/*
 uploads/profilepictures/*
 !uploads/profilepictures/default.jpg
 
+
+uploads/taskProof/*
+!uploads/taskProof/default.jpg
+
 # Environment file
 .env
