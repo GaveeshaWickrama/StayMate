@@ -1,5 +1,5 @@
 require("dotenv").config();
-const { app } = require("./socket/socket.js");
+const { app,server } = require("./socket/socket.js");
 const cors = require("cors");
 const morgan = require("morgan"); // Logging HTTP requests
 const mongoose = require("mongoose");
@@ -63,6 +63,6 @@ app.get("/", (req, res) => {
 
 // Start Server
 const port = process.env.PORT || 3000;
-app.listen(port, () => {
+server.listen(port, () => {
   console.log(`Server running at http://localhost:${port}/`);
 });
