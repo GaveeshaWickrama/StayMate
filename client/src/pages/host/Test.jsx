@@ -6,7 +6,128 @@ import SearchTechnician from "../../pages/technician/components/SearchTechnician
 import Dropdown from '../../pages/technician/components/Dropdown'; // Adjust the path as necessary
 import { FaSearch } from 'react-icons/fa';
 
-
+const mockUsers = [
+    {
+      id: '66a524a1dad761b3d66dd875',
+      name: 'chamma siri',
+      rating: 5,
+      avatar: 'https://randomuser.me/api/portraits/men/1.jpg',
+      skill: 'Plumber',
+      location: 'New York', ratings: 4.5, activeJobs: 2
+    },
+    {
+      id: 2,
+      name: 'Jane Smith',
+      rating: 4,
+      avatar: 'https://randomuser.me/api/portraits/women/2.jpg',
+      skill: 'Carpenter',
+      location: 'New York', ratings: 4.5, activeJobs: 2
+    },
+    {
+      id: 3,
+      name: 'Alice Johnson',
+      rating: 3,
+      avatar: 'https://randomuser.me/api/portraits/women/3.jpg',
+      skill: 'Electrician',
+      location: 'New York', ratings: 4.5, activeJobs: 2
+    },
+    {
+      id: 4,
+      name: 'Bob Brown',
+      rating: 5,
+      avatar: 'https://randomuser.me/api/portraits/men/4.jpg',
+      skill: 'HVAC',
+      location: 'New York', ratings: 4.5, activeJobs: 2
+    },
+    {
+      id: 5,
+      name: 'Charlie Davis',
+      rating: 2,
+      avatar: 'https://randomuser.me/api/portraits/men/5.jpg',
+      skill: 'Plumber',
+      location: 'New York', ratings: 4.5, activeJobs: 2
+    },
+    {
+      id: 6,
+      name: 'Dana Lee',
+      rating: 4,
+      avatar: 'https://randomuser.me/api/portraits/women/6.jpg',
+      skill: 'Carpenter',
+      location: 'New York', ratings: 4.5, activeJobs: 2
+    },
+    {
+      id: 7,
+      name: 'Ethan Wilson',
+      rating: 3,
+      avatar: 'https://randomuser.me/api/portraits/men/7.jpg',
+      skill: 'Electrician',
+      location: 'New York', ratings: 4.5, activeJobs: 2
+    },
+    {
+      id: 8,
+      name: 'Fiona Clark',
+      rating: 5,
+      avatar: 'https://randomuser.me/api/portraits/women/8.jpg',
+      skill: 'HVAC',
+      location: 'New York', ratings: 4.5, activeJobs: 2
+    },
+    {
+      id: 9,
+      name: 'George Harris',
+      rating: 1,
+      avatar: 'https://randomuser.me/api/portraits/men/9.jpg',
+      skill: 'Plumber',
+      location: 'New York', ratings: 4.5, activeJobs: 2
+    },
+    {
+      id: 10,
+      name: 'Hannah Martin',
+      rating: 4,
+      avatar: 'https://randomuser.me/api/portraits/women/10.jpg',
+      skill: 'Carpenter',
+      location: 'New York', ratings: 4.5, activeJobs: 2
+    },
+    {
+      id: 11,
+      name: 'Ian Thompson',
+      rating: 3,
+      avatar: 'https://randomuser.me/api/portraits/men/11.jpg',
+      skill: 'Electrician',
+      location: 'New York', ratings: 4.5, activeJobs: 2
+    },
+    {
+      id: 12,
+      name: 'Julia Adams',
+      rating: 5,
+      avatar: 'https://randomuser.me/api/portraits/women/12.jpg',
+      skill: 'HVAC',
+      location: 'New York', ratings: 4.5, activeJobs: 2
+    },
+    {
+      id: 13,
+      name: 'Kevin Parker',
+      rating: 2,
+      avatar: 'https://randomuser.me/api/portraits/men/13.jpg',
+      skill: 'Plumber',
+      location: 'New York', ratings: 4.5, activeJobs: 2
+    },
+    {
+      id: 14,
+      name: 'Lily White',
+      rating: 4,
+      avatar: 'https://randomuser.me/api/portraits/women/14.jpg',
+      skill: 'Carpenter',
+      location: 'New York', ratings: 4.5, activeJobs: 2
+    },
+    {
+      id: 15,
+      name: 'Michael Roberts',
+      rating: 3,
+      avatar: 'https://randomuser.me/api/portraits/men/15.jpg',
+      skill: 'Electrician',
+      location: 'New York', ratings: 4.5, activeJobs: 2
+    }
+  ];
   
 
 function NoTechnicians() {
@@ -25,79 +146,61 @@ function NoTechnicians() {
     );
   }
 
-const UserTile = ({ user, index, complaintId })  => (
+const UserTile = ({ user }) => (
+    <Link to={{
+        // pathname: `/host/technician-details/${technician.userDetails._id}`,
+        // search: `?complaintID=${complaint}`,
+        pathname: `../../host/technician-details/${user.id}`,
+      }}>
+  <div className="p-4 border rounded-lg shadow-md shadow-blue-300 transform transition-transform duration-300 hover:scale-105 relative">
+    <div className="flex items-center space-x-4">
+      <img src={user.avatar} alt={user.name} className="w-12 h-12 rounded-full" />
+      <div>
+        <h2 className="text-xl font-bold">{user.name}</h2>
+        <div>{user.skill}</div>
 
-//   console.log(`../../assets/${user.proPic}`);
-//   console.log(`complaint id is received to the technician cards ${complaint}`);
-//   console.log(`Navigating to: /host/technician-details/${user._id}?complaintID=${complaint}`);
-
-// return(
-
-  <Link to={{
-    pathname: `/host/technician-details/${user._id}`,
-    search: `?complaintID=${complaintId}`,
-    // pathname: `../../host/technician-details/`,
-  }}>
-<div className="p-4 border rounded-lg shadow-md shadow-blue-300 transform transition-transform duration-300 hover:scale-105 relative">
-<div className="flex items-center space-x-4">
-  {/* <img src={user.avatar} alt={user.name} className="w-12 h-12 rounded-full" /> */}
-  <img src={`../../assets/${user.proPic}`} alt="" className="w-7 h-7 rounded-full bg-blue-500 p-1 self-center" />
-
-  <div>
-    <h2 className="text-xl font-bold">{user.userDetails.firstName} {user.userDetails.lastName}</h2>
-    <div>{user.subRole}</div>
-
-    <p className="text-sm text-gray-500"> 
-    <div className="rating w-3/5">
-                <input
-                  type="radio"
-                  name="rating-1"
-                  className="mask mask-star bg-yellow-500"
-                />
-                <input
-                  type="radio"
-                  name="rating-2"
-                  className="mask mask-star-2 bg-yellow-500"
-                  defaultChecked
-                />
-                <input
-                  type="radio"
-                  name="rating-1"
-                  className="mask mask-star bg-yellow-500"
-                />
-                <input
-                  type="radio"
-                  name="rating-1"
-                  className="mask mask-star bg-yellow-500"
-                />
-                <input
-                  type="radio"
-                  name="rating-1"
-                  className="mask mask-star bg-yellow-500"
-                />
-                <span className='m-1 text-xs font-bold'>4.5</span>
-              </div>
-    </p>
+        <p className="text-sm text-gray-500"> 
+        <div className="rating w-3/5">
+                    <input
+                      type="radio"
+                      name="rating-1"
+                      className="mask mask-star bg-yellow-500"
+                    />
+                    <input
+                      type="radio"
+                      name="rating-2"
+                      className="mask mask-star-2 bg-yellow-500"
+                      defaultChecked
+                    />
+                    <input
+                      type="radio"
+                      name="rating-1"
+                      className="mask mask-star bg-yellow-500"
+                    />
+                    <input
+                      type="radio"
+                      name="rating-1"
+                      className="mask mask-star bg-yellow-500"
+                    />
+                    <input
+                      type="radio"
+                      name="rating-1"
+                      className="mask mask-star bg-yellow-500"
+                    />
+                    <span className='m-1 text-xs font-bold'>4.5</span>
+                  </div>
+        </p>
+      </div>
+    </div>
   </div>
-</div>
-</div>
-</Link>
-// );
-    
+  </Link>
 );
 
 
 
 
 
-
-
-export default function TechnicianPage() {
-  const location = useLocation();
-  const queryParams = new URLSearchParams(location.search);
-  const complaintId = queryParams.get('complaintID');
-
-
+const TechnicianPage = () => {
   const [users, setUsers] = useState([]);
   const [searchQuery, setSearchQuery] = useState('');
   const [skillFilter, setSkillFilter] = useState('');
@@ -106,7 +209,6 @@ export default function TechnicianPage() {
   const [activeJobsSort, setActiveJobsSort] = useState('');
   const [filteredUsers, setFilteredUsers] = useState([]);
 
-  // const [technicians, setTechnicians] = useState([]);
   const [currentPage, setCurrentPage] = useState(1);
   const usersPerPage = 10;
   const navigate = useNavigate();
@@ -133,36 +235,11 @@ export default function TechnicianPage() {
     { value: 'desc', label: 'Descending' },
   ];
 
-  
-
-  useEffect(()=>{
-
-    
-    const fetchUsers = async () => {
-      console.log("inside the fetch technician");
-      console.log(import.meta.env.VITE_API_URL);
-
-     
-      try{
-        const response = await axios.get(`${import.meta.env.VITE_API_URL}/technicians/all`);
-        console.log("Response from backend:", response.data); // Log the actual data
-
-        setUsers(response.data);
-        console.log(users)
-      }
-      catch(error){
-        console.error("Error fetching complaints:", error); 
-      
-      }
-        
-};
-
-fetchUsers();
-
-
-  },[]);
-
-
+  useEffect(() => {
+    // Fetch users from an API or use mock data
+    setUsers(mockUsers);
+    setFilteredUsers(mockUsers);
+  }, []);
 
   useEffect(() => {
     handleFilterChange();
@@ -177,14 +254,14 @@ fetchUsers();
 
     if (searchQuery) {
       filtered = filtered.filter(user =>
-        user.userId.firstName.toLowerCase().includes(searchQuery) ||
+        user.name.toLowerCase().includes(searchQuery) ||
         user.skill.toLowerCase().includes(searchQuery)
       );
     }
 
     if (skillFilter) {
       filtered = filtered.filter(user =>
-        user.subRole.toLowerCase() === skillFilter.toLowerCase()
+        user.skill.toLowerCase() === skillFilter.toLowerCase()
       );
     }
 
@@ -265,21 +342,21 @@ fetchUsers();
       <section className="mb-8">
         <h2 className="text-2xl font-bold mb-4">Near By Users</h2>
         <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 cursor-pointer rounded-full">
-          {trendingUsers.map(user => <UserTile key={user._id} user={user} complaintId={complaintId}/>)}
+          {trendingUsers.map(user => <UserTile key={user.id} user={user} />)}
         </div>
       </section>
 
       <section className="mb-8">
         <h2 className="text-2xl font-bold mb-4">Most Rated Users</h2>
         <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 cursor-pointer">
-          {mostRatedUsers.map(user => <UserTile key={user._id} user={user} complaintId={complaintId}/>)}
+          {mostRatedUsers.map(user => <UserTile key={user.id} user={user} />)}
         </div>
       </section>
 
       <section>
         <h2 className="text-2xl font-bold mb-4">All Users</h2>
         <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 mb-8 cursor-pointer">
-          {currentUsers.map(user => <UserTile key={user._id} user={user} complaintId={complaintId}/>)}
+          {currentUsers.map(user => <UserTile key={user.id} user={user} />)}
         </div>
 
         <div className="flex justify-center">
@@ -298,8 +375,6 @@ fetchUsers();
       </section>
     </div>
   );
-}
+};
 
-
-
-
+export default TechnicianPage;
