@@ -3,16 +3,14 @@ import axios from 'axios';
 import { useAuth } from '../../context/auth';
 
 // components
-import  PendingPropertyCard from '../../components/moderator/PendingPropertyCard'
-import  SearchProperty from '../../components/moderator/SearchProperty'
+import PendingPropertyCard from '../../components/moderator/PendingPropertyCard';
+import SearchProperty from '../../components/moderator/SearchProperty';
 
 const ViewNewProperties = () => {
-
     const { token } = useAuth();
     const [properties, setProperties] = useState([]);
 
     useEffect(() => {
-        
         const fetchProperties = async () => {
             try {
                 const response = await axios.get(`${import.meta.env.VITE_API_URL}/moderator/viewNewProperties`, {
@@ -23,10 +21,10 @@ const ViewNewProperties = () => {
                 if (response.status === 200) {
                     const json = response.data;
                     setProperties(json);
+                    console.log(`Fetched ${json.length} properties`);
                 } else {
-                        console.error('Failed to fetch properties. Status:', response.status);
+                    console.error('Failed to fetch properties. Status:', response.status);
                 }
-
             } catch (error) {
                 console.error('Error fetching properties:', error);
             }
@@ -36,10 +34,9 @@ const ViewNewProperties = () => {
     }, [token]);
 
     return (
-
         <div className="container mx-auto p-4">
             <SearchProperty />
-            <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-[15rem]">
+            <div className="flex justify-between items-center mb-4">
                 {properties && properties.length > 0 ? (
                     properties.map(property => (
                         <PendingPropertyCard key={property._id} property={property} />
@@ -47,11 +44,9 @@ const ViewNewProperties = () => {
                 ) : (
                     <h1>No Pending Properties</h1>
                 )}
-               
             </div>
         </div>
-
     );
 };
-                
+
 export default ViewNewProperties;

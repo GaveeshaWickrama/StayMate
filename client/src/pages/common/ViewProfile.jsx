@@ -7,7 +7,7 @@ import profpic from '../../assets/adminprofilepic.png';
 import HostProfile from './HostProfile';
 import AdminModProfile from './AdminModProfile';
 import GuestProfile from './GuestProfile';
-// import TechnicianProfile from './TechnicianProfile';
+import TechnicianProfile from './TechnicianProfile';
 
 const ViewProfile = () => {
 
@@ -55,9 +55,9 @@ const ViewProfile = () => {
     } else if (profile.role === 'guest'){
       ProfileComponent = <GuestProfile profile={profile} currentUser={currentUser} id={id} />;
     } 
-    // else if (profile.role === 'technician'){
-    //   ProfileComponent = <TechnicianProfile profile={profile} currentUser={currentUser} id={id} />;
-    // }
+    else if (profile.role === 'technician'){
+      ProfileComponent = <TechnicianProfile profile={profile} currentUser={currentUser} id={id} />;
+    }
 
 
 

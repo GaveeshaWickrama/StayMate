@@ -27,7 +27,7 @@ function App() {
       <Header toggleNavbar={toggleNavbar} />
       <div className={`flex-grow flex ${isNavbarVisible ? 'ml-0' : ''}`}>
         <Navbar isVisible={isNavbarVisible} />
-        <div className={`main-content flex-grow p-4 ${isNavbarVisible ? 'ml-64' : ''}`} style={{ marginTop: '5rem' } } >
+        <div className={`main-content flex-grow  ${isNavbarVisible ? 'ml-64' : ''}`} style={{ marginTop: '5rem' } } >
           <Routes>
             <Route path="/" element={<HomePage />} />
             <Route path="/admin/*" element={<AdminRoutes />} />
