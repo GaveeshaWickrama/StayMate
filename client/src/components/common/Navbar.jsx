@@ -146,7 +146,7 @@ function Navbar({ isVisible }) {
   if (currentUser.role === "admin") {
     return (
       <Sidebar
-        title="Admin Nav"
+        // title="Admin Nav"
         links={adminLinks}
         logout={handleLogout}
         isVisible={isVisible}
@@ -157,7 +157,7 @@ function Navbar({ isVisible }) {
   if (currentUser.role === "guest") {
     return (
       <Sidebar
-        title="User Nav"
+        // title="User Nav"
         links={guestLinks}
         logout={handleLogout}
         isVisible={isVisible}
@@ -168,7 +168,7 @@ function Navbar({ isVisible }) {
   if (currentUser.role === "host") {
     return (
       <Sidebar
-        title="Host Nav"
+        // title="Host Nav"
         links={hostLinks}
         logout={handleLogout}
         isVisible={isVisible}
@@ -179,7 +179,7 @@ function Navbar({ isVisible }) {
   if (currentUser.role === "technician") {
     return (
       <Sidebar
-        title="Technician Nav"
+        // title="Technician Nav"
         links={technicianLinks}
         logout={handleLogout}
         isVisible={isVisible}
