@@ -28,7 +28,7 @@ const PropertyCard = ({ property }) => {
           </div>
         </div>
         <div className="py-2 flex justify-between items-center border-t">
-          <span className="text-xl font-bold ">${formattedPricePerNight} / Night</span>
+          <span className="text-xl font-bold ">Rs {formattedPricePerNight} / Night</span>
         </div>
       </div>
     </Link>

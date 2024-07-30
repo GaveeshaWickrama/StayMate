@@ -3,7 +3,7 @@ import axios from 'axios';
 import PropertyCard from '../../components/PropertyCard';
 import LocationSearchBar from '../../components/LocationSearch';
 import Map from './Map';
-// import FilterBar from '../../components/FilterBar';
+import FilterBar from '../../components/FilterBar';
 
 function HomePage() {
   const [properties, setProperties] = useState([]);
@@ -61,7 +61,7 @@ function HomePage() {
           </button>
         )}
       </div>
-      {/* <FilterBar onFilterChange={handleFilterChange} /> */}
+      <FilterBar onFilterChange={handleFilterChange} />
       <div className="flex flex-wrap">
         <div className={`flex flex-wrap ${showMap ? 'w-full md:w-2/3' : 'w-full'} -mx-2`}>
           {properties.length > 0 ? (
