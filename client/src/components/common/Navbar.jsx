@@ -97,6 +97,7 @@ function Navbar({ isVisible }) {
     { path: "/", label: "Home" },
     // { path: "/moderator", label: "Moderator Dashboard" },
     { path: "/moderator/viewNewProperties", label: "View New Properties" },
+    { path: "/moderator/chat", label: "Chat" },
   ];
 
   const guestLinks = [
