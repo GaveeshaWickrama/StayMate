@@ -63,7 +63,7 @@ const PaymentDetails = () => {
     let totalToHosts = 0;
 
     filtered.forEach((payment) => {
-      totalRev += payment.serviceFee;
+      totalRev += payment.totalAmount;
       totalToHosts += payment.amountToHost;
     });
 
