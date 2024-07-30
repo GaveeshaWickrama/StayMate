@@ -95,7 +95,18 @@ export const StoreProvider = ({ children }) => {
 
       if (response.status === 201) {
         toast.success("Reservation successful!");
-        navigate("/");
+
+        const updatedResponse = await axios.get(
+          `${import.meta.env.VITE_API_URL}/reservation/get`,
+          {
+            headers: {
+              Authorization: `Bearer ${token}`,
+            },
+          }
+        );
+        setUserReservations(updatedResponse.data);
+
+        navigate("/user/reservations");
       }
     } catch (error) {
       console.log("Error making reservation:", error);
