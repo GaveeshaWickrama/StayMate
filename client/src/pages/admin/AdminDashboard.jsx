@@ -105,7 +105,7 @@ function AdminDashboard() {
     let totalPayout = 0;
 
     payments.forEach((payment) => {
-      totalRev += payment.serviceFee;
+      totalRev += payment.totalAmount;
       totalPayout += payment.amountToHost;
     });
 
@@ -115,6 +115,8 @@ function AdminDashboard() {
 
   const data = view === "monthly" ? monthlyData : yearlyData;
   const dataKey = view === "monthly" ? "month" : "year";
+
+  
 
   return (
     <main
