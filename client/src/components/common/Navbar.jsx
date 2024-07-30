@@ -138,9 +138,10 @@ function Navbar({ isVisible }) {
   ];
 
   if (!currentUser) {
-    return (
-      <Sidebar title="Public Nav" links={publicLinks} isVisible={isVisible} />
-    );
+    // return (
+    //   <Sidebar title="Public Nav" links={publicLinks} isVisible={isVisible} />
+    // );
+    return null; // Do not render the Navbar if the user is not logged in
   }
 
   if (currentUser.role === "admin") {
