@@ -100,7 +100,7 @@ function Report() {
     let totalPayout = 0;
 
     payments.forEach((payment) => {
-      totalRev += payment.serviceFee;
+      totalRev += payment.totalAmount;
       totalPayout += payment.amountToHost;
     });
 
