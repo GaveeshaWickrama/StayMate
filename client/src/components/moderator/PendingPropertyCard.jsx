@@ -2,6 +2,7 @@ import React from 'react';
 import { BsDiamondHalf, BsCalendarDate } from "react-icons/bs";
 import { FaMapMarkerAlt, FaUser, FaStar } from "react-icons/fa";
 import { Link } from 'react-router-dom';
+import { IoMdHome } from "react-icons/io";
 
 const PendingPropertyCard = ({ property }) => {
   const imageUrl = property?.images[0]?.url 
@@ -37,7 +38,7 @@ const PendingPropertyCard = ({ property }) => {
           {property.location?.address || 'No Address'}, {property.location?.province || 'No Province'}
         </div> */}
         <div className="flex items-center text-gray-700 text-sm mb-2">
-          <BsDiamondHalf className="mr-1 text-blue-500" /> 
+          <IoMdHome className="mr-1 text-blue-500" /> 
           {property.sections[0]?.section_name === 'entire_place' ? 'Entire Place' : 'Section'} in {property.type || 'No Type'}
           <BsCalendarDate className="ml-4 mr-1 text-blue-500" /> {formattedDate}
         </div>
