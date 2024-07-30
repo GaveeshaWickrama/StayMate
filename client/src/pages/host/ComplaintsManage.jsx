@@ -202,14 +202,14 @@ const TableComponent = ({ data }) => {
                 <td>{item.reservationId.user.firstName} {item.reservationId.user.lastName} </td>
 
                 <td>{item.reservationId.property.title}</td>
-                <td>{item.formattedDate}</td>
+                <td>{formattedDate}</td>
                 <td className='text-center'>
-              {item.technician ? (
-    item.technician.firstName
+  {item.technician ? (
+    `${item.technician.userId.firstName} ${item.technician.userId.lastName}`
   ) : (
     'N/A'
   )}
-              </td>
+</td>
                 <td>
                 {item.status === 'jobCompleted' && (
           <button  > <span className='badge badge-ghost badge-sm '>Completed</span></button>

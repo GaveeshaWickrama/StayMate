@@ -11,8 +11,9 @@ import { FaRegEnvelope } from "react-icons/fa6";
 
 
 function TechnicianDetails() {
-  const { id } = useParams();
-  const { currentUser } = useAuth();
+
+  const { id } = useParams();  //technician id
+  const { currentUser } = useAuth();  //host id
   const location = useLocation();
   const navigate = useNavigate();
   const queryParams = new URLSearchParams(location.search);
@@ -22,15 +23,16 @@ function TechnicianDetails() {
   const [technician, setTechnician] = useState(null);
 
 
-  const handleSave = (e) => {
-    e.preventDefault();
-    setShowModal(false);
-    alert(`Form submitted for complaint id: ${complaint.id}`);
+  // const handleSave = async (e) => {
+  //   e.preventDefault();
 
-    // <HandleSendRequest complaintId={complaintID} technicianID={id} hostID={hostID} />
+  // //   setShowModal(false);
+  // //   // alert(`Form submitted for complaint id: ${complaint.id}`);
 
-    navigate("/host/manage-complaints");
-  };
+  // //   // <HandleSendRequest complaintId={complaintID} technicianID={id} hostID={hostID} />
+
+  // //   navigate("/host/manage-complaints");
+  // // };
 
   useEffect(() => {
     const fetchTechnician = async () => {
@@ -60,7 +62,7 @@ function TechnicianDetails() {
           />
         </div>
         <h1 className="flex items-center text-4xl font-extrabold text-black-600">
-          {technician.firstName} {technician.lastName}
+          {technician.userId.firstName} {technician.userId.lastName}
         </h1>
         <div className="flex items-center text-gray-600 ml-6 mt-3"></div>
       </div>
@@ -83,7 +85,7 @@ function TechnicianDetails() {
           <div className="flex items-center p-6 gap-4 ">
             <h2 className="text-xl font-bold ">Skill</h2>
             <div className="bg-blue-300 p-2 rounded-lg text-white">
-              <span className="text-lg">Plumber</span>
+              <span className="text-lg">{technician.subRole}</span>
             </div>
           </div>
           <div className="flex items-center p-6 gap-4 ">
@@ -165,7 +167,9 @@ function TechnicianDetails() {
       <PopupForm
         isOpen={showModal}
         handleClose={() => setShowModal(false)}
-        handleSave={handleSave}
+        complaintId = {complaintID}
+        technicianID = {id}
+        hostID = {hostID}
       />
     </div>
   );

@@ -1,18 +1,29 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 
-const PopupForm = ({ isOpen, handleClose, handleSave }) => {
+import axios from 'axios';
+import { useParams, useLocation, useNavigate, Link } from 'react-router-dom';
+
+
+const PopupForm = ({ isOpen, handleClose, complaintId, technicianID, hostID }) => {
+
+  const [additionalInfo, setAdditionalInfo] = useState('');
+
+  const navigate = useNavigate();
+
   if (!isOpen) return null;
 
 
-  const sendRequest = async (complaintId, technicianID, hostID) => {
+  const sendRequest = async (complaintId, technicianID, hostID, additionalInfo) => {
     try {
       console.log(`Complaint ID: ${complaintId}`);
       console.log(`Technician ID: ${technicianID}`);
       console.log(`Host ID: ${hostID}`);
+      console.log(`additional info: ${additionalInfo}`);
 
       await axios.post(
         `${import.meta.env.VITE_API_URL}/complaints/assign-complaint/${technicianID}`,
-        null,
+        { additionalInfo }, // Include the additional info in the request body
+
         { params: { complaintId, hostID } }
       );
 
@@ -23,8 +34,12 @@ const PopupForm = ({ isOpen, handleClose, handleSave }) => {
     }
   };
 
-  const handleButtonClick = () => {
-    sendRequest(complaintId, technicianID, hostID);
+
+  const handleSave = async (e) => {
+    e.preventDefault();
+    await sendRequest(complaintId, technicianID, hostID, additionalInfo);
+    handleClose();
+    navigate("/host/manage-complaints");
   };
 
   // return (
@@ -34,7 +49,7 @@ const PopupForm = ({ isOpen, handleClose, handleSave }) => {
   //     </button>
   //   </div>
   // );
-}
+
 
 
   return (
@@ -42,6 +57,7 @@ const PopupForm = ({ isOpen, handleClose, handleSave }) => {
       <div className="bg-white p-8 rounded-lg shadow-lg w-1/3">
         <h2 className="text-2xl font-bold mb-4">Send Request To Technician</h2>
         <form onSubmit={handleSave}>
+
           <div className="mb-4">
             <label className="block text-lg font-medium text-gray-700 py-5">Additional Information</label>
            
@@ -50,13 +66,16 @@ const PopupForm = ({ isOpen, handleClose, handleSave }) => {
               className="focus:outline-none mt-1 block w-full p-2 border border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500"
               rows="4"
               placeholder='Please add any additional information you want to inform the technician about the Job'
-              required
+              value = {additionalInfo}
+              onChange={(e) => setAdditionalInfo(e.target.value)}
+
             ></textarea>
           </div>
           <div className="flex justify-end">
             <button
               type="button"
               className="bg-gray-500 text-white px-4 py-2 rounded mr-2"
+              
               onClick={handleClose}
             >
               Cancel
@@ -73,5 +92,5 @@ const PopupForm = ({ isOpen, handleClose, handleSave }) => {
     </div>
   );
 
-
+}
 export default PopupForm;

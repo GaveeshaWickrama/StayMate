@@ -25,17 +25,17 @@ function NoTechnicians() {
     );
   }
 
-const UserTile = ({ user, index, complaint }) => (
+const UserTile = ({ user, index, complaintId })  => (
 
-  console.log(`../../assets/${user.proPic}`);
-  console.log(`complaint id is received to the technician cards ${complaint}`);
-  console.log(`Navigating to: /host/technician-details/${user._id}?complaintID=${complaint}`);
+//   console.log(`../../assets/${user.proPic}`);
+//   console.log(`complaint id is received to the technician cards ${complaint}`);
+//   console.log(`Navigating to: /host/technician-details/${user._id}?complaintID=${complaint}`);
 
-return(
+// return(
 
   <Link to={{
     pathname: `/host/technician-details/${user._id}`,
-    search: `?complaintID=${complaint}`,
+    search: `?complaintID=${complaintId}`,
     // pathname: `../../host/technician-details/`,
   }}>
 <div className="p-4 border rounded-lg shadow-md shadow-blue-300 transform transition-transform duration-300 hover:scale-105 relative">
@@ -44,8 +44,8 @@ return(
   <img src={`../../assets/${user.proPic}`} alt="" className="w-7 h-7 rounded-full bg-blue-500 p-1 self-center" />
 
   <div>
-    <h2 className="text-xl font-bold">{user.firstName}</h2>
-    <div>{user.skill}</div>
+    <h2 className="text-xl font-bold">{user.userDetails.firstName} {user.userDetails.lastName}</h2>
+    <div>{user.subRole}</div>
 
     <p className="text-sm text-gray-500"> 
     <div className="rating w-3/5">
@@ -82,7 +82,7 @@ return(
 </div>
 </div>
 </Link>
-)
+// );
     
 );
 
@@ -90,7 +90,9 @@ return(
 
 
 
-const TechnicianPage = () => {
+
+
+export default function TechnicianPage() {
   const location = useLocation();
   const queryParams = new URLSearchParams(location.search);
   const complaintId = queryParams.get('complaintID');
@@ -104,7 +106,7 @@ const TechnicianPage = () => {
   const [activeJobsSort, setActiveJobsSort] = useState('');
   const [filteredUsers, setFilteredUsers] = useState([]);
 
-  const [complaintID, setComplaint] = useState(complaintId);
+  // const [technicians, setTechnicians] = useState([]);
   const [currentPage, setCurrentPage] = useState(1);
   const usersPerPage = 10;
   const navigate = useNavigate();
@@ -131,11 +133,36 @@ const TechnicianPage = () => {
     { value: 'desc', label: 'Descending' },
   ];
 
-  useEffect(() => {
-    // Fetch users from an API or use mock data
-    setUsers(mockUsers);
-    setFilteredUsers(mockUsers);
-  }, []);
+  
+
+  useEffect(()=>{
+
+    
+    const fetchUsers = async () => {
+      console.log("inside the fetch technician");
+      console.log(import.meta.env.VITE_API_URL);
+
+     
+      try{
+        const response = await axios.get(`${import.meta.env.VITE_API_URL}/technicians/all`);
+        console.log("Response from backend:", response.data); // Log the actual data
+
+        setUsers(response.data);
+        console.log(users)
+      }
+      catch(error){
+        console.error("Error fetching complaints:", error); 
+      
+      }
+        
+};
+
+fetchUsers();
+
+
+  },[]);
+
+
 
   useEffect(() => {
     handleFilterChange();
@@ -150,14 +177,14 @@ const TechnicianPage = () => {
 
     if (searchQuery) {
       filtered = filtered.filter(user =>
-        user.name.toLowerCase().includes(searchQuery) ||
+        user.userId.firstName.toLowerCase().includes(searchQuery) ||
         user.skill.toLowerCase().includes(searchQuery)
       );
     }
 
     if (skillFilter) {
       filtered = filtered.filter(user =>
-        user.skill.toLowerCase() === skillFilter.toLowerCase()
+        user.subRole.toLowerCase() === skillFilter.toLowerCase()
       );
     }
 
@@ -238,21 +265,21 @@ const TechnicianPage = () => {
       <section className="mb-8">
         <h2 className="text-2xl font-bold mb-4">Near By Users</h2>
         <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 cursor-pointer rounded-full">
-          {trendingUsers.map(user => <UserTile key={user._id} user={user} />)}
+          {trendingUsers.map(user => <UserTile key={user._id} user={user} complaintId={complaintId}/>)}
         </div>
       </section>
 
       <section className="mb-8">
         <h2 className="text-2xl font-bold mb-4">Most Rated Users</h2>
         <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 cursor-pointer">
-          {mostRatedUsers.map(user => <UserTile key={user._id} user={user} />)}
+          {mostRatedUsers.map(user => <UserTile key={user._id} user={user} complaintId={complaintId}/>)}
         </div>
       </section>
 
       <section>
         <h2 className="text-2xl font-bold mb-4">All Users</h2>
         <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 mb-8 cursor-pointer">
-          {currentUsers.map(user => <UserTile key={user._id} user={user} />)}
+          {currentUsers.map(user => <UserTile key={user._id} user={user} complaintId={complaintId}/>)}
         </div>
 
         <div className="flex justify-center">
@@ -271,6 +298,8 @@ const TechnicianPage = () => {
       </section>
     </div>
   );
-};
+}
 
-export default TechnicianPage;
+
+
+
