@@ -41,7 +41,7 @@ function Sidebar({ title, links, logout, isVisible }) {
     <nav
       className={`sidebar ${
         isVisible ? "visible" : ""
-      } h-full w-64 fixed top-20 left-0 bg-gray-800 z-2 text-white flex flex-col p-4`}
+      } h-full w-64 fixed top-20 left-0 bg-gradient-to-r from-blue-500 to-purple-600 z-2 text-white flex flex-col p-4`}
     >
       <h1 className="text-2xl font-bold mb-6">{title}</h1>
       <IconContext.Provider value={{ className: "inline-block mr-2" }}>
@@ -147,7 +147,7 @@ function Navbar({ isVisible }) {
   if (currentUser.role === "admin") {
     return (
       <Sidebar
-        title="Admin Nav"
+        // title="Admin Nav"
         links={adminLinks}
         logout={handleLogout}
         isVisible={isVisible}
@@ -158,7 +158,7 @@ function Navbar({ isVisible }) {
   if (currentUser.role === "guest") {
     return (
       <Sidebar
-        title="User Nav"
+        // title="User Nav"
         links={guestLinks}
         logout={handleLogout}
         isVisible={isVisible}
@@ -169,7 +169,7 @@ function Navbar({ isVisible }) {
   if (currentUser.role === "host") {
     return (
       <Sidebar
-        title="Host Nav"
+        // title="Host Nav"
         links={hostLinks}
         logout={handleLogout}
         isVisible={isVisible}
@@ -180,7 +180,7 @@ function Navbar({ isVisible }) {
   if (currentUser.role === "technician") {
     return (
       <Sidebar
-        title="Technician Nav"
+        // title="Technician Nav"
         links={technicianLinks}
         logout={handleLogout}
         isVisible={isVisible}
@@ -191,7 +191,7 @@ function Navbar({ isVisible }) {
   if (currentUser.role === "moderator") {
     return (
       <Sidebar
-        title="Moderator Nav"
+        // title="Moderator Nav"
         links={moderatorLinks}
         logout={handleLogout}
         isVisible={isVisible}
