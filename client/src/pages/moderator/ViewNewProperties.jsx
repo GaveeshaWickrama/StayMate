@@ -36,7 +36,7 @@ const ViewNewProperties = () => {
     return (
         <div className="container mx-auto p-4">
             <SearchProperty />
-            <div className="grid grid-cols-4 gap-[30px]">
+            <div className="flex justify-between items-center mb-4">
                 {properties && properties.length > 0 ? (
                     properties.map(property => (
                         <PendingPropertyCard key={property._id} property={property} />
