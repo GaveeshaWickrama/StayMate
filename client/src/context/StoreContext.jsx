@@ -95,7 +95,7 @@ export const StoreProvider = ({ children }) => {
 
       if (response.status === 201) {
         toast.success("Reservation successful!");
-        navigate("/user/reservations");
+        navigate("/");
       }
     } catch (error) {
       console.log("Error making reservation:", error);

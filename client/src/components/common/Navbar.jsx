@@ -83,7 +83,7 @@ function Navbar({ isVisible }) {
 
   const moderatorLinks = [
     { path: "/", label: "Home" },
-    { path: "/moderator", label: "Moderator Dashboard" },
+    // { path: "/moderator", label: "Moderator Dashboard" },
     { path: "/moderator/viewNewProperties", label: "View New Properties" },
   ];
 

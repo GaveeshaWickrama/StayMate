@@ -94,10 +94,17 @@ function ListingCard({ property, handleHide }) {
                 e.preventDefault();
                 handleHide(property._id);
               }}
-              className="bg-gray-500 text-white px-4 py-2 rounded hover:bg-gray-700 flex items-center justify-center space-x-1 w-full"
+              className="bg-gray-500 text-white px-4 py-2 rounded hover:bg-gray-700 flex items-center justify-center space-x-1 w-full mb-2"
             >
               <FaEyeSlash /> <span>Hide</span>
             </button>
+            <div
+              className={`px-2 py-1 rounded-full text-white text-center text-sm ${
+                property.status === "verified" ? "bg-green-300" : property.status === "rejected" ? "bg-red-300" : "bg-orange-300"
+              }`}
+            >
+              {property.status === "verified" ? "Verified" : property.status === "rejected" ? "Rejected" : "Pending"}
+            </div>
           </div>
         </div>
       </div>

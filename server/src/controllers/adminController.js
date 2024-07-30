@@ -15,20 +15,20 @@ const getModerators = async (req,res)=>{
 
 //create a new moderator
 const createModerator = async (req, res) => {
-    const { firstname, lastname, email, password, nic, gender, address, role } = req.body;
+    const { firstName, lastName, email, password, nicPassport, gender, address, role, phone } = req.body;
 
     let emptyFields = [];
 
-    if (!firstname) {
-        emptyFields.push('firstname');
-    } else if (!/^[A-Za-z]+$/.test(firstname)) {
-        emptyFields.push('firstname: only letters are allowed without spaces');
+    if (!firstName) {
+        emptyFields.push('firstName');
+    } else if (!/^[A-Za-z]+$/.test(firstName)) {
+        emptyFields.push('firstName: only letters are allowed without spaces');
     }
 
-    if (!lastname) {
-        emptyFields.push('lastname');
-    } else if (!/^[A-Za-z]+$/.test(lastname)) {
-        emptyFields.push('lastname: only letters are allowed without spaces');
+    if (!lastName) {
+        emptyFields.push('lastName');
+    } else if (!/^[A-Za-z]+$/.test(lastName)) {
+        emptyFields.push('lastName: only letters are allowed without spaces');
     }
 
     if (!email) {
@@ -41,7 +41,7 @@ const createModerator = async (req, res) => {
 
     //add to db
     try {
-        const moderator = await User.create({ firstname, lastname, email, password, nic, gender, address, role });
+        const moderator = await User.create({ firstName, lastName, email, password, nicPassport, gender, address, role, phone });
         res.status(200).json(moderator);
     } catch (error) {
         res.status(400).json({ error: error.message });
