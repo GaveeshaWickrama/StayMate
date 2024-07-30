@@ -190,7 +190,7 @@ function Navbar({ isVisible }) {
   if (currentUser.role === "moderator") {
     return (
       <Sidebar
-        title="Moderator Nav"
+        // title="Moderator Nav"
         links={moderatorLinks}
         logout={handleLogout}
         isVisible={isVisible}
