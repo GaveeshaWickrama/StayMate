@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { FaEdit, FaTrash, FaSearch, FaUserPlus } from "react-icons/fa";
 
-const Moderators = () => {
+const Moderator = () => {
   const navigate = useNavigate();
 
   const [searchQuery, setSearchQuery] = useState("");
@@ -16,11 +16,12 @@ const Moderators = () => {
   ]);
 
   const handleEdit = (id) => {
-    navigate(`/UpdateUser/${id}`);
+    navigate(`/admin/UpdateUser/${id}`);
   };
 
   const handleDelete = (id) => {
     const confirmDelete = window.confirm("Are you sure you want to delete this user?");
+    navigate("/admin/Moderator"); // Refresh the page
     if (confirmDelete) {
       console.log("Delete user with ID:", id);
       // Implement delete logic here
@@ -28,7 +29,7 @@ const Moderators = () => {
   };
 
   const handleAddUser = () => {
-    navigate("/AddUser"); // Redirect to Add User page
+    navigate("/admin/AddUser"); // Redirect to Add User page
   };
 
   const handleSearch = (e) => {
@@ -108,4 +109,4 @@ const Moderators = () => {
   );
 };
 
-export default Moderators;
+export default Moderator;
