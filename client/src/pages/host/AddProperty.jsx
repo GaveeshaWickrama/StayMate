@@ -12,6 +12,7 @@ import LocationInformation from './components/LocationInformation';
 import PropertyAmenities from './components/PropertyAmenities';
 import ProgressBar from './components/ProgressBar';
 import Publish from './components/Publish';
+import DeedUpload from './components/DeedUpload'; // Import DeedUpload component
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 
@@ -20,7 +21,7 @@ const AddProperty = () => {
   const location = useLocation();
   const { token } = useAuth();
   const { property, setProperty, stage, setStage, resetProperty } = useProperty();
-  const totalStages = 7;
+  const totalStages = 8; // Updated total stages
   const sidebarWidth = "250px";
   const [isFormValid, setIsFormValid] = useState(false);
 
@@ -73,10 +74,13 @@ const AddProperty = () => {
           Object.keys(property.location).forEach(locKey => {
             formData.append(`location[${locKey}]`, property.location[locKey]);
           });
-        } else if (key !== 'sections') {
+        } else if (key !== 'sections' && key !== 'deed') {
           formData.append(key, property[key]);
         }
       });
+      if (property.deed?.file) {
+        formData.append('deed', property.deed.file);
+      }
     };
   
     const handleEntireProperty = () => {
@@ -103,11 +107,6 @@ const AddProperty = () => {
       handleMultipleSectionsProperty();
     }
   
-    // Log the FormData entries to inspect them
-    for (const pair of formData.entries()) {
-      console.log(`${pair[0]}: ${pair[1]}`);
-    }
-  
     try {
       const response = await axios.post(`${import.meta.env.VITE_API_URL}/properties/add`, formData, {
         headers: {
@@ -117,12 +116,13 @@ const AddProperty = () => {
       });
       console.log('Property added:', response.data);
       resetProperty(); // Reset context after successful submit
-      navigate('/host/your-listings'); // Redirect to Your Listings
+      navigate('/host/listings', { state: { fromAddProperty: true } });
     } catch (error) {
       console.error('There was an error adding the property:', error);
     }
   };
   
+
   const validateForm = () => {
     let valid = false;
     switch (stage) {
@@ -143,6 +143,9 @@ const AddProperty = () => {
         break;
       case 6:
         valid = validateLocationInformation();
+        break;
+      case 7:
+        valid = validateDeedUpload();
         break;
       default:
         valid = false;
@@ -191,6 +194,10 @@ const AddProperty = () => {
            property.location.zipcode?.trim() !== '';
   };
 
+  const validateDeedUpload = () => {
+    return property.deed?.file !== undefined;
+  };
+
   return (
     <div className='flex flex-col h-[calc(100vh-80px)] justify-between bg-white overflow-auto'>
       <ToastContainer position="top-right" autoClose={5000} hideProgressBar={false} newestOnTop={false} closeOnClick rtl={false} pauseOnFocusLoss draggable pauseOnHover />
@@ -217,6 +224,9 @@ const AddProperty = () => {
             <LocationInformation property={property} handleChange={handleChange} navigate={navigate} />
           )}
           {stage === 7 && (
+            <DeedUpload property={property} setProperty={setProperty} />
+          )}
+          {stage === 8 && (
             <Publish handleSubmit={handleSubmit} property={property} />
           )}
         </form>
@@ -234,8 +244,3 @@ const AddProperty = () => {
 };
 
 export default AddProperty;
-
-
-
-
-

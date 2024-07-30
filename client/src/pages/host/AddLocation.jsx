@@ -256,8 +256,8 @@ const AddLocation = () => {
       </form>
 
       {googleResponse && (
-        <pre className="mt-4 bg-gray-100 p-4 rounded">
-          {JSON.stringify(googleResponse, null, 2)}
+        <pre className="mt-4  p-4 rounded">
+          {/* {JSON.stringify(googleResponse, null, 2)} */}
         </pre>
       )}
     </div>
