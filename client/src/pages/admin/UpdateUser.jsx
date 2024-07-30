@@ -15,10 +15,14 @@ const UpdateUser = () => {
   useEffect(() => {
     // Fetch the user data based on ID and prefill the form
     const fetchUserData = async () => {
-      // Replace with your API call
+      // Replace with your actual API call
       const response = await fetch(`/api/users/${id}`);
-      const data = await response.json();
-      setUserData(data);
+      if (response.ok) {
+        const data = await response.json();
+        setUserData(data);
+      } else {
+        console.error("Failed to fetch user data");
+      }
     };
 
     fetchUserData();
@@ -29,18 +33,34 @@ const UpdateUser = () => {
     setUserData({ ...userData, [name]: value });
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
     // Implement the API call to update the user here
-    console.log("Updated user data submitted:", userData);
-    // After submission, navigate back to the User Center
-    navigate("/UserCenter");
+    try {
+      const response = await fetch(`/api/users/${id}`, {
+        method: "PUT",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(userData),
+      });
+
+      if (response.ok) {
+        console.log("Updated user data submitted:", userData);
+        // After submission, navigate back to the Moderator page
+        navigate("/Moderators");
+      } else {
+        console.error("Failed to update user data");
+      }
+    } catch (error) {
+      console.error("Error updating user data:", error);
+    }
   };
 
   return (
     <div className="container mx-auto p-10 bg-white shadow-lg rounded-lg">
       <h2 className="text-4xl font-extrabold text-blue-600 mb-6 border-b-2 border-blue-200 pb-2">
-        Update User
+        Update Moderator
       </h2>
       <form onSubmit={handleSubmit} className="space-y-6">
         <div>
@@ -103,7 +123,7 @@ const UpdateUser = () => {
             type="submit"
             className="bg-gradient-to-r from-blue-500 to-blue-700 text-white px-6 py-2 rounded-md shadow-lg hover:shadow-xl transition duration-200"
           >
-            Update User
+            Update
           </button>
         </div>
       </form>
