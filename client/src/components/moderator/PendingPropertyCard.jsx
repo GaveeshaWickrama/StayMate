@@ -49,15 +49,10 @@ const PendingPropertyCard = ({ property }) => {
         </div>
       </div>
    
-      <div className="px-4 py-2 flex justify-center items-center border-t">
-        {/* <span className="text-xl font-bold mb-2"> */}
-          {property.location?.province || 'No Province'} 
-          {/* </span> */}
-      </div>
-      <div className="px-4 py-2 flex justify-center items-center">
-        {/* <span className="text-xl font-bold mb-2"> */}
-          {property.location?.district || 'No District'}
-          {/* </span> */}
+      <div className="px-4 py-2 flex justify-between items-center border-t">
+        
+        <span className="text-xl font-bold mb-2">{property.location?.district || 'No District'},</span>
+        <span className="text-xl font-bold mb-2">{property.location?.province || 'No Province'} </span>
       </div>
       <div className="px-4 py-2 flex justify-center">
         <Link
