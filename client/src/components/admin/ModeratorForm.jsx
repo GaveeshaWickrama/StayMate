@@ -7,21 +7,28 @@ const ModeratorForm = () => {
     const { token } = useAuth();
     const { dispatch } = useModeratorsContext();
 
-    const [firstname, setFirstname] = useState('');
-    const [lastname, setLastname] = useState('');
+    const [firstName, setFirstName] = useState('');
+    const [lastName, setLastName] = useState('');
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
-    const [nic, setNic] = useState('');
+    const [nicPassport, setNicPassport] = useState('');
     const [gender, setGender] = useState('');
     const [address, setAddress] = useState('');
     const [error, setError] = useState('');
     const [emptyFields,setEmptyFields] = useState([])
+    const [phone,setPhone] = useState('')
     const role = 'moderator';
+    // const gender='male';
+    // const phone="44";
+    const handleChange = (e) => {
+        setGender(e.target.value);
+      };
+    
 
     const handleSubmit = async (e) => {
         e.preventDefault();
 
-        const moderator = { firstname, lastname, email, password, nic, gender, address, role };
+        const moderator = { firstName, lastName, email, password, nicPassport, gender, address, role, phone };
 
         try {
             const response = await axios.post(`${import.meta.env.VITE_API_URL}/admin/moderators`, moderator, {
@@ -37,18 +44,18 @@ const ModeratorForm = () => {
             } else {
                 
                 setError(null);
-                console.log('State before reset:', { firstname, lastname, email, password, nic, gender, address });
+                console.log('State before reset:', { firstName, lastName, email, password, nicPassport, gender, address });
 
                 // Reset form fields
-                setFirstname('');
-                setLastname('');
+                setFirstName('');
+                setLastName('');
                 setEmail('');
                 setPassword('');
-                setNic('');
+                setNicPassport('');
                 setGender('');
                 setAddress('');
 
-                console.log('State after reset:', { firstname, lastname, email, password, nic, gender, address });
+                console.log('State after reset:', { firstName, lastName, email, password, nicPassport, gender, address });
 
                 console.log('new Moderator added', response.data);
                 dispatch({ type: 'CREATE_MODERATORS', payload: response.data });
@@ -65,17 +72,17 @@ const ModeratorForm = () => {
             <label className="block mb-2">First Name:</label>
             <input 
                 type="text"
-                onChange={(e) => setFirstname(e.target.value)}
-                value={firstname}
-                className="w-full p-2 mb-4 border rounded ${emptyFields.includes('firstname') ? 'border-red-500' : 'border-gray-300'}"
+                onChange={(e) => setFirstName(e.target.value)}
+                value={firstName}
+                className="w-full p-2 mb-4 border rounded ${emptyFields.includes('firstName') ? 'border-red-500' : 'border-gray-300'}"
             />
             
             <label className="block mb-2">Last Name:</label>
             <input 
                 type="text"
-                onChange={(e) => setLastname(e.target.value)}
-                value={lastname}
-                className="w-full p-2 mb-4 border rounded ${emptyFields.includes('lastname') ? 'border-red-500' : 'border-gray-300'}"
+                onChange={(e) => setLastName(e.target.value)}
+                value={lastName}
+                className="w-full p-2 mb-4 border rounded ${emptyFields.includes('lastName') ? 'border-red-500' : 'border-gray-300'}"
             />
             <label className="block mb-2">Email:</label>
             <input 
@@ -91,12 +98,12 @@ const ModeratorForm = () => {
                 value={password}
                 className="w-full p-2 mb-4 border rounded ${emptyFields.includes('password') ? 'border-red-500' : 'border-gray-300'}"
             />
-            <label className="block mb-2">NIC:</label>
+            <label className="block mb-2">NICPassport:</label>
             <input 
                 type="text"
-                onChange={(e) => setNic(e.target.value)}
-                value={nic}
-                className="w-full p-2 mb-4 border rounded ${emptyFields.includes('') ? 'bornicder-red-500' : 'border-gray-300'}"
+                onChange={(e) => setNicPassport(e.target.value)}
+                value={nicPassport}
+                className="w-full p-2 mb-4 border rounded ${emptyFields.includes('') ? 'border-red-500' : 'border-gray-300'}"
             />
             <label className="block mb-2">Address:</label>
             <input 
@@ -113,6 +120,36 @@ const ModeratorForm = () => {
                 value={role}
                 className="w-full p-2 mb-4 border border-gray-300 rounded"
                 readOnly
+            />
+            <label className="block mb-2">Gender:</label>
+            <div className="mb-4">
+      <label className="mr-4">
+        <input 
+          type="radio" 
+          value="male" 
+          checked={gender === 'male'} 
+          onChange={handleChange} 
+          className="mr-2"
+        />
+        Male
+      </label>
+      <label>
+        <input 
+          type="radio" 
+          value="female" 
+          checked={gender === 'female'} 
+          onChange={handleChange} 
+          className="mr-2"
+        />
+        Female
+      </label>
+    </div>
+            <label className="block mb-2">Phone:</label>
+            <input 
+                type="text"
+                onChange={(e) => setPhone(e.target.value)}
+                value={phone}
+                className="w-full p-2 mb-4 border border-gray-300 rounded"
             />
 
             <button className="w-full bg-blue-500 text-white p-2 rounded hover:bg-blue-600">Add Moderator</button>
