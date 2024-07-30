@@ -1,12 +1,13 @@
 require("dotenv").config();
-const express = require("express");
+const { app,server } = require("./socket/socket.js");
 const cors = require("cors");
 const morgan = require("morgan"); // Logging HTTP requests
 const mongoose = require("mongoose");
 const path = require("path"); // Import the path module
 const defaultImageMiddleware = require('./middleware/defaultImageMiddleware'); // Adjust the path as necessary
+const express = require('express');
 
-const app = express();
+
 
 // Middleware to serve static files
 app.use("/uploads", express.static(path.join(__dirname, "../uploads")));
@@ -62,6 +63,6 @@ app.get("/", (req, res) => {
 
 // Start Server
 const port = process.env.PORT || 3000;
-app.listen(port, () => {
+server.listen(port, () => {
   console.log(`Server running at http://localhost:${port}/`);
 });
