@@ -1,11 +1,9 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import { useAuth } from '../../context/auth';
-import { useHeaderContext } from '../../hooks/useHeaderContext'; // Correctly import the custom hook
 
 const EditProfile = () => {
-  const { token, currentUser, loading } = useAuth(); 
-  const { dispatch } = useHeaderContext(); // Use the custom hook to get dispatch from HeaderContext
+  const { token } = useAuth();
   const [profile, setProfile] = useState({
     firstName: '',
     lastName: '',
@@ -18,10 +16,10 @@ const EditProfile = () => {
   });
   const [photo, setPhoto] = useState(null);
   const [previewUrl, setPreviewUrl] = useState('');
-
-  if (loading) {
-    return <div>Loading...</div>; // Show a loading spinner or message
-  }
+  const { currentUser, loading } = useAuth();
+    if (loading) {
+      return <div>Loading...</div>; // Show a loading spinner or message
+    }
 
   useEffect(() => {
     const fetchProfile = async () => {
@@ -65,16 +63,22 @@ const EditProfile = () => {
 
   const handleSave = async (e) => {
     e.preventDefault();
-  
+
     const formData = new FormData();
     Object.keys(profile).forEach((key) => {
       formData.append(key, profile[key]);
     });
-  
+
     if (photo) {
       formData.append('photo', photo);
+    } else {
+      console.warn('No photo selected');
     }
-  
+
+    for (let pair of formData.entries()) {
+      console.log(pair[0] + ': ' + pair[1]); // Log formData entries to check if photo is included
+    }
+
     try {
       const response = await axios.patch(`${import.meta.env.VITE_API_URL}/users/editProfile`, formData, {
         headers: {
@@ -82,23 +86,15 @@ const EditProfile = () => {
           'Content-Type': 'multipart/form-data',
         },
       });
-  
+
+      console.log('Profile updated:', response.data);
+
       if (response.status === 200) {
         alert('Profile Updated successfully');
-  
-        // Update the header context with the new profile data
-        dispatch({
-          type: 'SET_HEADER_DATA',
-          payload: {
-            ...profile,
-            picture: response.data.picture, // Use the picture URL from the response
-          }
-        });
-  
-        // Redirect to the profile page
         setTimeout(() => {
-          window.location.href = `viewProfile/${currentUser.id}`;
-        }, 0);
+          window.location.href = `viewProfile/${currentUser.id}`; // Redirect to the profile page or any other desired page
+        }, 0); // Set a timeout to ensure the redirect happens after the alert
+    
       } else {
         alert('Failed to submit updated details');
       }
@@ -106,7 +102,6 @@ const EditProfile = () => {
       console.error('Error updating profile:', error);
     }
   };
-  
 
   return (
     <div className="flex justify-center items-center min-h-screen bg-gray-100">
