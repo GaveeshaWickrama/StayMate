@@ -1,16 +1,17 @@
 import React, { useState, useEffect, useRef } from "react";
 import { useAuth } from "../../context/auth";
 import logo from "../../assets/icons/logo.png";
-import { Link, useNavigate, useLocation } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
+
+
+
 import { FaBars, FaUser, FaSignOutAlt } from 'react-icons/fa';
-import defaultProfilePic from '../../assets/profile2.png';
-import { useHeaderContext } from "../../hooks/useHeaderContext"; // Use the custom hook
+import defaultProfilePic from '../../assets/profile2.png'
+
 
 const Header = ({ toggleNavbar }) => {
   const { currentUser, loading, logout } = useAuth();
-  const { firstName, lastName, role, picture, dispatch } = useHeaderContext(); // Use the custom hook
   const navigate = useNavigate();
-  const location = useLocation();
   const [dropdownOpen, setDropdownOpen] = useState(false);
   const dropdownRef = useRef(null);
 
@@ -26,29 +27,9 @@ const Header = ({ toggleNavbar }) => {
     };
   }, [dropdownRef]);
 
-  useEffect(() => {
-    // This will trigger on route change
-    console.log('Route changed:', location.pathname);
-  }, [location]);
-
-  useEffect(() => {
-    if (currentUser) {
-      // Dispatch action to update header context with the current user data
-      console.log("Updating header context with current user data:", currentUser);
-      dispatch({
-        type: 'SET_HEADER_DATA',
-        payload: {
-          firstName: currentUser.firstName,
-          lastName: currentUser.lastName,
-          role: currentUser.role,
-          picture: currentUser.picture,
-        }
-      });
-    }
-  }, [currentUser, dispatch]);
-
   if (loading) {
-    return <div><span className="loading loading-spinner text-info"></span></div>; // Show a loading spinner or message
+    return <div><span className="loading loading-spinner text-info"></span>
+</div>; // Show a loading spinner or message
   }
 
   const handleLogout = async () => {
@@ -82,16 +63,16 @@ const Header = ({ toggleNavbar }) => {
           >
             <div className="text-right mr-4">
               <p className="text-lg font-bold text-white">
-                {firstName} {lastName}
+                {currentUser.firstName} {currentUser.lastName}
               </p>
 
               <p className="text-blue-200">
-                {role === "guest" ? "Tenant" : role}
+                {currentUser.role === "guest" ? "Tenant" : currentUser.role}
               </p>
 
             </div>
             <img
-              src={picture ? `${import.meta.env.VITE_API_URL}/${picture}` : defaultProfilePic}
+              src={currentUser.picture ? `${import.meta.env.VITE_API_URL}/${currentUser.picture}` : defaultProfilePic}
               alt="Profile"
               className="h-12 w-12 rounded-full border-2 border-white"
             />
