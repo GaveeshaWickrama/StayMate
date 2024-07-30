@@ -160,6 +160,16 @@ const propertySchema = new Schema({
     }
   ],
   location: locationSchema,
+  visibility: {
+    type: String,
+    enum: ['visible', 'hidden'],
+    default: 'visible'
+  },
+  status: {
+    type: String,
+    enum: ['pending', 'verified', 'rejected'],
+    default: 'pending'
+  },
   created_at: {
     type: Date,
     default: Date.now
@@ -173,18 +183,18 @@ const propertySchema = new Schema({
 // Ensure 'location.coordinates' uses the 2dsphere index for geospatial queries
 propertySchema.index({ 'location.coordinates': '2dsphere' });
 
-// Post-save hook to create a PropertyVerified document
-propertySchema.post('save', async function(doc, next) {
-  const PropertyVerified = mongoose.model('PropertyVerified');
-  try {
-    await PropertyVerified.create({
-      propertyID: doc._id,
-      status: 'pending'
-    });
-    next();
-  } catch (error) {
-    next(error);
-  }
-});
+// Remove the post-save hook
+// propertySchema.post('save', async function(doc, next) {
+//   const PropertyVerified = mongoose.model('PropertyVerified');
+//   try {
+//     await PropertyVerified.create({
+//       propertyID: doc._id,
+//       status: 'pending'
+//     });
+//     next();
+//   } catch (error) {
+//     next(error);
+//   }
+// });
 
 module.exports = mongoose.model('Property', propertySchema);

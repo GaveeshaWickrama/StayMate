@@ -1,4 +1,5 @@
 const Property = require("../models/propertyModel");
+const PropertyVerified = require("../models/propertyverifiedModel");
 const path = require("path");
 
 async function createProperty(req, res) {
@@ -7,7 +8,6 @@ async function createProperty(req, res) {
     console.log('User role:', req.user.role);
     console.log('Request body:', JSON.stringify(req.body, null, 2));
 
-    // Check if req.files is an object
     if (req.files && typeof req.files === 'object') {
       console.log('Request files:', Object.keys(req.files).map(key => {
         return req.files[key].map(file => ({
@@ -27,7 +27,8 @@ async function createProperty(req, res) {
       total_unique_sections, 
       sections: sectionsString, 
       location, 
-      amenities 
+      amenities,
+      additionalDetails
     } = req.body;
 
     const host_id = req.user.userId;
@@ -35,8 +36,6 @@ async function createProperty(req, res) {
     if (!host_id || !title || !description || !type || !total_unique_sections || !sectionsString || !location || !amenities) {
       return res.status(400).json({ message: 'All fields are required' });
     }
-
-    console.log('Amenities:', amenities);
 
     let sections;
     try {
@@ -64,6 +63,8 @@ async function createProperty(req, res) {
       return section;
     });
 
+    const deed = req.files.deed ? req.files.deed[0].path : null;
+
     const property = new Property({
       host_id,
       title,
@@ -77,16 +78,22 @@ async function createProperty(req, res) {
     });
 
     const newProperty = await property.save();
+
+    const propertyVerified = new PropertyVerified({
+      propertyID: newProperty._id,
+      deed,
+      additionalDetails,
+      status: 'pending'
+    });
+
+    await propertyVerified.save();
+
     res.status(201).json(newProperty);
   } catch (error) {
     console.error(error);
     res.status(500).json({ message: 'Server error' });
   }
 }
-
-
-
-
 
 async function getPropertiesByHostId(req, res) {
   const hostId = req.user.userId;
@@ -170,17 +177,18 @@ async function getAllProperties(req, res) {
   console.log('Longitude:', longitude);
   console.log('Radius:', radius);
 
-  let query = {};
+  let query = {
+    visibility: 'visible',
+    status: 'verified'
+  };
 
   if (latitude && longitude && radius && !isNaN(latitude) && !isNaN(longitude) && !isNaN(radius)) {
-    query = {
-      'location.coordinates': {
-        $geoWithin: {
-          $centerSphere: [
-            [parseFloat(longitude), parseFloat(latitude)],
-            parseFloat(radius) / 3963.2 // Radius in radians, assuming radius in miles
-          ]
-        }
+    query['location.coordinates'] = {
+      $geoWithin: {
+        $centerSphere: [
+          [parseFloat(longitude), parseFloat(latitude)],
+          parseFloat(radius) / 3963.2 // Radius in radians, assuming radius in miles
+        ]
       }
     };
   }

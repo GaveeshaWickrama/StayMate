@@ -58,12 +58,15 @@ const PaymentDetails = () => {
       );
     });
     setFilteredPayments(filtered);
+    updateTotals(filtered);
+  };
 
+  const updateTotals = (filtered) => {
     let totalRev = 0;
     let totalToHosts = 0;
 
     filtered.forEach((payment) => {
-      totalRev += payment.serviceFee;
+      totalRev += payment.totalAmount;
       totalToHosts += payment.amountToHost;
     });
 
@@ -96,7 +99,10 @@ const PaymentDetails = () => {
       <div className="mb-6">
         <DateFilterForm
           onDateFilterChange={handleFilter}
-          onClear={() => setFilteredPayments(payments)}
+          onClear={() => {
+            setFilteredPayments(payments);
+            updateTotals(payments);
+          }}
         />
       </div>
 
@@ -212,6 +218,7 @@ const PaymentDetails = () => {
             </p>
           </div>
         </div>
+
         <div className="bg-white shadow rounded-lg p-4 flex items-center">
           <div className="flex-shrink-0 bg-blue-100 p-3 rounded-full">
             <FaUserTie className="text-blue-500" size={24} />
