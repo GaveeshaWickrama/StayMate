@@ -6,6 +6,7 @@ import { StoreProvider } from "./context/StoreContext.jsx";
 import "./index.css"; // Import Tailwind CSS
 import App from "./App.jsx";
 import { ModeratorContextProvider } from "./context/ModeratorContext.jsx";
+import { SocketContextProvider } from "./context/SocketContext.jsx";
 
 ReactDOM.createRoot(document.getElementById("root")).render(
   <React.StrictMode>
@@ -13,7 +14,9 @@ ReactDOM.createRoot(document.getElementById("root")).render(
       <AuthProvider>
         <StoreProvider>
           <ModeratorContextProvider>
-            <App />
+            <SocketContextProvider>
+              <App />
+            </SocketContextProvider>
           </ModeratorContextProvider>           
         </StoreProvider>
       </AuthProvider>
