@@ -65,12 +65,46 @@ const staticLocationData = [
   { name: "Kalutara", value: 189 },
 ];
 
+const propertyTypesData = {
+  Kandy: [
+    { type: "Hotel", count: 150 },
+    { type: "Apartment", count: 100 },
+    { type: "Villa", count: 150 },
+  ],
+  Colombo: [
+    { type: "Hotel", count: 200 },
+    { type: "Apartment", count: 50 },
+    { type: "Villa", count: 50 },
+  ],
+  Ella: [
+    { type: "Hotel", count: 100 },
+    { type: "Apartment", count: 100 },
+    { type: "Villa", count: 100 },
+  ],
+  Matara: [
+    { type: "Hotel", count: 80 },
+    { type: "Apartment", count: 60 },
+    { type: "Villa", count: 60 },
+  ],
+  Galle: [
+    { type: "Hotel", count: 100 },
+    { type: "Apartment", count: 78 },
+    { type: "Villa", count: 100 },
+  ],
+  Kalutara: [
+    { type: "Hotel", count: 89 },
+    { type: "Apartment", count: 50 },
+    { type: "Villa", count: 50 },
+  ],
+};
+
 function Report() {
   const { token } = useAuth();
   const [totalRevenue, setTotalRevenue] = useState(0);
   const [totalPayoutToHosts, setTotalPayoutToHosts] = useState(0);
   const [reportData, setReportData] = useState([]);
   const [selectedTab, setSelectedTab] = useState("monthly");
+  const [selectedLocation, setSelectedLocation] = useState(null);
 
   useEffect(() => {
     const fetchPayments = async () => {
@@ -258,6 +292,7 @@ function Report() {
                 outerRadius={150}
                 fill="#8884d8"
                 label
+                onClick={(data) => setSelectedLocation(data.name)}
               >
                 {staticLocationData.map((entry, index) => (
                   <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
@@ -274,6 +309,29 @@ function Report() {
           </button>
         </div>
       </div>
+
+      {selectedLocation && (
+        <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50">
+          <div className="bg-white p-8 rounded-lg shadow-md">
+            <h4 className="text-2xl font-semibold mb-4 text-center">
+              Property Types in {selectedLocation}
+            </h4>
+            <ul>
+              {propertyTypesData[selectedLocation].map((property) => (
+                <li key={property.type} className="text-lg mb-2">
+                  {property.type}: {property.count}
+                </li>
+              ))}
+            </ul>
+            <button
+              className="mt-4 px-4 py-2 bg-red-500 text-white rounded transition duration-200 ease-in-out"
+              onClick={() => setSelectedLocation(null)}
+            >
+              Close
+            </button>
+          </div>
+        </div>
+      )}
     </main>
   );
 }
