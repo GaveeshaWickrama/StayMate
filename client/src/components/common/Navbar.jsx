@@ -148,8 +148,8 @@ function Navbar({ isVisible }) {
     // { path: "/technician/dashboard", label: "Home" },
     { path: "/technician/dashboard", label: "Dashboard" },
     // { path: "/technician/MyProfile", label: "My Profile" },
-    { path: "/technician/requests/pending-tasks", label: "Pending Tasks" },
-    { path: "/technician/requests/active-tasks", label: "Active Tasks" },
+    // { path: "/technician/requests/pending-tasks", label: "Pending Tasks" },
+    // { path: "/technician/requests/active-tasks", label: "Active Tasks" },
     { path: "/technician/tasks", label: "Tasks" },
     { path: "/host/viewReviews", label: "Reviews" },
   ];
