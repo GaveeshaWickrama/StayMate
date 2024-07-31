@@ -11,6 +11,7 @@ const PopupForm = ({
   hostID,
 }) => {
   const [additionalInfo, setAdditionalInfo] = useState("");
+  const [deadline, setDeadline] = useState("");
 
   const navigate = useNavigate();
 
@@ -20,7 +21,8 @@ const PopupForm = ({
     complaintId,
     technicianID,
     hostID,
-    additionalInfo
+    additionalInfo,
+    deadline
   ) => {
     try {
       console.log(`Complaint ID: ${complaintId}`);
@@ -32,7 +34,7 @@ const PopupForm = ({
         `${
           import.meta.env.VITE_API_URL
         }/complaints/assign-complaint/${technicianID}`,
-        { additionalInfo }, // Include the additional info in the request body
+        { additionalInfo, deadline }, // Include the additional info in the request body
 
         { params: { complaintId, hostID } }
       );
@@ -46,7 +48,13 @@ const PopupForm = ({
 
   const handleSave = async (e) => {
     e.preventDefault();
-    await sendRequest(complaintId, technicianID, hostID, additionalInfo);
+    await sendRequest(
+      complaintId,
+      technicianID,
+      hostID,
+      additionalInfo,
+      deadline
+    );
     handleClose();
     navigate("/host/manage-complaints");
   };
@@ -68,7 +76,6 @@ const PopupForm = ({
             <label className="block text-lg font-medium text-gray-700 py-5">
               Additional Information
             </label>
-
             <textarea
               className="focus:outline-none mt-1 block w-full p-2 border border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500"
               rows="4"
@@ -76,15 +83,23 @@ const PopupForm = ({
               value={additionalInfo}
               onChange={(e) => setAdditionalInfo(e.target.value)}
             ></textarea>
-
             <label className="block text-lg font-medium text-gray-700 py-5">
-Deadline            </label>
-<p className="text-sm">Please enter a deadline</p>
+              Deadline{" "}
+            </label>
+            <p className="text-sm">Please enter a deadline</p>
+
             <input
-              type="text"
+              type="date"
               className="rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500"
               placeholder="20224-08-12"
+              value={deadline}
+              onChange={(e) => setDeadline(e.target.value)}
             />
+            {deadline && (
+              <div className="mt-2">
+                <p>Selected Deadline: {deadline}</p>
+              </div>
+            )}
           </div>
           <div className="flex justify-end">
             <button

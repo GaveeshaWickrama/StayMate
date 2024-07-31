@@ -20,27 +20,42 @@ export default function PendingTaskDetails({complaint}) {
     navigate("/host/manage-complaints");
   };
 
-  
+  console.log(complaint.status);
 
   return (
     <div className="bg-gray-100 mx-auto py-2 px-8">
+
+  
       
 
-      <div>
-<button  className='bg-blue-600 text-white p-4 rounded font-bold w-50 my-10'>Reject</button>
-<button  className='bg-green-600 text-white p-4 rounded font-bold w-50 my-10 m-4' 
-          onClick={() => setShowModal(true)}
->
-Accept and estimate budget</button>
 
-<PopupForm
-          isOpen={showModal}
-          handleClose={() => setShowModal(false)}
-          handleSave={handleSave}
-        />
-</div>
+      {complaint.estimatedBudget === null ? (
+     <div> 
+           {/* status = pending technician approval */}
 
+     <button className="bg-red-600 text-white p-4 rounded font-bold w-50 my-10">
+       Reject
+     </button>
+     <button
+       className="bg-blue-600 text-white p-4 rounded font-bold w-50 my-10 m-4"
+       onClick={() => setShowModal(true)}
+     >
+       Accept and estimate budget
+     </button>
 
+     <PopupForm
+       isOpen={showModal}
+       handleClose={() => setShowModal(false)}
+       handleSave={handleSave}
+     />
+   </div>
+  ) : (
+    <div>
+       {/* status = pending host confirmation */}
+    <div className='bg-blue-100 p-5 m-3'>Awaiting host confirmation, You estimated a budget of $ {complaint.estimatedBudget}</div>
+  </div>
+
+  )}
     </div>
   );
 }

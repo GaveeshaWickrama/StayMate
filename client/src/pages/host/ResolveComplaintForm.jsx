@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import { useParams, useLocation, useNavigate, Link } from 'react-router-dom';
 
-const PopupForm = ({ isOpen, handleClose , complaintId, hostID }) => {
+const PopupForm = ({ isOpen, handleClose , complaintId }) => {
   if (!isOpen) return null;
 
 

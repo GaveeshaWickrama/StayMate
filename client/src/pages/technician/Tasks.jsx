@@ -199,7 +199,7 @@ const TableComponent = ({ data }) => {
               <th>Issue Reported</th>
               <th>Remarks by the host</th>
 
-              <th>Property Address</th>
+              <th>Property </th>
               <th>Days Remaining</th>
               <th>Host Name</th>
               <th>Status</th>
@@ -272,13 +272,13 @@ const TableComponent = ({ data }) => {
                       </td>
                       <td>
                         <button
-                          className="bg-red-500 w-15 h-15 rounded-xl text-white text-xs p-2"
+                          className="bg-green-500 w-15 h-15 rounded-xl text-white text-xs p-2"
                           onClick={() =>
                             handleStatusChange(item.id, "in-progress")
                           }
                         >
                           {" "}
-                          <span className="">Terminate</span>
+                          <span className="">Mark As Completed</span>
                         </button>
                       </td>
                     </tr>

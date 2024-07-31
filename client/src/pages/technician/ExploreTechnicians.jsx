@@ -40,7 +40,7 @@ const UserTile = ({ user, index, complaintId })  => (
 <div className="flex items-center space-x-4">
   {/* <img src={user.avatar} alt={user.name} className="w-12 h-12 rounded-full" /> */}
   
-  <img src={`  ${import.meta.env.VITE_API_URL}/uploads/profilePictures/test`} alt="" className="w-7 h-7 rounded-full bg-blue-500 p-1 self-center" />
+  <img src={`  ${import.meta.env.VITE_API_URL}/uploads/profilePictures/test`} alt="" className="w-7 h-7 rounded-full bg-blue-500  self-center" />
   {/* <img src={`../../assets/${user.userDetails.picture}`} alt="" className="w-7 h-7 rounded-full bg-blue-500 p-1 self-center" /> */}
 
   <div>

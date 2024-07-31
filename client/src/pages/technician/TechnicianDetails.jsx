@@ -150,6 +150,10 @@ function TechnicianDetails() {
         </div>
       </div>
 
+    
+
+
+      <div className="flex flex-row">
       <button
         className="bg-blue-600 text-white p-4 rounded font-bold w-50 my-10 m-4"
         onClick={() => setShowModal(true)}
@@ -157,12 +161,13 @@ function TechnicianDetails() {
         Send Request
       </button>
       <button
-        className="bg-green-600 text-white p-4 rounded font-bold w-50 my-10 m-4 items-center "
+        className="bg-green-600 text-white p-4 rounded font-bold w-50 my-10 m-4 items-center flex flex-row gap-3 "
         onClick={() => setShowModal(true)}
       >
         <FaRegEnvelope />
         Message
       </button>
+      </div>
 
       <PopupForm
         isOpen={showModal}
