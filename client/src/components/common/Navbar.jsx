@@ -16,7 +16,9 @@ import {
 } from "react-icons/md";
 import { CiCircleList } from "react-icons/ci";
 import { MdReportProblem } from "react-icons/md";
-
+import { MdOutlineTaskAlt } from "react-icons/md";
+import { FaTasks } from "react-icons/fa";
+import { GrTasks } from "react-icons/gr";
 
 const iconMap = {
   Home: "home",
@@ -46,6 +48,9 @@ const iconMap = {
   "My Listings": <CiCircleList />,
   "Complaints": <MdReportProblem />,
   "Manage Users": <MdGroup />,
+  "Active Tasks":<MdOutlineTaskAlt/>,
+  "Pending Tasks":<FaTasks/>,
+  "Tasks":<GrTasks/>,
   
   
   
@@ -143,8 +148,8 @@ function Navbar({ isVisible }) {
     // { path: "/technician/dashboard", label: "Home" },
     { path: "/technician/dashboard", label: "Dashboard" },
     // { path: "/technician/MyProfile", label: "My Profile" },
-    { path: "/technician/requests/pending-tasks", label: "Pending Tasks" },
-    { path: "/technician/requests/active-tasks", label: "Active Tasks" },
+    // { path: "/technician/requests/pending-tasks", label: "Pending Tasks" },
+    // { path: "/technician/requests/active-tasks", label: "Active Tasks" },
     { path: "/technician/tasks", label: "Tasks" },
     { path: "/host/viewReviews", label: "Reviews" },
   ];

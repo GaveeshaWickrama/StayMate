@@ -159,8 +159,9 @@ function NewPropertySeemore() {
           </div>
           <div className="flex-grow px-4 border-l border-r border-gray-300">
             <h2 className="text-xl font-bold mb-2 text-center">Things to Know</h2>
-            <p className="text-lg flex items-center">< RiAppsLine style={{ color: '#2563eb' }} className="mr-2" /> Be aware of neighbour's dogs.</p>
-            <p className="text-lg flex items-center">< RiAppsLine style={{ color: '#2563eb' }} className="mr-2" /> The road shows in google maps .</p>
+            {/* <p className="text-lg flex items-center">< RiAppsLine style={{ color: '#2563eb' }} className="mr-2" /> Be aware of neighbour's dogs.</p> */}
+            {/* <p className="text-lg flex items-center">< RiAppsLine style={{ color: '#2563eb' }} className="mr-2" /> The road shows in google maps .</p> */}
+            <p className="text-lg flex items-center">Nothing</p>
           </div>
           <div className="flex-grow pl-4">
             <h2 className="text-xl font-bold mb-2 text-center">Description</h2>
