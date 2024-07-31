@@ -16,7 +16,9 @@ import {
 } from "react-icons/md";
 import { CiCircleList } from "react-icons/ci";
 import { MdReportProblem } from "react-icons/md";
-
+import { MdOutlineTaskAlt } from "react-icons/md";
+import { FaTasks } from "react-icons/fa";
+import { GrTasks } from "react-icons/gr";
 
 const iconMap = {
   Home: "home",
@@ -46,6 +48,9 @@ const iconMap = {
   "My Listings": <CiCircleList />,
   "Complaints": <MdReportProblem />,
   "Manage Users": <MdGroup />,
+  "Active Tasks":<MdOutlineTaskAlt/>,
+  "Pending Tasks":<FaTasks/>,
+  "Tasks":<GrTasks/>,
   
   
   
