@@ -1,12 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { useLocation } from "react-router-dom";
 import { useStore } from "../../context/StoreContext";
-import {
-  FaCalendarCheck,
-  FaCalendarAlt,
-  FaUsers,
-  FaMoneyBillWave,
-} from "react-icons/fa";
+import { FaCalendarAlt, FaUsers, FaMoneyBillWave } from "react-icons/fa";
 
 const TripDetails = () => {
   const { state } = useLocation();
@@ -83,74 +78,68 @@ const TripDetails = () => {
 
   return (
     <div className="container mx-auto p-10">
-      <div className="flex mb-6 border-b-4 border-blue-600 p-6 rounded-md shadow-sm bg-white">
-        <h1 className="flex items-center text-4xl font-extrabold text-black-600">
-          <FaCalendarCheck className="mr-4" />
+      <div className="flex flex-col items-center mb-6 border-b-4 border-blue-600 p-6 rounded-md shadow-sm bg-white">
+        <h1 className="text-4xl font-extrabold text-black-600 text-center">
           Confirm Your Trip
         </h1>
       </div>
 
-      {/* Combined Card Layout */}
-      <div className="flex flex-col md:flex-row gap-6">
-        {/* Combined Trip Details and Property Images Card */}
-        <div className="bg-white p-6 rounded-lg shadow-md flex-1">
-          <div className="flex flex-col md:flex-row gap-6">
-            {/* Trip Details Section */}
-            <div className="flex-1">
-              <h2 className="text-2xl font-bold mb-4">Trip Details</h2>
-              <p className="text-gray-700 mb-2 flex items-center">
-                <FaCalendarAlt className="mr-2" />
-                <strong>Check-In:</strong> {checkInDate}
-              </p>
-              <p className="text-gray-700 mb-2 flex items-center">
-                <FaCalendarAlt className="mr-2" />
-                <strong>Check-Out:</strong> {checkOutDate}
-              </p>
-              <p className="text-gray-700 mb-2 flex items-center">
-                <FaUsers className="mr-2" />
-                <strong>Guests:</strong> {noOfGuests}
-              </p>
-            </div>
+      {/* Layout with two cards side by side */}
+      <div className="flex flex-col md:flex-row items-start gap-6">
+        {/* Trip Details and Property Images Card */}
+        <div className="bg-white p-6 rounded-lg shadow-md w-full md:w-2/3">
+          <h2 className="text-2xl font-bold mb-4">Trip Details</h2>
 
-            {/* Property Images Section */}
-            <div className="flex-1">
-              <h2 className="text-2xl font-bold mb-4">{property.title}</h2>
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                {displayedImages.map((image, index) => {
-                  const imageUrl = `${import.meta.env.VITE_API_URL}/${
-                    image.url
-                  }`;
-                  return (
-                    <div key={image._id} className="relative">
-                      <img
-                        src={imageUrl}
-                        alt={`Property Image ${index + 1}`}
-                        className="w-full h-64 object-cover rounded-lg"
-                        onError={(e) => {
-                          e.target.onerror = null;
-                          e.target.src = "https://via.placeholder.com/600x400";
-                        }}
-                      />
-                    </div>
-                  );
-                })}
-              </div>
-            </div>
+          <p className="text-gray-700 mb-2 flex justify-center md:justify-start items-center">
+            <FaCalendarAlt className="mr-2" />
+            <strong>Check-In:</strong> {checkInDate}
+          </p>
+          <p className="text-gray-700 mb-2 flex justify-center md:justify-start items-center">
+            <FaCalendarAlt className="mr-2" />
+            <strong>Check-Out:</strong> {checkOutDate}
+          </p>
+          <p className="text-gray-700 mb-2 flex justify-center md:justify-start items-center">
+            <FaUsers className="mr-2" />
+            <strong>Guests:</strong> {noOfGuests}
+          </p>
+
+          <p className="text-gray-700 mb-2 flex justify-center md:justify-start items-center text-lg">
+            <span className="font-bold">{property.title}</span>
+          </p>
+
+          {/* Property Images Section */}
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-4">
+            {displayedImages.map((image, index) => {
+              const imageUrl = `${import.meta.env.VITE_API_URL}/${image.url}`;
+              return (
+                <div key={image._id} className="relative">
+                  <img
+                    src={imageUrl}
+                    alt={`Property Image ${index + 1}`}
+                    className="w-full h-32 md:h-48 object-cover rounded-lg"
+                    onError={(e) => {
+                      e.target.onerror = null;
+                      e.target.src = "https://via.placeholder.com/600x400";
+                    }}
+                  />
+                </div>
+              );
+            })}
           </div>
         </div>
 
-        {/* Total to Pay Card */}
-        <div className="bg-white p-6 rounded-lg shadow-md w-full md:w-1/3 flex flex-col items-center">
-          <h2 className="text-2xl font-bold mb-4 flex items-center">
+        {/* Total Price and Pay Now Button Card */}
+        <div className="bg-white p-6 rounded-lg shadow-md w-full md:w-1/3 flex flex-col items-center mt-[100px]">
+          <h2 className="text-2xl font-bold mb-4 flex items-center mt-[30px]">
             <FaMoneyBillWave className="mr-2 text-green-600" />
-            Total to Pay
+            Total Price
           </h2>
-          <p className="text-gray-700 mb-4 text-3xl font-bold mt-[100px]">
+          <p className="text-gray-700 mb-4 text-3xl font-bold">
             {formatPrice(totalPrice)}
           </p>
           <button
             onClick={handleConfirmBooking}
-            className="bg-green-500 text-white py-2 px-4 rounded-lg hover:bg-green-600 w-full mt-[30px]"
+            className="bg-green-500 text-white py-2 px-4 rounded-lg hover:bg-green-600 w-full mt-[20px]"
           >
             Pay Now
           </button>
