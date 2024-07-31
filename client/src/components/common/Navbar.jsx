@@ -41,7 +41,7 @@ function Sidebar({ title, links, logout, isVisible }) {
     <nav
       className={`sidebar ${
         isVisible ? "visible" : ""
-      } h-full w-64 fixed top-20 left-0 bg-gradient-to-r from-blue-500 to-purple-600 z-2 text-white flex flex-col p-4`}
+      } h-full w-64 fixed top-20 left-0 bg-gray-800 z-2 text-white flex flex-col p-4`}
     >
       <h1 className="text-2xl font-bold mb-6">{title}</h1>
       <IconContext.Provider value={{ className: "inline-block mr-2" }}>
@@ -109,22 +109,22 @@ function Navbar({ isVisible }) {
 
   const hostLinks = [
     { path: "/", label: "Home" },
-    { path: "/host", label: "Host Dashboard" },
-    { path: "/host/listings", label: "Your Listings" },
+    { path: "/host", label: "Dashboard" },
+    { path: "/host/listings", label: "My Listings" },
     { path: "/host/add-property", label: "New Listing" },
     { path: "/host/reservations", label: "Reservations" },
-    { path: "/host/property-details", label: "Test" },
+    // { path: "/host/property-details", label: "Test" },
     { path: "/host/view-complaints", label: "Complaints" },
     { path: "/host/manage-complaints", label: "Complaints" },
-    { path: "/host/view-technicians", label: "Technicians" },
+    // { path: "/host/view-technicians", label: "Technicians" },
     { path: "/host/HostReviews", label: "Reviews" },
     { path: "/host/chat", label: "Chat" },
   ];
 
   const technicianLinks = [
-    { path: "/technician/dashboard", label: "Home" },
+    // { path: "/technician/dashboard", label: "Home" },
     { path: "/technician/dashboard", label: "Dashboard" },
-    { path: "/technician/MyProfile", label: "My Profile" },
+    // { path: "/technician/MyProfile", label: "My Profile" },
     { path: "/technician/requests/pending-tasks", label: "Pending Tasks" },
     { path: "/technician/requests/active-tasks", label: "Active Tasks" },
     { path: "/technician/tasks", label: "Tasks" },
