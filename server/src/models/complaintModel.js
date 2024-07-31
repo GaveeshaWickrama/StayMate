@@ -22,6 +22,11 @@ const complaintSchema = new mongoose.Schema({
     required:false
 
   },
+  deadline:{
+    type:Date,
+    required:false
+
+  },
 
   technician:{
     type: mongoose.Schema.Types.ObjectId,
@@ -50,7 +55,7 @@ const complaintSchema = new mongoose.Schema({
   images : [{ type : String }],
   status: {
     type: String,
-    enum: ['pendingHostDecision', 'pendingTechnicianApproval','active','technicianCompleted', 'jobCompleted'],
+    enum: ['pendingHostDecision', 'pendingTechnicianApproval','active','technicianCompleted', 'jobCompleted', 'hostCompleted'],
     default: 'pendingHostDecision',
   },
   timestamp: {

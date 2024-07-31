@@ -30,7 +30,9 @@ const TableComponent = ({ data }) => {
         (filters.category ? item.category.includes(filters.category) : true) &&
         (filters.timestamp ? item.date.includes(filters.timestamp) : true) &&
         (filters.status ? item.status.includes(filters.status) : true) &&
-        (search ? Object.values(item).some(val => val.includes(search)) : true)
+        (search ? Object.values(item).some(val => 
+          typeof val === 'string' && val.includes(search)
+        ) : true)
       );
   
     //   if (sortCategory) {
@@ -224,7 +226,7 @@ const TableComponent = ({ data }) => {
         )}
                 </td>
                 <td>
-                <button className="bg-red-500 w-15 h-15 rounded-xl text-white text-xs p-2"onClick={() => handleStatusChange(item.id, 'in-progress')}> <span className=''>Terminate</span></button> 
+                <button className="bg-green-500 w-15 h-15 rounded-xl text-white text-xs p-2"onClick={() => handleStatusChange(item.id, 'in-progress')}> <span className=''>Mark as Resolved</span></button> 
 
                 </td>
               </tr>
