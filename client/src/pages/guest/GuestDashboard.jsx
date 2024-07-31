@@ -141,8 +141,10 @@ function GuestDashboard() {
                     {upcomingReservations[currentIndex].noOfGuests}
                   </p>
                   <p className="text-gray-700">
-                    <strong>Total Price:</strong> $
-                    {upcomingReservations[currentIndex].totalPrice.toFixed(2)}
+                    <strong>Total Price:</strong> Rs{" "}
+                    {upcomingReservations[
+                      currentIndex
+                    ].totalPrice.toLocaleString("en-IN")}
                   </p>
                 </div>
                 <button
