@@ -12,10 +12,12 @@ import {
   MdAccountCircle,
   MdBuild,
 } from "react-icons/md";
+import { CiCircleList } from "react-icons/ci";
+import { MdReportProblem } from "react-icons/md";
 
 const iconMap = {
   Home: "home",
-  "Admin Dashboard": <MdDashboard />,
+  "Dashboard": <MdDashboard />,
   "Manage Moderators": <MdAccountCircle />,
   "User Page": "account_circle",
   "My Profile": "account_circle",
@@ -34,6 +36,11 @@ const iconMap = {
   Payments: <FaCreditCard />,
   Report: <MdReport />,
   Technicians: <MdBuild />,
+  "My Listings": <CiCircleList />,
+  "Complaints": <MdReportProblem />,
+  
+  
+  
 };
 
 function Sidebar({ title, links, logout, isVisible }) {
@@ -80,7 +87,7 @@ function Navbar({ isVisible }) {
 
   const adminLinks = [
     { path: "/", label: "Home" },
-    { path: "/admin/AdminDashboard", label: "Admin Dashboard" },
+    { path: "/admin/AdminDashboard", label: "Dashboard" },
     // { path: "/admin/MyProfile", label: "My Profile" },
     { path: "/admin/Moderator", label: "Moderators" },
     { path: "/admin/report", label: "Report" },
@@ -113,10 +120,10 @@ function Navbar({ isVisible }) {
     { path: "/host/listings", label: "My Listings" },
     { path: "/host/add-property", label: "New Listing" },
     { path: "/host/reservations", label: "Reservations" },
-    // { path: "/host/property-details", label: "Test" },
-    { path: "/host/view-complaints", label: "Complaints" },
+    //  { path: "/host/property-details", label: "Test" },
+    // { path: "/host/view-complaints", label: "Complaints" },
     { path: "/host/manage-complaints", label: "Complaints" },
-    // { path: "/host/view-technicians", label: "Technicians" },
+    { path: "/host/view-technicians", label: "Technicians" },
     { path: "/host/HostReviews", label: "Reviews" },
     { path: "/host/chat", label: "Chat" },
   ];
