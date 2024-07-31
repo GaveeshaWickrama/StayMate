@@ -41,7 +41,7 @@ function Sidebar({ title, links, logout, isVisible }) {
     <nav
       className={`sidebar ${
         isVisible ? "visible" : ""
-      } h-full w-64 fixed top-20 left-0 bg-gradient-to-r from-blue-500 to-purple-600 z-2 text-white flex flex-col p-4`}
+      } h-full w-64 fixed top-20 left-0 bg-gray-800 z-2 text-white flex flex-col p-4`}
     >
       <h1 className="text-2xl font-bold mb-6">{title}</h1>
       <IconContext.Provider value={{ className: "inline-block mr-2" }}>

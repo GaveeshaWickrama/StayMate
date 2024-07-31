@@ -25,7 +25,9 @@ const PendingPropertyCard = ({ property }) => {
   });
 
   return (
-    <div style={{ width: '300px' }} className="rounded overflow-hidden shadow-lg bg-white no-underline text-black m-4 transition-transform transform hover:scale-105 hover:border">
+    // <div style={{ width: '300px' }} className="rounded overflow-hidden shadow-lg bg-white no-underline text-black m-4 transition-transform transform hover:scale-105 hover:border">
+    <div style={{ width: '100%' }} className="rounded overflow-hidden shadow-lg bg-white no-underline text-black m-4 transition-transform transform hover:scale-105 hover:border">
+
       <div className="relative">
         <img className="w-full h-48 object-cover" src={imageUrl} alt={property.title || 'Property Image'} />
       </div>
@@ -50,10 +52,10 @@ const PendingPropertyCard = ({ property }) => {
         </div>
       </div>
    
-      <div className="px-4 py-2 flex justify-between items-center border-t">
+      <div className="px-4 py-2 flex justify-center border-t">
         
-        <span className="text-xl font-bold mb-2">{property.location?.district || 'No District'},</span>
-        <span className="text-xl font-bold mb-2">{property.location?.province || 'No Province'} </span>
+        <span className="text-xl font-bold mb-2">{property.location?.district || 'No District'},{property.location?.province || 'No Province'} </span>
+        {/* <span className="text-xl font-bold mb-2">{property.location?.province || 'No Province'} </span> */}
       </div>
       <div className="px-4 py-2 flex justify-center">
         <Link
