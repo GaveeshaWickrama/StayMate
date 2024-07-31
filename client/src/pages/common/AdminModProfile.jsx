@@ -4,8 +4,31 @@ import axios from 'axios';
 import { useAuth } from '../../context/auth';
 import { FaEdit } from 'react-icons/fa';
 import defaultProfilePic from '../../assets/profile2.png';
+import useCreateOrSelectConversation from '../../hooks/useCreateOrSelectConversation';
+import { toast } from 'react-toastify';
+import { useNavigate } from 'react-router-dom';
 
 const ProfilePage = ({ profile, currentUser, id }) => {
+
+  const navigate = useNavigate();
+  const { createOrSelectConversation } = useCreateOrSelectConversation();
+  const [isLoading, setIsLoading] = useState(false);
+
+  const handleMessage = async () => {
+    if (currentUser) {
+      setIsLoading(true);
+      try {
+        await createOrSelectConversation(id);
+        navigate(`/moderator/chat`);
+      } catch (error) {
+        toast.error('Failed to create or select conversation.');
+      } finally {
+        setIsLoading(false);
+      }
+    } else {
+      toast.error('User is not logged in');
+    }
+  };
 
   const capitalizeFirstLetter = (string) => {
     return string.charAt(0).toUpperCase() + string.slice(1);
@@ -32,7 +55,12 @@ const ProfilePage = ({ profile, currentUser, id }) => {
             <p className="text-gray-600 mb-2">{profile.email}</p>
             <div className="flex space-x-4 mb-6">
               {currentUser && id !== currentUser.id && (
-                <button className="bg-gray-200 text-gray-700 py-2 px-6 rounded-full shadow-lg hover:bg-gray-300 transition transform hover:-translate-y-1">Message</button>
+                <button className="bg-gray-200 text-gray-700 py-2 px-6 rounded-full shadow-lg hover:bg-gray-300 transition transform hover:-translate-y-1"
+                  onClick={handleMessage}
+                  disabled={isLoading}
+                >  
+                  <span>{isLoading ? <span className='loading loading-spinner mx-auto'></span> : 'Message'}</span>
+                  </button>
               )}
               {currentUser && id === currentUser.id && (
                 <button className="bg-blue-500 text-white py-2 px-6 rounded-full shadow-lg hover:bg-blue-600 transition transform hover:-translate-y-1">Edit Profile</button>

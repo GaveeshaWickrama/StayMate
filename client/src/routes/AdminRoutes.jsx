@@ -14,10 +14,10 @@ import Tenants from "../pages/admin/Tenants";
 import Technicians from "../pages/admin/Technicians";
 import ReservationDetails from "../pages/admin/ReservationDetails";
 import PaymentDetails from "../components/admin/PaymentDetails";
+import ManageUsers from "../pages/admin/ManageUsers";
 
 function AdminRoutes() {
   const { currentUser, loading } = useAuth();
-  // console.log(currentUser);
 
   if (loading) {
     return <div>Loading...</div>; // Show a loading spinner or message
@@ -146,6 +146,18 @@ function AdminRoutes() {
           )
         }
       />
+
+<Route
+        path="/Users"
+        element={
+          currentUser && currentUser.role === "admin" ? (
+            <ManageUsers />
+          ) : (
+            <Navigate to="/Unauthorized" />
+          )
+        }
+      />
+
       <Route
         path="/Tenants"
         element={

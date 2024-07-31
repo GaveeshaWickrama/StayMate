@@ -1,17 +1,36 @@
-import React from 'react';
-import { Link, useNavigate } from 'react-router-dom';
-import { useAuth } from '../../context/auth';
-import { IconContext } from 'react-icons';
-import { RiLogoutBoxRLine } from 'react-icons/ri'; 
-import { RxDashboard } from 'react-icons/rx';
-import { BsFillHousesFill } from 'react-icons/bs';
-import { FaCreditCard } from 'react-icons/fa'; 
+import React from "react";
+import { Link, useNavigate } from "react-router-dom";
+import { useAuth } from "../../context/auth";
+import { IconContext } from "react-icons";
+import { RiLogoutBoxRLine } from "react-icons/ri";
+import { RxDashboard } from "react-icons/rx";
+import { BsFillHousesFill } from "react-icons/bs";
+import { FaCreditCard } from "react-icons/fa";
+import {
+  MdDashboard,
+  MdReport,
+  MdAccountCircle,
+  MdBuild,
+  MdGroup,
+  MdAssessment,
+} from "react-icons/md";
+import { CiCircleList } from "react-icons/ci";
+import { MdReportProblem } from "react-icons/md";
+
 
 const iconMap = {
   Home: "home",
-  "Admin Dashboard": "admin_panel_settings",
-  "Manage Moderators": "account_circle",
+  "Dashboard": <MdDashboard />,
+  "Manage Moderators": <MdAccountCircle />,
   "User Page": "account_circle",
+  "My Profile": "account_circle",
+  Moderators: "account_circle",
+  PropertyOwners: "account_circle",
+  Tenants: "account_circle",
+  "My Profile": "account_circle",
+  Moderators: "account_circle",
+  PropertyOwners: "account_circle",
+  Tenants: "account_circle",
   Reviews: "rate_review",
   Reservations: "event_available",
   "Host Dashboard": "dashboard",
@@ -19,9 +38,17 @@ const iconMap = {
   "New Listing": "add_box",
   Login: "login",
   Signup: "person_add",
-  Chat : "chat",
+  Chat: "chat",
   "View New Properties": <BsFillHousesFill />,
   Payments: <FaCreditCard />,
+  Report: <MdAssessment />,
+  Technicians: <MdBuild />,
+  "My Listings": <CiCircleList />,
+  "Complaints": <MdReportProblem />,
+  "Manage Users": <MdGroup />,
+  
+  
+  
 };
 
 function Sidebar({ title, links, logout, isVisible }) {
@@ -68,15 +95,17 @@ function Navbar({ isVisible }) {
 
   const adminLinks = [
     { path: "/", label: "Home" },
-    { path: "/admin/AdminDashboard", label: "AdminDashboard" },
-    { path: "/admin/MyProfile", label: "My Profile" },
-    { path: "/admin/Moderator", label: "Moderator" },
-    { path: "/admin/report", label: "Report" },
-    { path: "/admin/PropertyOwners", label: "PropertyOwners" },
-    { path: "/admin/Tenants", label: "Tenants" },
-    { path: "/admin/Technicians", label: "Technicians" },
+    { path: "/admin/AdminDashboard", label: "Dashboard" },
     // { path: "/admin/MyProfile", label: "My Profile" },
-    { path: "/admin/managemoderators", label: "Manage Moderators" },
+    // { path: "/admin/Moderator", label: "Moderators" },
+    { path: "/admin/report", label: "Report" },
+    //{ path: "/admin/PropertyOwners", label: "PropertyOwners" },
+    //{ path: "/admin/Tenants", label: "Tenants" },
+    //{ path: "/admin/Technicians", label: "Technicians" },
+    { path: "/admin/Users", label: "Manage Users" },
+    // { path: "/admin/MyProfile", label: "My Profile" },
+    //{ path: "/admin/managemoderators", label: "Manage Moderators" },
+    //{ path: "/admin/managemoderators", label: "Manage Moderators" },
     { path: "/admin/reservations", label: "Reservations" },
     { path: "/admin/Payments", label: "Payments" },
   ];
@@ -85,10 +114,12 @@ function Navbar({ isVisible }) {
     { path: "/", label: "Home" },
     // { path: "/moderator", label: "Moderator Dashboard" },
     { path: "/moderator/viewNewProperties", label: "View New Properties" },
+    { path: "/moderator/chat", label: "Chat" },
   ];
 
   const guestLinks = [
     { path: "/", label: "Home" },
+    { path: "/user/dashboard", label: "Dashboard" },
     { path: "/user/viewreviews", label: "Reviews" },
     { path: "/user/reservations", label: "Reservations" },
     { path: "/user/chat", label: "Chat" },
@@ -96,12 +127,12 @@ function Navbar({ isVisible }) {
 
   const hostLinks = [
     { path: "/", label: "Home" },
-    { path: "/host", label: "Host Dashboard" },
-    { path: "/host/listings", label: "Your Listings" },
+    { path: "/host", label: "Dashboard" },
+    { path: "/host/listings", label: "My Listings" },
     { path: "/host/add-property", label: "New Listing" },
     { path: "/host/reservations", label: "Reservations" },
-    { path: "/host/property-details", label: "Test" },
-    { path: "/host/view-complaints", label: "Complaints" },
+    //  { path: "/host/property-details", label: "Test" },
+    // { path: "/host/view-complaints", label: "Complaints" },
     { path: "/host/manage-complaints", label: "Complaints" },
     { path: "/host/view-technicians", label: "Technicians" },
     { path: "/host/HostReviews", label: "Reviews" },
@@ -109,9 +140,9 @@ function Navbar({ isVisible }) {
   ];
 
   const technicianLinks = [
-    { path: "/technician/dashboard", label: "Home" },
+    // { path: "/technician/dashboard", label: "Home" },
     { path: "/technician/dashboard", label: "Dashboard" },
-    { path: "/technician/MyProfile", label: "My Profile" },
+    // { path: "/technician/MyProfile", label: "My Profile" },
     { path: "/technician/requests/pending-tasks", label: "Pending Tasks" },
     { path: "/technician/requests/active-tasks", label: "Active Tasks" },
     { path: "/technician/tasks", label: "Tasks" },
@@ -120,20 +151,23 @@ function Navbar({ isVisible }) {
 
   const publicLinks = [
     { path: "/", label: "Home" },
-    { path: "/login", label: "Login" },
-    { path: "/signup/guest", label: "Signup" },
+    // { path: "/login", label: "Login" },
+    // { path: "/signup/guest", label: "Signup" },
   ];
 
   if (!currentUser) {
     return (
-      <Sidebar title="Public Nav" links={publicLinks} isVisible={isVisible} />
+      <Sidebar 
+      title="Welcome" 
+      links={publicLinks} isVisible={isVisible} />
     );
+    // return null; // Do not render the Navbar if the user is not logged in
   }
 
   if (currentUser.role === "admin") {
     return (
       <Sidebar
-        title="Admin Nav"
+        // title="Admin Nav"
         links={adminLinks}
         logout={handleLogout}
         isVisible={isVisible}
@@ -144,7 +178,7 @@ function Navbar({ isVisible }) {
   if (currentUser.role === "guest") {
     return (
       <Sidebar
-        title="User Nav"
+        // title="User Nav"
         links={guestLinks}
         logout={handleLogout}
         isVisible={isVisible}
@@ -155,7 +189,7 @@ function Navbar({ isVisible }) {
   if (currentUser.role === "host") {
     return (
       <Sidebar
-        title="Host Nav"
+        // title="Host Nav"
         links={hostLinks}
         logout={handleLogout}
         isVisible={isVisible}
@@ -166,7 +200,7 @@ function Navbar({ isVisible }) {
   if (currentUser.role === "technician") {
     return (
       <Sidebar
-        title="Technician Nav"
+        // title="Technician Nav"
         links={technicianLinks}
         logout={handleLogout}
         isVisible={isVisible}
@@ -177,7 +211,7 @@ function Navbar({ isVisible }) {
   if (currentUser.role === "moderator") {
     return (
       <Sidebar
-        title="Moderator Nav"
+        // title="Moderator Nav"
         links={moderatorLinks}
         logout={handleLogout}
         isVisible={isVisible}
