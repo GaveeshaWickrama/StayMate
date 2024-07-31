@@ -229,6 +229,10 @@ const iconMap = {
   Moderators: "account_circle",
   PropertyOwners: "account_circle",
   Tenants: "account_circle",
+  "My Profile": "account_circle",
+  Moderators: "account_circle",
+  PropertyOwners: "account_circle",
+  Tenants: "account_circle",
   Reviews: "rate_review",
   Reservations: "event_available",
   "Host Dashboard": "dashboard",
@@ -236,6 +240,7 @@ const iconMap = {
   "New Listing": "add_box",
   Login: "login",
   Signup: "person_add",
+  Chat: "chat",
   Chat: "chat",
   "View New Properties": <BsFillHousesFill />,
   Payments: <FaCreditCard />,
@@ -298,6 +303,7 @@ function Navbar({ isVisible }) {
     { path: "/admin/Users", label: "Manage Users" },
     // { path: "/admin/MyProfile", label: "My Profile" },
     //{ path: "/admin/managemoderators", label: "Manage Moderators" },
+    //{ path: "/admin/managemoderators", label: "Manage Moderators" },
     { path: "/admin/reservations", label: "Reservations" },
     { path: "/admin/Payments", label: "Payments" },
   ];
@@ -311,6 +317,7 @@ function Navbar({ isVisible }) {
 
   const guestLinks = [
     { path: "/", label: "Home" },
+    { path: "/user/dashboard", label: "Dashboard" },
     { path: "/user/viewreviews", label: "Reviews" },
     { path: "/user/reservations", label: "Reservations" },
     { path: "/user/chat", label: "Chat" },
