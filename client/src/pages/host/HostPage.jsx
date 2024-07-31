@@ -78,7 +78,7 @@ function HostPage() {
 
   return (
     <main className="p-6 min-h-screen bg-gradient-to-r from-blue-50 to-blue-100">
-      <GreetingBox name="Harry Potter" />
+      <GreetingBox name="Sachin Elvitigala" />
 
       <h3 className="text-4xl font-bold text-gray-800 mb-8">Dashboard</h3>
 
