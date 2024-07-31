@@ -1,11 +1,20 @@
-import React, { useState } from "react";
-import { useNavigate } from "react-router-dom";
+import React, { useState, useEffect } from "react";
+import PopupForm from "../ResolveComplaintForm"
+
+import {
+  Routes,
+  Route,
+  Navigate,
+  useParams,
+  useNavigate,
+} from "react-router-dom";
 import ComplaintDetails from "../ComplaintDetails";
 
 
 export default function PendingComplaintDetails({ complaint, id}) {
   const navigate = useNavigate();
 
+  const [showModal, setShowModal] = useState(false);
 
 
 
@@ -35,6 +44,18 @@ export default function PendingComplaintDetails({ complaint, id}) {
         >
           Assign to Technician
         </button>
+        <button
+          className="bg-green-600 text-white p-4 rounded font-bold w-50 my-10 m-4"
+          onClick={() => setShowModal(true)}
+
+        >
+          Assign to Technician
+        </button>
+
+        <PopupForm
+          isOpen={showModal}
+          handleClose={() => setShowModal(false)}
+        />
       </div>
     </div>
   );

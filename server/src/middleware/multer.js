@@ -1,3 +1,4 @@
+const { ifError } = require('assert');
 const multer = require('multer');
 const path = require('path');
 
@@ -16,7 +17,8 @@ const storage = multer.diskStorage({
       uploadPath = 'uploads/taskProof/';
     } else if (req.url.includes('/complaint-details')) {
       uploadPath = 'uploads/complaints/';
-    }
+    } 
+   
 
     cb(null, uploadPath);
   },

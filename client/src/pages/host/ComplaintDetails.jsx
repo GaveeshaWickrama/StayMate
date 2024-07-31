@@ -90,14 +90,7 @@ export default function ComplaintDetails(props) {
                 <p className="ml-4 badge badge-ghost">{complaint.status}</p>
               </div>
 
-              <div className="flex flex-row items-center p-2 gap-3">
-                <h2 className="text-xl font-bold">Posted On:</h2>
-
-                <p className="text-base">
-                {new Date(complaint.timestamp).toLocaleDateString()}
-
-                </p>
-              </div>
+             
               <div className="flex flex-row items-center p-2 gap-3">
                 <h2 className="text-xl font-bold">Category:</h2>
 
@@ -151,6 +144,16 @@ export default function ComplaintDetails(props) {
           </div>
 
           <div className="w-full md:w-1/3 bg-white p-4 rounded-lg shadow flex flex-col ">
+            
+          <div className="flex items-center p-6 gap-4">
+                <h2 className="text-xl font-bold">Posted On:</h2>
+
+                <p className="text-base">
+                {new Date(complaint.timestamp).toLocaleDateString()}
+
+                </p>
+              </div>
+            
             <div className="flex items-center p-6 gap-4">
               <h2 className="text-xl font-bold mb-2">Posted By</h2>
               <div className="text-xl card">
@@ -167,13 +170,14 @@ export default function ComplaintDetails(props) {
                   alt="Host"
                   className="w-25 h-25 rounded-full mb-2"
                 />
-                <h3 className="text-lg font-bold">John Doe</h3>
+                
               </div>
               <div className="flex flex-col flex-1">
-                <div className="flex items-center justify-start mb-2">
-                  {/* <FaPhone className="mr-2" size={24} /> */}
-                  <span>555-1234</span>
-                </div>
+              <h3 className="text-lg font-bold">
+                {" "}
+                {complaint.reservationId.user.firstName}{" "}
+                {complaint.reservationId.user.lastName}
+                </h3>
                 <div className="text-gray-500 mb-4">Joined on 2021-06-15</div>
                 <button
                   className="bg-blue-600 text-white p-2 rounded font-bold flex items-center"

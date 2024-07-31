@@ -199,8 +199,8 @@ const TableComponent = ({ data }) => {
               <th>Issue Reported</th>
               <th>Remarks by the host</th>
 
-              <th>Property</th>
-              <th>Date Reported</th>
+              <th>Property Address</th>
+              <th>Days Remaining</th>
               <th>Host Name</th>
               <th>Status</th>
               <th>Action</th>
@@ -229,18 +229,20 @@ const TableComponent = ({ data }) => {
                     >
                       <td>{item.category}</td>
                       <td>{item.description}</td>
-                      {/* <td>{item.reservationId.user.firstName} {item.reservationId.user.lastName} </td> */}
 
-                      <td>{item.reservationId.property.title}</td>
-                      <td>{formattedDate}</td>
-                      <td className="text-center">
-                        {item.technician ? item.technician.firstName : "N/A"}
-                      </td>
+                      <td>{item.assignTaskComments}</td>
+                      <td>{item.reservationId.property.address} {item.reservationId.property.title} </td>
+
+                      {/* <td>{formattedDate}</td> */}
+                      <td>3</td>
+                      <td>
+                      {item.reservationId.property.host_id.firstName}</td>
+                     
                       <td>
                         {item.status === "jobCompleted" && (
                           <button>
                             {" "}
-                            <span className="badge badge-ghost badge-sm ">
+                            <span className="badge badge-ghost bg-red-100 badge-sm ">
                               Completed
                             </span>
                           </button>
@@ -248,13 +250,13 @@ const TableComponent = ({ data }) => {
                         {item.status === "pendingTechnicianApproval" && (
                           <button className="">
                             {" "}
-                            <span className="badge badge-ghost badge-sm whitespace-nowrap">
+                            <span className="badge badge-ghost bg-red-100 badge-sm whitespace-nowrap">
                               Pending Technician Approval
                             </span>
                           </button>
                         )}
                         {item.status === "active" && (
-                          <span className="badge badge-ghost badge-sm">
+                          <span className="badge badge-ghost bg-red-100 badge-sm">
                             active
                           </span>
                         )}
@@ -262,7 +264,7 @@ const TableComponent = ({ data }) => {
                         {item.status === "pendingHostDecision" && (
                           <button className="">
                             {" "}
-                            <span className="badge badge-ghost badge-sm whitespace-nowrap">
+                            <span className="badge badge-ghost badge-sm bg-red-100 whitespace-nowrap">
                               Pending Host Decision
                             </span>
                           </button>

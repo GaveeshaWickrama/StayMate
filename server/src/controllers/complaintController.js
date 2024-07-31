@@ -389,11 +389,25 @@ const getAllJobsByTechnicianId = async (req, res) => {
           "jobCompleted",
         ],
       },
-    }).populate({path:"technician",
-      populate: {
-        path: 'userId',  // This is the field inside the technician document
-      }
-    });
+    })
+      .populate({
+        path: "technician",
+        populate: {
+          path: "userId", // This is the field inside the technician document
+        },
+      })
+      .populate({
+        path: "reservationId",
+        populate: [
+          { path: "property",
+            populate: {
+              path: 'host_id'
+            }
+           }
+
+        ]
+      })
+    
 
     console.log(`received technician id ${technicianID}`);
 
@@ -406,7 +420,7 @@ const getAllJobsByTechnicianId = async (req, res) => {
     if (!filteredJobs.length) {
       return res.status(404).json({ message: "no jobs found" });
     }
-    res.status(200).json(jobs);
+    res.status(200).json(filteredJobs);
   } catch (error) {
     console.error(error); // Log the error
     res.status(500).json({ message: "An error occurred while fetching jobs", error }); // Send error response
@@ -544,10 +558,10 @@ const getCompletedJobs = async (req, res) => {
 
 //following is for host
 const markAsResolved = async (req, res) => {
-  const id = req.params.id; //host id
+  const id = req.params.id; //complaintid
   try {
     await Complaint.updateMany(
-      { host: id, status: { $ne: "pendingHostDecision" } }, // Ensure only non-resolved complaints are updated
+      { _id: id, status: { $ne: "pendingHostDecision" } }, // Ensure only non-resolved complaints are updated
       { $set: { status: "hostCompleted" } }
     );
 
