@@ -41,14 +41,14 @@ const Header = ({ toggleNavbar }) => {
   return (
     <div className="header bg-gradient-to-r from-blue-400 via-blue-600 to-blue-700 p-4 flex justify-between items-center fixed top-0 left-0 w-full h-20 shadow-lg z-50">
       <div className="flex items-center">
-      {currentUser ? (
+      {/* {currentUser ? ( */}
         <button
           onClick={toggleNavbar}
           className="bg-blue-500 text-white rounded-full p-2 flex items-center justify-center shadow-md hover:bg-blue-600 transition duration-200"
         >
           <FaBars size={24} />
         </button>
-      ) : null}
+      {/* ) : null} */}
         <div className="flex items-center p-0 rounded ml-4">
           <img src={logo} alt="Staymate Logo" className="h-12" />
         </div>
