@@ -29,7 +29,7 @@ export default function PendingTaskDetails({complaint}) {
       
 
 
-      {complaint.estimatedBudget === null ? (
+      {Number(complaint.estimatedBudget) === null || isNaN(Number(complaint.estimatedBudget))? (
      <div> 
            {/* status = pending technician approval */}
 
@@ -52,7 +52,13 @@ export default function PendingTaskDetails({complaint}) {
   ) : (
     <div>
        {/* status = pending host confirmation */}
-    <div className='bg-blue-100 p-5 m-3'>Awaiting host confirmation, You estimated a budget of $ {complaint.estimatedBudget}</div>
+    {complaint.estimatedBudget != null && !isNaN(Number(complaint.estimatedBudget)) && (
+    <div className="bg-blue-100 p-5 m-3">
+      Awaiting host confirmation, You estimated a budget of $
+      {Number(complaint.estimatedBudget).toFixed(2)}
+    </div>
+  )}
+ 
   </div>
 
   )}

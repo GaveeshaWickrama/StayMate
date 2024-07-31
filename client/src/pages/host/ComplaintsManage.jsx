@@ -30,7 +30,9 @@ const TableComponent = ({ data }) => {
         (filters.category ? item.category.includes(filters.category) : true) &&
         (filters.timestamp ? item.date.includes(filters.timestamp) : true) &&
         (filters.status ? item.status.includes(filters.status) : true) &&
-        (search ? Object.values(item).some(val => val.includes(search)) : true)
+        (search ? Object.values(item).some(val => 
+          typeof val === 'string' && val.includes(search)
+        ) : true)
       );
   
     //   if (sortCategory) {
