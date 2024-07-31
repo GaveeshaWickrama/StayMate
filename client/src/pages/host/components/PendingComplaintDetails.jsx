@@ -25,6 +25,9 @@ export default function PendingComplaintDetails({ complaint, id}) {
 
   return (
     <div className="bg-gray-100 mx-auto py-2 px-8">
+      <div>heyy
+        
+      </div>
       <div>
         <button
           className="bg-green-600 text-white p-4 rounded font-bold w-50 my-10 m-4"

@@ -4,7 +4,7 @@ const mongoose = require('mongoose');
 const complaintSchema = new mongoose.Schema({
   reservationId: {
     type: mongoose.Schema.Types.ObjectId,
-    ref: 'reservation', // Reference to the reservation model
+    ref: 'Reservation', // Reference to the reservation model
     required: true,
   },
 
@@ -13,6 +13,15 @@ const complaintSchema = new mongoose.Schema({
     required:true
   }, */
 
+  estimatedBudget: {
+    type: Number,
+    required: false, // or true if it's mandatory
+  },
+  assignTaskComments:{
+    type:String,
+    required:false
+
+  },
 
   technician:{
     type: mongoose.Schema.Types.ObjectId,

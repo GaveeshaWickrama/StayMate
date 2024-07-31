@@ -7,10 +7,32 @@ import defaultProfilePic from '../../assets/profile2.png';
 import pic2 from '../../assets/1721533878657-3.webp';
 import pic1 from '../../assets/1721480638430-2.webp';
 import pic3 from '../../assets/1721715104858-8.webp';
-
+import useCreateOrSelectConversation from '../../hooks/useCreateOrSelectConversation';
+import { toast } from 'react-toastify';
+import { useNavigate } from 'react-router-dom';
 
 
 const HostProfile = ({ profile, currentUser, id }) => {
+
+  const navigate = useNavigate();
+  const { createOrSelectConversation } = useCreateOrSelectConversation();
+  const [isLoading, setIsLoading] = useState(false);
+
+  const handleMessageHost = async () => {
+    if (currentUser) {
+      setIsLoading(true);
+      try {
+        await createOrSelectConversation(id);
+        navigate(`/moderator/chat`);
+      } catch (error) {
+        toast.error('Failed to create or select conversation.');
+      } finally {
+        setIsLoading(false);
+      }
+    } else {
+      toast.error('User is not logged in');
+    }
+  };
 
     const capitalizeFirstLetter = (string) => {
         return string.charAt(0).toUpperCase() + string.slice(1);
@@ -41,7 +63,11 @@ const HostProfile = ({ profile, currentUser, id }) => {
                     <button className="bg-blue-500 text-white py-2 px-6 rounded-full shadow-lg hover:bg-blue-600 transition transform hover:-translate-y-1">Edit Profile</button>
                 )}
                 {currentUser && id !== currentUser.id && ( 
-                    <button className="bg-gray-200 text-gray-700 py-2 px-6 rounded-full shadow-lg hover:bg-gray-300 transition transform hover:-translate-y-1">Message</button>
+                    <button className="bg-gray-200 text-gray-700 py-2 px-6 rounded-full shadow-lg hover:bg-gray-300 transition transform hover:-translate-y-1" 
+                    onClick={handleMessageHost}
+                    disabled={isLoading}
+                    ><span>{isLoading ? <span className='loading loading-spinner mx-auto'></span> : 'Message'}</span>
+                    </button>
                 )}
             </div>
             <div className="mb-6">

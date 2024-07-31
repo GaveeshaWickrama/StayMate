@@ -2,6 +2,7 @@ import React from 'react';
 import { BsDiamondHalf, BsCalendarDate } from "react-icons/bs";
 import { FaMapMarkerAlt, FaUser, FaStar } from "react-icons/fa";
 import { Link } from 'react-router-dom';
+import { IoMdHome } from "react-icons/io";
 
 const PendingPropertyCard = ({ property }) => {
   const imageUrl = property?.images[0]?.url 
@@ -32,13 +33,13 @@ const PendingPropertyCard = ({ property }) => {
         <div className="flex justify-center mb-2">
           <div className="font-bold text-lg">{property.title || 'No Title'}</div>
         </div>
-        <div className="text-gray-700 text-sm mb-2">
+        {/* <div className="text-gray-700 text-sm mb-2">
           <FaMapMarkerAlt className="inline-block mr-1" />
           {property.location?.address || 'No Address'}, {property.location?.province || 'No Province'}
-        </div>
+        </div> */}
         <div className="flex items-center text-gray-700 text-sm mb-2">
-          <BsDiamondHalf className="mr-1 text-blue-500" /> 
-          {property.sections[0]?.section_name === 'entire_place' ? 'Entire Place' : 'Section'} {property.type || 'No Type'}
+          <IoMdHome className="mr-1 text-blue-500" /> 
+          {property.sections[0]?.section_name === 'entire_place' ? 'Entire Place' : 'Section'} in {property.type || 'No Type'}
           <BsCalendarDate className="ml-4 mr-1 text-blue-500" /> {formattedDate}
         </div>
       </div>
@@ -50,7 +51,9 @@ const PendingPropertyCard = ({ property }) => {
       </div>
    
       <div className="px-4 py-2 flex justify-between items-center border-t">
-        <span className="text-xl font-bold mb-2">{property.location?.province || 'No Province'} | {property.location?.district || 'No District'}</span>
+        
+        <span className="text-xl font-bold mb-2">{property.location?.district || 'No District'},</span>
+        <span className="text-xl font-bold mb-2">{property.location?.province || 'No Province'} </span>
       </div>
       <div className="px-4 py-2 flex justify-center">
         <Link

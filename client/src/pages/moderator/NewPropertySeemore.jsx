@@ -15,6 +15,7 @@ import { HiMiniArrowsPointingIn } from "react-icons/hi2";
 import { FaMousePointer } from "react-icons/fa";
 import { useAuth } from '../../context/auth';
 import RejectionForm from '../../components/moderator/RejectionForm';
+import { RiAppsLine } from "react-icons/ri";
 
 const capitalizeWords = (str) => {
   return str.replace(/\b\w/g, char => char.toUpperCase());
@@ -158,8 +159,8 @@ function NewPropertySeemore() {
           </div>
           <div className="flex-grow px-4 border-l border-r border-gray-300">
             <h2 className="text-xl font-bold mb-2 text-center">Things to Know</h2>
-            <p className="text-lg flex items-center"><FaMousePointer style={{ color: '#2563eb' }} className="mr-2" /> Be aware of neighbour's dogs.</p>
-            <p className="text-lg flex items-center"><FaMousePointer style={{ color: '#2563eb' }} className="mr-2" /> The road shows in google maps to the location can be misleading.</p>
+            <p className="text-lg flex items-center">< RiAppsLine style={{ color: '#2563eb' }} className="mr-2" /> Be aware of neighbour's dogs.</p>
+            <p className="text-lg flex items-center">< RiAppsLine style={{ color: '#2563eb' }} className="mr-2" /> The road shows in google maps .</p>
           </div>
           <div className="flex-grow pl-4">
             <h2 className="text-xl font-bold mb-2 text-center">Description</h2>

@@ -4,11 +4,15 @@ import { useNavigate, Link } from 'react-router-dom';
 import { FaStar, FaPhone, FaEnvelope } from 'react-icons/fa';
 import defaultProfilePic from '../../assets/profile.jpg'; // Adjust the path as necessary
 import { useAuth } from '../../context/auth'; // Adjust the path as necessary
+import useCreateOrSelectConversation from '../../hooks/useCreateOrSelectConversation';
+import { toast } from 'react-toastify';
 
 const PropertyHost = ({ propertyId }) => {
   const [host, setHost] = useState(null);
   const { currentUser } = useAuth();
   const navigate = useNavigate();
+  const { createOrSelectConversation } = useCreateOrSelectConversation();
+  const [isLoading, setIsLoading] = useState(false);
 
   useEffect(() => {
     const fetchHost = async () => {
@@ -39,12 +43,28 @@ const PropertyHost = ({ propertyId }) => {
     phone: host.phone
   };
 
-  const handleMessageHost = () => {
+/*   const handleMessageHost = () => {
     if (currentUser) {
       navigate(`/chat?currentUserId=${currentUser.id}&hostId=${host._id}`);
     } else {
       // Handle case where user is not logged in
       console.error('User is not logged in');
+    }
+  }; */
+
+  const handleMessageHost = async () => {
+    if (currentUser) {
+      setIsLoading(true);
+      try {
+        await createOrSelectConversation(host._id);
+        navigate(`/moderator/chat`);
+      } catch (error) {
+        toast.error('Failed to create or select conversation.');
+      } finally {
+        setIsLoading(false);
+      }
+    } else {
+      toast.error('User is not logged in');
     }
   };
 
@@ -70,9 +90,10 @@ const PropertyHost = ({ propertyId }) => {
         <button
           className="bg-blue-600 text-white px-4 py-2 rounded font-bold inline-flex items-center"
           onClick={handleMessageHost}
+          disabled={isLoading}
         >
           <FaEnvelope className="mr-2" size={24} />
-          <span>Message</span>
+          <span>{isLoading ? <span className='loading loading-spinner mx-auto'></span> : 'Message'}</span>
         </button>
       </div>
     </div>

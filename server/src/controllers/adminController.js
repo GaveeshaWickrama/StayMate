@@ -1,7 +1,7 @@
 const User = require('../models/userModel')
 const mongoose = require('mongoose')
 
-//get all users
+//get all Moderators
 const getModerators = async (req,res)=>{
 
     try{
@@ -15,20 +15,20 @@ const getModerators = async (req,res)=>{
 
 //create a new moderator
 const createModerator = async (req, res) => {
-    const { firstname, lastname, email, password, nic, gender, address, role } = req.body;
+    const { firstName, lastName, email, password, nicPassport, gender, address, role, phone } = req.body;
 
     let emptyFields = [];
 
-    if (!firstname) {
-        emptyFields.push('firstname');
-    } else if (!/^[A-Za-z]+$/.test(firstname)) {
-        emptyFields.push('firstname: only letters are allowed without spaces');
+    if (!firstName) {
+        emptyFields.push('firstName');
+    } else if (!/^[A-Za-z]+$/.test(firstName)) {
+        emptyFields.push('firstName: only letters are allowed without spaces');
     }
 
-    if (!lastname) {
-        emptyFields.push('lastname');
-    } else if (!/^[A-Za-z]+$/.test(lastname)) {
-        emptyFields.push('lastname: only letters are allowed without spaces');
+    if (!lastName) {
+        emptyFields.push('lastName');
+    } else if (!/^[A-Za-z]+$/.test(lastName)) {
+        emptyFields.push('lastName: only letters are allowed without spaces');
     }
 
     if (!email) {
@@ -41,7 +41,7 @@ const createModerator = async (req, res) => {
 
     //add to db
     try {
-        const moderator = await User.create({ firstname, lastname, email, password, nic, gender, address, role });
+        const moderator = await User.create({ firstName, lastName, email, password, nicPassport, gender, address, role, phone });
         res.status(200).json(moderator);
     } catch (error) {
         res.status(400).json({ error: error.message });
@@ -67,30 +67,65 @@ const deleteModerator = async (req, res) => {
    
         
 };
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+// get all users
 async function getAllUsers(req, res) {
     try {
-        const users = await User.find();
-        res.json(users);
+      const aggregation = [
+        {
+          $match: {
+            role: { $in: ["guest", "host"] },
+          },
+        },
+        {
+          $group: {
+            _id: "$role",
+            count: { $sum: 1 },
+          },
+        },
+      ];
+  
+      const roleCounts = await User.aggregate(aggregation);
+  
+      // Format the data to a more readable format
+      const formattedData = roleCounts.reduce((acc, { _id, count }) => {
+        acc[_id] = count;
+        return acc;
+      }, {});
+  
+      // Debug: Log the counts of guests and property owners
+      console.log("Guests:", formattedData.guest || 0);
+      console.log("Property Owners:", formattedData.propertyOwner || 0);
+  
+      res.json(formattedData);
     } catch (err) {
-        res.status(500).json({ message: err.message });
+      res.status(500).json({ message: err.message });
     }
-}
+  }
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+// async function getAllUsers(req, res) {
+//     try {
+//         const users = await User.find();
+//         res.json(users);
+//     } catch (err) {
+//         res.status(500).json({ message: err.message });
+//     }
+// }
 
 async function createUser(req, res) {
     const user = new User(req.body);
