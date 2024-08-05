@@ -1,4 +1,6 @@
 import React from "react";
+import { useState, useEffect } from "react";
+import useListenMessages from '../../hooks/useListenMessages';
 import { Link, useNavigate } from "react-router-dom";
 import { useAuth } from "../../context/auth";
 import { IconContext } from "react-icons";
@@ -32,7 +34,7 @@ const iconMap = {
   "My Profile": "account_circle",
   Moderators: "account_circle",
   PropertyOwners: "account_circle",
-  Tenants: "account_circle",
+  //Tenants: "account_circle",
   Reviews: "rate_review",
   Reservations: "event_available",
   "Host Dashboard": "dashboard",
@@ -56,7 +58,9 @@ const iconMap = {
   
 };
 
-function Sidebar({ title, links, logout, isVisible }) {
+useListenMessages(); //Listens for any incoming messages
+
+function Sidebar({ title, links, logout, isVisible, newMessageCount }) {
   return (
     <nav
       className={`sidebar ${
@@ -73,6 +77,11 @@ function Sidebar({ title, links, logout, isVisible }) {
           >
             <span className="material-icons">{iconMap[link.label]}</span>
             <span>{link.label}</span>
+            {link.label === "Chat" && newMessageCount > 0 && (
+              <span className="bg-red-600 text-white rounded-full ml-2 px-2 py-1 text-xs">
+                {newMessageCount}
+              </span>
+            )}
           </Link>
         ))}
       </IconContext.Provider>
@@ -92,6 +101,17 @@ function Sidebar({ title, links, logout, isVisible }) {
 function Navbar({ isVisible }) {
   const { currentUser, logout } = useAuth();
   const navigate = useNavigate();
+  const [newMessageCount, setNewMessageCount] = useState(0);
+
+  useEffect(() => {
+    // Simulate fetching new message count from an API or WebSocket
+    const fetchNewMessageCount = () => {
+      // Replace this with actual API call or WebSocket event listener
+      setNewMessageCount(5); // Example count
+    };
+
+    fetchNewMessageCount();
+  }, []);
 
   const handleLogout = () => {
     logout();
@@ -176,6 +196,7 @@ function Navbar({ isVisible }) {
         links={adminLinks}
         logout={handleLogout}
         isVisible={isVisible}
+        newMessageCount={newMessageCount}
       />
     );
   }
@@ -187,6 +208,7 @@ function Navbar({ isVisible }) {
         links={guestLinks}
         logout={handleLogout}
         isVisible={isVisible}
+        newMessageCount={newMessageCount}
       />
     );
   }
@@ -198,6 +220,7 @@ function Navbar({ isVisible }) {
         links={hostLinks}
         logout={handleLogout}
         isVisible={isVisible}
+        newMessageCount={newMessageCount}
       />
     );
   }
@@ -209,6 +232,7 @@ function Navbar({ isVisible }) {
         links={technicianLinks}
         logout={handleLogout}
         isVisible={isVisible}
+        newMessageCount={newMessageCount}
       />
     );
   }
@@ -220,6 +244,7 @@ function Navbar({ isVisible }) {
         links={moderatorLinks}
         logout={handleLogout}
         isVisible={isVisible}
+        newMessageCount={newMessageCount}
       />
     );
   }
