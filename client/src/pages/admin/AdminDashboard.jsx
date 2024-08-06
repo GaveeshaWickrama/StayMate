@@ -127,7 +127,7 @@ function AdminDashboard() {
         backgroundBlendMode: 'overlay',
       }}
     >
-      <GreetingBox name="Raveesha Wickrama" />
+      <GreetingBox name="jeo Deo" />
 
       <h3 className="text-4xl font-bold text-gray-800 mb-8">Dashboard</h3>
 

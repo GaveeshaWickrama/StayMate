@@ -1,45 +1,33 @@
-import React, { useEffect, useState } from 'react';
-import  TaskDetails  from "../TaskDetails";
-import { Routes, Route, Navigate, useNavigate } from "react-router-dom";
-import PopupForm from "../UploadProofForm";
+import React from 'react'
 
-
-
-
-
-export default function PendingTaskDetails({complaint}) {
-
-  const navigate = useNavigate();
-
-  const [showModal, setShowModal] = useState(false);
-
-  const handleSave = (e) => {
-    e.preventDefault();
-    alert(`Form submitted for complaint id: ${complaint.id}`);
-    setShowModal(false);
-    navigate("/host/manage-complaints");
-  };
-
-  
-
+function CompletedTaskDetails({complaint}) {
   return (
-    <div className="bg-gray-100 mx-auto py-2 px-8">
-      
-
-      <div>
-<button  className='bg-green-600 text-white p-4 rounded font-bold w-50 my-10 m-4' 
-          onClick={() => setShowModal(true)}
->
-Mark Job as completed</button>
-
-<PopupForm
-          isOpen={showModal}
-          handleClose={() => setShowModal(false)}
-          handleSave={handleSave}
-        />
-</div>
 
 
-    </div>
-  );
+    <div className="w-full rounded-lg p-6 bg-white shadow mt-2">
+    {complaint.status === "jobCompleted" && (
+      <div className="m-3 p-1">
+        <p className="text-lg">You successfully completed this job</p>
+        <div className="bg-green-100 m-3 p-5 rounded-lg">
+          <p>
+            Assigned Date: 2024-07-21 <br />
+            Completion Date: 2024-07-20 <br />
+            Response Time: 1 day <br />
+          </p>
+        </div>
+      </div>
+    )}
+
+    {complaint.status === "technicianCompleted" && (
+      <div className="m-3 p-1">
+        <p className="text-lg">Awaiting Proof confirmation by the host</p>
+      </div>
+    )}
+  </div>
+  )
 }
+
+export default CompletedTaskDetails
+
+
+

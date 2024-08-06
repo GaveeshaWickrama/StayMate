@@ -2,13 +2,20 @@ import React, { useState, useEffect } from "react";
 import {
   FaHome,
   FaClock,
+  FaRegClock,
   FaMapMarkerAlt,
   FaEnvelope,
   FaShower,
   FaStar,
 } from "react-icons/fa";
-import { Routes, Route, Navigate, useNavigate, useParams } from "react-router-dom";
-import axios from 'axios';
+import {
+  Routes,
+  Route,
+  Navigate,
+  useNavigate,
+  useParams,
+} from "react-router-dom";
+import axios from "axios";
 
 import { MdOutlineMeetingRoom } from "react-icons/md";
 import { IoBedSharp } from "react-icons/io5";
@@ -27,23 +34,23 @@ export default function ComplaintDetails(props) {
 
   console.log("complaint id received by task details function", id);
 
-  
   console.log("complaint id received by task details function", id);
   useEffect(() => {
     const fetchComplaint = async () => {
       try {
-        const response = await axios.get(`${import.meta.env.VITE_API_URL}/complaints/complaint-details/${id}`);
-      //   console.log(`${import.meta.env.VITE_API_URL}/complaints/${id}`);
+        const response = await axios.get(
+          `${import.meta.env.VITE_API_URL}/complaints/complaint-details/${id}`
+        );
+        //   console.log(`${import.meta.env.VITE_API_URL}/complaints/${id}`);
         setComplaint(response.data);
-        console.log('this is the response data', complaint);
+        console.log("this is the response data", complaint);
       } catch (error) {
-        console.error('Error fetching complaint:', error);
+        console.error("Error fetching complaint:", error);
       }
     };
 
     fetchComplaint();
   }, [id]);
-
 
   console.log(complaint);
 
@@ -61,10 +68,6 @@ export default function ComplaintDetails(props) {
     setShowModal(false);
     navigate("/host/manage-complaints");
   };
-
-
-
-
 
   return (
     <div className="bg-gray-100 mx-auto py-2 px-8">
@@ -85,14 +88,11 @@ export default function ComplaintDetails(props) {
           <div className="bg-white p-8 flex flex-row justify-between items-center border-b">
             <div className="flex flex-row items-center">
               <h2 className="text-xl font-bold">Status:</h2>
-              <p className="ml-4 badge badge-ghost">{complaint.status}</p>
+              <p className="ml-4 badge badge-ghost bg-yellow-200">
+                {complaint.status}
+              </p>
             </div>
 
-            <div className="flex flex-row items-center p-2 gap-3">
-              <h2 className="text-xl font-bold">Posted On:</h2>
-
-              <p className="text-base">2022-03-2</p>
-            </div>
             <div className="flex flex-row items-center p-2 gap-3">
               <h2 className="text-xl font-bold">Category:</h2>
 
@@ -101,25 +101,7 @@ export default function ComplaintDetails(props) {
               </p>
             </div>
           </div>
-          <div className="flex flex-row gap-8 justify-between py-10 px-8 border-b">
-            <p className="text-base flex flex-col self-center ">
-              {" "}
-              <span className="font-bold">Section:</span>Room No 4
-            </p>
-            <p className="text-base flex flex-col self-center">
-              {" "}
-              <span className="font-bold">Checked In Date:</span>{" "}
-              {complaint.reservationId.checkInDate}
-            </p>
-            <p className="text-base flex flex-col items-center">
-              <span className="font-bold">Check Out Date:</span>{" "}
-              {complaint.reservationId.checkOutDate}
-            </p>
-            <p className="text-base flex flex-col items-center">
-              <span className="font-bold">Property Name:</span>{" "}
-              {complaint.reservationId.property.title}
-            </p>
-          </div>
+
           <div className="bg-white p-8 flex items-center border-b">
             <FaMapMarkerAlt className="mr-2" />
             <p className="font-semibold">
@@ -133,7 +115,7 @@ export default function ComplaintDetails(props) {
               {complaint.images.map((image, index) => (
                 <img
                   key={index}
-                  src={`/${image}`}
+                  src={`${import.meta.env.VITE_API_URL}/${image}`}
                   alt={`Complaint Image ${index + 1}`}
                   className="mt-2 w-13 h-13"
                 />
@@ -144,25 +126,43 @@ export default function ComplaintDetails(props) {
 
         <div className="w-full md:w-1/3 bg-white p-4 rounded-lg shadow flex flex-col ">
           <div className="flex items-center p-6 gap-4">
+            <h2 className="text-xl font-bold">Posted On:</h2>
+
+            <p className="text-base">
+              {new Date(complaint.timestamp).toLocaleDateString()}
+            </p>
+          </div>
+
+          <div className="flex items-base p-6 gap-4">
             <h2 className="text-xl font-bold mb-2">Posted By</h2>
-            {/* <div className='text-xl card'> {complaint.reservationId.user.firstName} {complaint.reservationId.user.lastName}</div> */}
+            <div className="text-xl card">
+              {" "}
+              {complaint.reservationId.property.host_id.firstName}{" "}
+              {complaint.reservationId.property.host_id.lastName}
+            </div>
           </div>
 
           <div className="flex items-center  bg-blue-100 rounded-xl p-8">
             <div className="flex flex-col items-center mr-4">
               <img
-                src="https://via.placeholder.com/150"
+                src={`${
+                  import.meta.env.VITE_API_URL
+                }/uploads/profilePictures/2.jpeg`}
                 alt="Host"
-                className="w-25 h-25 rounded-full mb-2"
+                className="w-20 h-20 rounded-full mb-2"
               />
-              <h3 className="text-lg font-bold">John Doe</h3>
             </div>
             <div className="flex flex-col flex-1">
-              <div className="flex items-center justify-start mb-2">
-                {/* <FaPhone className="mr-2" size={24} /> */}
-                <span>555-1234</span>
+              <h3 className="text-lg font-bold">
+                {complaint.reservationId.property.host_id.firstName}{" "}
+                {complaint.reservationId.property.host_id.lastName}
+              </h3>
+              <div className="text-gray-500 mb-4 items-center">
+                <span className="block text-black">Joined On</span>
+                {new Date(
+                  complaint.reservationId.property.host_id.createdOn
+                ).toLocaleDateString()}
               </div>
-              <div className="text-gray-500 mb-4">Joined on 2021-06-15</div>
               <button
                 className="bg-blue-600 text-white p-2 rounded font-bold flex items-center"
                 // onClick={handleMessageHost}
@@ -174,49 +174,78 @@ export default function ComplaintDetails(props) {
               </button>
             </div>
           </div>
+
+          <div className="flex flex-col  bg-green-100 rounded-xl p-8 m-6 items-start ">
+            <p className="text-base flex flex-row items-center gap-6">
+              <span className="font-bold text-xl"> Deadline:</span>{" "}
+              <span className="text-lg">
+                {" "}
+                {new Date(
+                  complaint.reservationId.checkOutDate
+                ).toLocaleDateString()}
+              </span>
+            </p>
+
+            <p className="text-sm mt-3 flex flex-row items-center gap-2">
+              {" "}
+              <FaRegClock />3 Days left
+            </p>
+          </div>
+
+          <div>
+            {complaint.estimatedBudget && (
+              <div className="m-3 p-1">
+                <span>
+                  You estimated a LKR {complaint.estimatedBudget} for this job
+                </span>
+              </div>
+            )}
+          </div>
+        
         </div>
       </div>
 
       <div className="w-full rounded-lg p-6 bg-white shadow mt-2">
-        <h2 className="text-xl font-bold mb-2">Description</h2>
-        <p className="text-lg">{complaint.description}</p>
+        <div className="m-3 p-1">
+          <h2 className="text-xl font-bold mb-2">User Description</h2>
+          <p className="text-lg">{complaint.description}</p>
+        </div>
+
+        {complaint.assignTaskComments && (
+          <div className="m-3 p-1  border-t">
+            <h2 className="text-xl font-bold mb-2">Host Description</h2>
+            <p className="text-lg">{complaint.assignTaskComments}</p>
+          </div>
+        )}
       </div>
 
-              <div>
-              {complaint.status === 'active' ? (
+      {/* <div>
+        {complaint.status === "active" ? (
           <ActiveTaskDetails complaint={complaint} id={id}>
             {props.children}
           </ActiveTaskDetails>
-        ) : complaint.status === 'pending' ?(
+        ) : complaint.status === "pending" ? (
           <PendingTaskDetails complaint={complaint} id={id}>
             {props.children}
           </PendingTaskDetails>
         ) : (
-          
           <CompletedTaskDetails complaint={complaint} id={id}>
-{props.children}
+            {props.children}
           </CompletedTaskDetails>
-        )
-        }
-              </div>
-      
+        )}
+      </div> */}
 
-      <div>
-       
-       
+      {complaint.status === "pendingTechnicianApproval" ? (
         <PendingTaskDetails complaint={complaint}>
           {props.children}
         </PendingTaskDetails>
-
-          <CompletedTaskDetails complaint={complaint}>
-{props.children}
-          </CompletedTaskDetails>
-        {/* <PopupForm
-          isOpen={showModal}
-          handleClose={() => setShowModal(false)}
-          handleSave={handleSave}
-        /> */}
-      </div>
+      ) : complaint.status === "active" ? (
+        <ActiveTaskDetails complaint={complaint}>
+          {props.children}
+        </ActiveTaskDetails>
+      ) : (
+        <CompletedTaskDetails complaint={complaint} />
+      )}
     </div>
   );
 }

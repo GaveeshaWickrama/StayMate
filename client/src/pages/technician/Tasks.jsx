@@ -47,9 +47,10 @@ const TableComponent = ({ data }) => {
         (filters.category ? item.category.includes(filters.category) : true) &&
         (filters.timestamp ? item.date.includes(filters.timestamp) : true) &&
         (filters.status ? item.status.includes(filters.status) : true) &&
-        (search
-          ? Object.values(item).some((val) => val.includes(search))
-          : true)
+    
+          (search ? Object.values(item).some(val => 
+            typeof val === 'string' && val.includes(search)
+          ) : true)
     );
 
     //   if (sortCategory) {
@@ -199,8 +200,8 @@ const TableComponent = ({ data }) => {
               <th>Issue Reported</th>
               <th>Remarks by the host</th>
 
-              <th>Property</th>
-              <th>Date Reported</th>
+              <th>Property </th>
+              <th>Days Remaining</th>
               <th>Host Name</th>
               <th>Status</th>
               <th>Action</th>
@@ -229,18 +230,20 @@ const TableComponent = ({ data }) => {
                     >
                       <td>{item.category}</td>
                       <td>{item.description}</td>
-                      {/* <td>{item.reservationId.user.firstName} {item.reservationId.user.lastName} </td> */}
 
-                      <td>{item.reservationId.property.title}</td>
-                      <td>{formattedDate}</td>
-                      <td className="text-center">
-                        {item.technician ? item.technician.firstName : "N/A"}
-                      </td>
+                      <td>{item.assignTaskComments}</td>
+                      <td>{item.reservationId.property.address} {item.reservationId.property.title} </td>
+
+                      {/* <td>{formattedDate}</td> */}
+                      <td>3</td>
+                      <td>
+                      {item.reservationId.property.host_id.firstName}</td>
+                     
                       <td>
                         {item.status === "jobCompleted" && (
                           <button>
                             {" "}
-                            <span className="badge badge-ghost badge-sm ">
+                            <span className="badge badge-ghost bg-red-100 badge-sm ">
                               Completed
                             </span>
                           </button>
@@ -248,13 +251,13 @@ const TableComponent = ({ data }) => {
                         {item.status === "pendingTechnicianApproval" && (
                           <button className="">
                             {" "}
-                            <span className="badge badge-ghost badge-sm whitespace-nowrap">
+                            <span className="badge badge-ghost bg-red-100 badge-sm whitespace-nowrap">
                               Pending Technician Approval
                             </span>
                           </button>
                         )}
                         {item.status === "active" && (
-                          <span className="badge badge-ghost badge-sm">
+                          <span className="badge badge-ghost bg-red-100 badge-sm">
                             active
                           </span>
                         )}
@@ -262,7 +265,7 @@ const TableComponent = ({ data }) => {
                         {item.status === "pendingHostDecision" && (
                           <button className="">
                             {" "}
-                            <span className="badge badge-ghost badge-sm whitespace-nowrap">
+                            <span className="badge badge-ghost badge-sm bg-red-100 whitespace-nowrap">
                               Pending Host Decision
                             </span>
                           </button>
@@ -270,13 +273,13 @@ const TableComponent = ({ data }) => {
                       </td>
                       <td>
                         <button
-                          className="bg-red-500 w-15 h-15 rounded-xl text-white text-xs p-2"
+                          className="bg-green-500 w-15 h-15 rounded-xl text-white text-xs p-2"
                           onClick={() =>
                             handleStatusChange(item.id, "in-progress")
                           }
                         >
                           {" "}
-                          <span className="">Terminate</span>
+                          <span className="">Mark As Completed</span>
                         </button>
                       </td>
                     </tr>

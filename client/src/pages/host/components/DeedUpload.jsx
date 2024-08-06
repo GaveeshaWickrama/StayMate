@@ -31,7 +31,7 @@ const DeedUpload = ({ property, setProperty }) => {
           />
         </div>
         <div className="mt-10">
-          <label className="text-2xl block mb-2 font-semibold">Additional Details</label>
+          <label className="text-2xl block mb-2 font-semibold">Additional Details(Optional)</label>
           <textarea
             name="additionalDetails"
             value={property.additionalDetails || ''}

@@ -18,7 +18,7 @@ const PopupForm = ({ isOpen, handleClose, handleSave }) => {
             <textarea
               className="focus:outline-none mt-1 block w-full p-2 border border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500"
               rows="4"
-              placeholder='Please add any additional information you want to inform the technician about the Job'
+              placeholder='Please add any any additional remarks about the job'
               required
             ></textarea>
           </div>
