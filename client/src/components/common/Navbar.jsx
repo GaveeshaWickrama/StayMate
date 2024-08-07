@@ -1,6 +1,5 @@
 import React from "react";
-import { useState, useEffect } from "react";
-import useListenMessages from '../../hooks/useListenMessages';
+import { useSocketContext } from '../../context/SocketContext';
 import { Link, useNavigate } from "react-router-dom";
 import { useAuth } from "../../context/auth";
 import { IconContext } from "react-icons";
@@ -30,11 +29,11 @@ const iconMap = {
   "My Profile": "account_circle",
   Moderators: "account_circle",
   PropertyOwners: "account_circle",
-  Tenants: "account_circle",
-  "My Profile": "account_circle",
-  Moderators: "account_circle",
-  PropertyOwners: "account_circle",
   //Tenants: "account_circle",
+  //"My Profile": "account_circle",
+  //Moderators: "account_circle",
+  //PropertyOwners: "account_circle",
+  Tenants: "account_circle",
   Reviews: "rate_review",
   Reservations: "event_available",
   "Host Dashboard": "dashboard",
@@ -58,7 +57,6 @@ const iconMap = {
   
 };
 
-useListenMessages(); //Listens for any incoming messages
 
 function Sidebar({ title, links, logout, isVisible, newMessageCount }) {
   return (
@@ -99,19 +97,10 @@ function Sidebar({ title, links, logout, isVisible, newMessageCount }) {
 }
 
 function Navbar({ isVisible }) {
+  
   const { currentUser, logout } = useAuth();
   const navigate = useNavigate();
-  const [newMessageCount, setNewMessageCount] = useState(0);
-
-  useEffect(() => {
-    // Simulate fetching new message count from an API or WebSocket
-    const fetchNewMessageCount = () => {
-      // Replace this with actual API call or WebSocket event listener
-      setNewMessageCount(5); // Example count
-    };
-
-    fetchNewMessageCount();
-  }, []);
+  const {newMessageCount} = useSocketContext();
 
   const handleLogout = () => {
     logout();
