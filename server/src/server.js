@@ -1,20 +1,25 @@
 require("dotenv").config();
-const { app,server } = require("./socket/socket.js");
+const { app, server } = require("./socket/socket.js");
 const cors = require("cors");
 const morgan = require("morgan"); // Logging HTTP requests
 const mongoose = require("mongoose");
 const path = require("path"); // Import the path module
-const defaultImageMiddleware = require('./middleware/defaultImageMiddleware'); // Adjust the path as necessary
-const express = require('express');
-
-
+const defaultImageMiddleware = require("./middleware/defaultImageMiddleware"); // Adjust the path as necessary
+const express = require("express");
+const { schedulePayouts } = require("./service/payoutScheduler.js");
 
 // Middleware to serve static files
 app.use("/uploads", express.static(path.join(__dirname, "../uploads")));
 
 // Use custom middleware to serve default images if the requested image is not found
-app.use("/uploads/profilepictures", defaultImageMiddleware('profilepictures', 'default.jpg'));
-app.use("/uploads/properties", defaultImageMiddleware('properties', 'default.jpg'));
+app.use(
+  "/uploads/profilepictures",
+  defaultImageMiddleware("profilepictures", "default.jpg")
+);
+app.use(
+  "/uploads/properties",
+  defaultImageMiddleware("properties", "default.jpg")
+);
 
 app.use(cors());
 app.use(morgan("dev"));
@@ -58,6 +63,9 @@ app.use("/technicians", technicianRoutes);
 app.get("/", (req, res) => {
   res.send("Hello World!");
 });
+
+// Start the scheduling service
+schedulePayouts();
 
 // Start Server
 const port = process.env.PORT || 3000;
