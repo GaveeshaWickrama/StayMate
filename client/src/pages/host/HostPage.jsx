@@ -18,7 +18,7 @@ import {
 function GreetingBox({ name }) {
   return (
     <div className="bg-white p-6 rounded-lg border border-gray-200 shadow-lg mb-8">
-      <h1 className="text-4xl font-bold text-gray-800">Hello,{name}!</h1>
+      <h1 className="text-4xl font-bold text-gray-800">Hello, {name}!</h1>
     </div>
   );
 }
@@ -28,7 +28,7 @@ function HostPage() {
   const [totalRevenue] = useState(65000);
   const [totalBookedProperties] = useState(100);
   const [totalProperties] = useState(120); // Ensure this number is greater than totalBookedProperties
-  const [incomeExpensesData] = useState([
+  const [incomeExpensesDataMonthly] = useState([
     { month: "January", income: 5000, expenses: 2000 },
     { month: "February", income: 5500, expenses: 1800 },
     { month: "March", income: 6000, expenses: 2200 },
@@ -42,6 +42,14 @@ function HostPage() {
     { month: "November", income: 8700, expenses: 2800 },
     { month: "December", income: 9000, expenses: 2900 },
   ]);
+
+  const [incomeExpensesDataYearly] = useState([
+    { year: "2020", income: 60000, expenses: 25000 },
+    { year: "2021", income: 65000, expenses: 26000 },
+    { year: "2022", income: 70000, expenses: 27000 },
+    { year: "2023", income: 75000, expenses: 28000 },
+  ]);
+
   const [propertyData] = useState([
     { property: "Beachside Villa", bookings: 25, endDate: "2024-07-31", startDate: "2024-01-15", persons: 4, revenue: 12500 },
     { property: "Mountain Lodge", bookings: 18, endDate: "2024-07-15", startDate: "2024-03-10", persons: 6, revenue: 9000 },
@@ -49,9 +57,10 @@ function HostPage() {
     { property: "Countryside Cabin", bookings: 15, endDate: "2024-09-10", startDate: "2024-04-15", persons: 3, revenue: 7500 },
     { property: "Lake House", bookings: 22, endDate: "2024-10-01", startDate: "2024-05-25", persons: 5, revenue: 11000 },
   ]);
+
   const [view, setView] = useState("monthly");
 
-  const data = view === "monthly" ? incomeExpensesData : incomeExpensesData;
+  const data = view === "monthly" ? incomeExpensesDataMonthly : incomeExpensesDataYearly;
   const dataKey = view === "monthly" ? "month" : "year";
 
   const downloadCSV = (data, filename) => {
