@@ -1,4 +1,5 @@
 require("dotenv").config();
+require('./sheduler.js');  // Import the scheduler so it runs when the server starts
 const { app,server } = require("./socket/socket.js");
 const cors = require("cors");
 const morgan = require("morgan"); // Logging HTTP requests

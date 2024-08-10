@@ -1,7 +1,17 @@
 import React, { useState } from 'react';
 
-const PopupForm = ({ isOpen, handleClose, handleSave }) => {
+const PopupForm = ({ isOpen, handleClose, handleSave,
+  estimatedBudget,
+  setEstimatedBudget 
+ }) => {
   if (!isOpen) return null;
+
+  console.log(`estimated budget received in acceptjob form ${estimatedBudget}`);
+
+  const handleChange = (e) => {
+    setEstimatedBudget(e.target.value);
+  };
+
 
   return (
     <div className="fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center">
@@ -11,10 +21,12 @@ const PopupForm = ({ isOpen, handleClose, handleSave }) => {
           <div className="mb-4">
             <label className="block text-lg font-medium text-gray-700 py-3">Please estimate the payment you would be charging for the job</label>
            
-            <input type="text"
+            <input type="number"
             className="focus:outline-none mt-1 block w-full p-2 border border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500"
+            value={estimatedBudget}
+            onChange={handleChange}
 
-            required placeholder='LKR 3000'
+            required placeholder='(LKR) 3000'
              />
           </div>
           <div className="flex justify-end">

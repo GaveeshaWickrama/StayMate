@@ -1,5 +1,6 @@
 // complaintModel.js
 const mongoose = require('mongoose');
+const { assign } = require('nodemailer/lib/shared');
 
 const complaintSchema = new mongoose.Schema({
   reservationId: {
@@ -22,10 +23,20 @@ const complaintSchema = new mongoose.Schema({
     required:false
 
   },
+  resolveComments:{
+    type:String,
+    required:false
+  },
+  
   deadline:{
     type:Date,
     required:false
 
+  },
+
+  assignedDate: {
+    type:Date,
+    required:false
   },
 
   technician:{

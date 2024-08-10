@@ -34,11 +34,11 @@ function PendingComplaintDetails({ complaint, id }) {
               Assign to Technician
             </button>
           </div>
-
           <div>
             <button
               className="bg-green-600 text-white p-4 rounded font-bold w-50 my-10"
               onClick={() => setShowModal(true)}
+              type="submit"
             >
               Mark as resolved
             </button>

@@ -1,8 +1,12 @@
 const Complaint = require("../models/complaintModel");
-
 // const TaskController = require('./taskController'); // Import task controller
 const path = require("path");
 const mongoose = require("mongoose");
+
+
+
+
+
 
 const raiseComplaint = async (req, res) => {
   const { reservationId, title, description, category } = req.body;
@@ -55,12 +59,13 @@ async function assignComplaintToTechnician(req, res) {
   const { technicianId } = req.params; // Route parameter    //technician _id
   const { complaintId, hostID } = req.query; // Query parameters
 
-  const { additionalInfo } = req.body;
+  const { additionalInfo, deadline } = req.body;
 
   try {
     console.log("Received complaint ID:", complaintId);
     console.log("Received technician ID:", technicianId);
     console.log("Received host ID:", hostID);
+    console.log("deadline:", deadline);
 
     // Convert complaintId to ObjectId
 
@@ -84,6 +89,9 @@ async function assignComplaintToTechnician(req, res) {
         });
     }
 
+    const assignedDate = Date.now(); // Current timestamp in milliseconds
+    console.log(assignedDate);
+
     // Update the complaint to assign it to the technician and change status
     const updatedComplaint = await Complaint.findOneAndUpdate(
       { _id: complaintObjectId, status: "pendingHostDecision" },
@@ -92,18 +100,49 @@ async function assignComplaintToTechnician(req, res) {
           status: "pendingTechnicianApproval",
           technician: technicianUserId,
           assignTaskComments: additionalInfo,
+          assignedDate:assignedDate,
+          deadline:deadline
         },
       },
       { new: true } // Return the updated document
     );
 
     console.log("Assigned to a technician successfully");
+
+
+    //set timeout function
+    // setTimeout(async () => {
+    //   try{
+    //     await Complaint.findOneAndUpdate(
+    //       {_id:complaintObjectId, status: "pendingTechnicianApproval"},
+    //       {
+    //         $set:{
+    //           status:"pendingHostDecision",
+    //           technician:null
+    //         }
+    //       },
+    //         {
+    //           new: true
+    //         }
+    //     );
+    //     console.log(`Complaint ID ${complaintId} reverted to pendingHostDecision`);
+    //   } catch (error) {
+    //     console.error(`failed to revert complaint id ${complaintId}`, error);
+    //   }
+
+    // }, 3*24*60*60*1000 ); //3 days in milliseconds
+
+
     res
       .status(200)
       .json({
         message: "Complaint assigned to technician successfully",
         complaint: updatedComplaint,
       });
+
+
+
+
   } catch (error) {
     console.error("Error assigning complaint to technician:", error);
     res
@@ -168,6 +207,11 @@ async function acceptJob(req, res) {
       .status(500)
       .json({ message: "An error occurred while accepting job", error });
   }
+}
+
+
+async function updateStatus(req,res){
+
 }
 
 function hello(req, res) {
@@ -558,14 +602,24 @@ const getCompletedJobs = async (req, res) => {
 
 //following is for host
 const markAsResolved = async (req, res) => {
-  const id = req.params.id; //complaintid
+  const id = req.params.complaintId; //complaintid
+  const {resolveComments}  = req.body
+
+  
+  const complaintObjectId =
+  mongoose.Types.ObjectId.createFromHexString(id);
+
+  if(!id){
+    return res.status(400).json({message:"complaint id is required"});
+  }
   try {
-    await Complaint.updateMany(
-      { _id: id, status: { $ne: "pendingHostDecision" } }, // Ensure only non-resolved complaints are updated
-      { $set: { status: "hostCompleted" } }
+    const updatedComplaint = await Complaint.findByIdAndUpdate(
+      { _id: complaintObjectId }, // Ensure only non-resolved complaints are updated
+      { $set: { status: "hostCompleted", resolveComments:resolveComments } },
+      {new:true}
     );
 
-    res.status(200).json({ message: "complaint marked as resolved" });
+    res.status(200).json({ message: "complaint marked as resolved", updatedComplaint });
   } catch (error) {
     console.error(error); // Log the error
     res.status(500).json({ message: "couldnt save changes", error }); // Send error response
@@ -590,4 +644,5 @@ module.exports = {
   hello,
   reviewTask,
   uploadProof,
+  markAsResolved,
 };

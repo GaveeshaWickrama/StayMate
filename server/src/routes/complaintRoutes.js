@@ -47,6 +47,7 @@ router.post(
 );
 router.post("/complaint/:id/review", complaintController.reviewTask);
 router.post("/complaint/:complaintId/acceptJob", complaintController.acceptJob); //working
+router.post("/complaint/:complaintId/resolve", complaintController.markAsResolved); 
 router.post(
   "/complaint/:id/uploadProof",
   upload.array("proofImages", 5),

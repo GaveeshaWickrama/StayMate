@@ -66,7 +66,7 @@ export default function ComplaintDetails(props) {
     e.preventDefault();
     alert(`Form submitted for complaint id: ${complaint.id}`);
     setShowModal(false);
-    navigate("/host/manage-complaints");
+    navigate("/technician/tasks");
   };
 
   return (
