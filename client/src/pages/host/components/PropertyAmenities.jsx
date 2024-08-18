@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { FaWifi, FaParking, FaDumbbell, FaSwimmingPool, FaHotTub, FaUmbrellaBeach, FaShieldAlt, FaUtensils, FaSpa, FaFireAlt, FaSnowflake } from 'react-icons/fa';
+import { FaWifi, FaParking, FaDumbbell, FaSwimmingPool, FaHotTub, FaUmbrellaBeach, FaShieldAlt, FaUtensils, FaSpa, FaFireAlt, FaSnowflake, FaTimes } from 'react-icons/fa';
 import { FaKitchenSet } from "react-icons/fa6";
 import { RiBilliardsFill } from "react-icons/ri";
 import { TbSteam } from "react-icons/tb";
@@ -11,8 +11,9 @@ import { RiNetflixFill } from "react-icons/ri";
 
 const PropertyAmenities = ({ handleChange }) => {
   const { property, setProperty } = useProperty();
+  const [selectedImage, setSelectedImage] = useState(null);
 
-  const amenitiesList = [
+  const generalAmenitiesList = [
     { name: 'WiFi', icon: <FaWifi /> },
     { name: 'Kitchen', icon: <FaKitchenSet /> },
     { name: 'Parking', icon: <FaParking /> },
@@ -33,16 +34,33 @@ const PropertyAmenities = ({ handleChange }) => {
     { name: 'Streaming Service', icon: <RiNetflixFill /> }
   ];
 
+  const sectionAmenitiesList = [
+    { name: 'WiFi', icon: <FaWifi /> },
+    { name: 'Kitchen', icon: <FaKitchenSet /> },
+    { name: 'Parking', icon: <FaParking /> },
+    { name: 'Gym', icon: <FaDumbbell /> },
+    { name: 'Pool', icon: <FaSwimmingPool /> },
+    { name: 'Hot tub', icon: <FaHotTub /> },
+    { name: 'Beach access', icon: <FaUmbrellaBeach /> },
+    { name: 'Security', icon: <FaShieldAlt /> },
+    { name: 'Pool table', icon: <RiBilliardsFill /> },
+    { name: 'Outdoor dining', icon: <FaUtensils /> },
+    { name: 'Spa', icon: <FaSpa /> },
+    { name: 'Sauna', icon: <FaFireAlt /> },
+    { name: 'Steam Room', icon: <TbSteam /> }
+  ];
+
+  const amenitiesList = property.total_unique_sections == -1 ? generalAmenitiesList : sectionAmenitiesList;
+
   const handleIconClick = (amenityName) => {
     const existingAmenity = property.amenities.find(amenity => amenity.name === amenityName);
-    if (existingAmenity) {
-      // Remove amenity if already selected
+
+    if (existingAmenity && !existingAmenity.image?.url) {
       setProperty(prevProperty => ({
         ...prevProperty,
         amenities: prevProperty.amenities.filter(amenity => amenity.name !== amenityName)
       }));
-    } else {
-      // Add amenity with an empty image field
+    } else if (!existingAmenity) {
       setProperty(prevProperty => ({
         ...prevProperty,
         amenities: [...prevProperty.amenities, { name: amenityName, image: null }]
@@ -60,51 +78,96 @@ const PropertyAmenities = ({ handleChange }) => {
     }));
   };
 
+  const handleRemoveImage = (amenityName, event) => {
+    event.stopPropagation();
+    setProperty(prevProperty => ({
+      ...prevProperty,
+      amenities: prevProperty.amenities.map(amenity =>
+        amenity.name === amenityName ? { ...amenity, image: null } : amenity
+      )
+    }));
+  };
+
+  const handleImageClick = (url, event) => {
+    event.stopPropagation();  // Prevent triggering the unselect logic
+    setSelectedImage(url);
+  };
+
+  const closeImageModal = () => {
+    setSelectedImage(null);
+  };
+
   return (
-    <div className='container mx-auto px-8'>
+    <div className=' mx-auto px-8'>
       <h2 className="text-4xl font-extrabold text-black-600 mb-8 border-b-4 border-blue-600 p-6 rounded-md shadow-sm">Select Amenities</h2>
       <div className="p-6 bg-white rounded-lg shadow-md">
-        <div className="grid grid-cols-6 gap-4">
+        <div className="grid grid-cols-4 gap-2">
           {amenitiesList.map(({ name, icon }) => {
             const isSelected = property.amenities.some(amenity => amenity.name === name);
             const selectedAmenity = property.amenities.find(amenity => amenity.name === name);
+            const hasImage = selectedAmenity?.image?.url;
+
             return (
               <div
                 key={name}
+                className={`relative flex items-center justify-center p-4 border-4 rounded-lg cursor-pointer ${isSelected ? 'bg-white-100 border-blue-400 text-blue-600' : 'bg-white border-gray-200 text-gray-600'}`}
+                style={{ height: '180px', width: '380px' }}
                 onClick={() => handleIconClick(name)}
-                className={`relative flex flex-col items-center p-4 border-4 rounded-lg cursor-pointer ${isSelected ? 'bg-white-100 border-blue-400 text-blue-600' : 'bg-white border-gray-200 text-gray-600'}`}
               >
-                <div className="text-3xl mb-2">{icon}</div>
-                <label className="text-center">{name}</label>
-                {isSelected && (
-                  <div className="mt-4 w-full">
-                    <label className="block mb-2 font-semibold">Upload Image:</label>
-                    <input
-                      type="file"
-                      accept="image/*"
-                      onClick={(e) => e.stopPropagation()}
-                      onChange={(e) => handleFileChange(name, e.target.files[0])}
-                      className="block w-full text-sm text-gray-900 border border-gray-300 rounded-lg cursor-pointer bg-gray-50"
+                {hasImage ? (
+                  <>
+                    <img
+                      src={selectedAmenity.image.url}
+                      alt={`${name} preview`}
+                      className="absolute top-0 left-0 w-full h-full object-cover rounded-lg"
+                      onClick={(e) => handleImageClick(selectedAmenity.image.url, e)}
                     />
-                    {selectedAmenity?.image?.url && (
-                      <div className="mt-2">
-                        <img
-                          src={selectedAmenity.image.url}
-                          alt={`${name} preview`}
-                          className="w-32 h-32 object-cover rounded-lg"
+                    <div className="absolute top-0 left-0 w-full h-full flex flex-col justify-center items-center bg-black bg-opacity-50 rounded-lg">
+                      <div className="text-2xl text-white">{icon}</div>
+                      <label className="text-center text-white">{name}</label>
+                    </div>
+                    <FaTimes
+                      className="absolute top-2 right-2 text-white cursor-pointer"
+                      onClick={(e) => handleRemoveImage(name, e)}
+                    />
+                  </>
+                ) : (
+                  <>
+                    <div className="text-5xl mb-2 mr-4">
+                      {icon}
+                    </div>
+                    <label className="text-center">{name}</label>
+                    {isSelected && (
+                      <div className="absolute bottom-2 left-2 right-2">
+                        <input
+                          type="file"
+                          accept="image/*"
+                          onClick={(e) => e.stopPropagation()}
+                          onChange={(e) => handleFileChange(name, e.target.files[0])}
+                          className="block w-full text-sm text-gray-900 border border-gray-300 rounded-lg cursor-pointer bg-gray-50 file:mr-4 file:py-2 file:px-4 file:rounded-lg file:border-0 file:text-sm file:font-semibold file:bg-blue-50 file:text-blue-700 hover:file:bg-blue-100"
+                          aria-label="Add Image"
                         />
                       </div>
                     )}
-                  </div>
+                  </>
                 )}
               </div>
             );
           })}
         </div>
       </div>
+
+      {/* Custom Modal for viewing the image in detail */}
+      {selectedImage && (
+        <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-75 z-50" onClick={closeImageModal}>
+          <div className="relative">
+            <img src={selectedImage} alt="Detailed View" className="rounded-lg max-w-full max-h-full" />
+            <button onClick={closeImageModal} className="absolute top-2 right-2 text-white text-2xl">&times;</button>
+          </div>
+        </div>
+      )}
     </div>
   );
 };
 
 export default PropertyAmenities;
-
