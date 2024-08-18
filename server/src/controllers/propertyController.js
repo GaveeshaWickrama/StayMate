@@ -4,23 +4,6 @@ const path = require("path");
 
 async function createProperty(req, res) {
   try {
-    // Log the received files to verify their presence
-    if (req.files && typeof req.files === 'object') {
-      console.log('Request files:', Object.keys(req.files).map(key => {
-        return req.files[key].map(file => ({
-          fieldname: file.fieldname, // The name of the field associated with this file
-          originalname: file.originalname,
-          filename: file.filename,
-          mimetype: file.mimetype,
-          size: file.size,
-          path: file.path
-        }));
-      }));
-    } else {
-      console.log('No files received');
-    }
-
-    // Continue with the rest of the property creation logic
     const { 
       title, 
       description, 
@@ -28,35 +11,37 @@ async function createProperty(req, res) {
       total_unique_sections, 
       sections: sectionsString, 
       location, 
-      amenities,
+      amenities: amenitiesString,
       additionalDetails
     } = req.body;
 
     const host_id = req.user.userId;
 
-    if (!host_id || !title || !description || !type || !total_unique_sections || !sectionsString || !location || !amenities) {
+    if (!host_id || !title || !description || !type || !total_unique_sections || !sectionsString || !location || !amenitiesString) {
       return res.status(400).json({ message: 'All fields are required' });
     }
 
     let sections;
+    let amenities;
     try {
       sections = JSON.parse(sectionsString);
+      amenities = JSON.parse(amenitiesString);
     } catch (error) {
-      return res.status(400).json({ message: 'Invalid sections format' });
+      return res.status(400).json({ message: 'Invalid JSON format' });
     }
 
     const images = req.files.images ? req.files.images.map(file => ({ url: path.join('uploads/properties', file.filename) })) : [];
     const sectionImages = req.files.section_images ? req.files.section_images.map(file => ({ url: path.join('uploads/properties', file.filename) })) : [];
     const amenityImages = req.files.amenity_images ? req.files.amenity_images.map(file => ({ url: path.join('uploads/properties', file.filename) })) : [];
-
+    
     let imageIndex = 0;
     let amenityImageIndex = 0;
 
+    // Handle sections and their images
     sections = sections.map((section) => {
       if (section.images && section.images.length > 0) {
         section.images = section.images.map(() => {
           const img = sectionImages[imageIndex];
-          console.log(`Assigning image to section ${section.section_name}:`, img.url);
           imageIndex++;
           return { url: img.url };
         });
@@ -64,10 +49,10 @@ async function createProperty(req, res) {
         section.images = images;
       }
 
-      section.amenities = section.amenities.map((amenity, index) => {
+      // Process section-level amenities and assign images
+      section.amenities = section.amenities.map((amenity) => {
         if (amenityImages[amenityImageIndex]) {
           amenity.image = { url: amenityImages[amenityImageIndex].url };
-          console.log(`Assigning image to amenity ${amenity.name}:`, amenityImages[amenityImageIndex].url);
           amenityImageIndex++;
         }
         return amenity;
@@ -76,8 +61,19 @@ async function createProperty(req, res) {
       return section;
     });
 
+    // Handle property-level amenities and their images
+    let propertyAmenityImageIndex = 0;
+    amenities = amenities.map((amenity) => {
+      if (amenityImages[propertyAmenityImageIndex]) {
+        amenity.image = { url: amenityImages[propertyAmenityImageIndex].url };
+        propertyAmenityImageIndex++;
+      }
+      return amenity;
+    });
+
     const deed = req.files.deed ? req.files.deed[0].path : null;
 
+    // Create the property document
     const property = new Property({
       host_id,
       title,
@@ -87,11 +83,12 @@ async function createProperty(req, res) {
       sections,
       location,
       images,
-      amenities: Array.isArray(amenities) ? amenities : amenities.split(',').map(a => a.trim())
+      amenities, // Now includes property-level amenities with images
     });
 
     const newProperty = await property.save();
 
+    // Optionally save additional verification data
     const propertyVerified = new PropertyVerified({
       propertyID: newProperty._id,
       deed,
@@ -107,6 +104,7 @@ async function createProperty(req, res) {
     res.status(500).json({ message: 'Server error' });
   }
 }
+
 
 
 

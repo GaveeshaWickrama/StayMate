@@ -63,8 +63,8 @@ const AddProperty = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     const formData = new FormData();
-    
-    // Append all other fields to formData as before
+  
+    // Append all other fields to formData
     Object.keys(property).forEach(key => {
       if (key === 'images') {
         property.images.forEach(image => {
@@ -74,12 +74,12 @@ const AddProperty = () => {
         Object.keys(property.location).forEach(locKey => {
           formData.append(`location[${locKey}]`, property.location[locKey]);
         });
-      } else if (key !== 'sections' && key !== 'deed') {
+      } else if (key !== 'sections' && key !== 'deed' && key !== 'amenities') {
         formData.append(key, property[key]);
       }
     });
   
-    // Append sections including amenity images
+    // Append section data including images
     const sections = property.sections.map(section => {
       const updatedImages = section.images.map(image => {
         formData.append('section_images', image.file);
@@ -104,7 +104,20 @@ const AddProperty = () => {
     });
   
     formData.append('sections', JSON.stringify(sections));
-    
+  
+    // Append property-level amenities and their images
+    const updatedPropertyAmenities = property.amenities.map(amenity => {
+      if (amenity.image && amenity.image.file) {
+        formData.append('amenity_images', amenity.image.file);
+      }
+      return {
+        ...amenity,
+        image: { url: amenity.image.file.name }
+      };
+    });
+  
+    formData.append('amenities', JSON.stringify(updatedPropertyAmenities));
+  
     try {
       const response = await axios.post(`${import.meta.env.VITE_API_URL}/properties/add`, formData, {
         headers: {
@@ -113,12 +126,13 @@ const AddProperty = () => {
         }
       });
       console.log('Property added:', response.data);
-      resetProperty(); // Reset context after successful submit
+      
       navigate('/host/listings', { state: { fromAddProperty: true } });
     } catch (error) {
       console.error('There was an error adding the property:', error);
     }
   };
+  
 
   const validateForm = () => {
     let valid = false;
