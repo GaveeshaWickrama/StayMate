@@ -222,36 +222,44 @@ const SectionAmenities = ({ section, handleIconClick, handleFileChange }) => (
   <div>
     <h3 className="text-xl font-bold mt-8 mb-4">Select Amenities</h3>
     <div className="p-0 bg-white rounded-lg">
-      <div className="grid grid-cols-6 gap-4">
+      <div className="grid grid-cols-5 gap-2">
         {sectionAmenitiesList.map(({ name, icon }) => {
           const isSelected = section.amenities.some(amenity => amenity.name === name);
           const selectedAmenity = section.amenities.find(amenity => amenity.name === name);
+          const hasImage = selectedAmenity?.image?.url;
+
           return (
             <div
               key={name}
-              className={`flex flex-col items-center p-4 border-4 rounded-lg cursor-pointer ${isSelected ? 'bg-white-100 border-blue-400 text-blue-600' : 'bg-white border-gray-200 text-gray-600'}`}
+              className={`relative flex items-center justify-center p-4 border-4 rounded-lg cursor-pointer ${isSelected ? 'bg-white-100 border-blue-400 text-blue-600' : 'bg-white border-gray-200 text-gray-600'}`}
+              style={{ height: '160px', width: '260px' }}
+              onClick={() => handleIconClick(name)}
             >
-              <div className="text-3xl mb-2" onClick={() => handleIconClick(name)}>{icon}</div>
-              <label className="text-center">{name}</label>
-              {isSelected && (
-                <div className="mt-4 w-full">
-                  <label className="block mb-2 font-semibold">Upload Image:</label>
-                  <input
-                    type="file"
-                    accept="image/*"
-                    onChange={(e) => handleFileChange(name, e.target.files[0])}
-                    className="block w-full text-sm text-gray-900 border border-gray-300 rounded-lg cursor-pointer bg-gray-50"
-                  />
-                  {selectedAmenity?.image?.url && (
-                    <div className="mt-2">
-                      <img
-                        src={selectedAmenity.image.url}
-                        alt={`${name} preview`}
-                        className="w-32 h-32 object-cover rounded-lg"
+              {hasImage ? (
+                <img
+                  src={selectedAmenity.image.url}
+                  alt={`${name} preview`}
+                  className="absolute top-0 left-0 w-full h-full object-cover rounded-lg"
+                />
+              ) : (
+                <>
+                  <div className="text-5xl mb-2 mr-4">
+                    {icon}
+                  </div>
+                  <label className="text-center">{name}</label>
+                  {isSelected && (
+                    <div className="absolute bottom-2 left-2 right-2">
+                      <input
+                        type="file"
+                        accept="image/*"
+                        onClick={(e) => e.stopPropagation()}
+                        onChange={(e) => handleFileChange(name, e.target.files[0])}
+                        className="block w-full text-sm text-gray-900 border border-gray-300 rounded-lg cursor-pointer bg-gray-50 file:mr-4 file:py-2 file:px-4 file:rounded-lg file:border-0 file:text-sm file:font-semibold file:bg-blue-50 file:text-blue-700 hover:file:bg-blue-100"
+                        aria-label="Add Image"
                       />
                     </div>
                   )}
-                </div>
+                </>
               )}
             </div>
           );
@@ -260,6 +268,10 @@ const SectionAmenities = ({ section, handleIconClick, handleFileChange }) => (
     </div>
   </div>
 );
+
+
+
+
 
 const SectionPrice = ({ section, handleChange }) => (
   <div className="mt-8 p-6 bg-gray-100 rounded-lg shadow-inner">
