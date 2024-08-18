@@ -4,13 +4,11 @@ const path = require("path");
 
 async function createProperty(req, res) {
   try {
-    console.log('Decoded user:', req.user);
-    console.log('User role:', req.user.role);
-    console.log('Request body:', JSON.stringify(req.body, null, 2));
-
+    // Log the received files to verify their presence
     if (req.files && typeof req.files === 'object') {
       console.log('Request files:', Object.keys(req.files).map(key => {
         return req.files[key].map(file => ({
+          fieldname: file.fieldname, // The name of the field associated with this file
           originalname: file.originalname,
           filename: file.filename,
           mimetype: file.mimetype,
@@ -18,8 +16,11 @@ async function createProperty(req, res) {
           path: file.path
         }));
       }));
+    } else {
+      console.log('No files received');
     }
 
+    // Continue with the rest of the property creation logic
     const { 
       title, 
       description, 
@@ -46,8 +47,10 @@ async function createProperty(req, res) {
 
     const images = req.files.images ? req.files.images.map(file => ({ url: path.join('uploads/properties', file.filename) })) : [];
     const sectionImages = req.files.section_images ? req.files.section_images.map(file => ({ url: path.join('uploads/properties', file.filename) })) : [];
-    
+    const amenityImages = req.files.amenity_images ? req.files.amenity_images.map(file => ({ url: path.join('uploads/properties', file.filename) })) : [];
+
     let imageIndex = 0;
+    let amenityImageIndex = 0;
 
     sections = sections.map((section) => {
       if (section.images && section.images.length > 0) {
@@ -60,6 +63,16 @@ async function createProperty(req, res) {
       } else {
         section.images = images;
       }
+
+      section.amenities = section.amenities.map((amenity, index) => {
+        if (amenityImages[amenityImageIndex]) {
+          amenity.image = { url: amenityImages[amenityImageIndex].url };
+          console.log(`Assigning image to amenity ${amenity.name}:`, amenityImages[amenityImageIndex].url);
+          amenityImageIndex++;
+        }
+        return amenity;
+      });
+
       return section;
     });
 
@@ -95,6 +108,9 @@ async function createProperty(req, res) {
   }
 }
 
+
+
+
 async function getPropertiesByHostId(req, res) {
   const hostId = req.user.userId;
 
@@ -104,7 +120,7 @@ async function getPropertiesByHostId(req, res) {
       return res.status(404).json({ message: 'No properties found for this host.' });
     }
 
-    console.log('Properties found:', properties); // Log the properties
+    // console.log('Properties found:', properties); 
 
     res.status(200).json(properties);
   } catch (error) {

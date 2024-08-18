@@ -119,7 +119,22 @@ const sectionSchema = new Schema({
       }
     }
   ],
-  amenities: [String]
+  amenities: [
+    {
+      name: {
+        type: String,
+        required: true,
+        trim: true
+      },
+      image: {
+        url: {
+          type: String,
+          required: false,
+          trim: true
+        }
+      }
+    }
+  ]
 });
 
 // Define the schema for properties

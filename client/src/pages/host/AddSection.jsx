@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useProperty } from '../../context/PropertyContext'; // Adjust the path according to your project structure
-import { FaWifi, FaParking, FaDumbbell, FaSwimmingPool, FaHotTub, FaUmbrellaBeach, FaShieldAlt, FaUtensils, FaSpa, FaFireAlt, FaSnowflake, FaUpload } from 'react-icons/fa';
+import { FaWifi, FaParking, FaDumbbell, FaSwimmingPool, FaHotTub, FaUmbrellaBeach, FaShieldAlt, FaUtensils, FaSpa, FaFireAlt, FaUpload } from 'react-icons/fa';
 import { FaKitchenSet } from "react-icons/fa6";
 import { RiBilliardsFill } from "react-icons/ri";
 import { TbSteam } from "react-icons/tb";
@@ -20,7 +20,7 @@ const sectionAmenitiesList = [
   { name: 'Beach access', icon: <FaUmbrellaBeach /> },
   { name: 'Security', icon: <FaShieldAlt /> },
   { name: 'Pool table', icon: <RiBilliardsFill /> },
-  { name: 'Out door dining', icon: <FaUtensils /> },
+  { name: 'Outdoor dining', icon: <FaUtensils /> },
   { name: 'Spa', icon: <FaSpa /> },
   { name: 'Sauna', icon: <FaFireAlt /> },
   { name: 'Steam Room', icon: <TbSteam /> }
@@ -81,14 +81,31 @@ const AddSection = () => {
     }));
   };
 
-  const handleIconClick = (amenity) => {
-    const newAmenities = section.amenities.includes(amenity)
-      ? section.amenities.filter(item => item !== amenity)
-      : [...section.amenities, amenity];
-    
+  const handleIconClick = (amenityName) => {
+    const existingAmenity = section.amenities.find(amenity => amenity.name === amenityName);
+
+    if (existingAmenity) {
+      // Remove amenity if already selected
+      setSection(prevState => ({
+        ...prevState,
+        amenities: prevState.amenities.filter(amenity => amenity.name !== amenityName)
+      }));
+    } else {
+      // Add amenity with an empty image field
+      setSection(prevState => ({
+        ...prevState,
+        amenities: [...prevState.amenities, { name: amenityName, image: null }]
+      }));
+    }
+  };
+
+  const handleFileChange = (amenityName, file) => {
+    const url = URL.createObjectURL(file);
     setSection(prevState => ({
       ...prevState,
-      amenities: newAmenities
+      amenities: prevState.amenities.map(amenity =>
+        amenity.name === amenityName ? { ...amenity, image: { url, file } } : amenity
+      )
     }));
   };
 
@@ -105,11 +122,10 @@ const AddSection = () => {
     <form onSubmit={handleSubmit} className="container mx-auto px-8">
       <h2 className="text-4xl font-extrabold text-black-600 mb-8 border-b-4 border-blue-600 p-6 rounded-md shadow-sm">Add Section Details</h2>
       <SectionDetails section={section} handleChange={handleChange} handlePlanChange={handlePlanChange} />
-      <SectionAmenities section={section} handleIconClick={handleIconClick} />
-  
+      <SectionAmenities section={section} handleIconClick={handleIconClick} handleFileChange={handleFileChange} />
       <SectionImages section={section} handleFiles={handleFiles} handleDeleteImage={handleDeleteImage} />
       <SectionPrice section={section} handleChange={handleChange} />
-      <div className='my-10'> <button type="submit" className="bg-blue-500 text-white px-4 py-2 rounded" > Add Section </button> </div>
+      <div className='my-10'> <button type="submit" className="bg-blue-500 text-white px-4 py-2 rounded"> Add Section </button> </div>
     </form>
   );
 };
@@ -202,21 +218,44 @@ const SectionImages = ({ section, handleFiles, handleDeleteImage }) => {
   );
 };
 
-const SectionAmenities = ({ section, handleIconClick }) => (
+const SectionAmenities = ({ section, handleIconClick, handleFileChange }) => (
   <div>
     <h3 className="text-xl font-bold mt-8 mb-4">Select Amenities</h3>
     <div className="p-0 bg-white rounded-lg">
       <div className="grid grid-cols-6 gap-4">
-        {sectionAmenitiesList.map(({ name, icon }) => (
-          <div
-            key={name}
-            onClick={() => handleIconClick(name)}
-            className={`flex flex-col items-center p-4 border-4 rounded-lg cursor-pointer ${section.amenities.includes(name) ? 'bg-white-100 border-blue-400 text-blue-600' : 'bg-white border-gray-200 text-gray-600'}`}
-          >
-            <div className="text-3xl mb-2">{icon}</div>
-            <label className="text-center">{name}</label>
-          </div>
-        ))}
+        {sectionAmenitiesList.map(({ name, icon }) => {
+          const isSelected = section.amenities.some(amenity => amenity.name === name);
+          const selectedAmenity = section.amenities.find(amenity => amenity.name === name);
+          return (
+            <div
+              key={name}
+              className={`flex flex-col items-center p-4 border-4 rounded-lg cursor-pointer ${isSelected ? 'bg-white-100 border-blue-400 text-blue-600' : 'bg-white border-gray-200 text-gray-600'}`}
+            >
+              <div className="text-3xl mb-2" onClick={() => handleIconClick(name)}>{icon}</div>
+              <label className="text-center">{name}</label>
+              {isSelected && (
+                <div className="mt-4 w-full">
+                  <label className="block mb-2 font-semibold">Upload Image:</label>
+                  <input
+                    type="file"
+                    accept="image/*"
+                    onChange={(e) => handleFileChange(name, e.target.files[0])}
+                    className="block w-full text-sm text-gray-900 border border-gray-300 rounded-lg cursor-pointer bg-gray-50"
+                  />
+                  {selectedAmenity?.image?.url && (
+                    <div className="mt-2">
+                      <img
+                        src={selectedAmenity.image.url}
+                        alt={`${name} preview`}
+                        className="w-32 h-32 object-cover rounded-lg"
+                      />
+                    </div>
+                  )}
+                </div>
+              )}
+            </div>
+          );
+        })}
       </div>
     </div>
   </div>
