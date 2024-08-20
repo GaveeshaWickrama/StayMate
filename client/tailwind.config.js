@@ -7,6 +7,11 @@ module.exports = {
       fontSize: {
         'xxs': '0.6rem', // Custom size smaller than 'xs'
       },
+      boxShadow: {
+        'blue': '0 4px 6px -1px rgba(59, 130, 246, 0.5), 0 2px 4px -2px rgba(59, 130, 246, 0.5)',
+        'blue-strong': '0 8px 10px -2px rgba(59, 130, 246, 0.7), 0 4px 6px -2px rgba(59, 130, 246, 0.7)',
+
+      },
     },
   },
   plugins: [

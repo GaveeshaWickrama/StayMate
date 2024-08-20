@@ -1,52 +1,38 @@
-import React, { useEffect, useState } from 'react';
+import React, { useState, useEffect } from "react";
 import axios from 'axios';
-import { useParams, useLocation, useNavigate } from 'react-router-dom';
-import { FaClock, FaMapMarkerAlt } from 'react-icons/fa';
+
+import { useParams, useLocation, useNavigate } from "react-router-dom";
+import { FaClock, FaMapMarkerAlt } from "react-icons/fa";
 import { useAuth } from "../../context/auth";
+import PopupForm from "../host/SendRequestToTechnicianForm";
+import { FaRegEnvelope } from "react-icons/fa6";
 
-function HandleSendRequest({ complaintId, technicianID, hostID }) {
-  const navigate = useNavigate();
 
-  const sendRequest = async (complaintId, technicianID, hostID) => {
-    try {
-      console.log(`Complaint ID: ${complaintId}`);
-      console.log(`Technician ID: ${technicianID}`);
-      console.log(`Host ID: ${hostID}`);
 
-      await axios.post(
-        `${import.meta.env.VITE_API_URL}/complaints/assign-complaint/${technicianID}`,
-        null,
-        { params: { complaintId, hostID } }
-      );
-
-      navigate('/host/manage-complaints');
-      alert("Request successfully sent!");
-    } catch (error) {
-      console.error("Request couldn't be sent to the technician", error);
-    }
-  };
-
-  const handleButtonClick = () => {
-    sendRequest(complaintId, technicianID, hostID);
-  };
-
-  return (
-    <div>
-      <button className="bg-blue-600 text-white p-4 rounded font-bold w-50 my-10 m-4" onClick={handleButtonClick}>
-        Send Request
-      </button>
-    </div>
-  );
-}
 
 function TechnicianDetails() {
-  const { id } = useParams();
-  const { currentUser } = useAuth();
+
+  const { id } = useParams();  //technician id
+  const { currentUser } = useAuth();  //host id
   const location = useLocation();
+  const navigate = useNavigate();
   const queryParams = new URLSearchParams(location.search);
-  const complaintID = queryParams.get('complaintID');
+  const complaintID = queryParams.get("complaintID");
   const hostID = currentUser.id;
+  const [showModal, setShowModal] = useState(false);
   const [technician, setTechnician] = useState(null);
+
+
+  // const handleSave = async (e) => {
+  //   e.preventDefault();
+
+  // //   setShowModal(false);
+  // //   // alert(`Form submitted for complaint id: ${complaint.id}`);
+
+  // //   // <HandleSendRequest complaintId={complaintID} technicianID={id} hostID={hostID} />
+
+  // //   navigate("/host/manage-complaints");
+  // // };
 
   useEffect(() => {
     const fetchTechnician = async () => {
@@ -67,16 +53,18 @@ function TechnicianDetails() {
 
   return (
     <div className="bg-gray-100 mx-auto py-2 px-8">
-      <div className='flex mb-1 border-b-4 border-blue-600 p-6 rounded-md shadow-sm bg-white'>
+      <div className="flex mb-1 border-b-4 border-blue-600 p-6 rounded-md shadow-sm bg-white">
         <div>
-          <img src={`../../assets/${technician.proPic}`} alt="Technician" className="w-10 h-10 rounded-full mx-2" />
+          <img
+         src={`  ${import.meta.env.VITE_API_URL}/uploads/profilePictures/test`}
+            alt="Technician"
+            className="w-20 h-20 rounded-full mx-2"
+          />
         </div>
         <h1 className="flex items-center text-4xl font-extrabold text-black-600">
-          {technician.userDetails.firstName} {technician.userDetails.lastName}
+          {technician.userId.firstName} {technician.userId.lastName}
         </h1>
-        <div className="flex items-center text-gray-600 ml-6 mt-3">
-          <FaClock className="mr-2" /> <span>Added on: {new Date(technician.createdAt).toLocaleDateString()}</span>
-        </div>
+        <div className="flex items-center text-gray-600 ml-6 mt-3"></div>
       </div>
 
       <div className="bg-white rounded-lg overflow-hidden mb-4"></div>
@@ -85,35 +73,109 @@ function TechnicianDetails() {
         <div className="w-full md:w-2/3 rounded-lg p-1 bg-white shadow">
           <div className="bg-white p-8 flex flex-col text-xl gap-4 border-b">
             <h2 className="text-xl font-bold mb-2">About</h2>
-            <p className='text-lg'>{technician.about}</p>
+            <p className="text-lg">{technician.about}</p>
           </div>
-          <div className="bg-white p-8 flex items-center border-b">
+          <div className="bg-white p-8 flex items-center ">
             <FaMapMarkerAlt className="mr-2" />
             <p className="font-semibold">{technician.location.address}</p>
           </div>
         </div>
 
         <div className="w-full md:w-1/3 bg-white p-4 rounded-lg shadow">
-          <div>
+          <div className="flex items-center p-6 gap-4 ">
+            <h2 className="text-xl font-bold ">Skill</h2>
+            <div className="bg-blue-300 p-2 rounded-lg text-white">
+              <span className="text-lg">{technician.subRole}</span>
+            </div>
+          </div>
+          <div className="flex items-center p-6 gap-4 ">
             <h2 className="text-xl font-bold mb-2">Date Joined</h2>
-            <div>{new Date(technician.createdAt).toLocaleDateString()}</div>
+            <div className="text-lg">
+              {new Date(technician.createdAt).toLocaleDateString()}
+            </div>
           </div>
-          <div>
-            <h2 className="text-xl font-bold mb-2">Jobs done</h2>
-            <div>7</div>
-          </div>
-          <div>
-            <h2 className="text-xl font-bold">Rating: 4.5</h2>
-            <p className='ml-4'>Great!</p>
+          <div className="flex items-center p-6 gap-4">
+            <h2 className="text-xl font-bold ">Jobs done</h2>
+            <div className="text-lg">7</div>
           </div>
         </div>
       </div>
 
-      <div className='w-full rounded-lg p-6 bg-white shadow mt-2'>
-        <h2 className="text-xl font-bold mb-2">Reviews</h2>
-        <p className='text-lg'>Reviews come here</p>
+      <div className="w-full rounded-lg p-6 bg-white shadow mt-2">
+        <h2 className="text-xl font-bold mb-3 pb-4">Reviews</h2>
+
+        <div className="border-b flex flex-col items-start">
+          <div className="flex flex-row gap-2 p-2 items-center">
+            <div className="rounded-full w-10 h-10 bg-blue-100">
+              <img src={`  ${import.meta.env.VITE_API_URL}/uploads/profilePictures/test`} alt="" />
+            </div>
+            <div className="flex flex-col">
+              <span className="text-lg">chamma siri</span>
+              <span className="text-sm text-gray-500">2022-03-02</span>
+             
+            </div>
+          </div>
+          <div className="p-1">
+                {/* <span className="text-base p-2">4.5</span> */}
+                <div className="rating rating-sm	 ">
+                  <input
+                    type="radio"
+                    name="rating-2"
+                    className="mask mask-star-2 bg-orange-400"
+                  />
+                  <input
+                    type="radio"
+                    name="rating-2"
+                    className="mask mask-star-2 bg-orange-400"
+                    defaultChecked
+                  />
+                  <input
+                    type="radio"
+                    name="rating-2"
+                    className="mask mask-star-2 bg-orange-400"
+                  />
+                  <input
+                    type="radio"
+                    name="rating-2"
+                    className="mask mask-star-2 bg-orange-400"
+                  />
+                  <input
+                    type="radio"
+                    name="rating-2"
+                    className="mask mask-star-2 bg-orange-400"
+                  />
+                </div>
+              </div>
+          <p className="text-lg pb-5 p-1">Attended to the issue immediately!</p>
+        </div>
       </div>
-      <HandleSendRequest complaintId={complaintID} technicianID={id} hostID={hostID} />
+
+    
+
+
+      <div className="flex flex-row">
+      <button
+        className="bg-blue-600 text-white p-4 rounded font-bold w-50 my-10 m-4"
+        onClick={() => setShowModal(true)}
+      >
+        Send Request
+      </button>
+      <button
+        className="bg-green-600 text-white p-4 rounded font-bold w-50 my-10 m-4 items-center flex flex-row gap-3 "
+        onClick={() => setShowModal(true)}
+      >
+        <FaRegEnvelope />
+        Message
+      </button>
+      </div>
+
+      <PopupForm
+        isOpen={showModal}
+        handleClose={() => setShowModal(false)}
+        complaintId = {complaintID}
+        technicianID = {id}
+        hostID = {hostID}
+      />
     </div>
   );
 }

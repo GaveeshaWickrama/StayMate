@@ -1,12 +1,13 @@
 require("dotenv").config();
-const express = require("express");
+const { app,server } = require("./socket/socket.js");
 const cors = require("cors");
 const morgan = require("morgan"); // Logging HTTP requests
 const mongoose = require("mongoose");
 const path = require("path"); // Import the path module
 const defaultImageMiddleware = require('./middleware/defaultImageMiddleware'); // Adjust the path as necessary
+const express = require('express');
 
-const app = express();
+
 
 // Middleware to serve static files
 app.use("/uploads", express.static(path.join(__dirname, "../uploads")));
@@ -32,7 +33,6 @@ const reservationRoutes = require("./routes/reservationRoutes");
 const complaintRoutes = require("./routes/complaintRoutes");
 const reviewRoutes = require("./routes/reviewRoutes");
 const messageRoutes = require("./routes/messageRoutes");
-const taskRoutes = require("./routes/taskRoutes");
 const technicianRoutes = require("./routes/technicianRoutes");
 
 mongoose.connect(process.env.DATABASE_URL); // Use 127.0.0.1 instead of localhost to fix conversion issues with IPV6
@@ -53,7 +53,6 @@ app.use("/reservation", reservationRoutes);
 app.use("/complaints", complaintRoutes);
 app.use("/reviews", reviewRoutes);
 app.use("/message", messageRoutes);
-app.use("/tasks", taskRoutes);
 app.use("/technicians", technicianRoutes);
 
 app.get("/", (req, res) => {
@@ -62,6 +61,6 @@ app.get("/", (req, res) => {
 
 // Start Server
 const port = process.env.PORT || 3000;
-app.listen(port, () => {
+server.listen(port, () => {
   console.log(`Server running at http://localhost:${port}/`);
 });

@@ -3,11 +3,12 @@ import Message from './Message'
 import useGetMessages from '../../hooks/useGetMessages'
 import MessageSkeleton from '../skeletons/MessageSkeleton';
 import { useEffect,useRef } from 'react';
+import useListenMessages from '../../hooks/useListenMessages';
 
 const Messages = () => {
 
   const {messages,loading} = useGetMessages();
-  console.log("messages : ",messages);
+  useListenMessages(); //Listens for any incoming messages
   const lastMessageRef = useRef();
 
   useEffect(() => {

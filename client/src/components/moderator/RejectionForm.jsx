@@ -38,7 +38,9 @@ const RejectionForm = ({ propertyId, token, currentUser, onClose, onSubmit }) =>
       if (response.status === 200) {
         console.log('Property Rejected:', response.data);
         alert('Property rejected successfully');
-        onClose(); // Close the form after successful rejection
+        setTimeout(() => {
+          window.history.back(); // Navigate to the previous page
+        }, 0); // Set a timeout to ensure the navigation happens after the alert
       } else {
         alert('Failed to reject property');
       }
@@ -67,17 +69,17 @@ const RejectionForm = ({ propertyId, token, currentUser, onClose, onSubmit }) =>
   
 
   const handleBack = () => {
-    navigate(-1); // Navigate to the previous page
+    onClose(); // Navigate to the previous page
   };
 
   return (
-    <div className="bg-white p-6 rounded-lg shadow-lg mt-4 w-full">
-      <label className="block text-gray-700 font-bold mb-2">
-        Select reasons for rejection:
+    <div className="p-6 bg-white rounded-lg shadow-md mt-2 w-full">
+      <label>
+      <h2 className="text-2xl font-bold text-black-600 mb-4 ">Select reasons for rejection:</h2>
       </label>
-      <div className="w-full p-2 border border-gray-300 rounded mb-4">
+      <div>
         {reasons.map(reason => (
-          <div key={reason} className="flex items-center mb-2">
+          <div key={reason} className="text-lg flex">
             <input
               type="checkbox"
               id={reason}
@@ -91,13 +93,13 @@ const RejectionForm = ({ propertyId, token, currentUser, onClose, onSubmit }) =>
       </div>
       <div className="flex justify-between">
         <button 
-          className="bg-blue-600 text-white px-4 py-2 rounded font-bold"
+          className="bg-blue-600 text-white px-4 py-2 rounded font-bold mx-2 flex-grow"
           onClick={handleSubmit}
         >
           Submit Rejection
         </button>
         <button 
-          className="bg-gray-600 text-white px-4 py-2 rounded font-bold"
+          className="bg-gray-600 text-white px-4 py-2 rounded font-bold mx-2 flex-grow"
           onClick={handleBack}
         >
           Back

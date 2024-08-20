@@ -89,7 +89,7 @@ const SignupForm = ({ role, navigateTo }) => {
 
   return (
     <div className="h-full bg-gray-100 flex justify-center">
-      <form onSubmit={handleSubmit} className="bg-white p-8 py-0 rounded shadow-md w-full max-w-sm my-10 relative">
+      <form onSubmit={handleSubmit} className="bg-white p-8 py-0 pb-10 rounded shadow-md w-full max-w-sm my-10 relative">
         <Logo />
         <h2 className="text-2xl font-bold mb-10 text-center">{role.charAt(0).toUpperCase() + role.slice(1)} Sign-Up</h2>
         <div className="w-full bg-gray-200 h-1 mb-6">

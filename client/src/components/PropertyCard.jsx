@@ -10,12 +10,12 @@ const PropertyCard = ({ property }) => {
     : 'N/A';
 
   return (
-    
-    <Link to={`/property-details/${property._id}`} className="max-w-sm w-full md:w-1/3 lg:w-1/4 rounded overflow-hidden shadow-lg bg-white no-underline text-black m-4 transform transition duration-300 hover:scale-105 hover:shadow-2xl" >
+    <div className='transform transition duration-300 hover:scale-105'>
+    <Link to={`/property-details/${property._id}`} className="max-w-sm w-full md:w-1/3 lg:w-1/4 rounded overflow-hidden shadow-lg bg-white no-underline text-black m-4 hover:shadow-2xl" >
       <div className="relative h-64">
         <img className="w-full h-full object-cover" src={imageUrl} alt={property.title} />
       </div>
-      <div className="px-4 py-4 h-48 flex flex-col justify-between bg-gray-100 rounded-2xl">
+      <div className="px-4 py-4 h-48 flex flex-col justify-between bg-gray-100 rounded-2xl ">
         <div>
           <div className="font-bold text-lg mb-2">{property.title}</div>
           <div className="text-gray-700 text-sm mb-2">
@@ -28,11 +28,11 @@ const PropertyCard = ({ property }) => {
           </div>
         </div>
         <div className="py-2 flex justify-between items-center border-t">
-          <span className="text-xl font-bold ">${formattedPricePerNight} / Night</span>
+          <span className="text-xl font-bold ">Rs {formattedPricePerNight} / Night</span>
         </div>
       </div>
     </Link>
-    
+    </div>
   );
 };
 
