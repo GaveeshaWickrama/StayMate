@@ -20,6 +20,8 @@ import { MdReportProblem } from "react-icons/md";
 import { MdOutlineTaskAlt } from "react-icons/md";
 import { FaTasks } from "react-icons/fa";
 import { GrTasks } from "react-icons/gr";
+import useTotalUnreadMessageCount from '../../hooks/useTotalUnreadMessageCount';
+import useConversation from "../../zustand/useConversation";
 
 const iconMap = {
   Home: "home",
@@ -100,7 +102,9 @@ function Navbar({ isVisible }) {
   
   const { currentUser, logout } = useAuth();
   const navigate = useNavigate();
-  const {newMessageCount} = useSocketContext();
+  useTotalUnreadMessageCount();
+
+  const {totalUnreadMessageCount} = useConversation();
 
   const handleLogout = () => {
     logout();
@@ -185,7 +189,7 @@ function Navbar({ isVisible }) {
         links={adminLinks}
         logout={handleLogout}
         isVisible={isVisible}
-        newMessageCount={newMessageCount}
+        newMessageCount={totalUnreadMessageCount}
       />
     );
   }
@@ -197,7 +201,7 @@ function Navbar({ isVisible }) {
         links={guestLinks}
         logout={handleLogout}
         isVisible={isVisible}
-        newMessageCount={newMessageCount}
+        newMessageCount={totalUnreadMessageCount}
       />
     );
   }
@@ -209,7 +213,7 @@ function Navbar({ isVisible }) {
         links={hostLinks}
         logout={handleLogout}
         isVisible={isVisible}
-        newMessageCount={newMessageCount}
+        newMessageCount={totalUnreadMessageCount}
       />
     );
   }
@@ -221,7 +225,7 @@ function Navbar({ isVisible }) {
         links={technicianLinks}
         logout={handleLogout}
         isVisible={isVisible}
-        newMessageCount={newMessageCount}
+        newMessageCount={totalUnreadMessageCount}
       />
     );
   }
@@ -233,7 +237,7 @@ function Navbar({ isVisible }) {
         links={moderatorLinks}
         logout={handleLogout}
         isVisible={isVisible}
-        newMessageCount={newMessageCount}
+        newMessageCount={totalUnreadMessageCount}
       />
     );
   }

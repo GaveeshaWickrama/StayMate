@@ -16,7 +16,6 @@ export const SocketContextProvider = ({ children }) => {
 
     const [socket,setSocket] = useState(null);
     const [onlineUsers,setOnlineUsers] = useState([]);
-    const [newMessageCount, setNewMessageCount] = useState(0);
     const { currentUser } = useAuth();
     console.log("currentUser :- ",currentUser);
 
@@ -34,10 +33,6 @@ export const SocketContextProvider = ({ children }) => {
                 setOnlineUsers(users);
             });
 
-            socket.on('newMessageCount', (count) => {
-                setNewMessageCount(count);
-            });
-
             return () => socket.close();
         } else {
             if(socket) {
@@ -48,7 +43,7 @@ export const SocketContextProvider = ({ children }) => {
     },[currentUser]);
 
     return (
-        <SocketContext.Provider value={{socket,onlineUsers,newMessageCount}}>
+        <SocketContext.Provider value={{socket,onlineUsers}}>
             {children}
         </SocketContext.Provider>
     );

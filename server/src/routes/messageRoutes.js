@@ -7,5 +7,6 @@ router.get('/',authToken,requireRole('guest','host','technician','moderator'),me
 router.post("/send/:id",authToken,requireRole('guest','host','technician','moderator'),messageController.sendMessage);
 router.get("/:id",authToken,requireRole('guest','host','technician','moderator'),messageController.getMessages);
 router.get("/createOrSelectConversation/:id",authToken,requireRole('guest','host','technician','moderator'),messageController.createOrSelectConversation);
+router.get("/getTotalUnreadMessageCount/:id",authToken,requireRole('guest','host','technician','moderator'),messageController.getTotalUnreadMessageCount);
 
 module.exports = router;

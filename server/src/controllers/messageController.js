@@ -3,7 +3,7 @@ const User = require('../models/userModel');
 const Message = require('../models/messageModel');
 const { getRecieverSocketId, io } = require('../socket/socket');
 
-const getUnreadMessageCount = async (userId) => {
+/* const getUnreadMessageCount = async (userId) => {
     try {
         const count = await Message.countDocuments({ receiverId: userId, unread: true });
         return count;
@@ -12,6 +12,21 @@ const getUnreadMessageCount = async (userId) => {
         return 0;
     }
 };
+ */
+
+const getTotalUnreadMessageCount = async (req,res) => {
+    const {id:receiverId} = req.params;
+    console.log("Inside getTotalUnreadMessageCount :- ",receiverId);
+    try {
+        const count = await Message.countDocuments({ receiverId: receiverId, unread: true });
+        console.log('Unread Message Count :- ',count);
+        res.json(count); 
+    } catch (error) {
+        console.error('Error getting unread message count:', error);
+        return 0;
+    }
+}
+
 
 const sendMessage = async (req,res)=>{
     try {
@@ -47,8 +62,8 @@ const sendMessage = async (req,res)=>{
         const recieverSocketId = getRecieverSocketId(receiverId);
         if(recieverSocketId) {
             io.to(recieverSocketId).emit('newMessage',newMessage);
-            const unreadMessageCount = await getUnreadMessageCount(receiverId);
-            io.to(recieverSocketId).emit('newMessageCount', unreadMessageCount);
+/*             const unreadMessageCount = await getUnreadMessageCount(receiverId);
+            io.to(recieverSocketId).emit('newMessageCount', unreadMessageCount); */
         }
 
         res.status(201).json(newMessage);
@@ -137,4 +152,4 @@ const getContacts = async (req, res) => {
     }
 };
 
-module.exports = { sendMessage,getMessages, getContacts,createOrSelectConversation };
+module.exports = { sendMessage,getMessages, getContacts,createOrSelectConversation,getTotalUnreadMessageCount };
