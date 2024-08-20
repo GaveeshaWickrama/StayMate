@@ -96,7 +96,7 @@ const getMessages = async (req,res) => {
     }
 }
 
-const getContacts = async (req, res) => {
+/* const getContacts = async (req, res) => {
     try {
       const loggedInUser = req.user.userId;
   
@@ -121,7 +121,38 @@ const getContacts = async (req, res) => {
       console.error("Error Fetching Conversations: ", err.message);
       res.status(500).json({ error: "Internal Server Error" });
     }
-  };
+  }; */
+
+  const getConversationsWithUnreadCount = async (req, res) => {
+    const loggedInUser = req.user.userId;
+
+    try {
+        const conversations = await Conversation.find({ participants: { $in: [loggedInUser] } })
+            .populate('participants')
+            .populate({
+                path: 'messages',
+                match: { unread: true, receiverId: loggedInUser },
+                select: 'unread'
+            });
+
+        const conversationWithUnreadCount = conversations.map(convo => {
+            const unreadMessagesCount = convo.messages.length;
+            const otherParticipant = convo.participants.find(participant => participant._id.toString() !== loggedInUser);
+            return {
+                unreadMessagesCount,
+                otherParticipant
+            };
+        });
+
+        console.log("ConversationsWithUnreadCount : - ",conversationWithUnreadCount);
+
+        res.status(200).json(conversationWithUnreadCount);
+    } catch (err) {
+        console.error("Error Fetching Conversations: ", err.message);
+        res.status(500).json({ error: "Internal Server Error" });
+    }
+};
+
   
   const createOrSelectConversation = async (req, res) => {
     console.log("inside createOrSelectConversation");
@@ -152,4 +183,4 @@ const getContacts = async (req, res) => {
     }
 };
 
-module.exports = { sendMessage,getMessages, getContacts,createOrSelectConversation,getTotalUnreadMessageCount };
+module.exports = { sendMessage,getMessages, getConversationsWithUnreadCount,createOrSelectConversation,getTotalUnreadMessageCount };

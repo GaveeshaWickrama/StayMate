@@ -2,7 +2,7 @@ import React from 'react'
 import useConversation from '../../zustand/useConversation';
 import { useSocketContext } from '../../context/SocketContext';
 
-const Conversation = ({conversation,lastIdx,emoji}) => {
+const Conversation = ({conversation,lastIdx,emoji,unreadMessagesCount}) => {
 
     const {selectedConversation, setSelectedConversation}= useConversation();
 
@@ -33,6 +33,14 @@ const Conversation = ({conversation,lastIdx,emoji}) => {
         <div className={`avatar ${isOnline ? "online" : ""} `}>
             <div className='w-12 rounded-full'>
                 <img src={imageUrl} alt="User Image" />
+                {unreadMessagesCount > 0 && (
+              <div
+                className="absolute top-0 left-0 bg-red-500 text-white text-xs font-bold rounded-full w-5 h-5 flex items-center justify-center"
+                style={{ transform: "translate(-20%, -20%)" }}
+              >
+                {unreadMessagesCount}
+              </div>
+            )}
             </div>
         </div>
 
@@ -41,6 +49,7 @@ const Conversation = ({conversation,lastIdx,emoji}) => {
                 <p className=' text-black'>{`${conversation.firstName} ${conversation.lastName}`}</p>
                 <span className='text-xl'>{emoji}</span>
             </div>
+  
         </div>
     </div>
 

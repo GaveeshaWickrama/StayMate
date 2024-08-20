@@ -18,6 +18,7 @@ const Conversations = () => {
         <Conversation
           key={tempConversation._id}
           conversation={tempConversation}
+          unreadMessagesCount={0}  // Assuming temp conversation has no unread messages
           emoji={getRandomEmoji()}
           lastIdx={true}
         />
@@ -26,8 +27,9 @@ const Conversations = () => {
       {conversations.length ? (
         conversations.map((conversation, idx) => (
           <Conversation
-            key={conversation._id}
-            conversation={conversation}
+            key={conversation.otherParticipant._id}
+            conversation={conversation.otherParticipant}
+            unreadMessagesCount={conversation.unreadMessagesCount}
             emoji={getRandomEmoji()}
             lastIdx={idx === conversations.length - 1 && !tempConversation}
           />
