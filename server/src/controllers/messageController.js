@@ -133,7 +133,7 @@ const getMessages = async (req,res) => {
                 path: 'messages',
                 match: { unread: true, receiverId: loggedInUser },
                 select: 'unread'
-            });
+            }).sort({updatedAt : -1});
 
         const conversationWithUnreadCount = conversations.map(convo => {
             const unreadMessagesCount = convo.messages.length;
