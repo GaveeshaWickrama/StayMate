@@ -46,6 +46,8 @@ const sendMessage = async (req,res)=>{
             });
         }
 
+        console.log("Created or found conversation : ",conversation);
+
         const newMessage = new Message({
             senderId,
             receiverId,
@@ -62,8 +64,7 @@ const sendMessage = async (req,res)=>{
         const recieverSocketId = getRecieverSocketId(receiverId);
         if(recieverSocketId) {
             io.to(recieverSocketId).emit('newMessage',newMessage);
-/*             const unreadMessageCount = await getUnreadMessageCount(receiverId);
-            io.to(recieverSocketId).emit('newMessageCount', unreadMessageCount); */
+            //io.to(recieverSocketId).emit('latestConversation',conversation);
         }
 
         res.status(201).json(newMessage);
