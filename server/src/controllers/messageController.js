@@ -184,4 +184,30 @@ const getMessages = async (req,res) => {
     }
 };
 
-module.exports = { sendMessage,getMessages, getConversationsWithUnreadCount,createOrSelectConversation,getTotalUnreadMessageCount };
+const updateReadStatus = async (req,res) => {
+
+    try {
+
+        const loggedInUser = req.user.userId;
+        const { id: otherUserId } = req.params;
+        console.log("Inside Updatereadstatus");
+
+        // Update all messages sent by other participant to this logged in user and are unread
+        const result = await Message.updateMany(
+            { 
+                receiverId: loggedInUser,
+                senderId: otherUserId, // Ensure that you're only marking messages from the other user as read
+                unread: true
+            },
+            { $set: { unread: false } }
+        );
+
+        return res.status(200).json({ message: `${result.nModified} messages marked as read` });
+
+    } catch (error) {
+        console.error("Error updating read status: ", error.message);
+        return res.status(500).json({ message: "Server error" });
+    }
+}
+
+module.exports = { sendMessage,getMessages, getConversationsWithUnreadCount,createOrSelectConversation,getTotalUnreadMessageCount,updateReadStatus };

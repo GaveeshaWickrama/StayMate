@@ -2,14 +2,17 @@ import React from 'react'
 import { useState } from 'react';
 import useConversation from '../../zustand/useConversation';
 import { useSocketContext } from '../../context/SocketContext';
+import { toast } from 'react-toastify';
+import { useAuth } from "../../context/auth";
+import axios from 'axios';
 
 const Conversation = ({conversation,lastIdx,emoji,unreadMessagesCount}) => {
 
-    const [eachUserUnreadMessagesCount,setUnreadMessageCount] = useState(unreadMessagesCount);
+    const [eachUserUnreadMessagesCount,setEachUserUnreadMessagesCount] = useState(unreadMessagesCount);
 
+    const {selectedConversation, setSelectedConversation,totalUnreadMessageCount,setTotalUnreadMessageCount}= useConversation();
 
-
-    const {selectedConversation, setSelectedConversation}= useConversation();
+    const { currentUser, token } = useAuth();
 
     const isSelected = selectedConversation?._id === conversation._id;
     
@@ -26,11 +29,37 @@ const Conversation = ({conversation,lastIdx,emoji,unreadMessagesCount}) => {
     const DefaultPic = conversation?.gender == 'male' ? `${import.meta.env.VITE_API_URL}/uploads/profilepictures/maleDefaultPic.png` : `${import.meta.env.VITE_API_URL}/uploads/profilepictures/femaleDefaultPic.png`;
 
     const imageUrl = conversation?.picture ? `${import.meta.env.VITE_API_URL}/${selectedConversation.picture}` :  DefaultPic;
+
+
+    const updateReadStatus = async () => {
+
+      console.log("Update Read Status");
+
+      try {
+    
+        await axios.patch(
+          `${import.meta.env.VITE_API_URL}/message/updateReadStatus/${conversation._id}`,
+          {},// Empty object for data since this is a PATCH request
+          {
+            headers: {
+                Authorization: `Bearer ${token}`,
+                'Content-Type': 'application/json'
+            },
+        }) ;
+
+        setTotalUnreadMessageCount(totalUnreadMessageCount-eachUserUnreadMessagesCount);
+        setEachUserUnreadMessagesCount(0); 
+
+      } catch (error) {
+        console.error("updateReadStatus error: ", error.message);
+        toast.error("Failed to update read status");
+      }
+    };
    
 
     socket.on('newMessage',(newMessage) => {
       if(conversation._id === newMessage.senderId) {
-        setUnreadMessageCount(eachUserUnreadMessagesCount+1);
+        setEachUserUnreadMessagesCount(eachUserUnreadMessagesCount+1);
     }
     })
 
@@ -38,7 +67,11 @@ const Conversation = ({conversation,lastIdx,emoji,unreadMessagesCount}) => {
     <div className={`flex gap-2 items-center hover:bg-sky-500 rounded p-2 py-1 cursor-pointer
         ${isSelected ? "bg-sky-500" : "" }
         `}
-        onClick={() => setSelectedConversation(conversation)}
+        onClick={() => {
+          console.log("Conversation clicked");
+          setSelectedConversation(conversation);
+          updateReadStatus();
+        }}
         >
         
         <div className={`avatar ${isOnline ? "online" : ""} `}>
