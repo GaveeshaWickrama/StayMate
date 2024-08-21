@@ -1,14 +1,19 @@
 import React from 'react'
+import { useState } from 'react';
 import useConversation from '../../zustand/useConversation';
 import { useSocketContext } from '../../context/SocketContext';
 
 const Conversation = ({conversation,lastIdx,emoji,unreadMessagesCount}) => {
 
+    const [eachUserUnreadMessagesCount,setUnreadMessageCount] = useState(unreadMessagesCount);
+
+
+
     const {selectedConversation, setSelectedConversation}= useConversation();
 
     const isSelected = selectedConversation?._id === conversation._id;
     
-    const {onlineUsers} = useSocketContext();
+    const {onlineUsers,socket} = useSocketContext();
     const isOnline = onlineUsers.includes(conversation._id);
 
     console.log("onlineusers :- ",onlineUsers);
@@ -23,6 +28,12 @@ const Conversation = ({conversation,lastIdx,emoji,unreadMessagesCount}) => {
     const imageUrl = conversation?.picture ? `${import.meta.env.VITE_API_URL}/${selectedConversation.picture}` :  DefaultPic;
    
 
+    socket.on('newMessage',(newMessage) => {
+      if(conversation._id === newMessage.senderId) {
+        setUnreadMessageCount(eachUserUnreadMessagesCount+1);
+    }
+    })
+
   return <>
     <div className={`flex gap-2 items-center hover:bg-sky-500 rounded p-2 py-1 cursor-pointer
         ${isSelected ? "bg-sky-500" : "" }
@@ -33,12 +44,12 @@ const Conversation = ({conversation,lastIdx,emoji,unreadMessagesCount}) => {
         <div className={`avatar ${isOnline ? "online" : ""} `}>
             <div className='w-12 rounded-full'>
                 <img src={imageUrl} alt="User Image" />
-                {unreadMessagesCount > 0 && (
+                {eachUserUnreadMessagesCount > 0 && (
               <div
                 className="absolute top-0 left-0 bg-red-500 text-white text-xs font-bold rounded-full w-5 h-5 flex items-center justify-center"
                 style={{ transform: "translate(-20%, -20%)" }}
               >
-                {unreadMessagesCount}
+                {eachUserUnreadMessagesCount}
               </div>
             )}
             </div>
