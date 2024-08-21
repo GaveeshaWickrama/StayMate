@@ -4,6 +4,7 @@ import { useAuth } from "../context/auth";
 import { toast } from "react-toastify";
 import { useSocketContext } from '../context/SocketContext';
 import useConversation from '../zustand/useConversation';
+import notificationSound from '../assets/sounds/notification.mp3';
 
 const useTotalUnreadMessageCount = () => {
     const { socket } = useSocketContext();
@@ -43,6 +44,8 @@ const useTotalUnreadMessageCount = () => {
         getTotalUnreadMessageCount();
 
         socket?.on('newMessage', (newMessage) => {
+            const sound = new Audio(notificationSound);
+            sound.play();
             setTotalUnreadMessageCount(totalUnreadMessageCount+1);
         });
 
