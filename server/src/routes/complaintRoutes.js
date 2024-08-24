@@ -36,8 +36,9 @@ router.get(
 //   "/:id/pending/host",
 //   complaintController.getPendingComplaintsByHostId
 // );
-router.get("/:id/active/host", complaintController.getActiveComplaintsByHostId);
+// router.get("/:id/active/host", complaintController.getActiveComplaintsByHostId);
 router.get("/:id/completed", complaintController.getCompletedJobs);
+router.post("/:id/confirmJob", complaintController.confirmJob);
 router.get("/complaint-details/:complaintID", complaintController.getComplaintById);
 router.get("/:id", complaintController.getComplaintsByHost);   //working
 router.get("/:id/pending/host", complaintController.getPendingComplaintsByHost);   //working backend

@@ -1,8 +1,7 @@
-import React, { useState } from "react";
+import React, { useState, useEffect} from "react";
 import PopupForm from "../ResolveComplaintForm"; // Verify the path and component name
 import { useParams, useLocation, useNavigate, Link } from "react-router-dom";
-
-
+import axios from 'axios'
 
 function PendingComplaintDetails({ complaint, id }) {
   const navigate = useNavigate();
@@ -21,6 +20,20 @@ function PendingComplaintDetails({ complaint, id }) {
   const markAsResolved = () => {
     navigate(`/host/complaint-details/${id}/resolve`);
   };
+
+  const confirmJob = async () => {
+    console.log("button clicked");
+    try {
+      await axios.post(`${import.meta.env.VITE_API_URL}/complaints/${id}/confirmJob`);
+    } catch (error) {
+      console.error("Error while updating job status:", error);
+    }
+  };
+
+  
+  useEffect(() => {
+    confirmJob();
+  }, [id]);
 
   return (
     <div className="bg-gray-100 mx-auto py-2 px-8">
@@ -65,7 +78,7 @@ function PendingComplaintDetails({ complaint, id }) {
               </p>
               <button
                 className="bg-red-600 text-white p-4 rounded font-bold w-50 my-5"
-                onClick={markAsResolved}
+                onClick={confirmJob}
               >
                 Confirm Job
               </button>
@@ -79,4 +92,4 @@ function PendingComplaintDetails({ complaint, id }) {
   );
 }
 
-export default PendingComplaintDetails
+export default PendingComplaintDetails;

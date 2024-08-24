@@ -218,6 +218,33 @@ function hello(req, res) {
   console.log("hello");
   res.status(200).json({ message: "success" }); // Send error response
 }
+
+
+async function confirmJob(req,res) {
+  const id = req.params.id; //complaintid
+  
+
+  
+  const complaintObjectId =
+  mongoose.Types.ObjectId.createFromHexString(id);
+
+  if(!id){
+    return res.status(400).json({message:"complaint id is required"});
+  }
+  try {
+    const updatedComplaint = await Complaint.findByIdAndUpdate(
+      { _id: complaintObjectId , status : 'pendingTechnicianApproval' }, // Ensure only non-resolved complaints are updated
+      { $set: { status: "active" } },
+      {new:true}
+    );
+
+    res.status(200).json({ message: "successfully marked as active", updatedComplaint });
+  } catch (error) {
+    console.error(error); // Log the error
+    res.status(500).json({ message: "couldnt save changes", error }); // Send error response
+  }
+}
+
 async function getComplaintById(req, res) {
   let complaintID = req.params.complaintID;
 
@@ -549,34 +576,34 @@ const getPendingComplaintsByHost = async (req, res) => {
   }
 };
 
-const getActiveComplaintsByHostId = async (req, res) => {
-  const id = req.params.id; //host id
-  try {
-    let complaints = await Complaint.find({ status: "active" }).populate({
-      path: "reservationId",
-      populate: {
-        path: "property",
-        populate: {
-          path: "host_id",
-        },
-      },
-    });
-    complaints = complaints.filter(
-      (complaint) =>
-        complaint.reservationId.property.host_id.toString() === id.toString()
-    );
+// const getActiveComplaintsByHostId = async (req, res) => {
+//   const id = req.params.id; //host id
+//   try {
+//     let complaints = await Complaint.find({ status: "active" }).populate({
+//       path: "reservationId",
+//       populate: {
+//         path: "property",
+//         populate: {
+//           path: "host_id",
+//         },
+//       },
+//     });
+//     complaints = complaints.filter(
+//       (complaint) =>
+//         complaint.reservationId.property.host_id.toString() === id.toString()
+//     );
 
-    if (!complaints.length) {
-      return res.status(404).json({ message: "no pending complaints" });
-    }
-    res.status(200).json(complaints);
-  } catch (error) {
-    console.error(error); // Log the error
-    res
-      .status(500)
-      .json({ message: "An error occurred while fetching jobs", error: error }); // Send error response
-  }
-};
+//     if (!complaints.length) {
+//       return res.status(404).json({ message: "no pending complaints" });
+//     }
+//     res.status(200).json(complaints);
+//   } catch (error) {
+//     console.error(error); // Log the error
+//     res
+//       .status(500)
+//       .json({ message: "An error occurred while fetching jobs", error: error }); // Send error response
+//   }
+// };
 
 const getCompletedJobs = async (req, res) => {
   const id = req.params.id;
@@ -636,7 +663,7 @@ module.exports = {
   getActiveJobsByTechnicianId, //technician
   getPendingJobsByTechnicianId, //technician
   // getPendingComplaintsByHostId, //host
-  getActiveComplaintsByHostId, //host
+  // getActiveComplaintsByHostId, //host
   getCompletedJobs, //technician
   acceptJob,
   getComplaintsByHost, //working
@@ -645,4 +672,5 @@ module.exports = {
   reviewTask,
   uploadProof,
   markAsResolved,
+  confirmJob
 };

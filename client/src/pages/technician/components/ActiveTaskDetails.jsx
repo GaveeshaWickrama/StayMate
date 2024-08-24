@@ -129,7 +129,7 @@ export default function ActiveTaskDetails({ complaint }) {
     e.preventDefault();
     alert(`Form submitted for complaint id: ${complaint.id}`);
     setShowModal(false);
-    navigate("/host/manage-complaints");
+    navigate("/technician/tasks");
   };
 
   return (
@@ -151,6 +151,7 @@ export default function ActiveTaskDetails({ complaint }) {
 
         <PopupForm
           isOpen={showModal}
+          complaintId={complaint.id}
           handleClose={() => setShowModal(false)}
           handleSave={handleSave}
         />
