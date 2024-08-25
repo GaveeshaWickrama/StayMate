@@ -29,16 +29,16 @@ export const AuthProvider = ({ children }) => {
     return { user, error };
   };
 
-  const signup = async (email, password, role) => {
-    const { error } = await authService.signup(email, password, role);
+  const signup = async (userData) => {
+    const { error } = await authService.signup(userData);
     if (!error) {
-      setEmailForVerification(email);
+      setEmailForVerification(userData.email);
     }
     return { error };
   };
 
-  const verifyOtp = async (email, otp, role) => {
-    const { user, error } = await authService.verifyOtp(email, otp, role);
+  const verifyOtp = async (userData) => {
+    const { user, error } = await authService.verifyOtp(userData);
     if (user) {
       setCurrentUser(user);
       setToken(authService.getToken());
@@ -60,5 +60,4 @@ export const AuthProvider = ({ children }) => {
 };
 
 export const useAuth = () => useContext(AuthContext);
-
 

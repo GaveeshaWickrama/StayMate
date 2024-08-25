@@ -9,7 +9,11 @@ const reservationSchema = new Schema({
   },
   property: {
     type: Schema.Types.ObjectId,
-    ref: "property",
+    ref: "Property",
+    required: true,
+  },
+  sectionId: {
+    type: Schema.Types.ObjectId,
     required: true,
   },
   checkInDate: {
@@ -32,10 +36,72 @@ const reservationSchema = new Schema({
     type: Boolean,
     default: false,
   },
+  paymentDetails: {
+    paymentId: String,
+    paymentMethod: String,
+  },
+  payoutStatus: {
+    type: String,
+    enum: ["pending", "paid"],
+    default: "pending",
+  },
   createdAt: {
     type: Date,
     default: Date.now,
   },
+  status: {
+    type: String,
+    enum: ["upcoming", "ongoing", "completed"],
+    default: "upcoming",
+  },
 });
+
+// Static method to update reservation statuses
+reservationSchema.statics.updateStatuses = async function () {
+  try {
+    const now = new Date();
+    const startOfDay = new Date(now.setHours(0, 0, 0, 0));
+    const endOfDay = new Date(now.setHours(23, 59, 59, 999));
+
+    // Update reservations to "ongoing" if checkInDate is today and status is "upcoming"
+    const ongoingReservations = await this.updateMany(
+      {
+        checkInDate: { $gte: startOfDay, $lte: endOfDay },
+        status: "upcoming",
+      },
+      { $set: { status: "ongoing" } }
+    );
+
+    // Update reservations to "completed" if checkOutDate is in the past and status is "ongoing"
+    const completedOngoingReservations = await this.updateMany(
+      {
+        checkOutDate: { $lt: startOfDay }, // Check-out date is before today
+        status: "ongoing",
+      },
+      { $set: { status: "completed" } }
+    );
+
+    // Update reservations to "completed" if checkOutDate is in the past and status is "upcoming"
+    const completedUpcomingReservations = await this.updateMany(
+      {
+        checkOutDate: { $lt: startOfDay }, // Check-out date is before today
+        status: "upcoming",
+      },
+      { $set: { status: "completed" } }
+    );
+
+    console.log(
+      `${ongoingReservations.nModified} reservations updated to ongoing.`
+    );
+    console.log(
+      `${completedOngoingReservations.nModified} reservations updated to completed (from ongoing).`
+    );
+    console.log(
+      `${completedUpcomingReservations.nModified} reservations updated to completed (from upcoming).`
+    );
+  } catch (error) {
+    console.error("Error updating reservation statuses:", error);
+  }
+};
 
 module.exports = mongoose.model("Reservation", reservationSchema);

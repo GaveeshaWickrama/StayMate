@@ -1,23 +1,46 @@
-// In userController.js
-const express = require('express');
+const express = require("express");
 const router = express.Router();
-const authToken = require('../middleware/authToken');
-const requireRole = require('../middleware/requireRole');
-const userController = require('../controllers/userController'); // Import the user controller
+const upload = require("../middleware/multer");
+const userController = require("../controllers/userController");
+const { authToken, requireRole } = require("../middleware/authProvider");
 
-async function getAllUsers(req, res) {
-    try {
-        const users = await User.find({});
-        res.json(users);
-    } catch (err) {
-        res.status(500).json({ message: err.message });
-    }
-}
+//get the profile of a single user
+router.get(
+  "/:id",
+  authToken,
+  requireRole("user", "admin", "guest", "host", "technician", "moderator"),
+  userController.viewProfile
+);
 
-// Export the function
-module.exports = {
-    getUser,
-    updateUser,
-    getAllUsers, // Add this line
-};
+//get the profile of me
+router.get(
+  "/myProfile",
+  authToken,
+  requireRole("user", "admin", "guest", "host", "technician", "moderator"),
+  userController.getUser
+);
 
+//update profile
+router.patch(
+  "/editProfile",
+  authToken,
+  requireRole("user", "admin", "guest", "host", "technician", "moderator"),
+  upload.single("photo"),
+  userController.editProfile
+);
+
+//haven't used the below
+
+//get all users
+router.get("/", authToken, requireRole("admin"), userController.getUsers);
+
+//get a single user
+// router.get('/:id',authToken, requireRole('user', 'admin', 'guest', 'host', 'technician'),userController.getUser)
+
+//delete a user
+router.delete("/:id", userController.deleteUser);
+
+// // patch self user info (id stored in jwt token)
+// router.patch('/:id', authToken, requireRole('user', 'admin', 'guest', 'host', 'technician'), userController.updateUser);
+
+module.exports = router;

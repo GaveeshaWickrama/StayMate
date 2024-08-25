@@ -51,7 +51,7 @@ const PropertyImages = ({ property, setProperty }) => {
   };
 
   return (
-    <div className='container mx-auto px-8'>
+    <div className='container mx-auto px-8 mb-80'>
       <h2 className="text-4xl font-extrabold text-black-600 mb-8 border-b-4 border-blue-600 p-6 rounded-md shadow-sm">Add Images</h2> 
       <div
         className={`border-2 border-dashed p-8 rounded mb-4 cursor-pointer text-center ${isDragging ? 'border-blue-500 bg-blue-100' : 'border-gray-300'}`}

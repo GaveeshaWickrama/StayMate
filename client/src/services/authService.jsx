@@ -2,7 +2,6 @@ import axios from 'axios';
 
 const API_URL = import.meta.env.VITE_API_URL;
 
-console.log(API_URL)
 const authService = {
   login: async (email, password) => {
     try {
@@ -17,9 +16,9 @@ const authService = {
     }
   },
 
-  signup: async (email, password, role) => {
+  signup: async (userData) => {
     try {
-      await axios.post(`${API_URL}/auth/register`, { email, password, role });
+      await axios.post(`${API_URL}/auth/register`, userData);
       return { error: null };
     } catch (error) {
       const errorMessage = error.response?.data?.message || 'Signup failed';
@@ -27,9 +26,9 @@ const authService = {
     }
   },
 
-  verifyOtp: async (email, otp, role) => {
+  verifyOtp: async (userData) => {
     try {
-      const response = await axios.post(`${API_URL}/auth/verify-otp`, { email, otp, role });
+      const response = await axios.post(`${API_URL}/auth/verify-otp`, userData);
       const { accessToken, user } = response.data;
       localStorage.setItem('user', JSON.stringify(user));
       localStorage.setItem('token', accessToken);

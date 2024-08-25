@@ -1,4 +1,3 @@
-// src/components/EntirePlaceDetails.js
 import React, { useEffect } from 'react';
 
 const EntirePlaceDetails = ({ property, setProperty }) => {
@@ -75,7 +74,7 @@ const EntirePlaceDetails = ({ property, setProperty }) => {
     <div className="container mx-auto px-8">
       <h2 className="text-4xl font-extrabold text-black-600 mb-8 border-b-4 border-blue-600 p-6 rounded-md shadow-sm">Property Section Info</h2>
       <div className='p-6'> 
-      <p className="mb-8 text-gray-500">Lorem ipsum dolor sit amet consectetur adipisicing elit. </p>
+      <p className="mb-8 text-gray-500">Provide more details</p>
       <div className="flex-col space-y-6">
         {renderNumberInput("Guests", "guests", property.sections[0]?.plan?.guests || 1, handlePlanChange, 1)}
         {renderNumberInput("Bedrooms", "bedrooms", property.sections[0]?.plan?.bedrooms || 1, handlePlanChange, 1)}
