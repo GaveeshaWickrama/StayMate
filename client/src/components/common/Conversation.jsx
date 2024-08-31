@@ -5,6 +5,7 @@ import { useSocketContext } from '../../context/SocketContext';
 import { toast } from 'react-toastify';
 import { useAuth } from "../../context/auth";
 import axios from 'axios';
+import { useEffect } from 'react';
 
 const Conversation = ({conversation,lastIdx,emoji,unreadMessagesCount}) => {
 
@@ -56,12 +57,20 @@ const Conversation = ({conversation,lastIdx,emoji,unreadMessagesCount}) => {
       }
     };
    
-
-    socket.on('newMessage',(newMessage) => {
-      if(conversation._id === newMessage.senderId) {
-        setEachUserUnreadMessagesCount(eachUserUnreadMessagesCount+1);
-    }
-    })
+//Use global store for the conversations as well in order to fix the bug(Not sure Need to terst)
+    useEffect(() => {
+      const handleNewMessage = (newMessage) => {
+          if (conversation._id === newMessage.senderId) {
+              setEachUserUnreadMessagesCount(eachUserUnreadMessagesCount + 1);
+          }
+      };
+  
+      socket.on('newMessage', handleNewMessage);
+  
+      return () => {
+          socket.off('newMessage', handleNewMessage);
+      };
+  }, [eachUserUnreadMessagesCount]);
 
   return <>
     <div className={`flex gap-2 items-center hover:bg-sky-500 rounded p-2 py-1 cursor-pointer
