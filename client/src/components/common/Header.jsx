@@ -83,7 +83,7 @@ const Header = ({ toggleNavbar }) => {
             <div className="absolute top-12 right-0 mt-2 w-56 bg-white rounded-md shadow-lg z-50">
               <Link
                 to={`/users/ViewProfile/${currentUser.id}`}
-                className="block px-4 py-4 text-gray-800 hover:bg-gray-100 rounded-t-md flex items-center"
+                className="px-4 py-4 text-gray-800 hover:bg-gray-100 rounded-t-md flex items-center"
               >
                 <FaUser className="text-blue-500 mr-2" />
                 View Profile
@@ -91,7 +91,7 @@ const Header = ({ toggleNavbar }) => {
               <hr className="border-gray-300" />
               <button
                 onClick={handleLogout}
-                className="block w-full text-left px-4 py-4 text-gray-800 hover:bg-gray-100 rounded-b-md flex items-center"
+                className="w-full text-left px-4 py-4 text-gray-800 hover:bg-gray-100 rounded-b-md flex items-center"
               >
                 <FaSignOutAlt className="text-blue-500 mr-2" />
                 Logout
