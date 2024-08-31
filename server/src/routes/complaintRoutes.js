@@ -51,8 +51,11 @@ router.post("/complaint/:complaintId/acceptJob", complaintController.acceptJob);
 router.post("/complaint/:complaintId/resolve", complaintController.markAsResolved); 
 router.post(
   "/complaint/:id/uploadProof",
-  upload.array("proofImages", 5),
+  upload.array("images"),
   complaintController.uploadProof
 );
+router.get("/complaint/:complaintId/getProgress",complaintController.getProgress)
+router.post("/complaint/:complaintId/setProgress",complaintController.setProgress)
+router.post("/complaint/:complaintId/markJobCompleted",complaintController.markJobCompleted)
 
 module.exports = router;

@@ -10,14 +10,25 @@ function FinishedComplaintDetails({ complaint }) {
 
   return (
     <div className="bg-gray-100 mx-auto py-2 px-8">
-      <div>
-        <button
+      {complaint.status==="hostCompleted" && (
+          <button
           className="bg-blue-600 text-white p-4 rounded font-bold w-50 my-10 m-4"
-          onClick={markJobAsCompleted}
+          onClick={()=>{navigate('/host/manage-complaints')}}
         >
-          Rate Technician
+          Back
         </button>
-      </div>
+      )}
+      {complaint.status==="technicianCompleted" && (
+          <button
+          className="bg-blue-600 text-white p-4 rounded font-bold w-50 my-10 m-4"
+          
+        >
+         Review 
+        </button>
+      )}
+     
+     {/* onClick={markJobAsCompleted} */}
+     
     </div>
   );
 }

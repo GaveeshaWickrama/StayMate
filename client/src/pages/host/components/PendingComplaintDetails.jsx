@@ -17,23 +17,30 @@ function PendingComplaintDetails({ complaint, id }) {
     navigate(`/host/view-technicians?complaintID=${id}`);
   };
 
-  const markAsResolved = () => {
-    navigate(`/host/complaint-details/${id}/resolve`);
-  };
+  // const markAsResolved = async() => {
+  //   console.log("resolve button clicked");
+  //   try {
+  //     await axios.post(`${import.meta.env.VITE_API_URL}/complaints/complaint/${id}/resolve`);
+  //   } catch (error) {
+  //     console.error("Error while resolving:", error);
+  //   }
+  // };
 
   const confirmJob = async () => {
+    const progress = 0;
     console.log("button clicked");
     try {
       await axios.post(`${import.meta.env.VITE_API_URL}/complaints/${id}/confirmJob`);
+      await axios.post(`${import.meta.env.VITE_API_URL}/complaints/complaint/${id}/setProgress`,{progress : progress});
     } catch (error) {
       console.error("Error while updating job status:", error);
     }
   };
 
   
-  useEffect(() => {
-    confirmJob();
-  }, [id]);
+  // useEffect(() => {
+  //   confirmJob();
+  // }, [id]);
 
   return (
     <div className="bg-gray-100 mx-auto py-2 px-8">

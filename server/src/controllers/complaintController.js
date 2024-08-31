@@ -210,9 +210,7 @@ async function acceptJob(req, res) {
 }
 
 
-async function updateStatus(req,res){
 
-}
 
 function hello(req, res) {
   console.log("hello");
@@ -234,7 +232,12 @@ async function confirmJob(req,res) {
   try {
     const updatedComplaint = await Complaint.findByIdAndUpdate(
       { _id: complaintObjectId , status : 'pendingTechnicianApproval' }, // Ensure only non-resolved complaints are updated
-      { $set: { status: "active" } },
+      { 
+        $set: { 
+          status: "active",
+          progress: 0 // Add the progress field with an initial value
+        }
+      },
       {new:true}
     );
 
@@ -653,6 +656,76 @@ const markAsResolved = async (req, res) => {
   }
 };
 
+const getProgress = async (req,res) => {
+  const id = req.params.complaintId;
+  const complaintObjectId =
+  mongoose.Types.ObjectId.createFromHexString(id);
+
+
+  if(!id){
+    return res.status(400).json({message:"complaint id is required"});
+  }
+  try {
+    const complaint = await Complaint.find(
+      { _id: complaintObjectId , status: 'active' }, // Ensure only non-resolved complaints are updated
+    );
+
+    res.status(200).json({ message: "progress received", complaint });
+  } catch (error) {
+    console.error(error); // Log the error
+    res.status(500).json({ message: "couldnt retrieve progress", error }); // Send error response
+  }
+}
+
+const setProgress = async (req,res) => {
+  const id = req.params.complaintId;
+  const { progress } = req.body;
+  const complaintObjectId =
+  mongoose.Types.ObjectId.createFromHexString(id);
+
+
+  if(!id){
+    return res.status(400).json({message:"complaint id is required"});
+  }
+  try {
+    const updatedComplaint = await Complaint.findByIdAndUpdate(
+      { _id: complaintObjectId , status: 'active' },
+      { $set: { progress } },
+      { new: true } // Ensure only non-resolved complaints are updated
+    );
+
+    res.status(200).json({ message: "progress updated", updatedComplaint });
+  } catch (error) {
+    console.error(error); // Log the error
+    res.status(500).json({ message: "couldnt update progress", error }); // Send error response
+  }
+}
+
+
+const markJobCompleted = async (req, res) => {
+  const id = req.params.complaintId; //complaintid
+
+  
+  const complaintObjectId =
+  mongoose.Types.ObjectId.createFromHexString(id);
+
+  if(!id){
+    return res.status(400).json({message:"complaint id is required"});
+  }
+  try {
+    const updatedComplaint = await Complaint.findByIdAndUpdate(
+      { _id: complaintObjectId }, // Ensure only non-resolved complaints are updated
+      { $set: { status: "jobCompleted" } },
+      {new:true}
+    );
+
+    res.status(200).json({ message: "complaint marked as completed", updatedComplaint });
+  } catch (error) {
+    console.error(error); // Log the error
+    res.status(500).json({ message: "couldnt save changes", error }); // Send error response
+  }
+};
+
 module.exports = {
   raiseComplaint,
   getComplaintById, //host
@@ -672,5 +745,8 @@ module.exports = {
   reviewTask,
   uploadProof,
   markAsResolved,
-  confirmJob
+  confirmJob,
+  getProgress,
+  setProgress,
+  markJobCompleted
 };
