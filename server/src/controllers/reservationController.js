@@ -20,8 +20,8 @@ const addReservation = async (req, res) => {
     checkOutDate,
     totalPrice,
     noOfGuests,
-    paymentStatus,
-    paymentMethodId,
+    paymentStatus, // You can set this to `true` for testing
+    paymentMethodId, // This will not be used in testing
   } = req.body;
 
   // Extract user ID from the token payload
@@ -34,22 +34,13 @@ const addReservation = async (req, res) => {
     !checkInDate ||
     !checkOutDate ||
     !totalPrice ||
-    !noOfGuests ||
-    !paymentMethodId
+    !noOfGuests
   ) {
     return res.status(400).json({ message: "All fields are required" });
   }
 
   try {
-    //create paymentIntent with Stripe
-
-    const paymentIntent = await stripe.paymentIntents.create({
-      amount: totalPrice * 100, // Convert LKR to cents (Stripe's smallest unit)
-      currency: "lkr", // Set currency to LKR
-      payment_method: paymentMethodId,
-      confirm: true,
-      return_url: "http://localhost:5173/user/reserve/payment_success",
-    });
+    // Directly create the reservation without processing payment
     const reservation = new Reservation({
       user,
       property,
@@ -58,10 +49,10 @@ const addReservation = async (req, res) => {
       checkOutDate,
       totalPrice,
       noOfGuests,
-      paymentStatus: true,
+      paymentStatus: true, // Assume payment is successful for testing
       paymentDetails: {
-        paymentId: paymentIntent.id,
-        paymentMethod: paymentIntent.payment_method,
+        paymentId: "test_payment_id", // Dummy payment ID
+        paymentMethod: "test_payment_method", // Dummy payment method
       },
     });
 
@@ -72,6 +63,7 @@ const addReservation = async (req, res) => {
     res.status(500).json({ message: "Server error" });
   }
 };
+
 //get reservations for user(guest ,host or admin)
 const getReservations = async (req, res) => {
   const userId = req.user.userId;

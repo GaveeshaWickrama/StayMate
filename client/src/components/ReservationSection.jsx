@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { FaCalendarAlt, FaMoneyBillWave, FaInfoCircle } from "react-icons/fa";
+import CustomCalendar from './CustomCalendar';
 
 const ReservationSection = ({
   property,
@@ -18,6 +19,7 @@ const ReservationSection = ({
   const [totalPrice, setTotalPrice] = useState(0);
   const [serviceFee, setServiceFee] = useState(0);
   const [errors, setErrors] = useState({});
+  const [showCalendar, setShowCalendar] = useState(false);
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -26,18 +28,9 @@ const ReservationSection = ({
     const calculateServiceFee = (rate, nights, percentage) =>
       rate * nights * (percentage / 100);
 
-    if (
-      checkInDate &&
-      checkOutDate &&
-      !errors.checkInDate &&
-      !errors.checkOutDate
-    ) {
+    if (checkInDate && checkOutDate && !errors.checkInDate && !errors.checkOutDate) {
       const nights = calculateNights(checkInDate, checkOutDate);
-      const fee = calculateServiceFee(
-        nightlyRate,
-        nights,
-        serviceFeePercentage
-      );
+      const fee = calculateServiceFee(nightlyRate, nights, serviceFeePercentage);
 
       setNights(nights);
       setServiceFee(fee);
@@ -104,47 +97,79 @@ const ReservationSection = ({
     }
   };
 
+  const handleCheckInDateSelect = (date) => {
+    setCheckInDate(date.toISOString().split('T')[0]);
+    setShowCalendar(false); // Hide calendar after selection
+  };
+
+  const handleCheckOutDateSelect = (date) => {
+    setCheckOutDate(date.toISOString().split('T')[0]);
+    setShowCalendar(false); // Hide calendar after selection
+  };
+
   return (
     <div className="bg-white p-6 rounded-lg shadow mt-4">
       <h2 className="text-2xl font-bold mb-4">
         Rs {nightlyRate.toLocaleString()} / Night
       </h2>
+
       <div className="flex mb-4 space-x-4">
-        <div className="flex flex-col w-1/2">
+        <div className="flex flex-col w-1/2 relative">
           <label className="mb-2 flex items-center">
             <FaCalendarAlt className="mr-2" /> Check-in
           </label>
           <input
-            type="date"
+            type="text"
+            readOnly
             className={`p-2 border rounded ${
               errors.checkInDate ? "border-red-500" : ""
             }`}
-            value={checkInDate}
-            onChange={(e) => setCheckInDate(e.target.value)}
-            min={new Date().toISOString().split("T")[0]} // Prevent past dates
+            value={checkInDate || ""}
+            onClick={() => setShowCalendar(!showCalendar)}
           />
+          {showCalendar && (
+            <CustomCalendar
+              propertyId={propertyId}
+              sectionId={sectionId}
+              onDateSelect={handleCheckInDateSelect}
+              startDate={checkInDate}
+              endDate={checkOutDate}
+            />
+          )}
           {errors.checkInDate && (
             <p className="text-red-500 text-sm">{errors.checkInDate}</p>
           )}
         </div>
-        <div className="flex flex-col w-1/2">
+
+        <div className="flex flex-col w-1/2 relative">
           <label className="mb-2 flex items-center">
             <FaCalendarAlt className="mr-2" /> Check-out
           </label>
           <input
-            type="date"
+            type="text"
+            readOnly
             className={`p-2 border rounded ${
               errors.checkOutDate ? "border-red-500" : ""
             }`}
-            value={checkOutDate}
-            onChange={(e) => setCheckOutDate(e.target.value)}
-            min={checkInDate} // Ensure check-out is after check-in
+            value={checkOutDate || ""}
+            onClick={() => setShowCalendar(!showCalendar)}
+            disabled={!checkInDate} // Disable until check-in date is selected
           />
+          {showCalendar && (
+            <CustomCalendar
+              propertyId={propertyId}
+              sectionId={sectionId}
+              onDateSelect={handleCheckOutDateSelect}
+              startDate={checkInDate}
+              endDate={checkOutDate}
+            />
+          )}
           {errors.checkOutDate && (
             <p className="text-red-500 text-sm">{errors.checkOutDate}</p>
           )}
         </div>
       </div>
+
       <div className="flex mb-4 space-x-4">
         <div className="flex flex-col w-1/2">
           <label className="mb-2">Number of Guests</label>
@@ -162,6 +187,7 @@ const ReservationSection = ({
           )}
         </div>
       </div>
+
       <div className="flex justify-between items-start mb-4">
         <div className="w-1/2 p-4 border rounded">
           <div className="flex justify-between items-center mt-4">
