@@ -97,128 +97,115 @@ const ReservationSection = ({
     }
   };
 
-  const handleCheckInDateSelect = (date) => {
-    setCheckInDate(date.toISOString().split('T')[0]);
+  const handleDateRangeSelect = (startDate, endDate) => {
+    setCheckInDate(startDate.toLocaleDateString('en-CA')); // Local date format (YYYY-MM-DD)
+    setCheckOutDate(endDate.toLocaleDateString('en-CA'));  // Local date format (YYYY-MM-DD)
     setShowCalendar(false); // Hide calendar after selection
   };
 
-  const handleCheckOutDateSelect = (date) => {
-    setCheckOutDate(date.toISOString().split('T')[0]);
-    setShowCalendar(false); // Hide calendar after selection
+  const handleCloseCalendar = () => {
+    setShowCalendar(false);
   };
 
   return (
-    <div className="bg-white p-6 rounded-lg shadow mt-4">
-      <h2 className="text-2xl font-bold mb-4">
-        Rs {nightlyRate.toLocaleString()} / Night
-      </h2>
-
-      <div className="flex mb-4 space-x-4">
-        <div className="flex flex-col w-1/2 relative">
-          <label className="mb-2 flex items-center">
-            <FaCalendarAlt className="mr-2" /> Check-in
-          </label>
-          <input
-            type="text"
-            readOnly
-            className={`p-2 border rounded ${
-              errors.checkInDate ? "border-red-500" : ""
-            }`}
-            value={checkInDate || ""}
-            onClick={() => setShowCalendar(!showCalendar)}
-          />
-          {showCalendar && (
-            <CustomCalendar
-              propertyId={propertyId}
-              sectionId={sectionId}
-              onDateSelect={handleCheckInDateSelect}
-              startDate={checkInDate}
-              endDate={checkOutDate}
+    <div className="bg-white p-8 rounded-lg shadow-lg mt-6 flex space-x-6">
+      {/* Left Column */}
+      <div className="w-1/2">
+        <h2 className="text-3xl font-bold mb-6 text-gray-800">
+          Rs {nightlyRate.toLocaleString()} / Night
+        </h2>
+  
+        <div className="mb-6">
+          <div className="flex flex-col relative">
+            <label className="mb-3 text-lg font-semibold flex items-center text-gray-600">
+              <FaCalendarAlt className="mr-2 text-gray-500" /> Check-in / Check-out
+            </label>
+            <input
+              type="text"
+              readOnly
+              className={`p-3 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 ${
+                errors.checkInDate ? "border-red-500" : "border-gray-300"
+              }`}
+              value={`${checkInDate || ""} - ${checkOutDate || ""}`}
+              onClick={() => setShowCalendar(!showCalendar)}
             />
-          )}
-          {errors.checkInDate && (
-            <p className="text-red-500 text-sm">{errors.checkInDate}</p>
-          )}
+            {showCalendar && (
+              <CustomCalendar
+                propertyId={propertyId}
+                sectionId={sectionId}
+                onDateRangeSelect={handleDateRangeSelect}
+                startDate={checkInDate}
+                endDate={checkOutDate}
+                onClose={handleCloseCalendar}
+              />
+            )}
+            {(errors.checkInDate || errors.checkOutDate) && (
+              <p className="text-red-500 text-sm mt-2">
+                {errors.checkInDate || errors.checkOutDate}
+              </p>
+            )}
+          </div>
         </div>
-
-        <div className="flex flex-col w-1/2 relative">
-          <label className="mb-2 flex items-center">
-            <FaCalendarAlt className="mr-2" /> Check-out
-          </label>
-          <input
-            type="text"
-            readOnly
-            className={`p-2 border rounded ${
-              errors.checkOutDate ? "border-red-500" : ""
-            }`}
-            value={checkOutDate || ""}
-            onClick={() => setShowCalendar(!showCalendar)}
-            disabled={!checkInDate} // Disable until check-in date is selected
-          />
-          {showCalendar && (
-            <CustomCalendar
-              propertyId={propertyId}
-              sectionId={sectionId}
-              onDateSelect={handleCheckOutDateSelect}
-              startDate={checkInDate}
-              endDate={checkOutDate}
+  
+        <div className="mb-6">
+          <div className="flex flex-col">
+            <label className="mb-3 text-lg font-semibold text-gray-600">
+              Number of Guests
+            </label>
+            <input
+              type="number"
+              className={`p-3 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 ${
+                errors.noOfGuests ? "border-red-500" : "border-gray-300"
+              }`}
+              value={noOfGuests}
+              onChange={(e) => setNoOfGuests(parseInt(e.target.value, 10))}
+              min={1}
             />
-          )}
-          {errors.checkOutDate && (
-            <p className="text-red-500 text-sm">{errors.checkOutDate}</p>
-          )}
+            {errors.noOfGuests && (
+              <p className="text-red-500 text-sm mt-2">{errors.noOfGuests}</p>
+            )}
+          </div>
         </div>
       </div>
-
-      <div className="flex mb-4 space-x-4">
-        <div className="flex flex-col w-1/2">
-          <label className="mb-2">Number of Guests</label>
-          <input
-            type="number"
-            className={`p-2 border rounded ${
-              errors.noOfGuests ? "border-red-500" : ""
-            }`}
-            value={noOfGuests}
-            onChange={(e) => setNoOfGuests(parseInt(e.target.value, 10))}
-            min={1}
-          />
-          {errors.noOfGuests && (
-            <p className="text-red-500 text-sm">{errors.noOfGuests}</p>
-          )}
-        </div>
-      </div>
-
-      <div className="flex justify-between items-start mb-4">
-        <div className="w-1/2 p-4 border rounded">
-          <div className="flex justify-between items-center mt-4">
-            <span className="flex items-center">
-              <FaMoneyBillWave className="mr-2" /> Rs{" "}
+  
+      {/* Right Column */}
+      <div className="w-1/2 flex flex-col">
+        <div className="p-6 border border-gray-300 rounded-lg bg-gray-50 mb-6 mt-2">
+          <div className="flex justify-between items-center mb-4">
+            <span className="flex items-center text-gray-700">
+              <FaMoneyBillWave className="mr-2 text-gray-500" /> Rs{" "}
               {nightlyRate.toLocaleString()} x {nights} nights
             </span>
-            <span>Rs {(nightlyRate * nights).toLocaleString()}</span>
-          </div>
-          <div className="flex justify-between items-center mt-2">
-            <span className="flex items-center">
-              <FaInfoCircle className="mr-2" /> Service fee
+            <span className="text-gray-800 font-semibold">
+              Rs {(nightlyRate * nights).toLocaleString()}
             </span>
-            <span>Rs {serviceFee.toLocaleString()}</span>
           </div>
-          <div className="flex justify-between items-center mt-4 font-bold border-t pt-2">
-            <span>Total</span>
-            <span>Rs {totalPrice.toLocaleString()}</span>
+          <div className="flex justify-between items-center mb-4">
+            <span className="flex items-center text-gray-700">
+              <FaInfoCircle className="mr-2 text-gray-500" /> Service fee
+            </span>
+            <span className="text-gray-800 font-semibold">
+              Rs {serviceFee.toLocaleString()}
+            </span>
+          </div>
+          <div className="flex justify-between items-center font-bold border-t pt-4 border-gray-300">
+            <span className="text-gray-800">Total</span>
+            <span className="text-gray-900 text-lg">
+              Rs {totalPrice.toLocaleString()}
+            </span>
           </div>
         </div>
-        <div className="flex items-center w-1/2 ml-4">
-          <button
-            className="bg-blue-600 text-white p-4 rounded font-bold w-full my-10"
-            onClick={handleReserve}
-          >
-            Reserve
-          </button>
-        </div>
+        <button
+          className="bg-blue-600 text-white p-4 rounded-lg font-bold w-full hover:bg-blue-700 transition duration-300 ease-in-out"
+          onClick={handleReserve}
+        >
+          Reserve
+        </button>
       </div>
     </div>
   );
+  
+  
 };
 
 export default ReservationSection;

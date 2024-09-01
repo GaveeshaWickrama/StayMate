@@ -1,12 +1,16 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 
 const daysOfWeek = ['Su', 'Mo', 'Tu', 'We', 'Th', 'Fr', 'Sa'];
 
-const CustomCalendar = ({ propertyId, sectionId, onDateSelect, startDate, endDate }) => {
+const CustomCalendar = ({ propertyId, sectionId, onDateRangeSelect, onClose }) => {
   const [currentDate, setCurrentDate] = useState(new Date());
   const [daysInMonth, setDaysInMonth] = useState([]);
   const [nextMonthDays, setNextMonthDays] = useState([]);
   const [bookedDates, setBookedDates] = useState([]);
+  const [selectedStartDate, setSelectedStartDate] = useState(null);
+  const [selectedEndDate, setSelectedEndDate] = useState(null);
+  const [errorMessage, setErrorMessage] = useState('');
+  const calendarRef = useRef(null);
 
   useEffect(() => {
     generateCalendar();
@@ -16,12 +20,26 @@ const CustomCalendar = ({ propertyId, sectionId, onDateSelect, startDate, endDat
     fetchReservedDates();
   }, [currentDate, propertyId, sectionId]);
 
+  useEffect(() => {
+    const handleClickOutside = (event) => {
+      if (calendarRef.current && !calendarRef.current.contains(event.target)) {
+        onClose();
+      }
+    };
+
+    document.addEventListener('mousedown', handleClickOutside);
+    return () => {
+      document.removeEventListener('mousedown', handleClickOutside);
+    };
+  }, [calendarRef, onClose]);
+
   const generateCalendar = () => {
     const year = currentDate.getFullYear();
     const month = currentDate.getMonth();
 
     const firstDayOfMonth = new Date(year, month, 1).getDay();
     const lastDateOfMonth = new Date(year, month + 1, 0).getDate();
+
     const nextMonth = month + 1 === 12 ? 0 : month + 1;
     const nextMonthYear = month + 1 === 12 ? year + 1 : year;
 
@@ -51,17 +69,81 @@ const CustomCalendar = ({ propertyId, sectionId, onDateSelect, startDate, endDat
 
   const fetchReservedDates = async () => {
     try {
-      const start = new Date(currentDate.getFullYear(), currentDate.getMonth(), 1).toISOString().split('T')[0];
-      const end = new Date(currentDate.getFullYear(), currentDate.getMonth() + 2, 0).toISOString().split('T')[0]; // Fetch dates for two months
+      const start = new Date(currentDate.getFullYear(), currentDate.getMonth(), 1).toLocaleDateString('en-CA');
+      const end = new Date(currentDate.getFullYear(), currentDate.getMonth() + 2, 0).toLocaleDateString('en-CA');
 
       const response = await fetch(`${import.meta.env.VITE_API_URL}/reservation/reserved-dates/${propertyId}/${sectionId}?startDate=${start}&endDate=${end}`);
 
       const data = await response.json();
-
       const booked = data.dates.filter(d => d.booked).map(d => d.date);
       setBookedDates(booked);
     } catch (error) {
       console.error('Error fetching reserved dates:', error);
+    }
+  };
+
+  const isDateBooked = (date) => {
+    const dateString = date.toLocaleDateString('en-CA');
+    return bookedDates.includes(dateString);
+  };
+
+  const handleDateSelect = (date) => {
+    setErrorMessage(''); // Clear any previous error messages
+
+    if (selectedStartDate && date.getTime() === selectedStartDate.getTime()) {
+      setSelectedStartDate(null);
+      setSelectedEndDate(null);
+      return;
+    }
+
+    if (selectedEndDate && date.getTime() === selectedEndDate.getTime()) {
+      setSelectedEndDate(null);
+      return;
+    }
+
+    if (!selectedStartDate) {
+      if (isDateBooked(date)) {
+        setErrorMessage('Selected date is unavailable.');
+        return;
+      }
+      setSelectedStartDate(date);
+      setSelectedEndDate(null); // Reset the end date
+    } else if (!selectedEndDate) {
+      if (date <= selectedStartDate) {
+        setErrorMessage('Check-out date must be after the check-in date.');
+        return;
+      }
+
+      const isRangeValid = validateDateRange(selectedStartDate, date);
+      if (!isRangeValid) {
+        setErrorMessage('Date range includes unavailable dates.');
+        return;
+      }
+
+      setSelectedEndDate(date);
+    } else {
+      // Reset dates if clicked after selecting both start and end
+      setSelectedStartDate(date);
+      setSelectedEndDate(null);
+    }
+  };
+
+  const validateDateRange = (startDate, endDate) => {
+    let currentDate = new Date(startDate);
+    while (currentDate <= endDate) {
+      if (isDateBooked(currentDate)) {
+        return false;
+      }
+      currentDate.setDate(currentDate.getDate() + 1);
+    }
+    return true;
+  };
+
+  const handleConfirmSelection = () => {
+    if (selectedStartDate && selectedEndDate) {
+      onDateRangeSelect(selectedStartDate, selectedEndDate);
+      setSelectedStartDate(null);
+      setSelectedEndDate(null);
     }
   };
 
@@ -73,20 +155,37 @@ const CustomCalendar = ({ propertyId, sectionId, onDateSelect, startDate, endDat
     setCurrentDate(new Date(currentDate.getFullYear(), currentDate.getMonth() + 1, 1));
   };
 
-  const handleDateSelect = (date) => {
-    const dateString = date.toISOString().split('T')[0];
-    if (!bookedDates.includes(dateString)) {
-      onDateSelect(date);
-    }
+  const isInRange = (date) => {
+    return selectedStartDate && selectedEndDate && date >= selectedStartDate && date <= selectedEndDate;
+  };
+
+  const renderDay = (date) => {
+    const isSelectedStartDate = date && selectedStartDate && date.getTime() === selectedStartDate.getTime();
+    const isSelectedEndDate = date && selectedEndDate && date.getTime() === selectedEndDate.getTime();
+    return (
+      <div
+        key={date ? date.toLocaleDateString('en-CA') : 'empty'}
+        style={{
+          ...styles.day,
+          ...(date && isDateBooked(date) ? styles.unavailableDay : {}),
+          ...(isSelectedStartDate || isSelectedEndDate || isInRange(date) ? styles.selectedDay : {}),
+        }}
+        onClick={() => date && handleDateSelect(date)}
+      >
+        {date ? date.getDate() : ''}
+      </div>
+    );
   };
 
   return (
-    <div style={styles.calendarContainer}>
+    <div ref={calendarRef} style={styles.calendarContainer}>
       <div style={styles.header}>
         <button onClick={handlePrevMonth} style={styles.headerButton}>{"<"}</button>
         <span>{currentDate.toLocaleString('default', { month: 'long' })} {currentDate.getFullYear()}</span>
         <button onClick={handleNextMonth} style={styles.headerButton}>{">"}</button>
+        <button onClick={onClose} style={styles.closeButton}>×</button>
       </div>
+      {errorMessage && <div style={styles.errorMessage}>{errorMessage}</div>}
       <div style={styles.calendarGrid}>
         <div style={styles.monthContainer}>
           <div style={styles.daysOfWeek}>
@@ -95,21 +194,7 @@ const CustomCalendar = ({ propertyId, sectionId, onDateSelect, startDate, endDat
             ))}
           </div>
           <div style={styles.days}>
-            {daysInMonth.map((date, index) => {
-              const dateString = date ? date.toISOString().split('T')[0] : null;
-              return (
-                <div
-                  key={index}
-                  style={{
-                    ...styles.day,
-                    ...(date && bookedDates.includes(dateString) ? styles.unavailableDay : {}),
-                  }}
-                  onClick={() => date && handleDateSelect(date)}
-                >
-                  {date ? date.getDate() : ''}
-                </div>
-              );
-            })}
+            {daysInMonth.map(renderDay)}
           </div>
         </div>
         <div style={styles.monthContainer}>
@@ -119,24 +204,15 @@ const CustomCalendar = ({ propertyId, sectionId, onDateSelect, startDate, endDat
             ))}
           </div>
           <div style={styles.days}>
-            {nextMonthDays.map((date, index) => {
-              const dateString = date ? date.toISOString().split('T')[0] : null;
-              return (
-                <div
-                  key={index}
-                  style={{
-                    ...styles.day,
-                    ...(date && bookedDates.includes(dateString) ? styles.unavailableDay : {}),
-                  }}
-                  onClick={() => date && handleDateSelect(date)}
-                >
-                  {date ? date.getDate() : ''}
-                </div>
-              );
-            })}
+            {nextMonthDays.map(renderDay)}
           </div>
         </div>
       </div>
+      {selectedStartDate && selectedEndDate && (
+        <div style={styles.confirmContainer}>
+          <button onClick={handleConfirmSelection} style={styles.confirmButton}>Confirm Dates</button>
+        </div>
+      )}
     </div>
   );
 };
@@ -145,11 +221,13 @@ const styles = {
   calendarContainer: {
     display: 'inline-block',
     padding: '16px',
+    marginTop: '80px',
     border: '1px solid #ddd',
     borderRadius: '8px',
     backgroundColor: '#fff',
     position: 'absolute',
     zIndex: 1,
+    
   },
   header: {
     display: 'flex',
@@ -163,6 +241,15 @@ const styles = {
     cursor: 'pointer',
     fontSize: '16px',
     padding: '4px',
+  },
+  closeButton: {
+    background: 'none',
+    border: 'none',
+    cursor: 'pointer',
+    fontSize: '20px',
+    padding: '4px',
+    lineHeight: '20px',
+    marginLeft: '8px',
   },
   calendarGrid: {
     display: 'flex',
@@ -205,7 +292,27 @@ const styles = {
     pointerEvents: 'none',
     textDecoration: 'line-through',
   },
+  selectedDay: {
+    backgroundColor: '#b3d4fc',
+    color: '#000',
+  },
+  errorMessage: {
+    color: 'red',
+    marginBottom: '8px',
+  },
+  confirmContainer: {
+    marginTop: '16px',
+    textAlign: 'center',
+  },
+  confirmButton: {
+    padding: '8px 16px',
+    fontSize: '16px',
+    cursor: 'pointer',
+    backgroundColor: '#007bff',
+    color: '#fff',
+    border: 'none',
+    borderRadius: '4px',
+  },
 };
 
 export default CustomCalendar;
-
