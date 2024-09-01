@@ -1,4 +1,6 @@
 const Complaint = require("../models/complaintModel");
+const Reservation = require("../models/reservationModel");
+const { getRecieverSocketId, io } = require('../socket/socket');
 
 // const TaskController = require('./taskController'); // Import task controller
 const path = require("path");
@@ -31,6 +33,22 @@ const raiseComplaint = async (req, res) => {
 
     // Save the complaint document to the database
     await newComplaint.save();
+
+    const reservation = await getComplaintDetails(reservationId);
+
+    if (!reservation) {
+      return res.status(404).json({ message: "Reservation details not found" });
+    }
+
+
+    const newMessage = `A complaint was raised by ${reservation.user.firstName} ${reservation.user.lastName} for ${reservation.property.title}`;
+    console.log(newMessage);
+    //Socket IO functionality 
+    const recieverSocketId = getRecieverSocketId(reservation.property.host_id);
+
+    if(recieverSocketId) {
+        io.to(recieverSocketId).emit('newNotification',newMessage);
+    }
 
     res
       .status(200)
@@ -556,6 +574,7 @@ const getCompletedJobs = async (req, res) => {
   }
 };
 
+
 //following is for host
 const markAsResolved = async (req, res) => {
   const id = req.params.id; //complaintid
@@ -571,6 +590,29 @@ const markAsResolved = async (req, res) => {
     res.status(500).json({ message: "couldnt save changes", error }); // Send error response
   }
 };
+
+const getComplaintDetails = async (reservationId) => {
+  
+  try {
+    const reservation = await Reservation.findOne({_id : reservationId}).populate({
+      path : 'property',
+      select : 'host_id title'
+    }).populate({
+      path : 'user',
+      select : 'firstName lastName'
+    });
+
+    if (reservation) {
+      return reservation
+    } else {
+      throw new Error('No reservation found for given reservation ID.');
+    }
+
+  } catch (error) {
+    console.error("Error fetching details", error);
+    return null;  // Handle the error as needed
+  }
+}
 
 module.exports = {
   raiseComplaint,
