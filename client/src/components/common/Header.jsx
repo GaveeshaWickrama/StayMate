@@ -5,7 +5,7 @@ import { Link, useNavigate } from "react-router-dom";
 
 
 
-import { FaBars, FaUser, FaSignOutAlt } from 'react-icons/fa';
+import { FaBars, FaUser, FaSignOutAlt,FaBell } from 'react-icons/fa';
 import defaultProfilePic from '../../assets/profile2.png'
 
 
@@ -13,6 +13,7 @@ const Header = ({ toggleNavbar }) => {
   const { currentUser, loading, logout } = useAuth();
   const navigate = useNavigate();
   const [dropdownOpen, setDropdownOpen] = useState(false);
+  const [notifications, setNotifications] = useState(2); // Example count
   const dropdownRef = useRef(null);
 
   useEffect(() => {
@@ -41,14 +42,12 @@ const Header = ({ toggleNavbar }) => {
   return (
     <div className="header bg-gradient-to-r from-blue-400 via-blue-600 to-blue-700 p-4 flex justify-between items-center fixed top-0 left-0 w-full h-20 shadow-lg z-50">
       <div className="flex items-center">
-      {/* {currentUser ? ( */}
         <button
           onClick={toggleNavbar}
           className="bg-blue-500 text-white rounded-full p-2 flex items-center justify-center shadow-md hover:bg-blue-600 transition duration-200"
         >
           <FaBars size={24} />
         </button>
-      {/* ) : null} */}
         <div className="flex items-center p-0 rounded ml-4">
           <img src={logo} alt="Staymate Logo" className="h-12" />
         </div>
@@ -57,8 +56,19 @@ const Header = ({ toggleNavbar }) => {
           <p className="text-sm">Your Satisfaction, Our Priority</p>
         </div>
       </div>
+
       {currentUser ? (
+        
         <div className="relative flex items-center" ref={dropdownRef}>
+          {/* Notification Icon placed between name/role and profile picture */}
+          <div className="relative mr-4 cursor-pointer">
+            <FaBell size={24} className="text-white" />
+            {notifications > 0 && (
+              <span className="absolute top-0 right-0 inline-flex items-center justify-center px-2 py-1 text-xs font-bold leading-none text-red-100 bg-red-600 rounded-full transform translate-x-1/2 -translate-y-1/2">
+                {notifications}
+              </span>
+            )}
+          </div>
           <div
             className="flex items-center cursor-pointer"
             onClick={() => setDropdownOpen(!dropdownOpen)}
@@ -67,12 +77,11 @@ const Header = ({ toggleNavbar }) => {
               <p className="text-lg font-bold text-white">
                 {currentUser.firstName} {currentUser.lastName}
               </p>
-
               <p className="text-blue-200">
                 {currentUser.role === "guest" ? "Tenant" : currentUser.role}
               </p>
-
             </div>
+
             <img
               src={currentUser.picture ? `${import.meta.env.VITE_API_URL}/${currentUser.picture}` : defaultProfilePic}
               alt="Profile"
