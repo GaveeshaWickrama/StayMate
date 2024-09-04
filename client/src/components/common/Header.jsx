@@ -18,18 +18,25 @@ const Header = ({ toggleNavbar }) => {
   const { notifications } = useGetNotifications();
   console.log("Notifications in Header:", notifications);
   const dropdownRef = useRef(null);
+  const notificationsRef = useRef(null);
+  const [notificationsOpen, setNotificationsOpen] = useState(false);
 
   useEffect(() => {
     const handleClickOutside = (event) => {
       if (dropdownRef.current && !dropdownRef.current.contains(event.target)) {
         setDropdownOpen(false);
       }
+
+      if (notificationsRef.current && !notificationsRef.current.contains(event.target)) {
+        setNotificationsOpen(false);
+      }
+
     };
     document.addEventListener("mousedown", handleClickOutside);
     return () => {
       document.removeEventListener("mousedown", handleClickOutside);
     };
-  }, [dropdownRef]);
+  }, [dropdownRef,notificationsRef]);
 
   if (loading) {
     return <div><span className="loading loading-spinner text-info"></span>
@@ -64,14 +71,38 @@ const Header = ({ toggleNavbar }) => {
         
         <div className="relative flex items-center" ref={dropdownRef}>
           {/* Notification Icon placed between name/role and profile picture */}
-          <div className="relative mr-4 cursor-pointer">
+          <div 
+          className="relative mr-4 cursor-pointer"
+          onClick={() => setNotificationsOpen(!notificationsOpen)}
+          ref={notificationsRef}
+          >
             <FaBell size={24} className="text-white" />
-            {notifications > 0 && (
+            {notifications.length > 0 && (
               <span className="absolute top-0 right-0 inline-flex items-center justify-center px-2 py-1 text-xs font-bold leading-none text-red-100 bg-red-600 rounded-full transform translate-x-1/2 -translate-y-1/2">
-                {notifications}
+                {notifications.length}
               </span>
             )}
           </div>
+          {notificationsOpen && (
+            <div className="absolute top-12 right-0 mt-2 w-72 bg-white rounded-md shadow-lg z-50 max-h-64 overflow-y-auto">
+              <ul className="list-none p-2">
+                {notifications.length === 0 ? (
+                  <li className="p-2 text-gray-500 text-center">
+                    No new notifications
+                  </li>
+                ) : (
+                  notifications.map((notification, index) => (
+                    <li
+                      key={index}
+                      className="p-2 hover:bg-gray-100 cursor-pointer"
+                    >
+                      {notification.notificationMessage}
+                    </li>
+                  ))
+                )}
+              </ul>
+            </div>
+          )}
           <div
             className="flex items-center cursor-pointer"
             onClick={() => setDropdownOpen(!dropdownOpen)}
