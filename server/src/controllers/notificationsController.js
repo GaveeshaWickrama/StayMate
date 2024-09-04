@@ -11,6 +11,8 @@ const getNotifications = async (req,res) => {
             readStatus : false
         });
 
+        console.log("Notifications Fetched : ",notifications);
+
         res.status(200).json(notifications);
         
     } catch (error) {
