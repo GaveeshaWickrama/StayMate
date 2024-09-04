@@ -35,7 +35,7 @@ const raiseComplaint = async (req, res) => {
     // Save the complaint document to the database
     await newComplaint.save();
 
-    const reservation = await getComplaintDetails(reservationId);
+    const reservation = await getReservationDetails(reservationId);
 
     if (!reservation) {
       return res.status(404).json({ message: "Reservation details not found" });
@@ -47,8 +47,16 @@ const raiseComplaint = async (req, res) => {
     //Socket IO functionality 
     const recieverSocketId = getRecieverSocketId(reservation.property.host_id);
 
+    const newNotification = new Notification({
+      userId : reservation.user._id,
+      notificationMessage : newMessage,
+      notificationType : "complaint",
+    });
+
+    await newNotification.save();
+
     if(recieverSocketId) {
-        io.to(recieverSocketId).emit('newNotification',newMessage);
+        io.to(recieverSocketId).emit('newNotification',newNotification);
     }
 
     res
@@ -592,7 +600,7 @@ const markAsResolved = async (req, res) => {
   }
 };
 
-const getComplaintDetails = async (reservationId) => {
+const getReservationDetails = async (reservationId) => {
   
   try {
     const reservation = await Reservation.findOne({_id : reservationId}).populate({
@@ -600,7 +608,7 @@ const getComplaintDetails = async (reservationId) => {
       select : 'host_id title'
     }).populate({
       path : 'user',
-      select : 'firstName lastName'
+      select : 'firstName lastName _id'
     });
 
     if (reservation) {

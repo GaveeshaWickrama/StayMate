@@ -14,7 +14,8 @@ const bellNotificationSchema = new mongoose.Schema({
     },
 
     notificationType : {
-
+        type : String,
+        required : true
     },
 
     readStatus : {
