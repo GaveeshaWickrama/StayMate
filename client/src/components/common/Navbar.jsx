@@ -135,6 +135,10 @@ function Navbar({ isVisible }) {
     { path: "/host/view-technicians", label: "Technicians" },
     { path: "/host/HostReviews", label: "Reviews" },
     { path: "/host/chat", label: "Chat" },
+
+    { path: "/host/addpaymentdetails", label: "Add Payment Details" }
+
+
   ];
 
   const technicianLinks = [

@@ -107,6 +107,48 @@ const editProfile = async (req, res) => {
   }
 };
 
+
+
+
+
+
+
+
+
+/// Edit profile
+const addAccountNo = async (req, res) => {
+  const id = req.user.userId;
+  console.log("User ID:", id);
+  console.log("Uploaded file:", req.file); // Log the file object
+
+  if (!mongoose.Types.ObjectId.isValid(id)) {
+    return res.status(400).json({ error: "Invalid user ID" });
+  }
+
+  try {
+    const updateData = { ...req.body };
+
+    const user = await User.findOneAndUpdate(
+      { _id: id },
+      { $set: updateData },
+      { new: true, runValidators: true }
+    );
+
+    if (!user) {
+      return res.status(400).json({ error: "No such user" });
+    }
+
+    res.status(200).json(user);
+  } catch (error) {
+    console.error("Error updating Account No:", error);
+    res.status(500).json({ error: "Internal server error" });
+  }
+};
+
+
+
+
+
 //delete user
 const deleteUser = async (req, res) => {
   const { id } = req.params;
@@ -156,4 +198,5 @@ module.exports = {
   editProfile,
   deleteUser,
   viewProfile,
+  addAccountNo,
 };

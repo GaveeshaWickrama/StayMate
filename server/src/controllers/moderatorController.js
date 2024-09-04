@@ -4,11 +4,12 @@ const mongoose = require('mongoose');
 
 // Get all pending properties which are to be listed
 const viewPendingProperties = async (req, res) => {
+    // const mod_id = req.user.userId;
     try {
       const properties = await PropertyVerified.find({ status: 'pending' })
         .populate({
           path: 'propertyID',
-          populate: {
+          populate: {   
             path: 'host_id',
             model: 'User'
           }
