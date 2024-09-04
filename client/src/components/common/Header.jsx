@@ -2,7 +2,7 @@ import React, { useState, useEffect, useRef } from "react";
 import { useAuth } from "../../context/auth";
 import logo from "../../assets/icons/logo.png";
 import { Link, useNavigate } from "react-router-dom";
-
+import useGetNotifications from "../../hooks/useGetNotifications";
 
 
 import { FaBars, FaUser, FaSignOutAlt,FaBell } from 'react-icons/fa';
@@ -13,7 +13,10 @@ const Header = ({ toggleNavbar }) => {
   const { currentUser, loading, logout } = useAuth();
   const navigate = useNavigate();
   const [dropdownOpen, setDropdownOpen] = useState(false);
-  const [notifications, setNotifications] = useState(2); // Example count
+  //const [notifications, setNotifications] = useState(2); // Example count
+  // Use the custom hook to get notifications
+  const { notifications } = useGetNotifications();
+  console.log("Notifications in Header:", notifications);
   const dropdownRef = useRef(null);
 
   useEffect(() => {
