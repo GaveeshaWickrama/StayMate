@@ -48,7 +48,7 @@ const raiseComplaint = async (req, res) => {
     const recieverSocketId = getRecieverSocketId(reservation.property.host_id);
 
     const newNotification = new Notification({
-      userId : reservation.user._id,
+      userId : reservation.property.host_id,
       notificationMessage : newMessage,
       notificationType : "complaint",
     });
