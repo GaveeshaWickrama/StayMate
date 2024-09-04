@@ -76,6 +76,7 @@ const viewProfile = async (req, res) => {
 
 /// Edit profile
 const editProfile = async (req, res) => {
+  console.log("VVVVVVVVVVVVVVVVVVVVVVVVVVVV came inside edit here");
   const id = req.user.userId;
   console.log("User ID:", id);
   console.log("Uploaded file:", req.file); // Log the file object
@@ -115,19 +116,23 @@ const editProfile = async (req, res) => {
 
 
 
-/// Edit profile
 const addAccountNo = async (req, res) => {
   const id = req.user.userId;
   console.log("User ID:", id);
-  console.log("Uploaded file:", req.file); // Log the file object
 
+  // Optional: If you're handling file uploads, you can log or process the file.
+  // console.log("Uploaded file:", req.file);
+
+  // Validate the user ID
   if (!mongoose.Types.ObjectId.isValid(id)) {
     return res.status(400).json({ error: "Invalid user ID" });
   }
 
   try {
+    // Create an update object with the data from the request body
     const updateData = { ...req.body };
 
+    // Find the user by ID and update the account number or other fields
     const user = await User.findOneAndUpdate(
       { _id: id },
       { $set: updateData },
@@ -138,12 +143,14 @@ const addAccountNo = async (req, res) => {
       return res.status(400).json({ error: "No such user" });
     }
 
+    // Send the updated user data back to the client
     res.status(200).json(user);
   } catch (error) {
     console.error("Error updating Account No:", error);
     res.status(500).json({ error: "Internal server error" });
   }
 };
+
 
 
 
