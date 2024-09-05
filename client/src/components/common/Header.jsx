@@ -13,7 +13,7 @@ const Header = ({ toggleNavbar }) => {
   const [dropdownOpen, setDropdownOpen] = useState(false);
   //const [notifications, setNotifications] = useState(2); // Example count
   // Use the custom hook to get notifications
-  const { notifications } = useGetNotifications();
+  const { notifications,setNotifications } = useGetNotifications();
   console.log("Notifications in Header:", notifications);
   const dropdownRef = useRef(null);
   const notificationsRef = useRef(null);
@@ -68,6 +68,13 @@ const Header = ({ toggleNavbar }) => {
             },
         }
     );
+
+    // If the request is successful, remove the notification from the list
+    if (response.status === 200) {
+      setNotifications((prevNotifications) =>
+        prevNotifications.filter((n) => n._id !== notification._id)
+      );
+    }
 
     } catch (error) {
       console.error("updateReadStatus error: ", error.message);

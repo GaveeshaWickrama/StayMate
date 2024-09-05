@@ -65,7 +65,7 @@ const useGetNotifications = () => {
 
     },[currentUser,token,socket]);
 
-    return { notifications };
+    return { notifications,setNotifications };
 }
 
 export default useGetNotifications;
