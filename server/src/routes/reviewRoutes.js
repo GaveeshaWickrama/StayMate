@@ -23,4 +23,5 @@ router.get(
   requireRole("guest"),
   reviewController.getUserReviews
 );
+router.get("/propertyreviews", reviewController.getPropertyReviews);
 module.exports = router;

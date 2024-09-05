@@ -12,6 +12,7 @@ const PaymentDetails = () => {
   const [totalRevenue, setTotalRevenue] = useState(0);
   const [totalAmountToHosts, setTotalAmountToHosts] = useState(0);
   const [expandedRow, setExpandedRow] = useState(null);
+  const [hasFiltered, setHasFiltered] = useState(false);
 
   useEffect(() => {
     const fetchPayments = async () => {
@@ -28,6 +29,14 @@ const PaymentDetails = () => {
       fetchPayments();
     }
   }, [token]);
+
+  useEffect(() => {
+    // Reset filter on initial load
+    if (!hasFiltered) {
+      setFilteredPayments(payments);
+      updateTotals(payments);
+    }
+  }, [payments, hasFiltered]);
 
   const handleRowClick = (index) => {
     setExpandedRow(expandedRow === index ? null : index);
@@ -47,6 +56,7 @@ const PaymentDetails = () => {
   };
 
   const handleFilter = ({ startDate, endDate }) => {
+    setHasFiltered(true);
     const filtered = payments.filter((payment) => {
       const paymentCheckInDate = new Date(payment.checkInDate);
       const paymentCheckOutDate = new Date(payment.checkOutDate);
@@ -100,6 +110,7 @@ const PaymentDetails = () => {
         <DateFilterForm
           onDateFilterChange={handleFilter}
           onClear={() => {
+            setHasFiltered(false);
             setFilteredPayments(payments);
             updateTotals(payments);
           }}
@@ -205,7 +216,6 @@ const PaymentDetails = () => {
           </tbody>
         </table>
       </div>
-
       <div className="mt-8 grid grid-cols-1 sm:grid-cols-2 gap-6">
         <div className="bg-white shadow rounded-lg p-4 flex items-center">
           <div className="flex-shrink-0 bg-green-100 p-3 rounded-full">
