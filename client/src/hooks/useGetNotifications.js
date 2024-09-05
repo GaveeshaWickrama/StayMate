@@ -63,9 +63,10 @@ const useGetNotifications = () => {
             socket?.off("newNotification");
         };
 
-    },[currentUser,token,notifications]);
+    },[currentUser,token,socket]);
 
     return { notifications };
 }
 
 export default useGetNotifications;
+
