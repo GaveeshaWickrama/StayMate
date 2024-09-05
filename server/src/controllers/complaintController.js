@@ -11,15 +11,14 @@ const raiseComplaint = async (req, res) => {
   const { reservationId, title, description, category } = req.body;
 
   // Log the files to the console to check if they are being received correctly
-  console.log("Uploaded Files:", req.files);
+  //console.log("Uploaded Files:", req.files);
 
-  // Check if files are received and if not, respond with an error
-  if (!req.files || req.files.length === 0) {
-    return res.status(400).json({ message: "No files uploaded" });
-  }
-
+  const images = [];
   // Get the file paths
-  const images = req.files.map((file) => file.path);
+  if(req.files && req.files.length > 0) {
+    const images = req.files.map((file) => file.path);
+  }
+  
 
   // Complaint placed by the user to the host
   try {
