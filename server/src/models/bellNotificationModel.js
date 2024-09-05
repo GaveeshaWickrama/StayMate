@@ -5,7 +5,7 @@ const bellNotificationSchema = new mongoose.Schema({
     userId : {
         type : mongoose.Schema.Types.ObjectId,
         ref : 'user',
-        reuired : true
+        required : true
     },
 
     notificationMessage : {
@@ -16,6 +16,11 @@ const bellNotificationSchema = new mongoose.Schema({
     notificationType : {
         type : String,
         required : true
+    },
+
+    complaintId : {
+        type : mongoose.Schema.Types.ObjectId,
+        ref : "complaint"
     },
 
     readStatus : {

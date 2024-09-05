@@ -50,6 +50,7 @@ const raiseComplaint = async (req, res) => {
       userId : reservation.property.host_id,
       notificationMessage : newMessage,
       notificationType : "complaint",
+      complaintId : newComplaint._id,
     });
 
     await newNotification.save();
