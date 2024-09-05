@@ -334,12 +334,7 @@ function PropertyDetails() {
         const response = await axios.get(
           `${
             import.meta.env.VITE_API_URL
-          }/reviews/propertyreviews?propertyId=${id}`,
-          {
-            headers: {
-              Authorization: `Bearer ${token}`,
-            },
-          }
+          }/reviews/propertyreviews?propertyId=${id}`
         );
         setReviews(response.data);
       } catch (error) {
