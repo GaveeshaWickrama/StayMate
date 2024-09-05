@@ -5,10 +5,9 @@ import { useAuth } from "./auth";
 import { toast, ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 
-const StoreContext = createContext(); // Renaming ReservationContext to StoreContext
+const StoreContext = createContext();
 
 export const StoreProvider = ({ children }) => {
-  // Renaming ReservationProvider to StoreProvider
   const { token } = useAuth();
   const navigate = useNavigate();
   const [formData, setFormData] = useState({
@@ -42,11 +41,9 @@ export const StoreProvider = ({ children }) => {
         );
 
         setUserReservations(response.data);
-        console.log("Fetched reservations:", response.data); // Logging the response data
         setLoading(false);
       } catch (error) {
         console.log("Error fetching reservations:", error);
-        //toast.error("Error fetching reservations.");
         setLoading(false);
       }
     };
@@ -54,7 +51,7 @@ export const StoreProvider = ({ children }) => {
     if (token) {
       fetchReservations();
     }
-  }, [token]); // Fetch reservations whenever token changes
+  }, [token]);
 
   const handleChange = (e) => {
     setFormData({
@@ -64,7 +61,6 @@ export const StoreProvider = ({ children }) => {
   };
 
   const fetchPropertyById = async (propertyId) => {
-    // Mock fetch function, replace with actual API call
     try {
       const response = await axios.get(
         `${import.meta.env.VITE_API_URL}/properties/${propertyId}`,
@@ -74,43 +70,11 @@ export const StoreProvider = ({ children }) => {
           },
         }
       );
-      return response.data; // Return the property data from the API response
+      return response.data;
     } catch (error) {
       console.log("Error fetching property details:", error);
       toast.error("Failed to fetch property details.");
-      return null; // Return null or handle the error as appropriate
-    }
-  };
-  const handleSubmit = async (reservationData) => {
-    try {
-      const response = await axios.post(
-        `${import.meta.env.VITE_API_URL}/reservation/add`,
-        reservationData,
-        {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-        }
-      );
-
-      if (response.status === 201) {
-        toast.success("Reservation successful!");
-
-        const updatedResponse = await axios.get(
-          `${import.meta.env.VITE_API_URL}/reservation/get`,
-          {
-            headers: {
-              Authorization: `Bearer ${token}`,
-            },
-          }
-        );
-        setUserReservations(updatedResponse.data);
-
-        navigate("/user/reservations");
-      }
-    } catch (error) {
-      console.log("Error making reservation:", error);
-      toast.error("Failed to make reservation.");
+      return null;
     }
   };
 
@@ -135,17 +99,22 @@ export const StoreProvider = ({ children }) => {
     }
   };
 
+  // Function to update user reservations
+  const updateUserReservations = (reservations) => {
+    setUserReservations(reservations);
+  };
+
   return (
     <StoreContext.Provider
       value={{
         formData,
         reservationData,
         handleChange,
-        handleSubmit,
         userReservations,
         loading,
         addReview,
         fetchPropertyById,
+        updateUserReservations, // Expose the update function
       }}
     >
       {children}
@@ -154,4 +123,4 @@ export const StoreProvider = ({ children }) => {
   );
 };
 
-export const useStore = () => useContext(StoreContext); // Renaming useReservation to useStore
+export const useStore = () => useContext(StoreContext);

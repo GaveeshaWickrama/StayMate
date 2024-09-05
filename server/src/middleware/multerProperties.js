@@ -14,8 +14,10 @@ const propertyStorage = multer.diskStorage({
 const uploadPropertyImages = multer({ storage: propertyStorage }).fields([
   { name: 'images', maxCount: 10 },
   { name: 'section_images', maxCount: 50 },
-  { name: 'deed', maxCount: 1 } // Add this line to handle deed upload
+  { name: 'amenity_images', maxCount: 50 }, // Add this line to handle amenity images
+  { name: 'deed', maxCount: 1 }
 ]);
+
 
 module.exports = uploadPropertyImages;
 

@@ -1,6 +1,7 @@
 const Reservation = require("../models/reservationModel");
 const Property = require("../models/propertyModel");
 const User = require("../models/userModel");
+const stripe = require("stripe")(process.env.STRIPE_SECRET_KEY);
 
 // Function to update reservation statuses based on checkOutDate and checkInDate
 const updateReservationStatuses = async () => {
@@ -20,6 +21,7 @@ const addReservation = async (req, res) => {
     totalPrice,
     noOfGuests,
     paymentStatus,
+    paymentMethodId,
   } = req.body;
 
   // Extract user ID from the token payload
@@ -32,12 +34,22 @@ const addReservation = async (req, res) => {
     !checkInDate ||
     !checkOutDate ||
     !totalPrice ||
-    !noOfGuests
+    !noOfGuests ||
+    !paymentMethodId
   ) {
     return res.status(400).json({ message: "All fields are required" });
   }
 
   try {
+    //create paymentIntent with Stripe
+
+    const paymentIntent = await stripe.paymentIntents.create({
+      amount: totalPrice * 100, // Convert LKR to cents (Stripe's smallest unit)
+      currency: "lkr", // Set currency to LKR
+      payment_method: paymentMethodId,
+      confirm: true,
+      return_url: "http://localhost:5173/user/reserve/payment_success",
+    });
     const reservation = new Reservation({
       user,
       property,
@@ -46,7 +58,11 @@ const addReservation = async (req, res) => {
       checkOutDate,
       totalPrice,
       noOfGuests,
-      paymentStatus: paymentStatus || false,
+      paymentStatus: true,
+      paymentDetails: {
+        paymentId: paymentIntent.id,
+        paymentMethod: paymentIntent.payment_method,
+      },
     });
 
     const newReservation = await reservation.save();
