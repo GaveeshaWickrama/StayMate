@@ -3,14 +3,12 @@ import { useAuth } from "../../context/auth";
 import logo from "../../assets/icons/logo.png";
 import { Link, useNavigate } from "react-router-dom";
 import useGetNotifications from "../../hooks/useGetNotifications";
-
-
 import { FaBars, FaUser, FaSignOutAlt,FaBell } from 'react-icons/fa';
 import defaultProfilePic from '../../assets/profile2.png'
-
+import axios from "axios";
 
 const Header = ({ toggleNavbar }) => {
-  const { currentUser, loading, logout } = useAuth();
+  const { currentUser, loading, logout,token } = useAuth();
   const navigate = useNavigate();
   const [dropdownOpen, setDropdownOpen] = useState(false);
   //const [notifications, setNotifications] = useState(2); // Example count
@@ -32,9 +30,9 @@ const Header = ({ toggleNavbar }) => {
       }
 
     };
-    document.addEventListener("mousedown", handleClickOutside);
+    document.addEventListener("click", handleClickOutside);
     return () => {
-      document.removeEventListener("mousedown", handleClickOutside);
+      document.removeEventListener("click", handleClickOutside);
     };
   }, [dropdownRef,notificationsRef]);
 
@@ -47,6 +45,34 @@ const Header = ({ toggleNavbar }) => {
     setDropdownOpen(false); // Close the dropdown
     await logout();
     navigate("/"); // Redirect to the home page after logout
+  };
+
+  const handleNotificationClick = async (notification) => {
+    // Check if the notification type is 'complaint'
+    if (notification.notificationType === "complaint") {
+      // Navigate to the complaint details page with complaintId
+      navigate(`/host/complaint-details/${notification.complaintId}`);
+    }
+
+    try {
+      
+      const response = await axios.patch(
+        `${import.meta.env.VITE_API_URL}/notification/updateReadStatus`,
+        {
+          notificationId: notification._id, // Pass the notification ID
+        },
+        {
+            headers: {
+                Authorization: `Bearer ${token}`,
+                'Content-Type': 'application/json'
+            },
+        }
+    );
+
+    } catch (error) {
+      console.error("updateReadStatus error: ", error.message);
+      toast.error("Failed to update read status");
+    }
   };
 
   return (
@@ -95,6 +121,12 @@ const Header = ({ toggleNavbar }) => {
                     <li
                       key={index}
                       className="p-2 hover:bg-gray-100 cursor-pointer"
+                      onClick={() => {
+                        // Handle notification click
+                        console.log("List Item clicked : ",notification.complaintId);
+                        handleNotificationClick(notification);
+                      }
+                      } 
                     >
                       {notification.notificationMessage}
                     </li>
