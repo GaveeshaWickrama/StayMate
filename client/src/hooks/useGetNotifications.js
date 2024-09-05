@@ -3,6 +3,7 @@ import axios from "axios";
 import { useAuth } from "../context/auth";
 import { toast } from "react-toastify";
 import { useSocketContext } from '../context/SocketContext';
+import notificationSound from '../assets/sounds/notification.mp3';
 
 const useGetNotifications = () => {
 
@@ -49,14 +50,20 @@ const useGetNotifications = () => {
         // Call the function to fetch notifications
         getNotifications();
 
-        
+        socket?.on('newNotification', (newNotification) => {
+            const sound = new Audio(notificationSound);
+            sound.play();
+            //setNotifications([...notifications,newNotification]);
+            setNotifications((prevNotifications) => [...prevNotifications, newNotification]);
+        });
 
         // Optionally, clean up side effects if necessary
         return () => {
             // If there's any cleanup, do it here
+            socket?.off("newNotification");
         };
 
-    },[currentUser,token]);
+    },[currentUser,token,notifications]);
 
     return { notifications };
 }
