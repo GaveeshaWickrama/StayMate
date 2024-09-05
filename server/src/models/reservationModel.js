@@ -36,6 +36,15 @@ const reservationSchema = new Schema({
     type: Boolean,
     default: false,
   },
+  paymentDetails: {
+    paymentId: String,
+    paymentMethod: String,
+  },
+  payoutStatus: {
+    type: String,
+    enum: ["pending", "paid"],
+    default: "pending",
+  },
   createdAt: {
     type: Date,
     default: Date.now,

@@ -189,6 +189,7 @@ const PropertySection = ({ section, isExpanded, onExpand, propertyId }) => {
               />
             ))}
           </div>
+          <PropertyAmenitiesDisplay amenities={section.amenities} />
           <ReservationSection
             sectionId={section.section_id}
             propertyId={propertyId} // Pass the propertyId to ReservationSection
@@ -197,7 +198,7 @@ const PropertySection = ({ section, isExpanded, onExpand, propertyId }) => {
             initialCheckOutDate="2024-07-16"
             serviceFeePercentage={10}
           />
-          <PropertyAmenitiesDisplay amenities={section.amenities} />
+          
         </>
       )}
     </div>
@@ -221,10 +222,8 @@ const PropertySectionsList = ({ property }) => {
       </div>
       <PropertyDescription description={property.description} />
 
-      <div className="flex my-6 border-b-4 border-blue-600 p-6 rounded-md shadow-sm bg-white">
-        <h1 className="flex items-center text-3xl font-extrabold text-black-600">
-          <FaCouch className="mr-4" /> Accommodation Types
-        </h1>
+      <div className="flex mt-6 border-b-4 border-blue-600 p-6  shadow-sm bg-white">
+        <h1 className="flex items-center text-3xl font-extrabold text-black-600"> <FaCouch className="mr-4" /> Accommodation Types </h1>
       </div>
 
       {property.sections.map((section, index) => (
