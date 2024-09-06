@@ -1,7 +1,7 @@
 const PropertyVerified = require('../models/propertyverifiedModel');
 const Property = require('../models/propertyModel');
 const mongoose = require('mongoose');
-const Notification = require('../models/bellNotificationSchema')
+const Notification = require('../models/bellNotificationModel')
 
 // Get all pending properties which are to be listed
 const viewPendingProperties = async (req, res) => {
@@ -60,11 +60,27 @@ const viewPendingProperties = async (req, res) => {
         // Iterate over each property and check if it was created more than one week ago
         properties.forEach((property) => {
             const oneWeekAgo = new Date(currentDate.getTime() - 7 * 24 * 60 * 60 * 1000); // 7 days in milliseconds
+            const threeDaysAgo = new Date(currentDate.getTime() - 3 * 24 * 60 * 60 * 1000); // 3 days ago
+            const oneDaysAgo = new Date(currentDate.getTime() - 3 * 24 * 60 * 60 * 1000); // 3 days ago
     
-            if (property.created_at < oneWeekAgo) {
+            if (property.created_at >= oneWeekAgo && property.created_at < threeDaysAgo) {
                 return Notification.create({
                     userId : req.user.userId,
                     notificationMessage: `Reminder for Validating Property with ID ${property._id}, which was listed one week ago.`,
+                    notificationType : "validation_reminder",
+                  });
+            }
+            else if (property.created_at >= threeDaysAgo && property.created_at < oneDaysAgo) {
+                return Notification.create({
+                    userId : req.user.userId,
+                    notificationMessage: `Warning for Validating Property with ID ${property._id}, only 3 more days remaining.`,
+                    notificationType : "validation_reminder",
+                  });
+            }
+            else {
+                return Notification.create({
+                    userId : req.user.userId,
+                    notificationMessage: `Warning for Validating Property with ID ${property._id}, only 1 day remaining.`,
                     notificationType : "validation_reminder",
                   });
             }
