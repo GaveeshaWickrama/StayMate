@@ -46,6 +46,9 @@ const userSchema = new mongoose.Schema({
   picture: {
     type: String,
   },
+  accountno: {
+    type: String,
+  },
   createdOn: {
     type: Date,
     default: Date.now,

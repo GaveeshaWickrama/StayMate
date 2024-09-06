@@ -29,6 +29,16 @@ router.patch(
   userController.editProfile
 );
 
+
+
+//update accountno
+router.patch(
+  "/addAccountNo",
+  authToken,
+  requireRole("host"),
+  userController.addAccountNo
+);
+
 //haven't used the below
 
 //get all users

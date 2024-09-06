@@ -1,4 +1,5 @@
 const Property = require("../models/propertyModel");
+const User = require("../models/userModel")
 const PropertyVerified = require("../models/propertyverifiedModel");
 const path = require("path");
 
@@ -73,6 +74,9 @@ async function createProperty(req, res) {
 
     const deed = req.files.deed ? req.files.deed[0].path : null;
 
+
+
+    
     // Create the property document
     const property = new Property({
       host_id,
@@ -87,6 +91,76 @@ async function createProperty(req, res) {
     });
 
     const newProperty = await property.save();
+
+
+
+
+    //added by Gaveeesha
+
+    // Fetch only the _id of each user where the role is 'moderator' and save in an array
+    const moderatorIds = await User.find({ role: 'moderator' }).select('_id').exec();
+    if (moderatorIds.length === 0) {
+      return res.status(500).json({ message: 'No moderators available' });
+    }
+
+    // Convert the array of objects to an array of _id values
+    const moderatorIdsArray = moderatorIds.map(moderator => moderator._id);
+
+    // Assign the property to a moderator based on auto_id % moderator_count
+    const modValue = newProperty.auto_id % moderatorIdsArray.length;
+
+    //take the id of the moderator in the moderator array based on mod value
+    newProperty.moderator_id = moderatorIdsArray[modValue]
+    
+    await newProperty.save();
+
+    //until here
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
     // Optionally save additional verification data
     const propertyVerified = new PropertyVerified({
