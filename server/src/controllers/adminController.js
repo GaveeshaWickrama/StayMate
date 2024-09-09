@@ -425,6 +425,27 @@ const updateProfile = async (req, res) => {
   }
 };
 
+// Define the function
+const getPropertiesByLocation = async (req, res) => {
+  try {
+    // Fetch property data by location
+    const locationData = await User.aggregate([
+      { $match: { role: "host" } }, // Assuming "role" is defined in your schema
+      { $group: { _id: "$location", count: { $sum: 1 } } },
+      { $project: { _id: 0, location: "$_id", count: "$count" } }
+    ]);
+    
+    // Send data as a response
+    res.status(200).json(locationData);
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+};
+
+
+  
+
+
 module.exports = {
   getAllUsers,
   createUser,
@@ -436,4 +457,5 @@ module.exports = {
   getModerators,
   createModerator,
   deleteModerator,
+  getPropertiesByLocation,
 };
