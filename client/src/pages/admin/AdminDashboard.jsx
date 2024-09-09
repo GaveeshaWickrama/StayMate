@@ -68,7 +68,7 @@ function AdminDashboard() {
         const guestCount = data.guest || 0;
         const hostCount = data.host || 0;
 
-        // Simulate monthly data based on the actual user counts
+        // Simulate monthly data
         const simulatedMonthlyData = [
           { month: "January", customers: guestCount, propertyOwners: hostCount },
           { month: "February", customers: guestCount + 10, propertyOwners: hostCount + 5 },
@@ -116,8 +116,6 @@ function AdminDashboard() {
   const data = view === "monthly" ? monthlyData : yearlyData;
   const dataKey = view === "monthly" ? "month" : "year";
 
-  
-
   return (
     <main
       className="p-6 min-h-screen"
@@ -127,7 +125,7 @@ function AdminDashboard() {
         backgroundBlendMode: 'overlay',
       }}
     >
-      <GreetingBox name="jeo Deo" />
+      <GreetingBox name="Jeo Deo" />
 
       <h3 className="text-4xl font-bold text-gray-800 mb-8">Dashboard</h3>
 
@@ -149,12 +147,12 @@ function AdminDashboard() {
         <div className="bg-white shadow-lg p-6 rounded-lg flex flex-col items-center transform transition duration-300 hover:scale-105">
           <FaHome className="text-5xl text-purple-600 mb-3" />
           <h3 className="text-xl font-semibold text-gray-700">Total Properties</h3>
-          <p className="text-2xl font-bold text-gray-900">50</p> {/* Example static data */}
+          <p className="text-2xl font-bold text-gray-900">50</p> {/* Static data */}
         </div>
         <div className="bg-white shadow-lg p-6 rounded-lg flex flex-col items-center transform transition duration-300 hover:scale-105">
           <FaCalendarCheck className="text-5xl text-orange-600 mb-3" />
           <h3 className="text-xl font-semibold text-gray-700">Upcoming Bookings</h3>
-          <p className="text-2xl font-bold text-gray-900">25</p> {/* Example static data */}
+          <p className="text-2xl font-bold text-gray-900">25</p> {/* Static data */}
         </div>
       </div>
 
