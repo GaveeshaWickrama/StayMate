@@ -17,6 +17,7 @@ import {
 import axios from "axios";
 import { useAuth } from "../../context/auth";
 
+
 // Function to generate random allocation data
 const generateRandomAllocations = (total) => {
   const allocations = Array.from({ length: 12 }, () => Math.random());
@@ -29,7 +30,6 @@ const generateRandomAllocations = (total) => {
 const generateMonthlyData = (totalRevenue, totalPayoutToHosts) => {
   const months = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
 
-  // Generate random allocations for revenue and expenses
   const revenueAllocations = generateRandomAllocations(totalRevenue);
   const expenseAllocations = generateRandomAllocations(totalPayoutToHosts);
 
@@ -43,7 +43,6 @@ const generateMonthlyData = (totalRevenue, totalPayoutToHosts) => {
 const generateYearlyData = (totalRevenue, totalPayoutToHosts) => {
   const years = ["2020", "2021", "2022", "2023", "2024"];
 
-  // Generate random allocations for revenue and expenses
   const revenueAllocations = generateRandomAllocations(totalRevenue);
   const expenseAllocations = generateRandomAllocations(totalPayoutToHosts);
 
@@ -56,55 +55,13 @@ const generateYearlyData = (totalRevenue, totalPayoutToHosts) => {
 
 const COLORS = ["#0088FE", "#00C49F", "#FFBB28", "#FF8042", "#FF0000", "#800080"];
 
-const staticLocationData = [
-  { name: "Kandy", value: 400 },
-  { name: "Colombo", value: 300 },
-  { name: "Ella", value: 300 },
-  { name: "Matara", value: 200 },
-  { name: "Galle", value: 278 },
-  { name: "Kalutara", value: 189 },
-];
-
-const propertyTypesData = {
-  Kandy: [
-    { type: "Hotel", count: 150 },
-    { type: "Apartment", count: 100 },
-    { type: "Villa", count: 150 },
-  ],
-  Colombo: [
-    { type: "Hotel", count: 200 },
-    { type: "Apartment", count: 50 },
-    { type: "Villa", count: 50 },
-  ],
-  Ella: [
-    { type: "Hotel", count: 100 },
-    { type: "Apartment", count: 100 },
-    { type: "Villa", count: 100 },
-  ],
-  Matara: [
-    { type: "Hotel", count: 80 },
-    { type: "Apartment", count: 60 },
-    { type: "Villa", count: 60 },
-  ],
-  Galle: [
-    { type: "Hotel", count: 100 },
-    { type: "Apartment", count: 78 },
-    { type: "Villa", count: 100 },
-  ],
-  Kalutara: [
-    { type: "Hotel", count: 89 },
-    { type: "Apartment", count: 50 },
-    { type: "Villa", count: 50 },
-  ],
-};
-
 function Report() {
   const { token } = useAuth();
   const [totalRevenue, setTotalRevenue] = useState(0);
   const [totalPayoutToHosts, setTotalPayoutToHosts] = useState(0);
   const [reportData, setReportData] = useState([]);
   const [selectedTab, setSelectedTab] = useState("monthly");
-  const [selectedLocation, setSelectedLocation] = useState(null);
+  const [staticLocationData, setStaticLocationData] = useState([]);
 
   useEffect(() => {
     const fetchPayments = async () => {
@@ -124,8 +81,25 @@ function Report() {
       }
     };
 
+    const fetchLocations = async () => {
+      try {
+        const response = await axios.get(
+          `${import.meta.env.VITE_API_URL}/admin/properties-by-location`,
+          {
+            headers: {
+              Authorization: `Bearer ${token}`,
+            },
+          }
+        );
+        setStaticLocationData(response.data);
+      } catch (error) {
+        console.error("Error fetching location data:", error);
+      }
+    };
+
     if (token) {
       fetchPayments();
+      fetchLocations();
     }
   }, [token]);
 
@@ -178,7 +152,7 @@ function Report() {
   const downloadPieChartData = () => {
     const csvData = [
       ["Location", "Value"],
-      ...staticLocationData.map((item) => [item.name, item.value]),
+      ...staticLocationData.map((item) => [item.location, item.count]),
     ]
       .map((e) => e.join(","))
       .join("\n");
@@ -216,7 +190,7 @@ function Report() {
       </div>
 
       <div className="flex flex-col md:flex-row gap-5 mt-20">
-        {/* Bar Chart on the left */}
+        {/* Bar Chart */}
         <div className="flex-1 bg-white p-5 rounded-lg shadow-md">
           <h4 className="text-xl font-semibold mb-4 text-center">
             Income vs Expenses ({selectedTab.charAt(0).toUpperCase() + selectedTab.slice(1)})
@@ -243,7 +217,7 @@ function Report() {
           </button>
         </div>
 
-        {/* Line Chart on the right */}
+        {/* Line Chart */}
         <div className="flex-1 bg-white p-5 rounded-lg shadow-md">
           <h4 className="text-xl font-semibold mb-4 text-center">
             Income vs Expenses ({selectedTab.charAt(0).toUpperCase() + selectedTab.slice(1)})
@@ -276,62 +250,39 @@ function Report() {
         </div>
       </div>
 
-      <div className="flex flex-col mt-10">
-        <div className="flex-1 bg-white p-5 rounded-lg shadow-md">
-          <h4 className="text-xl font-semibold mb-4 text-center">
-            Properties by Location
-          </h4>
-          <ResponsiveContainer width="100%" height={400}>
-            <PieChart>
-              <Pie
-                data={staticLocationData}
-                dataKey="value"
-                nameKey="name"
-                cx="50%"
-                cy="50%"
-                outerRadius={150}
-                fill="#8884d8"
-                label
-                onClick={(data) => setSelectedLocation(data.name)}
-              >
-                {staticLocationData.map((entry, index) => (
-                  <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
-                ))}
-              </Pie>
-              <Tooltip />
-            </PieChart>
-          </ResponsiveContainer>
-          <button
-            className="mt-4 px-4 py-2 bg-blue-500 text-white rounded transition duration-200 ease-in-out"
-            onClick={downloadPieChartData}
-          >
-            Download Pie Chart Data
-          </button>
-        </div>
+      {/* Pie Chart */}
+      <div className="mt-20 bg-white p-5 rounded-lg shadow-md">
+        <h4 className="text-xl font-semibold mb-4 text-center">Properties by Location</h4>
+        <ResponsiveContainer width="100%" height={400}>
+          <PieChart>
+            <Pie
+              data={staticLocationData}
+              dataKey="count"
+              nameKey="location"
+              cx="50%"
+              cy="50%"
+              outerRadius={150}
+              fill="#8884d8"
+              label
+            >
+              {staticLocationData.map((entry, index) => (
+                <Cell
+                  key={`cell-${index}`}
+                  fill={COLORS[index % COLORS.length]}
+                />
+              ))}
+            </Pie>
+          </PieChart>
+        </ResponsiveContainer>
+        <button
+          className="mt-4 px-4 py-2 bg-blue-500 text-white rounded transition duration-200 ease-in-out"
+          onClick={downloadPieChartData}
+        >
+          Download Pie Chart Data
+        </button>
       </div>
 
-      {selectedLocation && (
-        <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50">
-          <div className="bg-white p-8 rounded-lg shadow-md">
-            <h4 className="text-2xl font-semibold mb-4 text-center">
-              Property Types in {selectedLocation}
-            </h4>
-            <ul>
-              {propertyTypesData[selectedLocation].map((property) => (
-                <li key={property.type} className="text-lg mb-2">
-                  {property.type}: {property.count}
-                </li>
-              ))}
-            </ul>
-            <button
-              className="mt-4 px-4 py-2 bg-red-500 text-white rounded transition duration-200 ease-in-out"
-              onClick={() => setSelectedLocation(null)}
-            >
-              Close
-            </button>
-          </div>
-        </div>
-      )}
+      
     </main>
   );
 }
