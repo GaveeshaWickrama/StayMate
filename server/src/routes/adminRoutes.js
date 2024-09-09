@@ -3,6 +3,12 @@ const router = express.Router();
 const adminController = require("../controllers/adminController");
 const reservationController = require("../controllers/reservationController");
 const { authToken, requireRole } = require("../middleware/authProvider");
+// Correctly import the controller
+const { getPropertiesByLocation } = require('../controllers/adminController');
+
+// Define the route
+router.get('/properties-by-location', getPropertiesByLocation);
+
 
 //get all moderators
 router.get(
