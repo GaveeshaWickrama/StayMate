@@ -4,6 +4,7 @@ const propertyController = require('../controllers/propertyController');
 const { authToken, requireRole } = require('../middleware/authProvider');
 const uploadPropertyImages = require('../middleware/multerProperties'); // Import the new multer configuration
 
+
 // Create a new property (accessible by hosts and admins)
 router.post(
   "/add",
