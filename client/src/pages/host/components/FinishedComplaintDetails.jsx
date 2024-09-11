@@ -8,6 +8,10 @@ function FinishedComplaintDetails({ complaint }) {
 
   const markJobAsCompleted = () => {};
 
+  const review = () => {
+    navigate(`/host/complaint/review`)
+  }
+
   return (
     <div className="bg-gray-100 mx-auto py-2 px-8">
       {complaint.status==="hostCompleted" && (
@@ -21,7 +25,7 @@ function FinishedComplaintDetails({ complaint }) {
       {complaint.status==="technicianCompleted" && (
           <button
           className="bg-blue-600 text-white p-4 rounded font-bold w-50 my-10 m-4"
-          
+          onClick={review}
         >
          Review 
         </button>

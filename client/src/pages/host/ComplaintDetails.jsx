@@ -87,7 +87,10 @@ export default function ComplaintDetails() {
           <div className="bg-white p-8 flex flex-row justify-between items-center border-b">
             <div className="flex flex-row items-center">
               <h2 className="text-xl font-bold">Status:</h2>
-              <p className="ml-4 badge badge-ghost">{complaint.status}</p>
+              {complaint.status==="technicianCompleted" ? (
+                <p className="ml-4 badge badge-ghost">to be reviewed</p>
+              ) : (<p className="ml-4 badge badge-ghost">{complaint.status}</p>)}
+              
             </div>
 
             <div className="flex flex-row items-center p-2 gap-3">
