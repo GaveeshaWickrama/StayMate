@@ -1,6 +1,4 @@
 
-
-
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { FaTrash, FaSearch } from "react-icons/fa";
@@ -90,3 +88,4 @@ const Technicians = () => {
 };
 
 export default Technicians;
+
