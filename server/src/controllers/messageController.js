@@ -3,6 +3,31 @@ const User = require('../models/userModel');
 const Message = require('../models/messageModel');
 const { getRecieverSocketId, io } = require('../socket/socket');
 
+/* const getUnreadMessageCount = async (userId) => {
+    try {
+        const count = await Message.countDocuments({ receiverId: userId, unread: true });
+        return count;
+    } catch (error) {
+        console.error('Error getting unread message count:', error);
+        return 0;
+    }
+};
+ */
+
+const getTotalUnreadMessageCount = async (req,res) => {
+    const {id:receiverId} = req.params;
+    console.log("Inside getTotalUnreadMessageCount :- ",receiverId);
+    try {
+        const count = await Message.countDocuments({ receiverId: receiverId, unread: true });
+        console.log('Unread Message Count :- ',count);
+        res.json(count); 
+    } catch (error) {
+        console.error('Error getting unread message count:', error);
+        return 0;
+    }
+}
+
+
 const sendMessage = async (req,res)=>{
     try {
         
@@ -21,6 +46,8 @@ const sendMessage = async (req,res)=>{
             });
         }
 
+        console.log("Created or found conversation : ",conversation);
+
         const newMessage = new Message({
             senderId,
             receiverId,
@@ -37,6 +64,7 @@ const sendMessage = async (req,res)=>{
         const recieverSocketId = getRecieverSocketId(receiverId);
         if(recieverSocketId) {
             io.to(recieverSocketId).emit('newMessage',newMessage);
+            //io.to(recieverSocketId).emit('latestConversation',conversation);
         }
 
         res.status(201).json(newMessage);
@@ -69,7 +97,7 @@ const getMessages = async (req,res) => {
     }
 }
 
-const getContacts = async (req, res) => {
+/* const getContacts = async (req, res) => {
     try {
       const loggedInUser = req.user.userId;
   
@@ -94,7 +122,38 @@ const getContacts = async (req, res) => {
       console.error("Error Fetching Conversations: ", err.message);
       res.status(500).json({ error: "Internal Server Error" });
     }
-  };
+  }; */
+
+  const getConversationsWithUnreadCount = async (req, res) => {
+    const loggedInUser = req.user.userId;
+
+    try {
+        const conversations = await Conversation.find({ participants: { $in: [loggedInUser] } })
+            .populate('participants')
+            .populate({
+                path: 'messages',
+                match: { unread: true, receiverId: loggedInUser },
+                select: 'unread'
+            }).sort({updatedAt : -1});
+
+        const conversationWithUnreadCount = conversations.map(convo => {
+            const unreadMessagesCount = convo.messages.length;
+            const otherParticipant = convo.participants.find(participant => participant._id.toString() !== loggedInUser);
+            return {
+                unreadMessagesCount,
+                otherParticipant
+            };
+        });
+
+        console.log("ConversationsWithUnreadCount : - ",conversationWithUnreadCount);
+
+        res.status(200).json(conversationWithUnreadCount);
+    } catch (err) {
+        console.error("Error Fetching Conversations: ", err.message);
+        res.status(500).json({ error: "Internal Server Error" });
+    }
+};
+
   
   const createOrSelectConversation = async (req, res) => {
     console.log("inside createOrSelectConversation");
@@ -125,4 +184,30 @@ const getContacts = async (req, res) => {
     }
 };
 
-module.exports = { sendMessage,getMessages, getContacts,createOrSelectConversation };
+const updateReadStatus = async (req,res) => {
+
+    try {
+
+        const loggedInUser = req.user.userId;
+        const { id: otherUserId } = req.params;
+        console.log("Inside Updatereadstatus");
+
+        // Update all messages sent by other participant to this logged in user and are unread
+        const result = await Message.updateMany(
+            { 
+                receiverId: loggedInUser,
+                senderId: otherUserId, // Ensure that you're only marking messages from the other user as read
+                unread: true
+            },
+            { $set: { unread: false } }
+        );
+
+        return res.status(200).json({ message: `${result.nModified} messages marked as read` });
+
+    } catch (error) {
+        console.error("Error updating read status: ", error.message);
+        return res.status(500).json({ message: "Server error" });
+    }
+}
+
+module.exports = { sendMessage,getMessages, getConversationsWithUnreadCount,createOrSelectConversation,getTotalUnreadMessageCount,updateReadStatus };
