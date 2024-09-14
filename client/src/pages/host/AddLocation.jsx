@@ -28,6 +28,7 @@ const AddLocation = () => {
   });
   const [googleResponse, setGoogleResponse] = useState(null);
   const [isMapsApiLoaded, setIsMapsApiLoaded] = useState(false);
+  const [errors, setErrors] = useState({});
 
   const {
     ready,
@@ -131,8 +132,26 @@ const AddLocation = () => {
     }
   };
 
+  const validateForm = () => {
+    const newErrors = {};
+    if (!propertyLocation.address.trim()) newErrors.address = 'Address is required';
+    if (!propertyLocation.district.trim()) newErrors.district = 'District is required';
+    if (!propertyLocation.province.trim()) newErrors.province = 'Province is required';
+    if (!propertyLocation.zipcode.trim()) newErrors.zipcode = 'Zip code is required';
+    if (!propertyLocation.latitude) newErrors.latitude = 'Latitude is required';
+    if (!propertyLocation.longitude) newErrors.longitude = 'Longitude is required';
+    
+    setErrors(newErrors);
+    return Object.keys(newErrors).length === 0;
+  };
+
   const handleSubmit = (e) => {
     e.preventDefault();
+
+    if (!validateForm()) {
+      return;  // If validation fails, stop submission.
+    }
+
     navigate('/host/add-property', { state: { ...location.state, location: propertyLocation, stage: 6 } });
   };
 
@@ -142,6 +161,7 @@ const AddLocation = () => {
     <div className='p-8 bg-white shadow-md rounded-lg'>
       <form onSubmit={handleSubmit} className="">
         <h2 className="text-2xl font-semibold mb-6 text-gray-800">Location Information</h2>
+        
         <div className="mb-4">
           <label className="block text-gray-600 mb-2">Address:</label>
           <input
@@ -149,9 +169,10 @@ const AddLocation = () => {
             onChange={(e) => setValue(e.target.value)}
             disabled={!ready}
             placeholder="Search for an address"
-            className="block w-full p-3 border border-gray-300 rounded-lg focus:outline-none focus:border-blue-500"
+            className={`block w-full p-3 border ${errors.address ? 'border-red-500' : 'border-gray-300'} rounded-lg focus:outline-none focus:border-blue-500`}
             required
           />
+          {errors.address && <p className="text-red-500 text-sm">{errors.address}</p>}
           {status === "OK" && (
             <ul className="border border-gray-300 mt-2 rounded-lg max-h-48 overflow-y-auto bg-white shadow-lg">
               {data.map(({ place_id, description }) => (
@@ -166,6 +187,7 @@ const AddLocation = () => {
             </ul>
           )}
         </div>
+
         <div className="mb-4 flex space-x-4">
           <div className="flex-1">
             <label className="block text-gray-600 mb-2">District:</label>
@@ -174,9 +196,10 @@ const AddLocation = () => {
               name="district"
               value={propertyLocation.district}
               onChange={handleLocationChange}
-              className="block w-full p-3 border border-gray-300 rounded-lg focus:outline-none focus:border-blue-500"
+              className={`block w-full p-3 border ${errors.district ? 'border-red-500' : 'border-gray-300'} rounded-lg focus:outline-none focus:border-blue-500`}
               required
             />
+            {errors.district && <p className="text-red-500 text-sm">{errors.district}</p>}
           </div>
           <div className="flex-1">
             <label className="block text-gray-600 mb-2">Province:</label>
@@ -185,11 +208,13 @@ const AddLocation = () => {
               name="province"
               value={propertyLocation.province}
               onChange={handleLocationChange}
-              className="block w-full p-3 border border-gray-300 rounded-lg focus:outline-none focus:border-blue-500"
+              className={`block w-full p-3 border ${errors.province ? 'border-red-500' : 'border-gray-300'} rounded-lg focus:outline-none focus:border-blue-500`}
               required
             />
+            {errors.province && <p className="text-red-500 text-sm">{errors.province}</p>}
           </div>
         </div>
+
         <div className="mb-4 flex space-x-4">
           <div className="flex-1">
             <label className="block text-gray-600 mb-2">Latitude:</label>
@@ -198,9 +223,10 @@ const AddLocation = () => {
               name="latitude"
               value={propertyLocation.latitude}
               onChange={handleLocationChange}
-              className="block w-full p-3 border border-gray-300 rounded-lg focus:outline-none focus:border-blue-500"
+              className={`block w-full p-3 border ${errors.latitude ? 'border-red-500' : 'border-gray-300'} rounded-lg focus:outline-none focus:border-blue-500`}
               required
             />
+            {errors.latitude && <p className="text-red-500 text-sm">{errors.latitude}</p>}
           </div>
           <div className="flex-1">
             <label className="block text-gray-600 mb-2">Longitude:</label>
@@ -209,9 +235,10 @@ const AddLocation = () => {
               name="longitude"
               value={propertyLocation.longitude}
               onChange={handleLocationChange}
-              className="block w-full p-3 border border-gray-300 rounded-lg focus:outline-none focus:border-blue-500"
+              className={`block w-full p-3 border ${errors.longitude ? 'border-red-500' : 'border-gray-300'} rounded-lg focus:outline-none focus:border-blue-500`}
               required
             />
+            {errors.longitude && <p className="text-red-500 text-sm">{errors.longitude}</p>}
           </div>
           <div className="flex-1">
             <label className="block text-gray-600 mb-2">Zip Code:</label>
@@ -220,9 +247,10 @@ const AddLocation = () => {
               name="zipcode"
               value={propertyLocation.zipcode}
               onChange={handleLocationChange}
-              className="block w-full p-3 border border-gray-300 rounded-lg focus:outline-none focus:border-blue-500"
+              className={`block w-full p-3 border ${errors.zipcode ? 'border-red-500' : 'border-gray-300'} rounded-lg focus:outline-none focus:border-blue-500`}
               required
             />
+            {errors.zipcode && <p className="text-red-500 text-sm">{errors.zipcode}</p>}
           </div>
         </div>
 
@@ -247,6 +275,7 @@ const AddLocation = () => {
             )}
           </GoogleMap>
         </div>
+
         <button
           type="submit"
           className="w-1/2 bg-blue-500 text-white p-3 rounded-lg hover:bg-blue-600 focus:outline-none focus:bg-blue-700"

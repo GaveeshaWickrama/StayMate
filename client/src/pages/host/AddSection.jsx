@@ -26,7 +26,6 @@ const sectionAmenitiesList = [
   { name: 'Minibar', icon: <FaGlassWhiskey /> },
   { name: 'Safe', icon: <FaLock /> }
 ];
-
 const AddSection = () => {
   const { property, setProperty } = useProperty();
   const navigate = useNavigate();
@@ -43,6 +42,8 @@ const AddSection = () => {
     images: [],
     amenities: []
   });
+
+  const [errors, setErrors] = useState({});
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -86,13 +87,11 @@ const AddSection = () => {
     const existingAmenity = section.amenities.find(amenity => amenity.name === amenityName);
 
     if (existingAmenity) {
-      // Remove amenity if already selected
       setSection(prevState => ({
         ...prevState,
         amenities: prevState.amenities.filter(amenity => amenity.name !== amenityName)
       }));
     } else {
-      // Add amenity with an empty image field
       setSection(prevState => ({
         ...prevState,
         amenities: [...prevState.amenities, { name: amenityName, image: null }]
@@ -110,28 +109,59 @@ const AddSection = () => {
     }));
   };
 
+  const validateForm = () => {
+    const newErrors = {};
+    if (!section.section_name.trim()) {
+      newErrors.section_name = 'Section name is required';
+    }
+    if (section.count <= 0) {
+      newErrors.count = 'Count must be greater than zero';
+    }
+    if (section.price_per_night <= 0) {
+      newErrors.price_per_night = 'Price per night must be greater than zero';
+    }
+    if (section.amenities.length === 0) {
+      newErrors.amenities = 'At least one amenity must be selected';
+    }
+    if (section.images.length === 0) {
+      newErrors.images = 'At least one image must be uploaded';
+    }
+    setErrors(newErrors);
+    return Object.keys(newErrors).length === 0;
+  };
+
   const handleSubmit = (e) => {
     e.preventDefault();
+
+    if (!validateForm()) {
+      return; // Stop the form submission if validation fails
+    }
+
     setProperty(prevProperty => ({
       ...prevProperty,
       sections: [...prevProperty.sections, section]
     }));
+
     navigate('/host/add-property');
   };
 
   return (
     <form onSubmit={handleSubmit} className="container mx-auto px-8">
       <h2 className="text-4xl font-extrabold text-black-600 mb-8 border-b-4 border-blue-600 p-6 rounded-md shadow-sm">Add Section Details</h2>
-      <SectionDetails section={section} handleChange={handleChange} handlePlanChange={handlePlanChange} />
-      <SectionAmenities section={section} handleIconClick={handleIconClick} handleFileChange={handleFileChange} />
-      <SectionImages section={section} handleFiles={handleFiles} handleDeleteImage={handleDeleteImage} />
-      <SectionPrice section={section} handleChange={handleChange} />
-      <div className='my-10'> <button type="submit" className="bg-blue-500 text-white px-4 py-2 rounded"> Add Section </button> </div>
+
+      <SectionDetails section={section} handleChange={handleChange} handlePlanChange={handlePlanChange} errors={errors} />
+      <SectionAmenities section={section} handleIconClick={handleIconClick} handleFileChange={handleFileChange} errors={errors} />
+      <SectionImages section={section} handleFiles={handleFiles} handleDeleteImage={handleDeleteImage} errors={errors} />
+      <SectionPrice section={section} handleChange={handleChange} errors={errors} />
+
+      <div className='my-10'>
+        <button type="submit" className="bg-blue-500 text-white px-4 py-2 rounded"> Add Section </button>
+      </div>
     </form>
   );
 };
 
-const SectionDetails = ({ section, handleChange, handlePlanChange }) => (
+const SectionDetails = ({ section, handleChange, handlePlanChange, errors }) => (
   <div className="mt-8">
     <h3 className="text-xl font-bold mt-8 mb-6">Details</h3>
     <div className="grid grid-cols-2 gap-4">
@@ -142,9 +172,10 @@ const SectionDetails = ({ section, handleChange, handlePlanChange }) => (
           name="section_name"
           value={section.section_name}
           onChange={handleChange}
-          className="block w-full p-2 border border-gray-300 rounded-lg"
+          className={`block w-full p-2 border ${errors.section_name ? 'border-red-500' : 'border-gray-300'} rounded-lg`}
           required
         />
+        {errors.section_name && <p className="text-red-500 text-sm">{errors.section_name}</p>}
       </div>
       <div className="mb-4 ml-20">
         <label className="block mb-1 font-semibold">Count:</label>
@@ -153,9 +184,10 @@ const SectionDetails = ({ section, handleChange, handlePlanChange }) => (
           name="count"
           value={section.count}
           onChange={handleChange}
-          className="block w-full p-2 border border-gray-300 rounded-lg"
+          className={`block w-full p-2 border ${errors.count ? 'border-red-500' : 'border-gray-300'} rounded-lg`}
           required
         />
+        {errors.count && <p className="text-red-500 text-sm">{errors.count}</p>}
       </div>
     </div>
     <div className="grid grid-cols-2">
@@ -167,7 +199,7 @@ const SectionDetails = ({ section, handleChange, handlePlanChange }) => (
   </div>
 );
 
-const SectionImages = ({ section, handleFiles, handleDeleteImage }) => {
+const SectionImages = ({ section, handleFiles, handleDeleteImage, errors }) => {
   const handleFileChange = (e) => {
     const files = e.target.files;
     handleFiles(files);
@@ -177,7 +209,7 @@ const SectionImages = ({ section, handleFiles, handleDeleteImage }) => {
     <div className="mt-8">
       <h3 className="text-lg font-bold mb-4">Add Images</h3>
       <div
-        className={`border-2 border-dashed p-8 rounded mb-4 cursor-pointer text-center`}
+        className={`border-2 border-dashed p-8 rounded mb-4 cursor-pointer text-center ${errors.images ? 'border-red-500' : ''}`}
         onClick={() => document.getElementById('fileInput').click()}
       >
         <FaUpload className="mx-auto text-3xl text-gray-400 mb-2" />
@@ -191,6 +223,7 @@ const SectionImages = ({ section, handleFiles, handleDeleteImage }) => {
           multiple
         />
       </div>
+      {errors.images && <p className="text-red-500 text-sm">{errors.images}</p>}
       <div className="flex flex-wrap justify-center">
         {section.images && section.images.length > 0 ? (
           section.images.map((image, index) => (
@@ -219,12 +252,13 @@ const SectionImages = ({ section, handleFiles, handleDeleteImage }) => {
   );
 };
 
-const SectionAmenities = ({ section, handleIconClick, handleFileChange }) => {
+const SectionAmenities = ({ section, handleIconClick, handleFileChange, errors }) => {
   const amenitiesWithoutImages = ['WiFi'];  // List of amenities that do not need images
 
   return (
     <div>
       <h3 className="text-xl font-bold mt-8 mb-4">Select Amenities</h3>
+      {errors.amenities && <p className="text-red-500 text-sm">{errors.amenities}</p>}
       <div className="p-0 bg-white rounded-lg">
         <div className="grid grid-cols-5 gap-2">
           {sectionAmenitiesList.map(({ name, icon }) => {
@@ -274,11 +308,7 @@ const SectionAmenities = ({ section, handleIconClick, handleFileChange }) => {
   );
 };
 
-
-
-
-
-const SectionPrice = ({ section, handleChange }) => (
+const SectionPrice = ({ section, handleChange, errors }) => (
   <div className="mt-8 p-6 bg-gray-100 rounded-lg shadow-inner">
     <h3 className="text-lg font-bold mb-4">Price Per Night</h3>
     <div className="flex items-center text-lg">
@@ -288,10 +318,12 @@ const SectionPrice = ({ section, handleChange }) => (
         name="price_per_night"
         value={section.price_per_night}
         onChange={handleChange}
-        className="p-2 border border-gray-300 rounded-lg"
+        className={`p-2 border ${errors.price_per_night ? 'border-red-500' : 'border-gray-300'} rounded-lg`}
         min="0"
       />
-      <span className="ml-2 text-gray-600">Rs</span>
+      <span className="ml-2 text-gray-600">Rs </span>
+      {errors.price_per_night && <p className="text-red-500 text-sl p-2">{errors.price_per_night}</p>}
+      
     </div>
   </div>
 );
