@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { FaWifi, FaParking, FaDumbbell, FaSwimmingPool, FaHotTub, FaUmbrellaBeach, FaShieldAlt, FaUtensils, FaSpa, FaFireAlt, FaSnowflake, FaTimes } from 'react-icons/fa';
+import { FaWifi, FaParking, FaDumbbell, FaSwimmingPool, FaHotTub, FaUmbrellaBeach, FaShieldAlt, FaUtensils, FaSpa, FaFireAlt, FaSnowflake, FaTimes, FaFire, FaTshirt, FaLaptop, FaDoorOpen, FaLock, FaGlassWhiskey, FaHotel, FaTools } from 'react-icons/fa';  // Updated import for additional icons
 import { FaKitchenSet } from "react-icons/fa6";
 import { RiBilliardsFill } from "react-icons/ri";
 import { TbSteam } from "react-icons/tb";
@@ -31,26 +31,32 @@ const PropertyAmenities = ({ handleChange }) => {
     { name: 'Fridge', icon: <RiFridgeFill /> },
     { name: 'Air Conditioning', icon: <FaSnowflake /> },
     { name: 'TV', icon: <PiTelevisionFill /> },
-    { name: 'Streaming Service', icon: <RiNetflixFill /> }
+    { name: 'Streaming Service', icon: <RiNetflixFill /> },
+    { name: 'Heating', icon: <FaFire /> }
   ];
 
   const sectionAmenitiesList = [
     { name: 'WiFi', icon: <FaWifi /> },
     { name: 'Kitchen', icon: <FaKitchenSet /> },
-    { name: 'Parking', icon: <FaParking /> },
-    { name: 'Gym', icon: <FaDumbbell /> },
-    { name: 'Pool', icon: <FaSwimmingPool /> },
     { name: 'Hot tub', icon: <FaHotTub /> },
-    { name: 'Beach access', icon: <FaUmbrellaBeach /> },
-    { name: 'Security', icon: <FaShieldAlt /> },
     { name: 'Pool table', icon: <RiBilliardsFill /> },
     { name: 'Outdoor dining', icon: <FaUtensils /> },
-    { name: 'Spa', icon: <FaSpa /> },
-    { name: 'Sauna', icon: <FaFireAlt /> },
-    { name: 'Steam Room', icon: <TbSteam /> }
+    { name: 'Heating', icon: <FaFire /> },
+    { name: 'Balcony', icon: <FaHotel /> },
+    { name: 'Workspace', icon: <FaLaptop /> },
+    { name: 'Dryer', icon: <FaTshirt /> },
+    { name: 'Iron', icon: <FaTools /> },  // Replaced with FaTools
+    { name: 'Private Entrance', icon: <FaDoorOpen /> },
+    { name: 'Jacuzzi', icon: <FaHotTub /> },
+    { name: 'Minibar', icon: <FaGlassWhiskey /> },
+    { name: 'Safe', icon: <FaLock /> }
   ];
 
-  const amenitiesList = property.total_unique_sections == -1 ? generalAmenitiesList : sectionAmenitiesList;
+  const filteredSectionAmenitiesList = sectionAmenitiesList.filter(
+    sectionAmenity => !generalAmenitiesList.some(generalAmenity => generalAmenity.name === sectionAmenity.name)
+  );
+
+  const amenitiesList = property.total_unique_sections == -1 ? generalAmenitiesList : filteredSectionAmenitiesList;
 
   const handleIconClick = (amenityName) => {
     const existingAmenity = property.amenities.find(amenity => amenity.name === amenityName);

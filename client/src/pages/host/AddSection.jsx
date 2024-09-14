@@ -1,29 +1,30 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { useProperty } from '../../context/PropertyContext'; // Adjust the path according to your project structure
-import { FaWifi, FaParking, FaDumbbell, FaSwimmingPool, FaHotTub, FaUmbrellaBeach, FaShieldAlt, FaUtensils, FaSpa, FaFireAlt, FaUpload } from 'react-icons/fa';
+import { useProperty } from '../../context/PropertyContext';  // Corrected the duplicate import
+import { FaUpload } from 'react-icons/fa';
+
+// Importing icons
+import { FaWifi, FaParking, FaDumbbell, FaSwimmingPool, FaHotTub, FaUmbrellaBeach, FaShieldAlt, FaUtensils, FaSpa, FaFireAlt, FaSnowflake, FaTimes, FaFire, FaTshirt, FaLaptop, FaDoorOpen, FaLock, FaGlassWhiskey, FaHotel, FaTools } from 'react-icons/fa';  
 import { FaKitchenSet } from "react-icons/fa6";
 import { RiBilliardsFill } from "react-icons/ri";
-import { TbSteam } from "react-icons/tb";
-import { RiFridgeFill } from "react-icons/ri";
-import { MdOutdoorGrill } from "react-icons/md";
-import { PiTelevisionFill } from "react-icons/pi";
-import { RiNetflixFill } from "react-icons/ri";
+
+
 
 const sectionAmenitiesList = [
   { name: 'WiFi', icon: <FaWifi /> },
   { name: 'Kitchen', icon: <FaKitchenSet /> },
-  { name: 'Parking', icon: <FaParking /> },
-  { name: 'Gym', icon: <FaDumbbell /> },
-  { name: 'Pool', icon: <FaSwimmingPool /> },
   { name: 'Hot tub', icon: <FaHotTub /> },
-  { name: 'Beach access', icon: <FaUmbrellaBeach /> },
-  { name: 'Security', icon: <FaShieldAlt /> },
   { name: 'Pool table', icon: <RiBilliardsFill /> },
   { name: 'Outdoor dining', icon: <FaUtensils /> },
-  { name: 'Spa', icon: <FaSpa /> },
-  { name: 'Sauna', icon: <FaFireAlt /> },
-  { name: 'Steam Room', icon: <TbSteam /> }
+  { name: 'Heating', icon: <FaFire /> },
+  { name: 'Balcony', icon: <FaHotel /> },
+  { name: 'Workspace', icon: <FaLaptop /> },
+  { name: 'Dryer', icon: <FaTshirt /> },
+  { name: 'Iron', icon: <FaTools /> }, 
+  { name: 'Private Entrance', icon: <FaDoorOpen /> },
+  { name: 'Jacuzzi', icon: <FaHotTub /> },
+  { name: 'Minibar', icon: <FaGlassWhiskey /> },
+  { name: 'Safe', icon: <FaLock /> }
 ];
 
 const AddSection = () => {
@@ -218,56 +219,60 @@ const SectionImages = ({ section, handleFiles, handleDeleteImage }) => {
   );
 };
 
-const SectionAmenities = ({ section, handleIconClick, handleFileChange }) => (
-  <div>
-    <h3 className="text-xl font-bold mt-8 mb-4">Select Amenities</h3>
-    <div className="p-0 bg-white rounded-lg">
-      <div className="grid grid-cols-5 gap-2">
-        {sectionAmenitiesList.map(({ name, icon }) => {
-          const isSelected = section.amenities.some(amenity => amenity.name === name);
-          const selectedAmenity = section.amenities.find(amenity => amenity.name === name);
-          const hasImage = selectedAmenity?.image?.url;
+const SectionAmenities = ({ section, handleIconClick, handleFileChange }) => {
+  const amenitiesWithoutImages = ['WiFi'];  // List of amenities that do not need images
 
-          return (
-            <div
-              key={name}
-              className={`relative flex items-center justify-center p-4 border-4 rounded-lg cursor-pointer ${isSelected ? 'bg-white-100 border-blue-400 text-blue-600' : 'bg-white border-gray-200 text-gray-600'}`}
-              style={{ height: '160px', width: '260px' }}
-              onClick={() => handleIconClick(name)}
-            >
-              {hasImage ? (
-                <img
-                  src={selectedAmenity.image.url}
-                  alt={`${name} preview`}
-                  className="absolute top-0 left-0 w-full h-full object-cover rounded-lg"
-                />
-              ) : (
-                <>
-                  <div className="text-5xl mb-2 mr-4">
-                    {icon}
-                  </div>
-                  <label className="text-center">{name}</label>
-                  {isSelected && (
-                    <div className="absolute bottom-2 left-2 right-2">
-                      <input
-                        type="file"
-                        accept="image/*"
-                        onClick={(e) => e.stopPropagation()}
-                        onChange={(e) => handleFileChange(name, e.target.files[0])}
-                        className="block w-full text-sm text-gray-900 border border-gray-300 rounded-lg cursor-pointer bg-gray-50 file:mr-4 file:py-2 file:px-4 file:rounded-lg file:border-0 file:text-sm file:font-semibold file:bg-blue-50 file:text-blue-700 hover:file:bg-blue-100"
-                        aria-label="Add Image"
-                      />
+  return (
+    <div>
+      <h3 className="text-xl font-bold mt-8 mb-4">Select Amenities</h3>
+      <div className="p-0 bg-white rounded-lg">
+        <div className="grid grid-cols-5 gap-2">
+          {sectionAmenitiesList.map(({ name, icon }) => {
+            const isSelected = section.amenities.some(amenity => amenity.name === name);
+            const selectedAmenity = section.amenities.find(amenity => amenity.name === name);
+            const hasImage = selectedAmenity?.image?.url;
+
+            return (
+              <div
+                key={name}
+                className={`relative flex items-center justify-center p-4 border-4 rounded-lg cursor-pointer ${isSelected ? 'bg-white-100 border-blue-400 text-blue-600' : 'bg-white border-gray-200 text-gray-600'}`}
+                style={{ height: '160px', width: '260px' }}
+                onClick={() => handleIconClick(name)}
+              >
+                {hasImage ? (
+                  <img
+                    src={selectedAmenity.image.url}
+                    alt={`${name} preview`}
+                    className="absolute top-0 left-0 w-full h-full object-cover rounded-lg"
+                  />
+                ) : (
+                  <>
+                    <div className="text-5xl mb-2 mr-4">
+                      {icon}
                     </div>
-                  )}
-                </>
-              )}
-            </div>
-          );
-        })}
+                    <label className="text-center">{name}</label>
+                    {isSelected && !amenitiesWithoutImages.includes(name) && (  // Only show file input if the amenity needs an image
+                      <div className="absolute bottom-2 left-2 right-2">
+                        <input
+                          type="file"
+                          accept="image/*"
+                          onClick={(e) => e.stopPropagation()}
+                          onChange={(e) => handleFileChange(name, e.target.files[0])}
+                          className="block w-full text-sm text-gray-900 border border-gray-300 rounded-lg cursor-pointer bg-gray-50 file:mr-4 file:py-2 file:px-4 file:rounded-lg file:border-0 file:text-sm file:font-semibold file:bg-blue-50 file:text-blue-700 hover:file:bg-blue-100"
+                          aria-label="Add Image"
+                        />
+                      </div>
+                    )}
+                  </>
+                )}
+              </div>
+            );
+          })}
+        </div>
       </div>
     </div>
-  </div>
-);
+  );
+};
 
 
 
