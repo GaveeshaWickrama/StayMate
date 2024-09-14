@@ -1,6 +1,8 @@
 const Complaint = require("../models/complaintModel");
 const Reservation = require("../models/reservationModel");
-const Notification = require('../models/bellNotificationModel')
+const Notification = require('../models/bellNotificationModel');
+const Technician = require('../models/technicianModel');
+const User = require('../models/userModel');
 const { getRecieverSocketId, io } = require('../socket/socket');
 
 // const TaskController = require('./taskController'); // Import task controller
@@ -123,6 +125,29 @@ async function assignComplaintToTechnician(req, res) {
       },
       { new: true } // Return the updated document
     );
+
+    
+    const host_Name = await getNameById(hostID);
+    const newMessage = `A repair Request by ${host_Name}`;
+    const techUserId = await getTechnicianUserId(technicianId);
+    console.log(techUserId);
+    //Socket IO functionality 
+    const recieverSocketId = getRecieverSocketId(techUserId);
+
+    const newNotification = new Notification({
+      userId : techUserId,
+      notificationMessage : newMessage,
+      notificationType : "requestToTechnicians",
+      complaintId : complaintId,
+    });
+
+    console.log("New Notification :- ",newNotification);
+
+    await newNotification.save();
+
+    if(recieverSocketId) {
+        io.to(recieverSocketId).emit('newNotification',newNotification);
+    }
 
     console.log("Assigned to a technician successfully");
     res
@@ -620,6 +645,41 @@ const getReservationDetails = async (reservationId) => {
   } catch (error) {
     console.error("Error fetching details", error);
     return null;  // Handle the error as needed
+  }
+}
+
+// Function to get the full name of a user by their ID
+const getNameById = async (id) => {
+  try {
+    // Find user by ID
+    const user = await User.findById(id);
+    
+    // Check if the user exists
+    if (!user) {
+      throw new Error("User not found");
+    }
+    
+    // Return the full name
+    return `${user.firstName} ${user.lastName}`;
+  } catch (error) {
+    console.error("Error fetching user:", error);
+    throw error;
+  }
+};
+
+const getTechnicianUserId = async (technicianId) => {
+
+  try{
+    const technicianFetched = await Technician.findById(technicianId);
+    console.log("technicianFeched",technicianFetched);
+    if(!technicianFetched) {
+      throw new Error("No Such Technician Found.");
+    }
+    return technicianFetched.userId
+  }
+  catch (error) {
+    console.error("Error fetching Technician:", error);
+    throw error;
   }
 }
 
