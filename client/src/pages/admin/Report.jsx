@@ -17,7 +17,6 @@ import {
 import axios from "axios";
 import { useAuth } from "../../context/auth";
 
-
 // Function to generate random allocation data
 const generateRandomAllocations = (total) => {
   const allocations = Array.from({ length: 12 }, () => Math.random());
@@ -62,6 +61,12 @@ function Report() {
   const [reportData, setReportData] = useState([]);
   const [selectedTab, setSelectedTab] = useState("monthly");
   const [staticLocationData, setStaticLocationData] = useState([]);
+  const [propertyData, setPropertyData] = useState([
+    { propertyName: 'Property A', bookings: 200 },
+    { propertyName: 'Property B', bookings: 150 },
+    { propertyName: 'Property C', bookings: 100 },
+    { propertyName: 'Property D', bookings: 50 },
+  ]);
 
   useEffect(() => {
     const fetchPayments = async () => {
@@ -97,9 +102,26 @@ function Report() {
       }
     };
 
+    const fetchProperties = async () => {
+      try {
+        const response = await axios.get(
+          `${import.meta.env.VITE_API_URL}/admin/most-booked-properties`,
+          {
+            headers: {
+              Authorization: `Bearer ${token}`,
+            },
+          }
+        );
+        setPropertyData(response.data);
+      } catch (error) {
+        console.error("Error fetching property data:", error);
+      }
+    };
+
     if (token) {
       fetchPayments();
       fetchLocations();
+      fetchProperties();
     }
   }, [token]);
 
@@ -167,124 +189,113 @@ function Report() {
   };
 
   return (
-    <main className="p-5 text-gray-900 bg-gray-100 min-h-screen">
-      <h3 className="text-3xl font-bold py-8 text-center">Reports</h3>
+    <main className="p-5 bg-gradient-to-r from-blue-50 to-green-50 min-h-screen">
+      <h3 className="text-4xl font-bold py-8 text-center text-blue-600">Reports</h3>
 
       <div className="flex gap-5 justify-center mb-8">
         <button
-          className={`px-4 py-2 ${
-            selectedTab === "monthly" ? "bg-blue-500 text-white" : "bg-gray-200"
-          } rounded-lg transition duration-200 ease-in-out`}
+          className={`px-6 py-3 text-lg ${selectedTab === "monthly" ? "bg-blue-600 text-white shadow-lg" : "bg-gray-300"} rounded-lg transition-transform transform hover:scale-105`}
           onClick={() => handleTabClick("monthly")}
         >
           Monthly
         </button>
         <button
-          className={`px-4 py-2 ${
-            selectedTab === "yearly" ? "bg-blue-500 text-white" : "bg-gray-200"
-          } rounded-lg transition duration-200 ease-in-out`}
+          className={`px-6 py-3 text-lg ${selectedTab === "yearly" ? "bg-blue-600 text-white shadow-lg" : "bg-gray-300"} rounded-lg transition-transform transform hover:scale-105`}
           onClick={() => handleTabClick("yearly")}
         >
           Yearly
         </button>
       </div>
 
-      <div className="flex flex-col md:flex-row gap-5 mt-20">
-        {/* Bar Chart */}
-        <div className="flex-1 bg-white p-5 rounded-lg shadow-md">
-          <h4 className="text-xl font-semibold mb-4 text-center">
-            Income vs Expenses ({selectedTab.charAt(0).toUpperCase() + selectedTab.slice(1)})
+      <div className="flex flex-col gap-6 mt-10">
+        {/* Number of Booked Properties Bar Chart */}
+        <div className="bg-white p-4 rounded-lg shadow-lg transition-transform transform hover:scale-105" style={{ width: '80%' }}>
+          <h4 className="text-xl font-semibold mb-4 text-center text-blue-700">
+            Number of Booked Properties
           </h4>
-          <ResponsiveContainer width="100%" height={400}>
+          <ResponsiveContainer width="100%" height={300}>
             <BarChart
-              data={reportData}
-              margin={{ top: 5, right: 30, left: 20, bottom: 5 }}
+              data={propertyData}
+              margin={{ top: 5, right: 20, left: 10, bottom: 5 }}
             >
               <CartesianGrid strokeDasharray="3 3" />
-              <XAxis dataKey="name" />
+              <XAxis dataKey="propertyName" />
               <YAxis />
               <Tooltip />
               <Legend />
-              <Bar dataKey="revenue" fill="#8884d8" />
-              <Bar dataKey="expense" fill="#82ca9d" />
+              <Bar dataKey="bookings" fill="#8884d8" />
             </BarChart>
           </ResponsiveContainer>
           <button
-            className="mt-4 px-4 py-2 bg-blue-500 text-white rounded transition duration-200 ease-in-out"
-            onClick={() => downloadChartData("Bar")}
+            className="mt-4 px-4 py-2 bg-blue-600 text-white rounded-lg shadow-lg transition-transform transform hover:scale-105"
+            onClick={() => downloadChartData("Property")}
           >
-            Download Bar Chart Data
+            Download Property Data
           </button>
         </div>
 
         {/* Line Chart */}
-        <div className="flex-1 bg-white p-5 rounded-lg shadow-md">
-          <h4 className="text-xl font-semibold mb-4 text-center">
+        <div className="bg-white p-4 rounded-lg shadow-lg transition-transform transform hover:scale-105" style={{ width: '80%' }}>
+          <h4 className="text-xl font-semibold mb-4 text-center text-blue-700">
             Income vs Expenses ({selectedTab.charAt(0).toUpperCase() + selectedTab.slice(1)})
           </h4>
-          <ResponsiveContainer width="100%" height={400}>
+          <ResponsiveContainer width="100%" height={300}>
             <LineChart
               data={reportData}
-              margin={{ top: 5, right: 30, left: 20, bottom: 5 }}
+              margin={{ top: 5, right: 20, left: 10, bottom: 5 }}
             >
               <CartesianGrid strokeDasharray="3 3" />
               <XAxis dataKey="name" />
               <YAxis />
               <Tooltip />
               <Legend />
-              <Line
-                type="monotone"
-                dataKey="revenue"
-                stroke="#8884d8"
-                activeDot={{ r: 8 }}
-              />
+              <Line type="monotone" dataKey="revenue" stroke="#8884d8" />
               <Line type="monotone" dataKey="expense" stroke="#82ca9d" />
             </LineChart>
           </ResponsiveContainer>
           <button
-            className="mt-4 px-4 py-2 bg-blue-500 text-white rounded transition duration-200 ease-in-out"
-            onClick={() => downloadChartData("Line")}
+            className="mt-4 px-4 py-2 bg-blue-600 text-white rounded-lg shadow-lg transition-transform transform hover:scale-105"
+            onClick={() => downloadChartData("Income-Expense")}
           >
-            Download Line Chart Data
+            Download Income-Expense Data
+          </button>
+        </div>
+
+        {/* Pie Chart */}
+        <div className="bg-white p-4 rounded-lg shadow-lg transition-transform transform hover:scale-105" style={{ width: '80%' }}>
+          <h4 className="text-xl font-semibold mb-4 text-center text-blue-700">
+            Properties by Location
+          </h4>
+          <ResponsiveContainer width="100%" height={300}>
+            <PieChart>
+              <Pie
+                data={staticLocationData}
+                dataKey="count"
+                nameKey="location"
+                cx="50%"
+                cy="50%"
+                outerRadius={120}
+                fill="#8884d8"
+                label
+              >
+                {staticLocationData.map((entry, index) => (
+                  <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
+                ))}
+              </Pie>
+              <Tooltip />
+            </PieChart>
+          </ResponsiveContainer>
+          <button
+            className="mt-4 px-4 py-2 bg-blue-600 text-white rounded-lg shadow-lg transition-transform transform hover:scale-105"
+            onClick={downloadPieChartData}
+          >
+            Download Location Data
           </button>
         </div>
       </div>
-
-      {/* Pie Chart */}
-      <div className="mt-20 bg-white p-5 rounded-lg shadow-md">
-        <h4 className="text-xl font-semibold mb-4 text-center">Properties by Location</h4>
-        <ResponsiveContainer width="100%" height={400}>
-          <PieChart>
-            <Pie
-              data={staticLocationData}
-              dataKey="count"
-              nameKey="location"
-              cx="50%"
-              cy="50%"
-              outerRadius={150}
-              fill="#8884d8"
-              label
-            >
-              {staticLocationData.map((entry, index) => (
-                <Cell
-                  key={`cell-${index}`}
-                  fill={COLORS[index % COLORS.length]}
-                />
-              ))}
-            </Pie>
-          </PieChart>
-        </ResponsiveContainer>
-        <button
-          className="mt-4 px-4 py-2 bg-blue-500 text-white rounded transition duration-200 ease-in-out"
-          onClick={downloadPieChartData}
-        >
-          Download Pie Chart Data
-        </button>
-      </div>
-
-      
     </main>
   );
 }
 
 export default Report;
+
