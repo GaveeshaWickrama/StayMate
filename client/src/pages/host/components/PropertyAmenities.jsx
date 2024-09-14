@@ -14,7 +14,7 @@ const PropertyAmenities = ({ handleChange }) => {
   const [selectedImage, setSelectedImage] = useState(null);
 
   const generalAmenitiesList = [
-    { name: 'WiFi', icon: <FaWifi /> },
+    { name: 'WiFi', icon: <FaWifi /> }, // WiFi will not require an image
     { name: 'Kitchen', icon: <FaKitchenSet /> },
     { name: 'Parking', icon: <FaParking /> },
     { name: 'Gym', icon: <FaDumbbell /> },
@@ -45,7 +45,7 @@ const PropertyAmenities = ({ handleChange }) => {
     { name: 'Balcony', icon: <FaHotel /> },
     { name: 'Workspace', icon: <FaLaptop /> },
     { name: 'Dryer', icon: <FaTshirt /> },
-    { name: 'Iron', icon: <FaTools /> },  // Replaced with FaTools
+    { name: 'Iron', icon: <FaTools /> }, 
     { name: 'Private Entrance', icon: <FaDoorOpen /> },
     { name: 'Jacuzzi', icon: <FaHotTub /> },
     { name: 'Minibar', icon: <FaGlassWhiskey /> },
@@ -82,6 +82,8 @@ const PropertyAmenities = ({ handleChange }) => {
         amenity.name === amenityName ? { ...amenity, image: { url, file } } : amenity
       )
     }));
+    
+    
   };
 
   const handleRemoveImage = (amenityName, event) => {
@@ -103,9 +105,15 @@ const PropertyAmenities = ({ handleChange }) => {
     setSelectedImage(null);
   };
 
+  // Validation for "at least one amenity"
+  const isValid = property.amenities.length > 0;
+
   return (
     <div className=' mx-auto px-8'>
       <h2 className="text-4xl font-extrabold text-black-600 mb-8 border-b-4 border-blue-600 p-6 rounded-md shadow-sm">Select Amenities</h2>
+      {!isValid && (
+        <p className="text-red-600 mb-4">Please select at least one amenity.</p>
+      )}
       <div className="p-6 bg-white rounded-lg shadow-md">
         <div className="grid grid-cols-4 gap-2">
           {amenitiesList.map(({ name, icon }) => {
@@ -143,7 +151,7 @@ const PropertyAmenities = ({ handleChange }) => {
                       {icon}
                     </div>
                     <label className="text-center">{name}</label>
-                    {isSelected && (
+                    {isSelected && name !== 'WiFi' && (
                       <div className="absolute bottom-2 left-2 right-2">
                         <input
                           type="file"
