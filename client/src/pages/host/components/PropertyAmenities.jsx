@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { FaWifi, FaParking, FaDumbbell, FaSwimmingPool, FaHotTub, FaUmbrellaBeach, FaShieldAlt, FaUtensils, FaSpa, FaFireAlt, FaSnowflake, FaTimes } from 'react-icons/fa';
+import { FaWifi, FaParking, FaDumbbell, FaSwimmingPool, FaHotTub, FaUmbrellaBeach, FaShieldAlt, FaUtensils, FaSpa, FaFireAlt, FaSnowflake, FaTimes, FaFire, FaTshirt, FaLaptop, FaDoorOpen, FaLock, FaGlassWhiskey, FaHotel, FaTools } from 'react-icons/fa';  // Updated import for additional icons
 import { FaKitchenSet } from "react-icons/fa6";
 import { RiBilliardsFill } from "react-icons/ri";
 import { TbSteam } from "react-icons/tb";
@@ -14,7 +14,7 @@ const PropertyAmenities = ({ handleChange }) => {
   const [selectedImage, setSelectedImage] = useState(null);
 
   const generalAmenitiesList = [
-    { name: 'WiFi', icon: <FaWifi /> },
+    { name: 'WiFi', icon: <FaWifi /> }, // WiFi will not require an image
     { name: 'Kitchen', icon: <FaKitchenSet /> },
     { name: 'Parking', icon: <FaParking /> },
     { name: 'Gym', icon: <FaDumbbell /> },
@@ -31,26 +31,32 @@ const PropertyAmenities = ({ handleChange }) => {
     { name: 'Fridge', icon: <RiFridgeFill /> },
     { name: 'Air Conditioning', icon: <FaSnowflake /> },
     { name: 'TV', icon: <PiTelevisionFill /> },
-    { name: 'Streaming Service', icon: <RiNetflixFill /> }
+    { name: 'Streaming Service', icon: <RiNetflixFill /> },
+    { name: 'Heating', icon: <FaFire /> }
   ];
 
   const sectionAmenitiesList = [
     { name: 'WiFi', icon: <FaWifi /> },
     { name: 'Kitchen', icon: <FaKitchenSet /> },
-    { name: 'Parking', icon: <FaParking /> },
-    { name: 'Gym', icon: <FaDumbbell /> },
-    { name: 'Pool', icon: <FaSwimmingPool /> },
     { name: 'Hot tub', icon: <FaHotTub /> },
-    { name: 'Beach access', icon: <FaUmbrellaBeach /> },
-    { name: 'Security', icon: <FaShieldAlt /> },
     { name: 'Pool table', icon: <RiBilliardsFill /> },
     { name: 'Outdoor dining', icon: <FaUtensils /> },
-    { name: 'Spa', icon: <FaSpa /> },
-    { name: 'Sauna', icon: <FaFireAlt /> },
-    { name: 'Steam Room', icon: <TbSteam /> }
+    { name: 'Heating', icon: <FaFire /> },
+    { name: 'Balcony', icon: <FaHotel /> },
+    { name: 'Workspace', icon: <FaLaptop /> },
+    { name: 'Dryer', icon: <FaTshirt /> },
+    { name: 'Iron', icon: <FaTools /> }, 
+    { name: 'Private Entrance', icon: <FaDoorOpen /> },
+    { name: 'Jacuzzi', icon: <FaHotTub /> },
+    { name: 'Minibar', icon: <FaGlassWhiskey /> },
+    { name: 'Safe', icon: <FaLock /> }
   ];
 
-  const amenitiesList = property.total_unique_sections == -1 ? generalAmenitiesList : sectionAmenitiesList;
+  const filteredSectionAmenitiesList = sectionAmenitiesList.filter(
+    sectionAmenity => !generalAmenitiesList.some(generalAmenity => generalAmenity.name === sectionAmenity.name)
+  );
+
+  const amenitiesList = property.total_unique_sections == -1 ? generalAmenitiesList : filteredSectionAmenitiesList;
 
   const handleIconClick = (amenityName) => {
     const existingAmenity = property.amenities.find(amenity => amenity.name === amenityName);
@@ -76,6 +82,8 @@ const PropertyAmenities = ({ handleChange }) => {
         amenity.name === amenityName ? { ...amenity, image: { url, file } } : amenity
       )
     }));
+    
+    
   };
 
   const handleRemoveImage = (amenityName, event) => {
@@ -97,9 +105,15 @@ const PropertyAmenities = ({ handleChange }) => {
     setSelectedImage(null);
   };
 
+  // Validation for "at least one amenity"
+  const isValid = property.amenities.length > 0;
+
   return (
     <div className=' mx-auto px-8'>
       <h2 className="text-4xl font-extrabold text-black-600 mb-8 border-b-4 border-blue-600 p-6 rounded-md shadow-sm">Select Amenities</h2>
+      {!isValid && (
+        <p className="text-red-600 mb-4">Please select at least one amenity.</p>
+      )}
       <div className="p-6 bg-white rounded-lg shadow-md">
         <div className="grid grid-cols-4 gap-2">
           {amenitiesList.map(({ name, icon }) => {
@@ -137,7 +151,7 @@ const PropertyAmenities = ({ handleChange }) => {
                       {icon}
                     </div>
                     <label className="text-center">{name}</label>
-                    {isSelected && (
+                    {isSelected && name !== 'WiFi' && (
                       <div className="absolute bottom-2 left-2 right-2">
                         <input
                           type="file"

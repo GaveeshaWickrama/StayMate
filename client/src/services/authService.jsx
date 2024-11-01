@@ -50,7 +50,33 @@ const authService = {
 
   getToken: () => {
     return localStorage.getItem('token');
+  },
+
+  requestPasswordReset: async (email) => {
+    try {
+      const response = await authService.requestPasswordReset(email);
+      if (response.error) {
+        return { error: response.message };
+      }
+      return { error: null }; // OTP sent successfully
+    } catch (error) {
+      return { error: 'Error requesting OTP' };
+    }
+  },
+
+  // New function to reset password using OTP
+  resetPassword: async (email, otp, newPassword) => {
+    try {
+      const response = await authService.resetPassword(email, otp, newPassword);
+      if (response.error) {
+        return { error: response.message };
+      }
+      return { error: null }; // Password reset successfully
+    } catch (error) {
+      return { error: 'Error resetting password' };
+    }
   }
+
 };
 
 export default authService;
