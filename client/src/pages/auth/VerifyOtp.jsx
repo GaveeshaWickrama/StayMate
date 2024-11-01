@@ -13,27 +13,23 @@ const VerifyOtp = () => {
   const { verifyOtp } = useContext(AuthContext);
   const navigate = useNavigate();
   const location = useLocation();
-  const { email, password, role } = location.state; // Destructure role from location.state
+  const userData = location.state;
 
   const handleChange = (element, index) => {
     const value = element.value;
     if (/^[a-zA-Z0-9]$/.test(value)) {
-      // If the input is a valid character (letter or number)
       const newOtp = [...otp];
       newOtp[index] = value;
       setOtp(newOtp);
 
-      // Move to the next input field if a character is entered
       if (element.nextSibling) {
         element.nextSibling.focus();
       }
     } else if (value === '') {
-      // If the input is empty (backspace)
       const newOtp = [...otp];
       newOtp[index] = '';
       setOtp(newOtp);
 
-      // Move to the previous input field if the current one is cleared
       if (element.previousSibling) {
         element.previousSibling.focus();
       }
@@ -43,7 +39,7 @@ const VerifyOtp = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     const otpCode = otp.join('');
-    const { user, error } = await verifyOtp(email, otpCode, role); // Pass role to verifyOtp
+    const { user, error } = await verifyOtp({ ...userData, otp: otpCode });
     if (error) {
       setError(error);
     } else {
@@ -53,7 +49,7 @@ const VerifyOtp = () => {
 
   const handleResendOtp = async () => {
     try {
-      const response = await authService.signup(email, password, role); // Pass role to signup
+      const response = await authService.signup(userData);
       if (response.error) {
         setError(response.error || 'Failed to resend OTP. Please try again later.');
         setResendMessage(null);
@@ -71,7 +67,7 @@ const VerifyOtp = () => {
       <form onSubmit={handleSubmit} className="bg-white p-8 pt-4 rounded shadow-md w-full max-w-sm">
         <Logo />
         <h2 className="text-2xl font-bold mb-10 text-center">Verify your email address</h2>
-        <p className="mb-4 text-center">We emailed you a 4-character code to <strong>{email}</strong></p>
+        <p className="mb-4 text-center">We emailed you a 4-character code to <strong>{userData.email}</strong></p>
         <p className="mb-4 text-center">Enter the code below to confirm your email address</p>
         <div className="flex justify-center mb-4">
           {otp.map((data, index) => (
@@ -98,12 +94,12 @@ const VerifyOtp = () => {
             Resend a new code
           </button>
         </p>
-
       </form>
     </div>
   );
-}
+};
 
 export default VerifyOtp;
+
 
 

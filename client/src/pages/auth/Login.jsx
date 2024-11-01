@@ -54,7 +54,8 @@ const LoginForm = () => {
       {error && <ErrorAlert message={error} />}
       <div className="flex mb-4 mt-4 text-sm text-gray-600">
         <FaExclamationCircle className="mr-1" />
-        <Link to="/forgot-password" className="hover:underline relative top-[-3px]">Forgotten password?</Link>
+        {/* Link to the password reset OTP page */}
+        <Link to="/reset-password-otp" className="hover:underline relative top-[-3px]">Forgotten password?</Link>
       </div>
       <button type="submit" className="w-full bg-blue-700 text-white p-2 rounded flex items-center justify-center hover:bg-blue-900 transition-colors">
         <FaArrowRight className="mr-2" />
@@ -62,9 +63,8 @@ const LoginForm = () => {
       </button>
       <div className="flex mb-4 mt-10 text-sm text-gray-600">
         <FaQuestionCircle className="mr-1" />
-          <div className='relative top-[-3px]'>Don't have an account? </div>
+        <div className='relative top-[-3px]'>Don't have an account? </div>
         <Link to="/signup/guest" className="flex hover:underline relative top-[-3px]">
-          
           <div className="text-blue-600 ml-1">Create your account</div>
         </Link>
       </div>

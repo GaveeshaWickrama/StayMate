@@ -18,23 +18,13 @@ export default function completion() {
     <div>
         <Title title="Proof of submission" />
 
-        <div> Progress
-        <LinearProgress
-  variant="determinate"
-  value={43}
-  sx={{
-    '& .MuiLinearProgress-bar': {
-      backgroundColor: 'blue', // Customize the bar color
-    },
-  }}
-  className="m-2 w-48 h-20 rounded-lg"
-/>
+        <div> 
         </div>
         <DescriptionInput label={"Please Mention Any Special Remarks"} />
 
         <PhotoUpload title={"Upload photos"} />
 
-      <Button text={"submit"}/>
+      <Button text={"submit"} />
     </div>
   )
 }

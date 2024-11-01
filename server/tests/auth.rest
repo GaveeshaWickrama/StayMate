@@ -55,3 +55,12 @@ Content-Type: application/json
 
 ### Test complaint
 get http://localhost:3000/complaints
+
+###
+
+POST http://localhost:3000/auth/request-password-reset
+Content-Type: application/json
+
+{
+    "email": "h@gmail.com"
+}

@@ -1,145 +1,90 @@
-import React from 'react';
-import { Link } from 'react-router-dom';
+import React, { useEffect, useState } from 'react';
+import axios from 'axios';
+import PropertyCard from '../../components/PropertyCard';
+import LocationSearchBar from '../../components/LocationSearch';
+import Map from './Map';
+import FilterBar from '../../components/FilterBar';
 
-const HomePage = () => {
+function HomePage() {
+  const [properties, setProperties] = useState([]);
+  const [searchParams, setSearchParams] = useState({ location: '', radius: '' });
+  const [showMap, setShowMap] = useState(false);
+  const [searchPerformed, setSearchPerformed] = useState(false); // Track if a search has been performed
+
+  const fetchProperties = async (params = {}) => {
+    const { location = {}, radius = '' } = params;
+    const latitude = location?.latitude || '';
+    const longitude = location?.longitude || '';
+
+    try {
+      const response = await axios.get(`${import.meta.env.VITE_API_URL}/properties`, {
+        params: { latitude, longitude, radius }
+      });
+      setProperties(response.data);
+      console.log('Fetched properties:', response.data);
+    } catch (error) {
+      console.error('Error fetching properties:', error);
+    }
+  };
+
+  useEffect(() => {
+    fetchProperties();
+  }, []);
+
+  const handleSearch = (params) => {
+    console.log('Search params:', params);
+    setSearchParams(params);
+    fetchProperties(params);
+    setShowMap(true); // Automatically show the map after a search
+    setSearchPerformed(true); // Mark that a search has been performed
+  };
+
+  const handleFilterChange = (name, value) => {
+    // Implement the logic to handle filter changes
+    // This could involve updating the searchParams state and refetching properties
+  };
+
+  const toggleMap = () => {
+    setShowMap(!showMap);
+  };
+
   return (
-    <div className="min-h-screen bg-white">
-      <header className="bg-blue-500 shadow-md">
-        <div className="container mx-auto px-6 py-4 flex justify-between items-center">
-          <div className="flex items-center">
-            <span className="text-3xl font-bold text-white">StayMate</span>
-          </div>
-          <nav>
-            <Link to="/login" className="text-white hover:text-blue-200 mx-2">Login</Link>
-            <Link to="/signup" className="text-white hover:text-blue-200 mx-2">Sign Up</Link>
-          </nav>
+    <div className="container mx-auto p-4">
+      <div className="flex justify-between items-center mb-4">
+        <LocationSearchBar onSearch={handleSearch} />
+        {searchPerformed && !showMap && (
+          <button
+            onClick={toggleMap}
+            className="bg-black text-white rounded-md p-3 ml-4 shadow-md hover:bg-blue-600 transition duration-200"
+          >
+            Show Map
+          </button>
+        )}
+      </div>
+      <FilterBar onFilterChange={handleFilterChange} />
+      <div className="flex flex-wrap">
+        <div className={`flex flex-wrap ${showMap ? 'w-full md:w-2/3' : 'w-full'} -mx-2`}>
+          {properties.length > 0 ? (
+            properties.map(property => (
+              <div key={property._id} className={`w-full sm:w-1/2 ${showMap ? 'md:w-1/2 lg:w-1/2' : 'md:w-1/3 lg:w-1/4'} px-2 mb-0`} >
+                <PropertyCard property={property} />
+              </div>
+            ))
+          ) : (
+            <p className="px-2">No properties found. Try adjusting your search criteria.</p>
+          )}
         </div>
-      </header>
-
-      <main className="container mx-auto px-6 py-8">
-        <section className="bg-blue-100 py-12 rounded-lg shadow-md mb-6">
-          <div className="text-center">
-            <h1 className="text-5xl font-bold text-blue-800 mb-4">Find Your Perfect Stay with StayMate</h1>
-            <p className="text-gray-700 mb-8">Discover amazing properties for rent and sale, tailored to your needs.</p>
-            <Link to="/properties" className="bg-blue-500 text-white py-2 px-6 rounded-lg hover:bg-blue-400">
-              Browse Properties
-            </Link>
-          </div>
-        </section>
-
-        <section className="bg-white py-12 rounded-lg shadow-md mb-6">
-          <div className="text-center">
-            <h2 className="text-3xl font-bold text-blue-800 mb-8">How It Works</h2>
-            <div className="flex flex-wrap justify-center">
-              <div className="w-full md:w-1/3 px-4 mb-8">
-                <div className="bg-blue-50 p-6 rounded-lg shadow-md">
-                  <h3 className="text-xl font-semibold text-blue-800 mb-2">Search</h3>
-                  <p className="text-gray-700">Find properties that match your preferences.</p>
-                </div>
-              </div>
-              <div className="w-full md:w-1/3 px-4 mb-8">
-                <div className="bg-blue-50 p-6 rounded-lg shadow-md">
-                  <h3 className="text-xl font-semibold text-blue-800 mb-2">Book</h3>
-                  <p className="text-gray-700">Secure your booking easily and quickly.</p>
-                </div>
-              </div>
-              <div className="w-full md:w-1/3 px-4 mb-8">
-                <div className="bg-blue-50 p-6 rounded-lg shadow-md">
-                  <h3 className="text-xl font-semibold text-blue-800 mb-2">Enjoy</h3>
-                  <p className="text-gray-700">Experience a memorable stay with StayMate.</p>
-                </div>
-              </div>
+        {showMap && (
+          <div className="w-full md:w-1/3 px-2 md:px-4 my-4 md:my-0 relative">
+            <div className="sticky top-0">
+              <Map location={searchParams.location} radius={searchParams.radius} properties={properties} />
+              <button onClick={toggleMap} className="bg-black text-white rounded-md p-3 absolute top-4 right-4 shadow-md hover:bg-blue-600 transition duration-200" > Hide Map </button>
             </div>
           </div>
-        </section>
-
-        <section className="bg-blue-100 py-12 rounded-lg shadow-md mb-6">
-          <div className="text-center">
-            <h2 className="text-3xl font-bold text-blue-800 mb-8">Popular Properties</h2>
-            <div className="flex flex-wrap justify-center">
-              <div className="w-full md:w-1/3 px-4 mb-8">
-                <div className="bg-white rounded-lg shadow-md overflow-hidden">
-                  <img src="https://via.placeholder.com/400x300" alt="Property 1" className="w-full h-48 object-cover" />
-                  <div className="p-6">
-                    <h3 className="text-xl font-semibold text-blue-800 mb-2">Luxury Villa</h3>
-                    <p className="text-gray-700 mb-4">$250/night</p>
-                    <Link to="/property/1" className="text-blue-500 hover:text-blue-400">View Details</Link>
-                    <button className="bg-blue-500 text-white py-2 px-6 rounded-lg hover:bg-blue-400 ml-4">
-                      Book Property
-                    </button>
-                  </div>
-                </div>
-              </div>
-              <div className="w-full md:w-1/3 px-4 mb-8">
-                <div className="bg-white rounded-lg shadow-md overflow-hidden">
-                  <img src="https://via.placeholder.com/400x300" alt="Property 2" className="w-full h-48 object-cover" />
-                  <div className="p-6">
-                    <h3 className="text-xl font-semibold text-blue-800 mb-2">Modern Apartment</h3>
-                    <p className="text-gray-700 mb-4">$150/night</p>
-                    <Link to="/property/2" className="text-blue-500 hover:text-blue-400">View Details</Link>
-                    <button className="bg-blue-500 text-white py-2 px-6 rounded-lg hover:bg-blue-400 ml-4">
-                      Book Property
-                    </button>
-                  </div>
-                </div>
-              </div>
-              <div className="w-full md:w-1/3 px-4 mb-8">
-                <div className="bg-white rounded-lg shadow-md overflow-hidden">
-                  <img src="https://via.placeholder.com/400x300" alt="Property 3" className="w-full h-48 object-cover" />
-                  <div className="p-6">
-                    <h3 className="text-xl font-semibold text-blue-800 mb-2">Cozy Cottage</h3>
-                    <p className="text-gray-700 mb-4">$100/night</p>
-                    <Link to="/property/3" className="text-blue-500 hover:text-blue-400">View Details</Link>
-                    <button className="bg-blue-500 text-white py-2 px-6 rounded-lg hover:bg-blue-400 ml-4">
-                      Book Property
-                    </button>
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
-        </section>
-
-        <section className="bg-white py-12 rounded-lg shadow-md mb-6">
-          <div className="text-center">
-            <h2 className="text-3xl font-bold text-blue-800 mb-8">Why Choose StayMate?</h2>
-            <div className="flex flex-wrap justify-center">
-              <div className="w-full md:w-1/3 px-4 mb-8">
-                <div className="bg-blue-50 p-6 rounded-lg shadow-md">
-                  <h3 className="text-xl font-semibold text-blue-800 mb-2">Wide Variety of Properties</h3>
-                  <p className="text-gray-700">From luxurious villas to cozy cottages, we have it all.</p>
-                </div>
-              </div>
-              <div className="w-full md:w-1/3 px-4 mb-8">
-                <div className="bg-blue-50 p-6 rounded-lg shadow-md">
-                  <h3 className="text-xl font-semibold text-blue-800 mb-2">Easy Booking Process</h3>
-                  <p className="text-gray-700">Book your stay in just a few clicks.</p>
-                </div>
-              </div>
-              <div className="w-full md:w-1/3 px-4 mb-8">
-                <div className="bg-blue-50 p-6 rounded-lg shadow-md">
-                  <h3 className="text-xl font-semibold text-blue-800 mb-2">Customer Support</h3>
-                  <p className="text-gray-700">24/7 customer support to assist you with your needs.</p>
-                </div>
-              </div>
-            </div>
-          </div>
-        </section>
-      </main>
-
-      <footer className="bg-blue-500 py-6">
-        <div className="container mx-auto px-6 text-center text-white">
-          <p>&copy; 2024 StayMate. All rights reserved.</p>
-          <nav className="mt-4">
-            <Link to="/about" className="text-white hover:text-blue-200 mx-2">About Us</Link>
-            <Link to="/contact" className="text-white hover:text-blue-200 mx-2">Contact</Link>
-            <Link to="/privacy" className="text-white hover:text-blue-200 mx-2">Privacy Policy</Link>
-            <Link to="/terms" className="text-white hover:text-blue-200 mx-2">Terms of Service</Link>
-          </nav>
-        </div>
-      </footer>
+        )}
+      </div>
     </div>
   );
-};
+}
 
 export default HomePage;

@@ -29,16 +29,16 @@ export const AuthProvider = ({ children }) => {
     return { user, error };
   };
 
-  const signup = async (email, password, role) => {
-    const { error } = await authService.signup(email, password, role);
+  const signup = async (userData) => {
+    const { error } = await authService.signup(userData);
     if (!error) {
-      setEmailForVerification(email);
+      setEmailForVerification(userData.email);
     }
     return { error };
   };
 
-  const verifyOtp = async (email, otp, role) => {
-    const { user, error } = await authService.verifyOtp(email, otp, role);
+  const verifyOtp = async (userData) => {
+    const { user, error } = await authService.verifyOtp(userData);
     if (user) {
       setCurrentUser(user);
       setToken(authService.getToken());
@@ -52,13 +52,31 @@ export const AuthProvider = ({ children }) => {
     setToken(null);
   };
 
+  const requestPasswordReset = async (email) => {
+    try {
+      const response = await authService.requestPasswordReset(email);
+      return { error: null }; // OTP sent successfully
+    } catch (error) {
+      return { error: error.response?.data?.message || 'Error requesting OTP' };
+    }
+  };
+
+  const resetPassword = async (email, otp, newPassword) => {
+    try {
+      const response = await authService.resetPassword(email, otp, newPassword);
+      return { error: null }; // Password reset successfully
+    } catch (error) {
+      return { error: error.response?.data?.message || 'Error resetting password' };
+    }
+  };
+
   return (
-    <AuthContext.Provider value={{ currentUser, token, loading, login, signup, verifyOtp, emailForVerification, logout }}>
+    <AuthContext.Provider value={{ currentUser, token, loading, login, signup, verifyOtp, emailForVerification, logout ,  requestPasswordReset,
+      resetPassword,}}>
       {children}
     </AuthContext.Provider>
   );
 };
 
 export const useAuth = () => useContext(AuthContext);
-
 
