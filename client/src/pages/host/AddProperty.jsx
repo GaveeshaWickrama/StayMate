@@ -64,47 +64,68 @@ const AddProperty = () => {
     e.preventDefault();
     const formData = new FormData();
   
-    const appendPropertyFieldsToFormData = () => {
-      Object.keys(property).forEach(key => {
-        if (key === 'images') {
-          property.images.forEach(image => {
-            formData.append('images', image.file); // Assuming image.file is the File object
-          });
-        } else if (key === 'location') {
-          Object.keys(property.location).forEach(locKey => {
-            formData.append(`location[${locKey}]`, property.location[locKey]);
-          });
-        } else if (key !== 'sections' && key !== 'deed') {
-          formData.append(key, property[key]);
-        }
-      });
-      if (property.deed?.file) {
-        formData.append('deed', property.deed.file);
-      }
-    };
-  
-    const handleEntireProperty = () => {
-      formData.append('sections', JSON.stringify(property.sections));
-      appendPropertyFieldsToFormData();
-    };
-  
-    const handleMultipleSectionsProperty = () => {
-      const sections = property.sections.map(section => {
-        const updatedImages = section.images.map(image => {
-          formData.append('section_images', image.file); // Append file to FormData with a specific key
-          return { url: image.file.name }; // You can store the file name or any other identifier
+    // Append all other fields to formData
+    Object.keys(property).forEach(key => {
+      if (key === 'images') {
+        property.images.forEach(image => {
+          if (image.file) {  // Check if file exists before appending
+            formData.append('images', image.file);
+          }
         });
-        return { ...section, images: updatedImages };
+      } else if (key === 'location') {
+        Object.keys(property.location).forEach(locKey => {
+          formData.append(`location[${locKey}]`, property.location[locKey]);
+        });
+      } else if (key !== 'sections' && key !== 'deed' && key !== 'amenities') {
+        formData.append(key, property[key]);
+      }
+    });
+  
+    // Append section data including images
+    const sections = property.sections.map(section => {
+      const updatedImages = section.images.map(image => {
+        if (image.file) {  // Check if file exists before appending
+          formData.append('section_images', image.file);
+          return { url: image.file.name };
+        }
+        return image;  // If no file, return existing image object
       });
   
-      formData.append('sections', JSON.stringify(sections));
-      appendPropertyFieldsToFormData();
-    };
+      const updatedAmenities = section.amenities.map(amenity => {
+        if (amenity.image?.file) {  // Check if file exists before appending
+          formData.append('amenity_images', amenity.image.file);
+        }
+        return {
+          ...amenity,
+          image: amenity.image?.file ? { url: amenity.image.file.name } : amenity.image
+        };
+      });
   
-    if (property.total_unique_sections === "-1") {
-      handleEntireProperty();
-    } else {
-      handleMultipleSectionsProperty();
+      return {
+        ...section,
+        images: updatedImages,
+        amenities: updatedAmenities
+      };
+    });
+  
+    formData.append('sections', JSON.stringify(sections));
+  
+    // Append property-level amenities and their images
+    const updatedPropertyAmenities = property.amenities.map(amenity => {
+      if (amenity.image?.file) {  // Check if file exists before appending
+        formData.append('amenity_images', amenity.image.file);
+      }
+      return {
+        ...amenity,
+        image: amenity.image?.file ? { url: amenity.image.file.name } : amenity.image
+      };
+    });
+  
+    formData.append('amenities', JSON.stringify(updatedPropertyAmenities));
+  
+    // Append the deed file if it exists
+    if (property.deed?.file) {
+      formData.append('deed', property.deed.file);
     }
   
     try {
@@ -115,12 +136,12 @@ const AddProperty = () => {
         }
       });
       console.log('Property added:', response.data);
-      resetProperty(); // Reset context after successful submit
       navigate('/host/listings', { state: { fromAddProperty: true } });
     } catch (error) {
       console.error('There was an error adding the property:', error);
     }
   };
+  
   
 
   const validateForm = () => {

@@ -22,13 +22,9 @@ import { GrTasks } from "react-icons/gr";
 
 const iconMap = {
   Home: "home",
-  "Dashboard": <MdDashboard />,
+  Dashboard: <MdDashboard />,
   "Manage Moderators": <MdAccountCircle />,
   "User Page": "account_circle",
-  "My Profile": "account_circle",
-  Moderators: "account_circle",
-  PropertyOwners: "account_circle",
-  Tenants: "account_circle",
   "My Profile": "account_circle",
   Moderators: "account_circle",
   PropertyOwners: "account_circle",
@@ -46,14 +42,11 @@ const iconMap = {
   Report: <MdAssessment />,
   Technicians: <MdBuild />,
   "My Listings": <CiCircleList />,
-  "Complaints": <MdReportProblem />,
+  Complaints: <MdReportProblem />,
   "Manage Users": <MdGroup />,
-  "Active Tasks":<MdOutlineTaskAlt/>,
-  "Pending Tasks":<FaTasks/>,
-  "Tasks":<GrTasks/>,
-  
-  
-  
+  "Active Tasks": <MdOutlineTaskAlt />,
+  "Pending Tasks": <FaTasks />,
+  Tasks: <GrTasks />,
 };
 
 function Sidebar({ title, links, logout, isVisible }) {
@@ -162,9 +155,7 @@ function Navbar({ isVisible }) {
 
   if (!currentUser) {
     return (
-      <Sidebar 
-      title="Welcome" 
-      links={publicLinks} isVisible={isVisible} />
+      <Sidebar title="Welcome" links={publicLinks} isVisible={isVisible} />
     );
     // return null; // Do not render the Navbar if the user is not logged in
   }
