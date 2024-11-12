@@ -1,7 +1,7 @@
-import React from 'react';
+import React from 'react'
 
-function GuestPage() {
-  return <h1>Only guests can see this</h1>;
+export default function GuestPage() {
+  return (
+    <div>GuestPage</div>
+  )
 }
-
-export default GuestPage;

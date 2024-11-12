@@ -71,8 +71,30 @@ const getHostReviews = async (req, res) => {
   }
 };
 
+const getUserReviews = async (req, res) => {
+  const userId = req.user.userId;
+
+  try {
+    const reviews = await Review.find({ user: userId })
+      .populate({
+        path: "user",
+        select: "email firstName lastName role createdOn", // Select all user details you need
+      })
+      .populate({
+        path: "property",
+        select:
+          "title description type total_unique_sections amenities images location created_at updated_at", // Select all property details you need
+      })
+      .exec();
+
+    res.status(200).json(reviews);
+  } catch (error) {
+    console.error("Error fetching user reviews:", error);
+    res.status(500).json({ message: "Server Error!" });
+  }
+};
 module.exports = {
   addReview,
   getHostReviews,
-  
+  getUserReviews,
 };

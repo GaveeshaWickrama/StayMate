@@ -1,14 +1,41 @@
-import React, { useState, useContext } from 'react';
+import React, { useState, useEffect,useContext } from 'react';
 import adminprofilepic from "../../assets/adminprofilepic.png";
 import { Link } from 'react-router-dom';
+import axios from 'axios';
+import { useAuth } from '../../context/auth';
 
 const MyProfile = () => {
+
+    const { token } = useAuth();
 
     const [email, setEmail] = useState('Raveesa@gmail.com');
     const [contactNumber, setContactNumber] = useState('(+94) 077-1234567');
     const [address, setAddress] = useState('290 Chatham Way Reston, Maryland (MD), 20191');
     const [nic, setNIC] = useState('20002345434');
     const [gender, setGender] = useState('Male');
+    const [obj, setObj] = useState([]);
+
+
+    useEffect(() => {
+      const fetchProfile = async () => {
+        try {
+          const response = await axios.get(`${import.meta.env.VITE_API_URL}/admin/viewProfile`, {
+            headers: {
+              Authorization: `Bearer ${token}`,
+            },
+          });
+          setObj(response.data);
+        } catch (error) {
+          console.error('Error fetching properties:', error);
+        }
+      };
+  
+      fetchProfile();
+    }, [token]);
+
+    // console.log(obj);
+
+
 
     return ( 
         
@@ -22,8 +49,8 @@ const MyProfile = () => {
                 className="w-32 h-32 rounded-full"
               />
               <div className="ml-4">
-                <h1 className="text-2xl font-bold">Sameera Perera</h1>
-                <p className="text-gray-600">Admin</p>
+                <h1 className="text-2xl font-bold">{obj.firstname} {obj.lastname}</h1>
+                <p className="text-gray-600">{obj.role}</p>
                 {/* <p className="text-yellow-500">4.5 ★★★★☆</p> */}
               </div>
             </div>
@@ -37,7 +64,7 @@ const MyProfile = () => {
           <div className="mt-6 grid grid-cols-1 sm:grid-cols-2 gap-4">
             <div className="bg-white p-4 rounded-lg shadow">
               <h2 className="text-lg font-semibold">Email</h2>
-              <p>{ email }</p>
+              <p>{ obj.email }</p>
             </div>
             <div className="bg-white p-4 rounded-lg shadow">
               <h2 className="text-lg font-semibold">Phone</h2>

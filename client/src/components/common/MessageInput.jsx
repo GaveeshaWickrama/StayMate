@@ -1,33 +1,35 @@
-import React, { useState } from 'react';
+import React, {useState} from 'react'
+import {BsSend} from "react-icons/bs"
+import useSendMessage from '../../hooks/useSendMessage';
 
-const MessageInput = ({ onSendMessage }) => {
-  const [message, setMessage] = useState('');
+const MessageInput = () => {
 
-  const handleSend = () => {
-    if (message.trim()) {
-      onSendMessage(message);
-      setMessage(''); // Clear the input box
-    }
-  };
+  const [message,setMessage] = useState("");
+  const {loading,sendMessage} = useSendMessage();
+  
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    if(!message) return;
+    await sendMessage(message);
+    setMessage("");
+  }
 
   return (
-    <div className="flex items-center p-4 border-t border-gray-300">
-      <input
-        type="text"
-        className="flex-1 p-2 border rounded-lg"
-        placeholder="Type your message..."
-        value={message}
-        onChange={(e) => setMessage(e.target.value)}
-      />
-      <button
+    <form className='px-4 my-3' onSubmit={handleSubmit}>
+        <div className='w-full relative'>
+            <input 
+                type="text"
+                className='border text-sm rounded-lg block w-full p-2.5 bg-gray-700 border-gray-600 text-white'
+                placeholder='Send a message'
+                value = {message}
+                onChange={(e) => setMessage(e.target.value)}
+            />
+            <button type='submit' className='absolute inset-y-0  end-0 flex items-center pe-3'>
+                {loading ? <div className='loading loading-spinner'></div> : <BsSend  style={{ color: 'white' }} />}
+            </button>
+        </div>
+    </form>
+  )
+}
 
-        className="ml-4 bg-blue-500 text-white p-2 rounded-lg"
-        onClick={handleSend}
-      >
-        Send
-      </button>
-    </div>
-  );
-};
-
-export default MessageInput;
+export default MessageInput

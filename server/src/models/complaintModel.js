@@ -2,15 +2,48 @@
 const mongoose = require('mongoose');
 
 const complaintSchema = new mongoose.Schema({
-  reservation: {
+  reservationId: {
     type: mongoose.Schema.Types.ObjectId,
-    ref: 'reservation', // Reference to the Tenant model (if you have one)
-    //required: true,
+    ref: 'Reservation', // Reference to the reservation model
+    required: true,
   },
+
+/*   hostId:{
+    type:String,
+    required:true
+  }, */
+
+  estimatedBudget: {
+    type: Number,
+    required: false, // or true if it's mandatory
+  },
+  assignTaskComments:{
+    type:String,
+    required:false
+
+  },
+  deadline:{
+    type:Date,
+    required:false
+
+  },
+
+  technician:{
+    type: mongoose.Schema.Types.ObjectId,
+    ref:'Technician',
+    required:false
+  },
+  proofImages: [{ type: String }],
+
+
   category: {
     type: String,
     required: true,
   },
+/*   propertyName:{
+    type: String,
+    //required: true,
+  }, */
   title: {
     type: String,
     required: true,
@@ -22,8 +55,8 @@ const complaintSchema = new mongoose.Schema({
   images : [{ type : String }],
   status: {
     type: String,
-    enum: ['pending', 'resolved'],
-    default: 'pending',
+    enum: ['pendingHostDecision', 'pendingTechnicianApproval','active','technicianCompleted', 'jobCompleted', 'hostCompleted'],
+    default: 'pendingHostDecision',
   },
   timestamp: {
     type: Date,
