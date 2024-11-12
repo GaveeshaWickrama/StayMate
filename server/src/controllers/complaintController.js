@@ -726,6 +726,10 @@ const markJobCompleted = async (req, res) => {
   }
 };
 
+const rateTechnician = async (req,res) => {
+
+};
+
 module.exports = {
   raiseComplaint,
   getComplaintById, //host
