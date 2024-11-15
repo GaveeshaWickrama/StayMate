@@ -193,145 +193,175 @@
 
 
 import React, { useEffect, useState } from "react";
-import {
-  BarChart,
-  Bar,
-  XAxis,
-  YAxis,
-  CartesianGrid,
-  Tooltip,
-  Legend,
-  ResponsiveContainer,
-  LineChart,
-  Line,
-} from "recharts";
-import { useStore } from "../../context/StoreContext";
+import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer } from "recharts";
 import { FaMoneyBillWave, FaCalendarCheck, FaHome } from "react-icons/fa";
 
-// Helper function to generate random values
-const generateRandomValue = (baseValue, variance) =>
-  Math.max(0, baseValue + Math.floor(Math.random() * variance * 2) - variance);
+// Sample data for properties
+const sampleProperties = [
+  { id: 1, address: "123 Ocean Drive, Malibu", status: "Available", type: "Beach House" },
+  { id: 2, address: "45 Mountain Ave, Aspen", status: "Booked", type: "Cabin" },
+  { id: 3, address: "78 City St, New York", status: "Available", type: "Apartment" },
+];
 
-const getOrCreateRandomData = (key, length, baseValue, variance) => {
-  const storedData = localStorage.getItem(key);
-  if (storedData) {
-    return JSON.parse(storedData);
-  }
+// Sample reservation data
+const sampleReservations = [
+  { property: { title: "Beach House" }, totalPrice: 200, status: "upcoming" },
+  { property: { title: "Mountain Cabin" }, totalPrice: 300, status: "completed" },
+  { property: { title: "City Apartment" }, totalPrice: 150, status: "upcoming" },
+];
 
-  const newData = Array.from({ length }, (_, index) => ({
-    name:
-      key === "quarterly"
-        ? `Q${index + 1}`
-        : new Date(2020, index).toLocaleString("default", { month: "short" }),
-    revenue: generateRandomValue(baseValue / length, variance),
-  }));
-
-  localStorage.setItem(key, JSON.stringify(newData));
-  return newData;
+// Sample income data for the line chart
+const incomeData = {
+  monthly: [
+    { month: "Jan", income: 1200 },
+    { month: "Feb", income: 1400 },
+    { month: "Mar", income: 800 },
+    { month: "Apr", income: 1600 },
+    { month: "May", income: 1000 },
+    { month: "Jun", income: 1800 },
+    { month: "Jul", income: 1500 },
+    { month: "Aug", income: 1200 },
+    { month: "Sep", income: 1700 },
+    { month: "Oct", income: 2000 },
+    { month: "Nov", income: 1300 },
+    { month: "Dec", income: 1600 },
+  ],
+  yearly: [
+    { year: "2021", income: 15000 },
+    { year: "2022", income: 18000 },
+    { year: "2023", income: 21000 },
+    { year: "2024", income: 25000 },
+  ],
 };
 
 function HostPage() {
-  const { userReservations } = useStore();
   const [totalHostRevenue, setTotalHostRevenue] = useState(0);
-  const [revenueData, setRevenueData] = useState([]);
-  const [trendData, setTrendData] = useState([]);
   const [uniqueProperties, setUniqueProperties] = useState(0);
+  const [upcomingBookings, setUpcomingBookings] = useState(0);
+  const [viewMode, setViewMode] = useState("monthly"); // State to switch between monthly and yearly
+  const [filteredProperties, setFilteredProperties] = useState(sampleProperties);
+  const [searchTerm, setSearchTerm] = useState(""); // State for search term
 
   useEffect(() => {
-    const calculateHostRevenue = () => {
+    const calculateHostData = () => {
       let totalRevenue = 0;
       const propertySet = new Set();
+      let upcoming = 0;
 
-      userReservations.forEach((reservation) => {
+      sampleReservations.forEach((reservation) => {
         totalRevenue += reservation.totalPrice * 0.9; // Host receives 90% of the total price
-        propertySet.add(reservation.property.title); // Assuming property title is unique
+        propertySet.add(reservation.property.title);
+        if (reservation.status === "upcoming") upcoming++;
       });
 
       setTotalHostRevenue(totalRevenue);
       setUniqueProperties(propertySet.size);
+      setUpcomingBookings(upcoming);
     };
 
-    calculateHostRevenue();
-  }, [userReservations]);
+    calculateHostData();
+  }, []);
 
+  // Filter properties based on search term
   useEffect(() => {
-    if (totalHostRevenue > 0) {
-      const quarterlyVariance = totalHostRevenue / 8; // Adjust variance as needed
-      const monthlyVariance = totalHostRevenue / 15; // Adjust variance as needed
-
-      const newRevenueData = getOrCreateRandomData(
-        "quarterly",
-        4,
-        totalHostRevenue,
-        quarterlyVariance
-      );
-
-      const newTrendData = getOrCreateRandomData(
-        "monthly",
-        12,
-        totalHostRevenue,
-        monthlyVariance
-      );
-
-      setRevenueData(newRevenueData);
-      setTrendData(newTrendData);
-    }
-  }, [totalHostRevenue]);
+    const filtered = sampleProperties.filter((property) =>
+      property.address.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      property.type.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      property.status.toLowerCase().includes(searchTerm.toLowerCase())
+    );
+    setFilteredProperties(filtered);
+  }, [searchTerm]);
 
   return (
-    <main className="p-5 text-gray-900 bg-gray-100 min-h-screen">
-      <h3 className="text-3xl font-bold py-8">Host Dashboard</h3>
+    <main className="p-6 text-gray-900 bg-gray-50 min-h-screen">
+      <h3 className="text-4xl font-bold text-center py-8">Host Dashboard</h3>
 
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-10 my-5">
-        <div className="bg-white shadow-md p-5 rounded-md flex flex-col items-center">
-          <FaMoneyBillWave className="text-4xl text-green-500 mb-2" />
-          <h3 className="text-lg font-medium ">Total Revenue</h3>
-          <h1 className="text-2xl font-bold">
-            LKR {totalHostRevenue.toLocaleString()}
-          </h1>
+      {/* Dashboard summary boxes */}
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 my-6">
+        <div className="bg-white shadow-lg p-6 rounded-lg flex flex-col items-center border border-gray-200">
+          <FaMoneyBillWave className="text-5xl text-green-500 mb-4" />
+          <h3 className="text-lg font-semibold text-gray-700">Total Revenue</h3>
+          <h1 className="text-3xl font-bold text-gray-800">LKR {totalHostRevenue.toLocaleString()}</h1>
         </div>
-        <div className="bg-white shadow-md p-5 rounded-md flex flex-col items-center">
-          <FaCalendarCheck className="text-4xl text-orange-500 mb-2" />
-          <h3 className="text-lg font-medium">Upcoming Bookings</h3>
-          <h1 className="text-2xl font-bold">
-            {userReservations.filter((res) => res.status === "upcoming").length}
-          </h1>
+        <div className="bg-white shadow-lg p-6 rounded-lg flex flex-col items-center border border-gray-200">
+          <FaCalendarCheck className="text-5xl text-orange-500 mb-4" />
+          <h3 className="text-lg font-semibold text-gray-700">Upcoming Bookings</h3>
+          <h1 className="text-3xl font-bold text-gray-800">{upcomingBookings}</h1>
         </div>
-        <div className="bg-white shadow-md p-5 rounded-md flex flex-col items-center">
-          <FaHome className="text-4xl text-blue-500 mb-2" />
-          <h3 className="text-lg font-medium">Number of Properties</h3>
-          <h1 className="text-2xl font-bold">{uniqueProperties}</h1>
+        <div className="bg-white shadow-lg p-6 rounded-lg flex flex-col items-center border border-gray-200">
+          <FaHome className="text-5xl text-blue-500 mb-4" />
+          <h3 className="text-lg font-semibold text-gray-700">Number of Properties</h3>
+          <h1 className="text-3xl font-bold text-gray-800">{uniqueProperties}</h1>
         </div>
       </div>
 
-      <div className="mt-20 grid grid-cols-1 lg:grid-cols-2 gap-5">
-        <div className="h-80">
-          <ResponsiveContainer width="100%" height="100%">
-            <BarChart
-              data={revenueData}
-              margin={{ top: 5, right: 30, left: 20, bottom: 5 }}
-            >
-              <CartesianGrid strokeDasharray="3 3" />
-              <XAxis dataKey="name" />
-              <YAxis />
-              <Tooltip />
-              <Legend />
-              <Bar dataKey="revenue" fill="#82ca9d" />
-            </BarChart>
-          </ResponsiveContainer>
+      {/* Property Details Table and Chart */}
+      <div className="flex justify-between gap-6">
+        {/* Property Table */}
+        <div className="w-1/2">
+          <h4 className="text-2xl font-bold text-gray-700 py-6">Property Details</h4>
+          
+          {/* Search Bar */}
+          <div className="mb-4">
+            <input
+              type="text"
+              placeholder="Search properties..."
+              className="w-full p-2 border border-gray-300 rounded-lg"
+              value={searchTerm}
+              onChange={(e) => setSearchTerm(e.target.value)}
+            />
+          </div>
+
+          <div className="overflow-x-auto">
+            <table className="min-w-full bg-white shadow-md rounded-lg border border-gray-200">
+              <thead>
+                <tr className="bg-gray-200 text-gray-700 text-left">
+                  <th className="py-3 px-4 font-semibold">Property ID</th>
+                  <th className="py-3 px-4 font-semibold">Property Address</th>
+                  <th className="py-3 px-4 font-semibold">Property Type</th>
+                  <th className="py-3 px-4 font-semibold">Status</th>
+                </tr>
+              </thead>
+              <tbody>
+                {filteredProperties.map((property) => (
+                  <tr key={property.id} className="hover:bg-gray-100">
+                    <td className="py-3 px-4 border-b border-gray-200">{property.id}</td>
+                    <td className="py-3 px-4 border-b border-gray-200">{property.address}</td>
+                    <td className="py-3 px-4 border-b border-gray-200">{property.type}</td>
+                    <td className="py-3 px-4 border-b border-gray-200">{property.status}</td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
         </div>
-        <div className="h-80">
-          <ResponsiveContainer width="100%" height="100%">
-            <LineChart
-              data={trendData}
-              margin={{ top: 5, right: 30, left: 20, bottom: 5 }}
+
+        {/* Income Line Chart */}
+        <div className="w-1/2">
+          <h4 className="text-2xl font-bold text-gray-700 py-6">Income Overview</h4>
+          <div className="mb-4">
+            <button
+              onClick={() => setViewMode("monthly")}
+              className={`px-4 py-2 mr-2 rounded ${viewMode === "monthly" ? "bg-blue-600 text-white" : "bg-gray-300"}`}
             >
+              Monthly
+            </button>
+            <button
+              onClick={() => setViewMode("yearly")}
+              className={`px-4 py-2 rounded ${viewMode === "yearly" ? "bg-blue-600 text-white" : "bg-gray-300"}`}
+            >
+              Yearly
+            </button>
+          </div>
+
+          <ResponsiveContainer width="100%" height={300}>
+            <LineChart data={viewMode === "monthly" ? incomeData.monthly : incomeData.yearly}>
               <CartesianGrid strokeDasharray="3 3" />
-              <XAxis dataKey="name" />
+              <XAxis dataKey={viewMode === "monthly" ? "month" : "year"} />
               <YAxis />
               <Tooltip />
               <Legend />
-              <Line type="monotone" dataKey="revenue" stroke="#8884d8" />
+              <Line type="monotone" dataKey="income" stroke="#8884d8" activeDot={{ r: 8 }} />
             </LineChart>
           </ResponsiveContainer>
         </div>
