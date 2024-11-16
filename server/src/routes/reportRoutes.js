@@ -1,8 +1,8 @@
 const express = require("express");
-const { getRevenueReport } = require("../controllers/revenueController");
+const { getRevenueReport } = require("../controllers/reportController");
 const router = express.Router();
 
-// Route to get revenue report for a date range
-router.get("/report", getRevenueReport);
+// Single route to get revenue report for a specific date range
+router.get("/revenue", getRevenueReport);
 
 module.exports = router;
