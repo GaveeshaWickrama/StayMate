@@ -33,7 +33,7 @@ function Revenue() {
   const [hostPercentage, setHostPercentage] = useState(0);
   const [sitePercentage, setSitePercentage] = useState(0);
 
-  const PLATFORM_PERCENTAGE = 20; // Assume the platform takes 20% of the total revenue
+  const PLATFORM_PERCENTAGE = 10; // Assume the platform takes 20% of the total revenue
 
   const COLORS = ["#0088FE", "#FF8042", "#00C49F", "#FFBB28", "#FF6666", "#AA66CC", "#33B5E5"];
 
