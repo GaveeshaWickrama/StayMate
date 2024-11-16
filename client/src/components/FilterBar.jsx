@@ -80,7 +80,7 @@ const FilterBar = ({ onFilterChange, onFilterSubmit, onFilterReset }) => {
           onClick={handleResetFilters} 
           className="p-2 px-8 bg-gray-400 text-white rounded shadow hover:bg-gray-500 transition duration-300 ml-2"
         >
-          Remove Filters
+          Clear
         </button>
       </div>
     </div>
