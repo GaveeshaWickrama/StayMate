@@ -1,5 +1,6 @@
 import React, { useState } from "react";
-import Revenue from "./Reports/Revenue"; // Import the Revenue component
+import Revenue from "./Reports/Revenue";
+import PropertyReport from "./Reports/Property"; // Import the PropertyReport component
 
 function Report() {
   const [selectedView, setSelectedView] = useState("revenue");
@@ -9,7 +10,7 @@ function Report() {
       <h3 className="text-3xl font-bold py-8 text-center">Report Dashboard</h3>
 
       {/* Navigation Bar */}
-      <div className="flex justify-center gap-4 mb-8 p">
+      <div className="flex justify-center gap-4 mb-8">
         <button
           onClick={() => setSelectedView("revenue")}
           className={`px-4 py-2 ${
@@ -31,9 +32,7 @@ function Report() {
       {/* Render Selected View */}
       <div className="bg-white p-5 rounded-lg shadow-md">
         {selectedView === "revenue" && <Revenue />}
-        {selectedView === "property" && (
-          <p className="text-center text-gray-500">Property report is under construction.</p>
-        )}
+        {selectedView === "property" && <PropertyReport />}
       </div>
     </main>
   );

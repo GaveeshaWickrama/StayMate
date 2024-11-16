@@ -1,4 +1,5 @@
 const Reservation = require("../models/reservationModel");
+const Property = require("../models/propertyModel");
 
 const getRevenueReport = async (req, res) => {
   const { startDate, endDate, status } = req.query;
@@ -63,4 +64,36 @@ const getRevenueReport = async (req, res) => {
   }
 };
 
-module.exports = { getRevenueReport };
+
+const getPropertyCounts = async (req, res) => {
+    try {
+      // Aggregation pipeline to group by type, district, and status and get counts
+      const typeCounts = await Property.aggregate([
+        { $group: { _id: "$type", count: { $sum: 1 } } },
+        { $project: { _id: 0, type: "$_id", count: 1 } }
+      ]);
+  
+      const districtCounts = await Property.aggregate([
+        { $group: { _id: "$location.district", count: { $sum: 1 } } },
+        { $project: { _id: 0, district: "$_id", count: 1 } }
+      ]);
+  
+      const statusCounts = await Property.aggregate([
+        { $group: { _id: "$status", count: { $sum: 1 } } },
+        { $project: { _id: 0, status: "$_id", count: 1 } }
+      ]);
+  
+      // Combine all counts into a single response
+      res.status(200).json({
+        typeCounts,
+        districtCounts,
+        statusCounts
+      });
+    } catch (error) {
+      console.error("Error fetching property counts:", error);
+      res.status(500).json({ error: "Internal server error" });
+    }
+  };
+
+
+module.exports = { getRevenueReport , getPropertyCounts  };
