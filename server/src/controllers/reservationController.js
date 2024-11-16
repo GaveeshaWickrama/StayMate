@@ -124,8 +124,55 @@ const getReservations = async (req, res) => {
 };
 
 //function to fetch Payment details to admin
+// const getPaymentDetails = async (req, res) => {
+//   try {
+//     // Fetch reservations with total amount
+//     const reservations = await Reservation.find({})
+//       .populate("property", "host_id title")
+//       .populate({
+//         path: "property",
+//         populate: { path: "host_id", select: "firstName lastName" },
+//       })
+//       .populate({
+//         path: "user",
+//         select: "firstName lastName", // Populate user with firstName and lastName
+//       })
+//       .select("totalPrice paymentStatus checkInDate checkOutDate");
+
+//     // Calculate service fee and amount to host, and format response
+//     const enrichedReservations = reservations.map((reservation) => {
+//       const totalAmount = reservation.totalPrice;
+//       const serviceFee = totalAmount * 0.1; // 10% service fee
+//       const amountToHost = totalAmount - serviceFee;
+//       const hostFirstName = reservation.property.host_id.firstName;
+//       const hostLastName = reservation.property.host_id.lastName;
+//       const hostFullName = `${hostFirstName} ${hostLastName}`;
+
+//       return {
+//         reservationId: reservation._id,
+//         totalAmount,
+//         serviceFee,
+//         amountToHost,
+//         paymentStatus: reservation.paymentStatus,
+//         hostName: hostFullName,
+//         title: reservation.property.title,
+//         checkInDate: reservation.checkInDate,
+//         checkOutDate: reservation.checkOutDate,
+//       };
+//     });
+
+//     res.status(200).json(enrichedReservations);
+//   } catch (error) {
+//     console.error(error);
+//     res.status(500).json({ message: "Server error" });
+//   }
+// };
+
+
 const getPaymentDetails = async (req, res) => {
   try {
+    console.log("Fetching reservations...");
+
     // Fetch reservations with total amount
     const reservations = await Reservation.find({})
       .populate("property", "host_id title")
@@ -139,14 +186,32 @@ const getPaymentDetails = async (req, res) => {
       })
       .select("totalPrice paymentStatus checkInDate checkOutDate");
 
+    console.log("Reservations fetched:", reservations);
+
     // Calculate service fee and amount to host, and format response
     const enrichedReservations = reservations.map((reservation) => {
       const totalAmount = reservation.totalPrice;
       const serviceFee = totalAmount * 0.1; // 10% service fee
       const amountToHost = totalAmount - serviceFee;
-      const hostFirstName = reservation.property.host_id.firstName;
-      const hostLastName = reservation.property.host_id.lastName;
+
+      // Debugging: Log host_id and related fields
+      console.log("Reservation property:", reservation.property);
+      if (reservation.property) {
+        console.log("Host ID:", reservation.property.host_id);
+      } else {
+        console.log("Property does not exist for this reservation.");
+      }
+
+      // Check if host_id exists and has firstName and lastName
+      const hostFirstName = reservation.property?.host_id?.firstName || 'N/A';
+      const hostLastName = reservation.property?.host_id?.lastName || 'N/A';
       const hostFullName = `${hostFirstName} ${hostLastName}`;
+
+      // Debugging: Log calculated values
+      console.log(`Host Name: ${hostFullName}`);
+      console.log(`Total Amount: ${totalAmount}`);
+      console.log(`Service Fee: ${serviceFee}`);
+      console.log(`Amount to Host: ${amountToHost}`);
 
       return {
         reservationId: reservation._id,
@@ -155,18 +220,22 @@ const getPaymentDetails = async (req, res) => {
         amountToHost,
         paymentStatus: reservation.paymentStatus,
         hostName: hostFullName,
-        title: reservation.property.title,
+        title: reservation.property?.title || 'N/A',
         checkInDate: reservation.checkInDate,
         checkOutDate: reservation.checkOutDate,
       };
     });
 
+    console.log("Enriched reservations:", enrichedReservations);
+
+    // Send the response
     res.status(200).json(enrichedReservations);
   } catch (error) {
-    console.error(error);
+    console.error("Error fetching payment details:", error);
     res.status(500).json({ message: "Server error" });
   }
 };
+
 
 module.exports = {
   addReservation,
