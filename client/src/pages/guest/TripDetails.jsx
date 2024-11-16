@@ -30,6 +30,8 @@ const TripDetails = () => {
   const { fetchPropertyById, updateUserReservations } = useStore();
   const [property, setProperty] = useState(null);
   const [loading, setLoading] = useState(false);
+  const [cardholderName, setCardholderName] = useState("");
+  const [errors, setErrors] = useState({});
   const stripe = useStripe();
   const elements = useElements();
   const { token } = useAuth();
@@ -62,11 +64,44 @@ const TripDetails = () => {
     totalPrice,
   } = state;
 
-  const handleConfirmBooking = async (e) => {
-    e.preventDefault();
+  const validateForm = () => {
+    const newErrors = {};
+    if (!cardholderName) {
+      newErrors.cardholderName = "Cardholder name is required";
+    }
 
     if (!stripe || !elements) {
       toast.error("Stripe has not loaded yet. Please try again later.");
+      return false;
+    }
+
+    const cardNumberElement = elements.getElement(CardNumberElement);
+    const cardExpiryElement = elements.getElement(CardExpiryElement);
+    const cardCvcElement = elements.getElement(CardCvcElement);
+
+    if (!cardNumberElement || !cardExpiryElement || !cardCvcElement) {
+      toast.error("Please complete the card details.");
+      return false;
+    }
+
+    const { error: cardNumberError } = stripe.createPaymentMethod({
+      type: "card",
+      card: cardNumberElement,
+    });
+
+    if (cardNumberError) {
+      newErrors.cardNumber = "Invalid card number";
+    }
+
+    setErrors(newErrors);
+
+    return Object.keys(newErrors).length === 0;
+  };
+
+  const handleConfirmBooking = async (e) => {
+    e.preventDefault();
+
+    if (!validateForm()) {
       return;
     }
 
@@ -170,9 +205,16 @@ const TripDetails = () => {
               </label>
               <input
                 type="text"
+                value={cardholderName}
+                onChange={(e) => setCardholderName(e.target.value)}
                 className="border border-gray-300 p-3 rounded-lg w-full"
                 placeholder="Cardholder Name"
               />
+              {errors.cardholderName && (
+                <p className="text-red-500 text-sm mt-1">
+                  {errors.cardholderName}
+                </p>
+              )}
             </div>
 
             <div className="grid grid-cols-1 gap-6 md:grid-cols-2 mb-4">
@@ -181,6 +223,11 @@ const TripDetails = () => {
                   Card Number
                 </label>
                 <CardNumberElement className="border border-gray-300 p-3 rounded-lg w-full" />
+                {errors.cardNumber && (
+                  <p className="text-red-500 text-sm mt-1">
+                    {errors.cardNumber}
+                  </p>
+                )}
               </div>
               <div className="border border-gray-300 p-4 rounded-lg">
                 <label className="block text-gray-700 font-medium mb-2">
