@@ -17,18 +17,19 @@ import {
 import axios from "axios";
 import { useAuth } from "../../context/auth";
 
-// Function to generate random allocation data
+// Colors for Pie Chart
+const COLORS = ["#0088FE", "#00C49F", "#FFBB28", "#FF8042", "#FF0000", "#800080"];
+
+// Utility function to distribute values randomly
 const generateRandomAllocations = (total) => {
   const allocations = Array.from({ length: 12 }, () => Math.random());
-  const totalAllocations = allocations.reduce((acc, value) => acc + value, 0);
-  return allocations.map(
-    (allocation) => (allocation / totalAllocations) * total
-  );
+  const totalAllocations = allocations.reduce((sum, val) => sum + val, 0);
+  return allocations.map((value) => (value / totalAllocations) * total);
 };
 
+// Generate monthly data for the line chart
 const generateMonthlyData = (totalRevenue, totalPayoutToHosts) => {
   const months = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
-
   const revenueAllocations = generateRandomAllocations(totalRevenue);
   const expenseAllocations = generateRandomAllocations(totalPayoutToHosts);
 
@@ -39,9 +40,9 @@ const generateMonthlyData = (totalRevenue, totalPayoutToHosts) => {
   }));
 };
 
+// Generate yearly data for the line chart
 const generateYearlyData = (totalRevenue, totalPayoutToHosts) => {
   const years = ["2020", "2021", "2022", "2023", "2024"];
-
   const revenueAllocations = generateRandomAllocations(totalRevenue);
   const expenseAllocations = generateRandomAllocations(totalPayoutToHosts);
 
@@ -52,172 +53,120 @@ const generateYearlyData = (totalRevenue, totalPayoutToHosts) => {
   }));
 };
 
-const COLORS = ["#0088FE", "#00C49F", "#FFBB28", "#FF8042", "#FF0000", "#800080"];
-
 function Report() {
-  const { token } = useAuth();
+  // State variables
+  const { token } = useAuth(); // Authentication context
   const [totalRevenue, setTotalRevenue] = useState(0);
   const [totalPayoutToHosts, setTotalPayoutToHosts] = useState(0);
   const [reportData, setReportData] = useState([]);
   const [selectedTab, setSelectedTab] = useState("monthly");
   const [staticLocationData, setStaticLocationData] = useState([]);
   const [propertyData, setPropertyData] = useState([
-    { propertyName: 'Property A', bookings: 200 },
-    { propertyName: 'Property B', bookings: 150 },
-    { propertyName: 'Property C', bookings: 100 },
-    { propertyName: 'Property D', bookings: 50 },
+    { propertyName: "Property A", bookings: 200 },
+    { propertyName: "Property B", bookings: 150 },
+    { propertyName: "Property C", bookings: 100 },
+    { propertyName: "Property D", bookings: 50 },
   ]);
 
+  // Fetch data from backend
   useEffect(() => {
-    const fetchPayments = async () => {
+    const fetchData = async () => {
+      if (!token) return;
+
       try {
-        const response = await axios.get(
+        // Fetch payment data
+        const paymentResponse = await axios.get(
           `${import.meta.env.VITE_API_URL}/admin/payments`,
-          {
-            headers: {
-              Authorization: `Bearer ${token}`,
-            },
-          }
+          { headers: { Authorization: `Bearer ${token}` } }
         );
-        const data = response.data;
-        calculateTotals(data);
-      } catch (error) {
-        console.error("Error fetching payments:", error);
-      }
-    };
+        calculateTotals(paymentResponse.data);
 
-    const fetchLocations = async () => {
-      try {
-        const response = await axios.get(
+        // Fetch location data
+        const locationResponse = await axios.get(
           `${import.meta.env.VITE_API_URL}/admin/properties-by-location`,
-          {
-            headers: {
-              Authorization: `Bearer ${token}`,
-            },
-          }
+          { headers: { Authorization: `Bearer ${token}` } }
         );
-        setStaticLocationData(response.data);
-      } catch (error) {
-        console.error("Error fetching location data:", error);
-      }
-    };
+        setStaticLocationData(locationResponse.data);
 
-    const fetchProperties = async () => {
-      try {
-        const response = await axios.get(
+        // Fetch most booked property data
+        const propertyResponse = await axios.get(
           `${import.meta.env.VITE_API_URL}/admin/most-booked-properties`,
-          {
-            headers: {
-              Authorization: `Bearer ${token}`,
-            },
-          }
+          { headers: { Authorization: `Bearer ${token}` } }
         );
-        setPropertyData(response.data);
+        setPropertyData(propertyResponse.data);
       } catch (error) {
-        console.error("Error fetching property data:", error);
+        console.error("Error fetching data:", error);
       }
     };
 
-    if (token) {
-      fetchPayments();
-      fetchLocations();
-      fetchProperties();
-    }
+    fetchData();
   }, [token]);
 
+  // Calculate totals from payment data
   const calculateTotals = (payments) => {
-    let totalRev = 0;
-    let totalPayout = 0;
-
-    payments.forEach((payment) => {
-      totalRev += payment.totalAmount;
-      totalPayout += payment.amountToHost;
-    });
+    const totalRev = payments.reduce((sum, payment) => sum + payment.totalAmount, 0);
+    const totalPayout = payments.reduce((sum, payment) => sum + payment.amountToHost, 0);
 
     setTotalRevenue(totalRev);
     setTotalPayoutToHosts(totalPayout);
     setReportData(generateMonthlyData(totalRev, totalPayout));
   };
 
+  // Handle tab switching (Monthly/Yearly)
   const handleTabClick = (tab) => {
     setSelectedTab(tab);
-    if (tab === "monthly") {
-      setReportData(generateMonthlyData(totalRevenue, totalPayoutToHosts));
-    } else if (tab === "yearly") {
-      setReportData(generateYearlyData(totalRevenue, totalPayoutToHosts));
-    }
+    const dataGenerator = tab === "monthly" ? generateMonthlyData : generateYearlyData;
+    setReportData(dataGenerator(totalRevenue, totalPayoutToHosts));
   };
 
-  const downloadChartData = (type) => {
-    const data = reportData.map((item) => ({
-      Period: item.name,
-      Revenue: item.revenue,
-      Expense: item.expense,
-    }));
-
-    const csvData = [
+  // Download chart data as CSV
+  const downloadChartData = (filename, data) => {
+    const csvContent = [
       ["Period", "Revenue", "Expense"],
-      ...data.map((row) => [row.Period, row.Revenue, row.Expense]),
+      ...data.map((item) => [item.name, item.revenue, item.expense]),
     ]
-      .map((e) => e.join(","))
+      .map((row) => row.join(","))
       .join("\n");
 
-    const blob = new Blob([csvData], { type: "text/csv" });
+    const blob = new Blob([csvContent], { type: "text/csv" });
     const url = URL.createObjectURL(blob);
-    const a = document.createElement("a");
-    a.href = url;
-    a.download = `${type}_Chart_Data.csv`;
-    a.click();
+    const anchor = document.createElement("a");
+    anchor.href = url;
+    anchor.download = `${filename}.csv`;
+    anchor.click();
     URL.revokeObjectURL(url);
   };
 
+  // Download pie chart data as CSV
   const downloadPieChartData = () => {
-    const csvData = [
+    const csvContent = [
       ["Location", "Value"],
       ...staticLocationData.map((item) => [item.location, item.count]),
     ]
-      .map((e) => e.join(","))
+      .map((row) => row.join(","))
       .join("\n");
 
-    const blob = new Blob([csvData], { type: "text/csv" });
+    const blob = new Blob([csvContent], { type: "text/csv" });
     const url = URL.createObjectURL(blob);
-    const a = document.createElement("a");
-    a.href = url;
-    a.download = "Location_Data.csv";
-    a.click();
+    const anchor = document.createElement("a");
+    anchor.href = url;
+    anchor.download = "Location_Data.csv";
+    anchor.click();
     URL.revokeObjectURL(url);
   };
 
   return (
-    <main className="p-5 bg-gradient-to-r from-blue-50 to-green-50 min-h-screen">
-      <h3 className="text-4xl font-bold py-8 text-center text-blue-600">Reports</h3>
+    <main className="p-10 bg-blue-50 min-h-screen">
+      <h3 className="text-4xl font-semibold text-center text-blue-700 mb-8 shadow-md p-4 rounded-xl bg-white">
+        Reports 
+      </h3>
 
-      <div className="flex gap-5 justify-center mb-8">
-        <button
-          className={`px-6 py-3 text-lg ${selectedTab === "monthly" ? "bg-blue-600 text-white shadow-lg" : "bg-gray-300"} rounded-lg transition-transform transform hover:scale-105`}
-          onClick={() => handleTabClick("monthly")}
-        >
-          Monthly
-        </button>
-        <button
-          className={`px-6 py-3 text-lg ${selectedTab === "yearly" ? "bg-blue-600 text-white shadow-lg" : "bg-gray-300"} rounded-lg transition-transform transform hover:scale-105`}
-          onClick={() => handleTabClick("yearly")}
-        >
-          Yearly
-        </button>
-      </div>
-
-      <div className="flex flex-col gap-6 mt-10">
-        {/* Number of Booked Properties Bar Chart */}
-        <div className="bg-white p-4 rounded-lg shadow-lg transition-transform transform hover:scale-105" style={{ width: '80%' }}>
-          <h4 className="text-xl font-semibold mb-4 text-center text-blue-700">
-            Number of Booked Properties
-          </h4>
-          <ResponsiveContainer width="100%" height={300}>
-            <BarChart
-              data={propertyData}
-              margin={{ top: 5, right: 20, left: 10, bottom: 5 }}
-            >
+      {/* Charts */}
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+        {/* Bar Chart */}
+        <ChartContainer title="Most Booked Properties">
+          <ResponsiveContainer width="100%" height={350}>
+            <BarChart data={propertyData}>
               <CartesianGrid strokeDasharray="3 3" />
               <XAxis dataKey="propertyName" />
               <YAxis />
@@ -226,24 +175,28 @@ function Report() {
               <Bar dataKey="bookings" fill="#8884d8" />
             </BarChart>
           </ResponsiveContainer>
-          <button
-            className="mt-4 px-4 py-2 bg-blue-600 text-white rounded-lg shadow-lg transition-transform transform hover:scale-105"
-            onClick={() => downloadChartData("Property")}
-          >
-            Download Property Data
-          </button>
-        </div>
+          <DownloadButton onClick={() => downloadChartData("Properties", propertyData)} />
+        </ChartContainer>
 
         {/* Line Chart */}
-        <div className="bg-white p-4 rounded-lg shadow-lg transition-transform transform hover:scale-105" style={{ width: '80%' }}>
-          <h4 className="text-xl font-semibold mb-4 text-center text-blue-700">
-            Income vs Expenses ({selectedTab.charAt(0).toUpperCase() + selectedTab.slice(1)})
-          </h4>
-          <ResponsiveContainer width="100%" height={300}>
-            <LineChart
-              data={reportData}
-              margin={{ top: 5, right: 20, left: 10, bottom: 5 }}
-            >
+        <ChartContainer title={`Income vs Expenses (${selectedTab})`}>
+          <div className="flex justify-center gap-4 mb-4">
+            {["monthly", "yearly"].map((tab) => (
+              <button
+                key={tab}
+                className={`px-4 py-2 text-sm rounded-xl transition-all duration-200 ${
+                  selectedTab === tab
+                    ? "bg-blue-600 text-white shadow-lg"
+                    : "bg-gray-200 hover:bg-gray-300"
+                }`}
+                onClick={() => handleTabClick(tab)}
+              >
+                {tab.charAt(0).toUpperCase() + tab.slice(1)}
+              </button>
+            ))}
+          </div>
+          <ResponsiveContainer width="100%" height={350}>
+            <LineChart data={reportData}>
               <CartesianGrid strokeDasharray="3 3" />
               <XAxis dataKey="name" />
               <YAxis />
@@ -253,49 +206,49 @@ function Report() {
               <Line type="monotone" dataKey="expense" stroke="#82ca9d" />
             </LineChart>
           </ResponsiveContainer>
-          <button
-            className="mt-4 px-4 py-2 bg-blue-600 text-white rounded-lg shadow-lg transition-transform transform hover:scale-105"
-            onClick={() => downloadChartData("Income-Expense")}
-          >
-            Download Income-Expense Data
-          </button>
-        </div>
+          <DownloadButton onClick={() => downloadChartData(selectedTab, reportData)} />
+        </ChartContainer>
 
         {/* Pie Chart */}
-        <div className="bg-white p-4 rounded-lg shadow-lg transition-transform transform hover:scale-105" style={{ width: '80%' }}>
-          <h4 className="text-xl font-semibold mb-4 text-center text-blue-700">
-            Properties by Location
-          </h4>
-          <ResponsiveContainer width="100%" height={300}>
+        <ChartContainer title="Properties by Location">
+          <ResponsiveContainer width="100%" height={350}>
             <PieChart>
               <Pie
                 data={staticLocationData}
                 dataKey="count"
                 nameKey="location"
-                cx="50%"
-                cy="50%"
-                outerRadius={120}
-                fill="#8884d8"
+                outerRadius={120} // Increased outer radius for larger pie
                 label
               >
                 {staticLocationData.map((entry, index) => (
-                  <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
+                  <Cell key={index} fill={COLORS[index % COLORS.length]} />
                 ))}
               </Pie>
-              <Tooltip />
             </PieChart>
           </ResponsiveContainer>
-          <button
-            className="mt-4 px-4 py-2 bg-blue-600 text-white rounded-lg shadow-lg transition-transform transform hover:scale-105"
-            onClick={downloadPieChartData}
-          >
-            Download Location Data
-          </button>
-        </div>
+          <DownloadButton onClick={downloadPieChartData} />
+        </ChartContainer>
       </div>
     </main>
   );
 }
 
-export default Report;
+// Reusable Chart Container Component
+const ChartContainer = ({ title, children }) => (
+  <div className="bg-white p-6 rounded-lg shadow-lg">
+    <h4 className="text-2xl font-semibold text-center mb-6 text-blue-700">{title}</h4>
+    {children}
+  </div>
+);
 
+// Download Button
+const DownloadButton = ({ onClick }) => (
+  <button
+    onClick={onClick}
+    className="mt-4 py-2 px-3 bg-blue-600 text-white text-sm rounded-xl hover:bg-blue-700 transition duration-200"
+  >
+    Download Chart Data
+  </button>
+);
+
+export default Report;
