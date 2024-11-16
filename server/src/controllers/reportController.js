@@ -1,7 +1,7 @@
 const Reservation = require("../models/reservationModel");
 
 const getRevenueReport = async (req, res) => {
-  const { startDate, endDate, websiteCutPercent = 10 } = req.query;
+  const { startDate, endDate, status } = req.query;
 
   // Validate input
   if (!startDate || !endDate) {
@@ -13,28 +13,49 @@ const getRevenueReport = async (req, res) => {
     const start = new Date(startDate);
     const end = new Date(endDate);
 
-    // Fetch paid reservations within the date range
-    const reservations = await Reservation.find({
-      createdAt: { $gte: start, $lte: end },
-      paymentStatus: true, // Only include paid reservations
-    });
+    // Build the query based on the `status` parameter
+    const query = {
+      checkOutDate: { $gte: start, $lte: end },
+    };
 
-    // Calculate total cash flow, website cut, and payout to hosts
-    let totalCashFlow = 0;
+    if (status === "paid") {
+      query.paymentStatus = true; // Only fetch paid reservations
+    } else if (status === "pending") {
+      query.paymentStatus = false; // Only fetch pending reservations
+    }
+    // If no `status` is provided, fetch all reservations (both paid and pending)
+
+    // Fetch reservations based on the query
+    const reservations = await Reservation.find(query);
+
+    // Group total cash flow by date
+    const revenueByDate = {};
+
     reservations.forEach((reservation) => {
-      totalCashFlow += reservation.totalPrice;
+      const checkOutDate = reservation.checkOutDate.toISOString().split("T")[0]; // Format as YYYY-MM-DD
+      const totalPrice = reservation.totalPrice;
+
+      // Initialize the date in the map if not present
+      if (!revenueByDate[checkOutDate]) {
+        revenueByDate[checkOutDate] = 0;
+      }
+
+      // Add totalPrice to the date's total
+      revenueByDate[checkOutDate] += totalPrice;
     });
 
-    const websiteCut = (totalCashFlow * websiteCutPercent) / 100;
-    const payoutToHosts = totalCashFlow - websiteCut;
+    // Format the result as an array
+    const revenueSummary = Object.keys(revenueByDate).map((date) => ({
+      date,
+      totalCashFlow: revenueByDate[date],
+    }));
 
-    // Return the calculated data
+    // Return the result
     res.status(200).json({
-      totalCashFlow,
-      websiteCut,
-      payoutToHosts,
+      revenueSummary,
       startDate,
       endDate,
+      status: status || "all", // Return the status filter applied
     });
   } catch (error) {
     console.error("Error fetching revenue report:", error);
