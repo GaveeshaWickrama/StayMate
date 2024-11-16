@@ -50,12 +50,6 @@ const userSchema = new mongoose.Schema({
     type: Date,
     default: Date.now,
   },
-
- 
-    // other fields
-    location: { type: String, required: true },
-    // other fields
-    address: { type: String, required: true },
 });
 
 module.exports = mongoose.model("User", userSchema);
