@@ -208,8 +208,6 @@ const propertySchema = new Schema({
     type: Date,
     default: Date.now
   }
-
-  
 });
 
 // Ensure 'location.coordinates' uses the 2dsphere index for geospatial queries

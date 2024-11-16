@@ -16,7 +16,7 @@ const Moderator = () => {
   ]);
 
   const handleEdit = (id) => {
-    navigate("/admin/UpdateUser");//Redirect to Update User page
+    navigate(`/admin/UpdateUser/${id}`);
   };
 
   const handleDelete = (id) => {
