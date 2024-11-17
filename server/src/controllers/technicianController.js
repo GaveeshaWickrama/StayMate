@@ -100,7 +100,7 @@ if(!technicianId || !rating || !userId){
 
   const technician = await Technician.findById(technicianId);
 
-  const complaint = await Complaint.findById({
+  const complaint = await Complaint.findOne({
     _id:complaintID,
     status:"jobCompleted",
   });
@@ -109,6 +109,14 @@ if(!technicianId || !rating || !userId){
     return res.status(404).json({error:'technician or complaint not found'});
   }
 
+
+  if (!Array.isArray(technician.reviews)) {
+    technician.reviews = [];
+  }
+  
+
+console.log("you are here");
+
  //add the new review
  technician.reviews.push({
   reviewerId:userId,
@@ -116,6 +124,7 @@ if(!technicianId || !rating || !userId){
   review
  });
 
+ console.log(technician.reviews);
  //optionally update the overall rating
 
  const totalRatings = technician.reviews.length;
@@ -124,7 +133,7 @@ if(!technicianId || !rating || !userId){
  await technician.save();
 
  res.status(200).json({message:"thank you for your feedback",
-  complaint:ratedComplaint
+  technician
 });
 
 }
@@ -143,6 +152,6 @@ module.exports = {
   
   getTechnicianByIdC,
   getAllTechnicians,
-
+  rateTechnician,
   getTechnicianWithUserDetails,
 };

@@ -16,7 +16,7 @@ const reviewSchema = new Schema({
     max: 5,
     required: true, // Rating is required
   },
-  reviewText: {
+  review: {
     type: String, // Optional review text
     trim: true,
   },
@@ -69,10 +69,7 @@ const locationSchema = new Schema({
     }
   },
 
-reviews: {
-  type:[reviewSchema],
-  default:[],
-}
+
  
 });
 
@@ -108,7 +105,13 @@ const technicianSchema = new Schema({
     type: String,
     default: 'No description provided',
     trim: true
+  },
+
+  reviews: {
+    type:[reviewSchema],
+    default:[],
   }
+
 }, {
   timestamps: true, // Adds createdAt and updatedAt timestamps
   collection: 'technicians' // Explicitly set the collection name

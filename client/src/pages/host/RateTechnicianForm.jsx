@@ -36,16 +36,19 @@ export default function RateTechnicianForm({ isOpen, handleClose, complaint }) {
 
     try {
       const payload = {
-        technicianId: complaint.technicianId,
-        currentRating, //required
+        technicianId: complaint.technician._id,
+        rating: currentRating, //required
         review: review.trim() || null,
         userId: currentUser.id,
+        complaintID:complaint._id
       };
+
+console.log("this is the payload",payload);
 
       // console.log("rating received by the parent component:",currentRating);
       // console.log("technician review",review);
-      await axios.post(
-        `${import.meta.env.VITE_API_URL}/complaints/rate`,
+      const response = await axios.post(
+        `${import.meta.env.VITE_API_URL}/technicians/rate`,
         payload
       );
       console.log("Rating and review submitted successfully:", response.data);

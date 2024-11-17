@@ -14,5 +14,6 @@ router.get('/:technicianID/jobs/', complaintController.getAllJobsByTechnicianId)
 router.get('/all/', technicianController.getAllTechnicians);
 router.get('/:id/', technicianController.getTechnicianByIdC);
 router.get('/:id/task-details', complaintController.getComplaintById);
+router.post('/rate', technicianController.rateTechnician);
 
 module.exports = router;

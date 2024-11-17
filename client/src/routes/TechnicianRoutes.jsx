@@ -38,6 +38,7 @@ function TechnicianRoutes() {
               <Route path="/tasks" element={<Tasks />} />
               <Route path="/:id/task-details" element={<TaskDetails />} />
               <Route path="/:id/task/estimateBudget" element={<PendingTaskDetails />} />
+              <Route path="/:id/reviews" element={<PendingTaskDetails />} />
 
             </>
           ) : (
