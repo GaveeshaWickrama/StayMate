@@ -5,6 +5,10 @@ import Carousel from "../../components/Carousel";
 import PropertyAmenitiesDisplay from "../host/components/PropertyAmenitiesDisplay";
 import ReservationSection from "../../components/ReservationSection";
 import PropertyHost from "../../components/PropertyHost";
+import { useAuth } from "../../context/auth";
+import defaultProfileImg from "../../assets/profile.jpg";
+import { FaStar } from "react-icons/fa";
+
 import {
   FaCouch,
   FaHome,
@@ -71,10 +75,6 @@ const PropertyInfo = ({ location, section }) => {
         <GoPersonFill className="ml-3 text-blue-500" />
         <p>Guests: {section.plan.guests}</p>
       </div>
-      <div className="bg-white p-8 flex items-center">
-        <h2 className="text-xl font-bold">Rating: </h2>
-        <p className="ml-4">No reviews yet.</p>
-      </div>
     </div>
   );
 };
@@ -88,10 +88,6 @@ const PropertyInfoSections = ({ location }) => {
           {capitalizeWords(location.address)}{" "}
           {capitalizeWords(location.province)}
         </p>
-      </div>
-      <div className="bg-white p-8 flex items-center">
-        <h2 className="text-xl font-bold">Rating: </h2>
-        <p className="ml-4">No reviews yet.</p>
       </div>
     </div>
   );
@@ -198,7 +194,6 @@ const PropertySection = ({ section, isExpanded, onExpand, propertyId }) => {
             initialCheckOutDate="2024-07-16"
             serviceFeePercentage={10}
           />
-          
         </>
       )}
     </div>
@@ -223,7 +218,10 @@ const PropertySectionsList = ({ property }) => {
       <PropertyDescription description={property.description} />
 
       <div className="flex mt-6 border-b-4 border-blue-600 p-6  shadow-sm bg-white">
-        <h1 className="flex items-center text-3xl font-extrabold text-black-600"> <FaCouch className="mr-4" /> Accommodation Types </h1>
+        <h1 className="flex items-center text-3xl font-extrabold text-black-600">
+          {" "}
+          <FaCouch className="mr-4" /> Accommodation Types{" "}
+        </h1>
       </div>
 
       {property.sections.map((section, index) => (
@@ -240,7 +238,54 @@ const PropertySectionsList = ({ property }) => {
   );
 };
 
-const DetailedPropertyView = ({ property, id }) => {
+const PropertyReviews = ({ reviews }) => {
+  return (
+    <div className="bg-white p-6 rounded-lg shadow mt-6">
+      <h2 className="text-2xl font-bold mb-4">Reviews</h2>
+      {reviews.length > 0 ? (
+        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
+          {reviews.map((review, index) => (
+            <div
+              key={index}
+              className="border rounded-lg p-4 flex flex-col items-center bg-gray-50"
+            >
+              <img
+                src={defaultProfileImg}
+                alt="Profile"
+                className="w-16 h-16 rounded-full border-2 border-gray-300 mb-2"
+              />
+              <div className="flex flex-col items-center text-center">
+                <h3 className="text-lg font-semibold">
+                  {review.user.firstName} {review.user.lastName}
+                </h3>
+                <p className="text-sm text-gray-600 mb-2">
+                  {new Date(review.createdAt).toLocaleDateString()}
+                </p>
+                <div className="flex items-center mb-2">
+                  {[...Array(5)].map((_, starIndex) => (
+                    <FaStar
+                      key={starIndex}
+                      className={`text-lg ${
+                        starIndex < review.rating
+                          ? "text-yellow-500"
+                          : "text-gray-300"
+                      }`}
+                    />
+                  ))}
+                </div>
+                <p className="text-md">{review.comment}</p>
+              </div>
+            </div>
+          ))}
+        </div>
+      ) : (
+        <p className="text-center text-gray-600">No reviews yet.</p>
+      )}
+    </div>
+  );
+};
+
+const DetailedPropertyView = ({ property, id, reviews }) => {
   return (
     <div className="bg-gray-100 mx-auto py-2 px-8">
       <PropertyHeader title={property.title} createdAt={property.created_at} />
@@ -262,6 +307,7 @@ const DetailedPropertyView = ({ property, id }) => {
         serviceFeePercentage={10}
       />
       <PropertyAmenitiesDisplay amenities={property.amenities} />
+      <PropertyReviews reviews={reviews} />
     </div>
   );
 };
@@ -269,6 +315,8 @@ const DetailedPropertyView = ({ property, id }) => {
 function PropertyDetails() {
   const { id } = useParams();
   const [property, setProperty] = useState(null);
+  const [reviews, setReviews] = useState([]);
+  const { token } = useAuth(); // Retrieve the token here
 
   useEffect(() => {
     const fetchProperty = async () => {
@@ -281,8 +329,21 @@ function PropertyDetails() {
         console.error("Error fetching property:", error);
       }
     };
+    const fetchReviews = async () => {
+      try {
+        const response = await axios.get(
+          `${
+            import.meta.env.VITE_API_URL
+          }/reviews/propertyreviews?propertyId=${id}`
+        );
+        setReviews(response.data);
+      } catch (error) {
+        console.error("Error fetching reviews:", error);
+      }
+    };
 
     fetchProperty();
+    fetchReviews();
   }, [id]);
 
   if (!property) {
@@ -290,7 +351,9 @@ function PropertyDetails() {
   }
 
   if (property.total_unique_sections === -1) {
-    return <DetailedPropertyView property={property} id={id} />;
+    return (
+      <DetailedPropertyView property={property} id={id} reviews={reviews} />
+    );
   } else {
     return <PropertySectionsList property={property} />;
   }

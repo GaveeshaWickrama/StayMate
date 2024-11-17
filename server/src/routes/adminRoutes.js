@@ -4,7 +4,7 @@ const adminController = require("../controllers/adminController");
 const reservationController = require("../controllers/reservationController");
 const { authToken, requireRole } = require("../middleware/authProvider");
 
-//get all moderators
+// Get all moderators
 router.get(
   "/moderators",
   authToken,
@@ -12,13 +12,7 @@ router.get(
   adminController.getModerators
 );
 
-//create a new moderator
-router.post(
-  "/moderators",
-  authToken,
-  requireRole("admin"),
-  adminController.createModerator
-);
+// Create a new moderator
 router.post(
   "/moderators",
   authToken,
@@ -26,7 +20,7 @@ router.post(
   adminController.createModerator
 );
 
-//delete a new moderator
+// Delete a moderator
 router.delete(
   "/moderators/:id",
   authToken,
@@ -34,7 +28,7 @@ router.delete(
   adminController.deleteModerator
 );
 
-// get all users
+// Get all users (guests and hosts)
 router.get(
   "/users",
   authToken,
@@ -42,7 +36,7 @@ router.get(
   adminController.getAllUsers
 );
 
-// create a user
+// Create a new user
 router.post(
   "/users",
   authToken,
@@ -50,7 +44,7 @@ router.post(
   adminController.createUser
 );
 
-// get single user
+// Get a single user by ID
 router.get(
   "/users/:id",
   authToken,
@@ -58,7 +52,7 @@ router.get(
   adminController.getUser
 );
 
-// update single user
+// Update a single user by ID
 router.patch(
   "/users/:id",
   authToken,
@@ -66,7 +60,7 @@ router.patch(
   adminController.updateUser
 );
 
-// delete single user
+// Delete a single user by ID
 router.delete(
   "/users/:id",
   authToken,
@@ -74,7 +68,7 @@ router.delete(
   adminController.deleteUser
 );
 
-//get profile details
+// Get profile details of the authenticated admin
 router.get(
   "/viewProfile",
   authToken,
@@ -82,20 +76,20 @@ router.get(
   adminController.viewProfile
 );
 
-//get Payment Details
-router.get(
-  "/payments",
-  authToken,
-  requireRole("admin"),
-  reservationController.getPaymentDetails
-);
-
-//update profile details
+// Update profile details of the authenticated admin
 router.put(
   "/viewProfile",
   authToken,
   requireRole("admin"),
   adminController.updateProfile
+);
+
+// Get payment details
+router.get(
+  "/payments",
+  authToken,
+  requireRole("admin"),
+  reservationController.getPaymentDetails
 );
 
 router.get('/technicians', adminController.getAllTechnicians);
