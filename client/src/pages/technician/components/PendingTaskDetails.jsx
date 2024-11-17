@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 import  TaskDetails  from "../TaskDetails";
 import { Routes, Route, Navigate, useNavigate } from "react-router-dom";
 import PopupForm from "../AcceptJobForm";
-
+import axios from 'axios';
 
 
 
@@ -11,16 +11,29 @@ export default function PendingTaskDetails({complaint}) {
 
   const navigate = useNavigate();
 
+  const [estimatedBudget, setEstimatedBudget] = useState('');
   const [showModal, setShowModal] = useState(false);
 
-  const handleSave = (e) => {
+  const handleSave = async (e) => {
     e.preventDefault();
-    alert(`Form submitted for complaint id: ${complaint.id}`);
+
+    console.log(`estimated budget received in handleSave function ${estimatedBudget}`)
+
+    try {
+      await axios.post(`${import.meta.env.VITE_API_URL}/complaints/complaint/${complaint._id}/acceptJob`, { budget : estimatedBudget });
+
+      alert('Budget submitted successfully');
+    } catch (error) {
+      console.error('Error submitting budget:', error);
+    }
+
+    // alert(`Form submitted for complaintt id: ${complaint._id}`);
     setShowModal(false);
-    navigate("/host/manage-complaints");
+    navigate("/technician/tasks");
   };
 
   console.log(complaint.status);
+  console.log("initial estimated budget",estimatedBudget);
 
   return (
     <div className="bg-gray-100 mx-auto py-2 px-8">
@@ -47,6 +60,8 @@ export default function PendingTaskDetails({complaint}) {
        isOpen={showModal}
        handleClose={() => setShowModal(false)}
        handleSave={handleSave}
+       estimatedBudget={estimatedBudget} // Pass any other necessary props
+       setEstimatedBudget={setEstimatedBudget} // Pass setter function if needed
      />
    </div>
   ) : (

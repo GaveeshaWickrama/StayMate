@@ -3,10 +3,16 @@ import React from 'react';
 const DeedUpload = ({ property, setProperty }) => {
   const handleFileChange = (e) => {
     const file = e.target.files[0];
-    setProperty(prevState => ({
-      ...prevState,
-      deed: { file }
-    }));
+
+    if (file && file.type === "application/pdf") {
+      // Set the PDF file in the property state
+      setProperty(prevState => ({
+        ...prevState,
+        deed: { file }  // Save the file object
+      }));
+    } else {
+      alert("Please upload a valid PDF file.");
+    }
   };
 
   const handleChange = (e) => {
@@ -22,16 +28,16 @@ const DeedUpload = ({ property, setProperty }) => {
       <h2 className="text-4xl font-extrabold text-black-600 mb-8 border-b-4 border-blue-600 p-6 rounded-md shadow-sm">Upload Deed</h2>
       <div className="flex-col p-10 bg-gray-50 rounded-lg shadow-lg">
         <div className="mb-4">
-          <label className="text-2xl block mb-2 font-semibold">Image of Deed</label>
+          <label className="text-2xl block mb-2 font-semibold">Deed (PDF)</label>
           <input 
             type="file" 
-            accept="image/*" 
+            accept="application/pdf"  // Accept only PDF
             onChange={handleFileChange} 
             className="block w-full text-lg text-gray-900 border border-gray-300 rounded-lg cursor-pointer bg-gray-50 focus:outline-none p-6"
           />
         </div>
         <div className="mt-10">
-          <label className="text-2xl block mb-2 font-semibold">Additional Details(Optional)</label>
+          <label className="text-2xl block mb-2 font-semibold">Additional Details (Optional)</label>
           <textarea
             name="additionalDetails"
             value={property.additionalDetails || ''}

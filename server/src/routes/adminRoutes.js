@@ -92,4 +92,6 @@ router.get(
   reservationController.getPaymentDetails
 );
 
+router.get('/technicians', adminController.getAllTechnicians);
+
 module.exports = router;

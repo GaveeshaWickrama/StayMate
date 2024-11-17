@@ -1,12 +1,11 @@
 const User = require("../models/userModel");
 const mongoose = require("mongoose");
+const Technician = require("../models/technicianModel");
 
 // Get all Moderators
 const getModerators = async (req, res) => {
   try {
-    const users = await User.find({ role: "moderator" }).sort({
-      createdAt: -1,
-    });
+    const users = await User.find({ role: "moderator" }).sort({ createdAt: -1 });
     res.status(200).json(users);
   } catch (error) {
     res.status(400).json({ error: error.message });
@@ -89,7 +88,20 @@ const deleteModerator = async (req, res) => {
   }
 };
 
-// Get all users (including guests and hosts)
+// Get all Technicians
+const getAllTechnicians = async (req, res) => {
+  try {
+    const technicians = await Technician.find().populate(
+      "userId",
+      "firstName lastName email phone"
+    ); // Optionally populate user fields
+    res.status(200).json(technicians);
+  } catch (error) {
+    res.status(400).json({ error: error.message });
+  }
+};
+
+// Other User Functions
 const getAllUsers = async (req, res) => {
   try {
     const users = await User.find({ role: { $in: ["guest", "host"] } }).sort({
@@ -101,7 +113,6 @@ const getAllUsers = async (req, res) => {
   }
 };
 
-// Create a new user
 const createUser = async (req, res) => {
   const user = new User(req.body);
   try {
@@ -112,7 +123,6 @@ const createUser = async (req, res) => {
   }
 };
 
-// Get a single user by ID
 const getUser = async (req, res) => {
   try {
     const userId = req.params.id;
@@ -124,7 +134,6 @@ const getUser = async (req, res) => {
   }
 };
 
-// Update user by ID
 const updateUser = async (req, res) => {
   try {
     const userId = req.params.id;
@@ -142,7 +151,6 @@ const updateUser = async (req, res) => {
   }
 };
 
-// Delete user by ID
 const deleteUser = async (req, res) => {
   try {
     const user = await User.findByIdAndDelete(req.params.id);
@@ -153,7 +161,6 @@ const deleteUser = async (req, res) => {
   }
 };
 
-// View profile of the authenticated user
 const viewProfile = async (req, res) => {
   const userId = req.user.userId;
 
@@ -170,7 +177,6 @@ const viewProfile = async (req, res) => {
   }
 };
 
-// Update profile of the authenticated user
 const updateProfile = async (req, res) => {
   const userId = req.user.userId;
 
@@ -200,4 +206,5 @@ module.exports = {
   getModerators,
   createModerator,
   deleteModerator,
+  getAllTechnicians,
 };
