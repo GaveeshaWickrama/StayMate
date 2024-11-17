@@ -36,8 +36,9 @@ router.get(
 //   "/:id/pending/host",
 //   complaintController.getPendingComplaintsByHostId
 // );
-router.get("/:id/active/host", complaintController.getActiveComplaintsByHostId);
+// router.get("/:id/active/host", complaintController.getActiveComplaintsByHostId);
 router.get("/:id/completed", complaintController.getCompletedJobs);
+router.post("/:id/confirmJob", complaintController.confirmJob);
 router.get("/complaint-details/:complaintID", complaintController.getComplaintById);
 router.get("/:id", complaintController.getComplaintsByHost);   //working
 router.get("/:id/pending/host", complaintController.getPendingComplaintsByHost);   //working backend
@@ -45,12 +46,16 @@ router.post(
   "/assign-complaint/:technicianId",
   complaintController.assignComplaintToTechnician   //working
 );
-router.post("/complaint/:id/review", complaintController.reviewTask);
+router.post("/complaint/:complaintId/review", complaintController.reviewTask);
 router.post("/complaint/:complaintId/acceptJob", complaintController.acceptJob); //working
+router.post("/complaint/:complaintId/resolve", complaintController.markAsResolved); 
 router.post(
   "/complaint/:id/uploadProof",
-  upload.array("proofImages", 5),
+  upload.array("images"),
   complaintController.uploadProof
 );
+router.get("/complaint/:complaintId/getProgress",complaintController.getProgress)
+router.post("/complaint/:complaintId/setProgress",complaintController.setProgress)
+router.post("/complaint/:complaintId/markJobCompleted",complaintController.markJobCompleted)
 
 module.exports = router;

@@ -18,6 +18,9 @@ const storage = multer.diskStorage({
     } else if (req.url.includes('/complaint-details')) {
       uploadPath = 'uploads/complaints/';
     } 
+     else if (req.url.includes('/uploadProof')) {
+      uploadPath = 'uploads/proof/';
+    } 
    
 
     cb(null, uploadPath);

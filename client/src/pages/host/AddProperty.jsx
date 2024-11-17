@@ -68,7 +68,9 @@ const AddProperty = () => {
     Object.keys(property).forEach(key => {
       if (key === 'images') {
         property.images.forEach(image => {
-          formData.append('images', image.file);
+          if (image.file) {  // Check if file exists before appending
+            formData.append('images', image.file);
+          }
         });
       } else if (key === 'location') {
         Object.keys(property.location).forEach(locKey => {
@@ -82,17 +84,20 @@ const AddProperty = () => {
     // Append section data including images
     const sections = property.sections.map(section => {
       const updatedImages = section.images.map(image => {
-        formData.append('section_images', image.file);
-        return { url: image.file.name };
+        if (image.file) {  // Check if file exists before appending
+          formData.append('section_images', image.file);
+          return { url: image.file.name };
+        }
+        return image;  // If no file, return existing image object
       });
   
       const updatedAmenities = section.amenities.map(amenity => {
-        if (amenity.image && amenity.image.file) {
+        if (amenity.image?.file) {  // Check if file exists before appending
           formData.append('amenity_images', amenity.image.file);
         }
         return {
           ...amenity,
-          image: { url: amenity.image.file.name }
+          image: amenity.image?.file ? { url: amenity.image.file.name } : amenity.image
         };
       });
   
@@ -107,16 +112,21 @@ const AddProperty = () => {
   
     // Append property-level amenities and their images
     const updatedPropertyAmenities = property.amenities.map(amenity => {
-      if (amenity.image && amenity.image.file) {
+      if (amenity.image?.file) {  // Check if file exists before appending
         formData.append('amenity_images', amenity.image.file);
       }
       return {
         ...amenity,
-        image: { url: amenity.image.file.name }
+        image: amenity.image?.file ? { url: amenity.image.file.name } : amenity.image
       };
     });
   
     formData.append('amenities', JSON.stringify(updatedPropertyAmenities));
+  
+    // Append the deed file if it exists
+    if (property.deed?.file) {
+      formData.append('deed', property.deed.file);
+    }
   
     try {
       const response = await axios.post(`${import.meta.env.VITE_API_URL}/properties/add`, formData, {
@@ -126,12 +136,12 @@ const AddProperty = () => {
         }
       });
       console.log('Property added:', response.data);
-      
       navigate('/host/listings', { state: { fromAddProperty: true } });
     } catch (error) {
       console.error('There was an error adding the property:', error);
     }
   };
+  
   
 
   const validateForm = () => {

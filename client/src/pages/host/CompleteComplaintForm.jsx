@@ -15,10 +15,12 @@ const PopupForm = ({ isOpen, handleClose , complaint }) => {
       // console.log(`Host ID: ${hostID}`);
 
       await axios.post(
-        `${import.meta.env.VITE_API_URL}/complaints/resolve-complaint/${complaint._id}`,
-        {},
+        `${import.meta.env.VITE_API_URL}/complaints/complaint/${complaint._id}/markJobCompleted`,
+        
   { params: { complaintId: complaint._id } }
       );
+     
+
 
       navigate('/host/manage-complaints');
       alert("Job successsfully closed!!");
@@ -45,6 +47,7 @@ const PopupForm = ({ isOpen, handleClose , complaint }) => {
             <button
               type="button"
               className="bg-gray-500 text-white px-4 py-2 rounded mr-2"
+              onClick={handleClose}
             >
               Cancel
             </button>
