@@ -9,6 +9,11 @@ const { getRecieverSocketId, io } = require('../socket/socket');
 const path = require("path");
 const mongoose = require("mongoose");
 
+
+
+
+
+
 const raiseComplaint = async (req, res) => {
   const { reservationId, title, description, category } = req.body;
 
@@ -84,12 +89,13 @@ async function assignComplaintToTechnician(req, res) {
   const { technicianId } = req.params; // Route parameter    //technician _id
   const { complaintId, hostID } = req.query; // Query parameters
 
-  const { additionalInfo } = req.body;
+  const { additionalInfo, deadline } = req.body;
 
   try {
     console.log("Received complaint ID:", complaintId);
     console.log("Received technician ID:", technicianId);
     console.log("Received host ID:", hostID);
+    console.log("deadline:", deadline);
 
     // Convert complaintId to ObjectId
 
@@ -113,6 +119,9 @@ async function assignComplaintToTechnician(req, res) {
         });
     }
 
+    const assignedDate = Date.now(); // Current timestamp in milliseconds
+    console.log(assignedDate);
+
     // Update the complaint to assign it to the technician and change status
     const updatedComplaint = await Complaint.findOneAndUpdate(
       { _id: complaintObjectId, status: "pendingHostDecision" },
@@ -121,6 +130,8 @@ async function assignComplaintToTechnician(req, res) {
           status: "pendingTechnicianApproval",
           technician: technicianUserId,
           assignTaskComments: additionalInfo,
+          assignedDate:assignedDate,
+          deadline:deadline
         },
       },
       { new: true } // Return the updated document
@@ -150,12 +161,41 @@ async function assignComplaintToTechnician(req, res) {
     }
 
     console.log("Assigned to a technician successfully");
+
+
+    //set timeout function
+    // setTimeout(async () => {
+    //   try{
+    //     await Complaint.findOneAndUpdate(
+    //       {_id:complaintObjectId, status: "pendingTechnicianApproval"},
+    //       {
+    //         $set:{
+    //           status:"pendingHostDecision",
+    //           technician:null
+    //         }
+    //       },
+    //         {
+    //           new: true
+    //         }
+    //     );
+    //     console.log(`Complaint ID ${complaintId} reverted to pendingHostDecision`);
+    //   } catch (error) {
+    //     console.error(`failed to revert complaint id ${complaintId}`, error);
+    //   }
+
+    // }, 3*24*60*60*1000 ); //3 days in milliseconds
+
+
     res
       .status(200)
       .json({
         message: "Complaint assigned to technician successfully",
         complaint: updatedComplaint,
       });
+
+
+
+
   } catch (error) {
     console.error("Error assigning complaint to technician:", error);
     res
@@ -222,10 +262,45 @@ async function acceptJob(req, res) {
   }
 }
 
+
+
+
 function hello(req, res) {
   console.log("hello");
   res.status(200).json({ message: "success" }); // Send error response
 }
+
+
+async function confirmJob(req,res) {
+  const id = req.params.id; //complaintid
+  
+
+  
+  const complaintObjectId =
+  mongoose.Types.ObjectId.createFromHexString(id);
+
+  if(!id){
+    return res.status(400).json({message:"complaint id is required"});
+  }
+  try {
+    const updatedComplaint = await Complaint.findByIdAndUpdate(
+      { _id: complaintObjectId , status : 'pendingTechnicianApproval' }, // Ensure only non-resolved complaints are updated
+      { 
+        $set: { 
+          status: "active",
+          progress: 0 // Add the progress field with an initial value
+        }
+      },
+      {new:true}
+    );
+
+    res.status(200).json({ message: "successfully marked as active", updatedComplaint });
+  } catch (error) {
+    console.error(error); // Log the error
+    res.status(500).json({ message: "couldnt save changes", error }); // Send error response
+  }
+}
+
 async function getComplaintById(req, res) {
   let complaintID = req.params.complaintID;
 
@@ -557,34 +632,34 @@ const getPendingComplaintsByHost = async (req, res) => {
   }
 };
 
-const getActiveComplaintsByHostId = async (req, res) => {
-  const id = req.params.id; //host id
-  try {
-    let complaints = await Complaint.find({ status: "active" }).populate({
-      path: "reservationId",
-      populate: {
-        path: "property",
-        populate: {
-          path: "host_id",
-        },
-      },
-    });
-    complaints = complaints.filter(
-      (complaint) =>
-        complaint.reservationId.property.host_id.toString() === id.toString()
-    );
+// const getActiveComplaintsByHostId = async (req, res) => {
+//   const id = req.params.id; //host id
+//   try {
+//     let complaints = await Complaint.find({ status: "active" }).populate({
+//       path: "reservationId",
+//       populate: {
+//         path: "property",
+//         populate: {
+//           path: "host_id",
+//         },
+//       },
+//     });
+//     complaints = complaints.filter(
+//       (complaint) =>
+//         complaint.reservationId.property.host_id.toString() === id.toString()
+//     );
 
-    if (!complaints.length) {
-      return res.status(404).json({ message: "no pending complaints" });
-    }
-    res.status(200).json(complaints);
-  } catch (error) {
-    console.error(error); // Log the error
-    res
-      .status(500)
-      .json({ message: "An error occurred while fetching jobs", error: error }); // Send error response
-  }
-};
+//     if (!complaints.length) {
+//       return res.status(404).json({ message: "no pending complaints" });
+//     }
+//     res.status(200).json(complaints);
+//   } catch (error) {
+//     console.error(error); // Log the error
+//     res
+//       .status(500)
+//       .json({ message: "An error occurred while fetching jobs", error: error }); // Send error response
+//   }
+// };
 
 const getCompletedJobs = async (req, res) => {
   const id = req.params.id;
@@ -611,19 +686,100 @@ const getCompletedJobs = async (req, res) => {
 
 //following is for host
 const markAsResolved = async (req, res) => {
-  const id = req.params.id; //complaintid
+  const id = req.params.complaintId; //complaintid
+  const {resolveComments}  = req.body
+
+  
+  const complaintObjectId =
+  mongoose.Types.ObjectId.createFromHexString(id);
+
+  if(!id){
+    return res.status(400).json({message:"complaint id is required"});
+  }
   try {
-    await Complaint.updateMany(
-      { _id: id, status: { $ne: "pendingHostDecision" } }, // Ensure only non-resolved complaints are updated
-      { $set: { status: "hostCompleted" } }
+    const updatedComplaint = await Complaint.findByIdAndUpdate(
+      { _id: complaintObjectId }, // Ensure only non-resolved complaints are updated
+      { $set: { status: "hostCompleted", resolveComments:resolveComments } },
+      {new:true}
     );
 
-    res.status(200).json({ message: "complaint marked as resolved" });
+    res.status(200).json({ message: "complaint marked as resolved", updatedComplaint });
   } catch (error) {
     console.error(error); // Log the error
     res.status(500).json({ message: "couldnt save changes", error }); // Send error response
   }
 };
+
+const getProgress = async (req,res) => {
+  const id = req.params.complaintId;
+  const complaintObjectId =
+  mongoose.Types.ObjectId.createFromHexString(id);
+
+
+  if(!id){
+    return res.status(400).json({message:"complaint id is required"});
+  }
+  try {
+    const complaint = await Complaint.find(
+      { _id: complaintObjectId , status: 'active' }, // Ensure only non-resolved complaints are updated
+    );
+
+    res.status(200).json({ message: "progress received", complaint });
+  } catch (error) {
+    console.error(error); // Log the error
+    res.status(500).json({ message: "couldnt retrieve progress", error }); // Send error response
+  }
+}
+
+const setProgress = async (req,res) => {
+  const id = req.params.complaintId;
+  const { progress } = req.body;
+  const complaintObjectId =
+  mongoose.Types.ObjectId.createFromHexString(id);
+
+
+  if(!id){
+    return res.status(400).json({message:"complaint id is required"});
+  }
+  try {
+    const updatedComplaint = await Complaint.findByIdAndUpdate(
+      { _id: complaintObjectId , status: 'active' },
+      { $set: { progress } },
+      { new: true } // Ensure only non-resolved complaints are updated
+    );
+
+    res.status(200).json({ message: "progress updated", updatedComplaint });
+  } catch (error) {
+    console.error(error); // Log the error
+    res.status(500).json({ message: "couldnt update progress", error }); // Send error response
+  }
+}
+
+
+const markJobCompleted = async (req, res) => {
+  const id = req.params.complaintId; //complaintid
+
+  
+  const complaintObjectId =
+  mongoose.Types.ObjectId.createFromHexString(id);
+
+  if(!id){
+    return res.status(400).json({message:"complaint id is required"});
+  }
+  try {
+    const updatedComplaint = await Complaint.findByIdAndUpdate(
+      { _id: complaintObjectId }, // Ensure only non-resolved complaints are updated
+      { $set: { status: "jobCompleted" } },
+      {new:true}
+    );
+
+    res.status(200).json({ message: "complaint marked as completed", updatedComplaint });
+  } catch (error) {
+    console.error(error); // Log the error
+    res.status(500).json({ message: "couldnt save changes", error }); // Send error response
+  }
+};
+
 
 const getReservationDetails = async (reservationId) => {
   
@@ -683,6 +839,7 @@ const getTechnicianUserId = async (technicianId) => {
   }
 }
 
+
 module.exports = {
   raiseComplaint,
   getComplaintById, //host
@@ -693,7 +850,7 @@ module.exports = {
   getActiveJobsByTechnicianId, //technician
   getPendingJobsByTechnicianId, //technician
   // getPendingComplaintsByHostId, //host
-  getActiveComplaintsByHostId, //host
+  // getActiveComplaintsByHostId, //host
   getCompletedJobs, //technician
   acceptJob,
   getComplaintsByHost, //working
@@ -701,4 +858,9 @@ module.exports = {
   hello,
   reviewTask,
   uploadProof,
+  markAsResolved,
+  confirmJob,
+  getProgress,
+  setProgress,
+  markJobCompleted
 };
