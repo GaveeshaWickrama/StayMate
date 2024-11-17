@@ -157,7 +157,7 @@ const propertySchema = new Schema({
   type: {
     type: String,
     required: true,
-    enum: ['House', 'Apartment', 'Villa', 'Cottage', 'Cabin']
+    enum: ['House', 'Apartment', 'Villa', 'Cottage', 'Cabin' , 'Bungalow']
   },
   total_unique_sections: {
     type: Number,

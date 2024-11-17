@@ -1,6 +1,6 @@
 const User = require('../models/userModel')
 const mongoose = require('mongoose')
-
+const Technician = require('../models/technicianModel');
 //get all Moderators
 const getModerators = async (req,res)=>{
 
@@ -107,7 +107,14 @@ async function getAllUsers(req, res) {
 
 
 
-
+  const getAllTechnicians = async (req, res) => {
+    try {
+      const technicians = await Technician.find().populate('userId', 'firstName lastName email phone'); // Optionally populate user fields
+      res.status(200).json(technicians);
+    } catch (error) {
+      res.status(400).json({ error: error.message });
+    }
+  };
 
 
 
@@ -231,4 +238,5 @@ module.exports = {
     getModerators,
     createModerator,
     deleteModerator,
+    getAllTechnicians,
 };
