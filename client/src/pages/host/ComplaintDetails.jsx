@@ -41,6 +41,7 @@ export default function ComplaintDetails() {
         console.log(
           `${import.meta.env.VITE_API_URL}/complaints/complaint-details/${id}`
         );
+        console.log("this is the complaint id",id);
         setComplaint(response.data);
         console.log("this is the response data", complaint);
       } catch (error) {
@@ -147,7 +148,7 @@ export default function ComplaintDetails() {
           </div>
         </div>
 
-        <div className="w-full md:w-1/3 bg-white p-4 rounded-lg shadow flex flex-col ">
+        <div className="w-full md:w-1/3 bg-white p-4 rounded-lg shadow md:flex md:flex-col ">
           <div className="flex items-center p-6 gap-4">
             <h2 className="text-xl font-bold">Posted On:</h2>
 
@@ -210,7 +211,7 @@ export default function ComplaintDetails() {
           complaint.status === "pendingTechnicianApproval" ? (
           <PendingComplaintDetails complaint={complaint} id={id} />
         ) : (
-          <FinishedComplaintDetails complaint={complaint} />
+          <FinishedComplaintDetails  complaint={complaint} complaintId={id} />
         )}
       </div>
     </div>

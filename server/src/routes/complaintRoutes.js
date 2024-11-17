@@ -46,7 +46,7 @@ router.post(
   "/assign-complaint/:technicianId",
   complaintController.assignComplaintToTechnician   //working
 );
-router.post("/complaint/:id/review", complaintController.reviewTask);
+router.post("/complaint/:complaintId/review", complaintController.reviewTask);
 router.post("/complaint/:complaintId/acceptJob", complaintController.acceptJob); //working
 router.post("/complaint/:complaintId/resolve", complaintController.markAsResolved); 
 router.post(

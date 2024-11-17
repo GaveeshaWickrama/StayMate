@@ -168,6 +168,14 @@ export default function ComplaintDetails(props) {
               {new Date(complaint.timestamp).toLocaleDateString()}
             </p>
           </div>
+          {(complaint.status !== "pendingHostDecision" || complaint.status!=="hostCompleted") && (<div className="flex items-center p-6 gap-4">
+          {/* {complaint.status === "pendingTechnicianApproval" && (<div className="flex items-center p-6 gap-4"> */}
+            <h2 className="text-xl font-bold">Assigned On:</h2>
+
+            <p className="text-base">
+              {new Date(complaint.assignedDate).toLocaleDateString()}
+            </p>
+          </div>)}
 
           <div className="flex items-base p-6 gap-4">
             <h2 className="text-xl font-bold mb-2">Posted By</h2>
@@ -216,7 +224,7 @@ export default function ComplaintDetails(props) {
             <p className="text-base flex flex-row items-center gap-6">
               <span className="font-bold text-xl"> Deadline:</span>{" "}
               <span className="text-lg">
-               {complaint.deadlineDate}
+               {new Date(complaint.deadline).toLocaleDateString()}
               </span>
             </p>
               
