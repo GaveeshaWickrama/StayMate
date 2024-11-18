@@ -224,6 +224,12 @@ const TableComponent = ({ data }) => {
         {item.status === 'pendingHostDecision' && (
           <button className=''> <span className='badge badge-ghost badge-sm whitespace-nowrap'>Pending Host Decision</span></button>
         )}
+        {item.status === 'hostCompleted' && (
+          <button className=''> <span className='badge badge-ghost badge-sm whitespace-nowrap'>Resolved</span></button>
+        )}
+        {item.status === 'technicianCompleted' && (
+          <button className=''> <span className='badge badge-ghost badge-sm whitespace-nowrap'>to be reviewed</span></button>
+        )}
                 </td>
                 <td>
                 <button className="bg-green-500 w-15 h-15 rounded-xl text-white text-xs p-2"onClick={() => handleStatusChange(item.id, 'in-progress')}> <span className=''>Mark as Resolved</span></button> 

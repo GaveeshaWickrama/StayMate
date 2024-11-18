@@ -16,7 +16,7 @@ const PopupForm = ({ isOpen, handleClose , complaintId }) => {
       // console.log(`Host ID: ${hostID}`);
 
       await axios.post(
-        `${import.meta.env.VITE_API_URL}/complaints/resolve-complaint/${complaintId}`,
+        `${import.meta.env.VITE_API_URL}/complaints/complaint/${complaintId}/resolve`,
         { resolveComments }, // Include the additional info in the request body
 
         { params: { complaintId } }

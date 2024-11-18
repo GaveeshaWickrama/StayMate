@@ -1,4 +1,5 @@
 import React from "react";
+import { useSocketContext } from '../../context/SocketContext';
 import { Link, useNavigate } from "react-router-dom";
 import { useAuth } from "../../context/auth";
 import { IconContext } from "react-icons";
@@ -19,6 +20,8 @@ import { MdReportProblem } from "react-icons/md";
 import { MdOutlineTaskAlt } from "react-icons/md";
 import { FaTasks } from "react-icons/fa";
 import { GrTasks } from "react-icons/gr";
+import useTotalUnreadMessageCount from '../../hooks/useTotalUnreadMessageCount';
+import useConversation from "../../zustand/useConversation";
 
 const iconMap = {
   Home: "home",
@@ -49,7 +52,8 @@ const iconMap = {
   Tasks: <GrTasks />,
 };
 
-function Sidebar({ title, links, logout, isVisible }) {
+
+function Sidebar({ title, links, logout, isVisible, newMessageCount }) {
   return (
     <nav
       className={`sidebar ${
@@ -66,6 +70,11 @@ function Sidebar({ title, links, logout, isVisible }) {
           >
             <span className="material-icons">{iconMap[link.label]}</span>
             <span>{link.label}</span>
+            {link.label === "Chat" && newMessageCount > 0 && (
+              <span className="bg-red-600 text-white rounded-full ml-2 px-2 py-1 text-xs">
+                {newMessageCount}
+              </span>
+            )}
           </Link>
         ))}
       </IconContext.Provider>
@@ -83,8 +92,12 @@ function Sidebar({ title, links, logout, isVisible }) {
 }
 
 function Navbar({ isVisible }) {
+  
   const { currentUser, logout } = useAuth();
   const navigate = useNavigate();
+  useTotalUnreadMessageCount();
+
+  const {totalUnreadMessageCount} = useConversation();
 
   const handleLogout = () => {
     logout();
@@ -171,6 +184,7 @@ function Navbar({ isVisible }) {
         links={adminLinks}
         logout={handleLogout}
         isVisible={isVisible}
+        newMessageCount={totalUnreadMessageCount}
       />
     );
   }
@@ -182,6 +196,7 @@ function Navbar({ isVisible }) {
         links={guestLinks}
         logout={handleLogout}
         isVisible={isVisible}
+        newMessageCount={totalUnreadMessageCount}
       />
     );
   }
@@ -193,6 +208,7 @@ function Navbar({ isVisible }) {
         links={hostLinks}
         logout={handleLogout}
         isVisible={isVisible}
+        newMessageCount={totalUnreadMessageCount}
       />
     );
   }
@@ -204,6 +220,7 @@ function Navbar({ isVisible }) {
         links={technicianLinks}
         logout={handleLogout}
         isVisible={isVisible}
+        newMessageCount={totalUnreadMessageCount}
       />
     );
   }
@@ -215,6 +232,7 @@ function Navbar({ isVisible }) {
         links={moderatorLinks}
         logout={handleLogout}
         isVisible={isVisible}
+        newMessageCount={totalUnreadMessageCount}
       />
     );
   }

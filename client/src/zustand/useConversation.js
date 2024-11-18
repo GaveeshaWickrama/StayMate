@@ -7,6 +7,8 @@
     setMessages : (messages) => set({ messages }),
     tempConversation : null,
     setTempConversation : (tempConversation) => set( {tempConversation} ),
+    totalUnreadMessageCount : null,
+    setTotalUnreadMessageCount : (totalUnreadMessageCount) => set( {totalUnreadMessageCount} ),
  }));
 
  export default useConversation;

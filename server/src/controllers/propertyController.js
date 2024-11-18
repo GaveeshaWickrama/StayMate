@@ -52,7 +52,10 @@ async function createProperty(req, res) {
 
       // Process section-level amenities and assign images
       section.amenities = section.amenities.map((amenity) => {
-        if (amenityImages[amenityImageIndex]) {
+        if (amenity.name === 'WiFi') {
+          // Set WiFi image to default path
+          amenity.image = { url: 'uploads/default/Wifi.webp' };
+        } else if (amenityImages[amenityImageIndex]) {
           amenity.image = { url: amenityImages[amenityImageIndex].url };
           amenityImageIndex++;
         }
@@ -65,7 +68,10 @@ async function createProperty(req, res) {
     // Handle property-level amenities and their images
     let propertyAmenityImageIndex = 0;
     amenities = amenities.map((amenity) => {
-      if (amenityImages[propertyAmenityImageIndex]) {
+      if (amenity.name === 'WiFi') {
+        // Set WiFi image to default path
+        amenity.image = { url: 'uploads/properties/wifi' };
+      } else if (amenityImages[propertyAmenityImageIndex]) {
         amenity.image = { url: amenityImages[propertyAmenityImageIndex].url };
         propertyAmenityImageIndex++;
       }

@@ -24,6 +24,7 @@ import PendingTaskDetails from "./components/PendingTaskDetails";
 import CompletedTaskDetails from "./components/CompletedTaskDetails";
 import ActiveTaskDetails from "./components/ActiveTaskDetails";
 // import PendingComplaintDetails from "./components/PendingComplaintDetails";
+import ProgressBar from './components/ProgressBar'
 
 export default function ComplaintDetails(props) {
   const { id } = useParams();
@@ -31,6 +32,8 @@ export default function ComplaintDetails(props) {
 
   const navigate = useNavigate();
   const [showModal, setShowModal] = useState(false);
+
+ 
 
   console.log("complaint id received by task details function", id);
 
@@ -66,8 +69,12 @@ export default function ComplaintDetails(props) {
     e.preventDefault();
     alert(`Form submitted for complaint id: ${complaint.id}`);
     setShowModal(false);
-    navigate("/host/manage-complaints");
+    navigate("/technician/tasks");
   };
+
+  const currentDate = new Date();
+  const deadlineDate = new Date(complaint.deadline);
+  const timeLeft = deadlineDate - currentDate; // Time difference in milliseconds
 
   return (
     <div className="bg-gray-100 mx-auto py-2 px-8">
@@ -85,14 +92,35 @@ export default function ComplaintDetails(props) {
 
       <div className="flex flex-col md:flex-row gap-4">
         <div className="w-full md:w-2/3 rounded-lg p-1 bg-white shadow">
-          <div className="bg-white p-8 flex flex-row justify-between items-center border-b">
+          <div className="bg-white p-8 flex flex-row justify-between items-center border-none">
             <div className="flex flex-row items-center">
               <h2 className="text-xl font-bold">Status:</h2>
-              <p className="ml-4 badge badge-ghost bg-yellow-200">
+              {complaint.status === "pendingTechnicianApproval" && complaint.estimatedBudget!=null && (
+                <p className="ml-4 badge badge-ghost bg-yellow-200">
+                pending Budget  Confirmation
+                
+              </p>
+              )}
+              {complaint.status === "pendingTechnicianApproval" && !complaint.estimatedBudget && (
+                <p className="ml-4 badge badge-ghost bg-yellow-200">
                 {complaint.status}
               </p>
+              )}
+              {complaint.status === "active" && (
+                <p className="ml-4 badge badge-ghost bg-yellow-200">
+                {complaint.status}
+              </p>
+              )}
+              {complaint.status === "technicianCompleted" && (
+                <p className="ml-4 badge badge-ghost bg-yellow-200">
+                awaiting Proof review
+              </p>
+              )}
+              {/* <p className="ml-4 badge badge-ghost bg-yellow-200">
+                {complaint.status}
+              </p> */}
             </div>
-
+                  
             <div className="flex flex-row items-center p-2 gap-3">
               <h2 className="text-xl font-bold">Category:</h2>
 
@@ -100,9 +128,17 @@ export default function ComplaintDetails(props) {
                 {complaint.category}
               </p>
             </div>
+         
           </div>
 
-          <div className="bg-white p-8 flex items-center border-b">
+          
+          {complaint.status==="active" && (
+                    <div className="flex w-full items-center border-none">
+                    <ProgressBar complaint={complaint}/>
+                    </div>
+                  )}
+        
+          <div className="bg-white p-8 flex items-center border-b border-t">
             <FaMapMarkerAlt className="mr-2" />
             <p className="font-semibold">
               {complaint.reservationId.property.title}{" "}
@@ -132,6 +168,14 @@ export default function ComplaintDetails(props) {
               {new Date(complaint.timestamp).toLocaleDateString()}
             </p>
           </div>
+          {(complaint.status !== "pendingHostDecision" || complaint.status!=="hostCompleted") && (<div className="flex items-center p-6 gap-4">
+          {/* {complaint.status === "pendingTechnicianApproval" && (<div className="flex items-center p-6 gap-4"> */}
+            <h2 className="text-xl font-bold">Assigned On:</h2>
+
+            <p className="text-base">
+              {new Date(complaint.assignedDate).toLocaleDateString()}
+            </p>
+          </div>)}
 
           <div className="flex items-base p-6 gap-4">
             <h2 className="text-xl font-bold mb-2">Posted By</h2>
@@ -175,22 +219,31 @@ export default function ComplaintDetails(props) {
             </div>
           </div>
 
-          <div className="flex flex-col  bg-green-100 rounded-xl p-8 m-6 items-start ">
+{complaint.deadline && (
+  <div className="flex flex-col  bg-green-100 rounded-xl p-8 m-6 items-start ">
             <p className="text-base flex flex-row items-center gap-6">
               <span className="font-bold text-xl"> Deadline:</span>{" "}
               <span className="text-lg">
-                {" "}
-                {new Date(
-                  complaint.reservationId.checkOutDate
-                ).toLocaleDateString()}
+               {new Date(complaint.deadline).toLocaleDateString()}
               </span>
             </p>
-
+              
             <p className="text-sm mt-3 flex flex-row items-center gap-2">
               {" "}
-              <FaRegClock />3 Days left
+              <FaRegClock /> 
+              {timeLeft <= 0 ? (
+          <div>Expired</div>
+        ) : (
+         <div>
+          {Math.floor(timeLeft / (1000 * 60 * 60 * 24))}{" "}
+          {Math.floor(timeLeft / (1000 * 60 * 60 * 24)) > 1 ? "days" : "day"} left</div>
+
+          
+        )}
             </p>
           </div>
+)}
+          
 
           <div>
             {complaint.estimatedBudget && (
@@ -213,7 +266,7 @@ export default function ComplaintDetails(props) {
 
         {complaint.assignTaskComments && (
           <div className="m-3 p-1  border-t">
-            <h2 className="text-xl font-bold mb-2">Host Description</h2>
+            <h2 className="text-xl font-bold mb-2">Host Remarks</h2>
             <p className="text-lg">{complaint.assignTaskComments}</p>
           </div>
         )}
@@ -246,6 +299,9 @@ export default function ComplaintDetails(props) {
       ) : (
         <CompletedTaskDetails complaint={complaint} />
       )}
+
+
+
     </div>
   );
 }

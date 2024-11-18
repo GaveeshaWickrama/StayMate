@@ -66,10 +66,6 @@ const ReservationsView = () => {
     }, {});
   };
 
-  const handleViewClick = (property) => {
-    navigate(`/admin/reservations/view`, { state: { property } });
-  };
-
   if (loading) {
     return <p>Loading Reservations...</p>;
   }
@@ -101,46 +97,33 @@ const ReservationsView = () => {
               <th className="py-3 px-4 text-left text-sm font-medium text-gray-700">
                 Number of Reservations
               </th>
-              <th className="py-3 px-4 text-left text-sm font-medium text-gray-700">
-                Action
-              </th>
             </tr>
           </thead>
           <tbody>
             {Object.keys(aggregatedReservations).map((key) => {
-              const { title, hostName, imageUrl, count, property } =
+              const { title, hostName, imageUrl, count } =
                 aggregatedReservations[key];
               return (
-                <React.Fragment key={key}>
-                  <tr className="border-b">
-                    <td className="py-3 px-4 text-sm text-gray-700">
-                      <div className="flex items-center">
-                        <div className="flex flex-col items-start">
-                          <span>{title}</span>
-                          {imageUrl && (
-                            <img
-                              src={imageUrl}
-                              alt={title}
-                              className="h-16 w-16 object-cover rounded mt-2"
-                            />
-                          )}
-                        </div>
+                <tr className="border-b" key={key}>
+                  <td className="py-3 px-4 text-sm text-gray-700">
+                    <div className="flex items-center">
+                      <div className="flex flex-col items-start">
+                        <span>{title}</span>
+                        {imageUrl && (
+                          <img
+                            src={imageUrl}
+                            alt={title}
+                            className="h-16 w-16 object-cover rounded mt-2"
+                          />
+                        )}
                       </div>
-                    </td>
-                    <td className="py-3 px-4 text-sm text-gray-700">
-                      {hostName}
-                    </td>
-                    <td className="py-3 px-4 text-sm text-gray-700">{count}</td>
-                    <td className="py-3 px-4 text-sm text-gray-700">
-                      <button
-                        className="bg-blue-500 text-white font-semibold py-2 px-4 rounded hover:bg-blue-600 transition duration-300"
-                        onClick={() => handleViewClick(property)}
-                      >
-                        View
-                      </button>
-                    </td>
-                  </tr>
-                </React.Fragment>
+                    </div>
+                  </td>
+                  <td className="py-3 px-4 text-sm text-gray-700">
+                    {hostName}
+                  </td>
+                  <td className="py-3 px-4 text-sm text-gray-700">{count}</td>
+                </tr>
               );
             })}
           </tbody>
