@@ -1,8 +1,5 @@
 import React, { useState } from "react";
-import {
-  FaMoneyBillWave,
-  FaHome,
-} from "react-icons/fa";
+import { FaMoneyBillWave, FaHome, FaClipboardList } from "react-icons/fa";
 import {
   LineChart,
   Line,
@@ -18,133 +15,83 @@ import {
 function GreetingBox({ name }) {
   return (
     <div className="bg-white p-6 rounded-lg border border-gray-200 shadow-lg mb-8">
-      <h1 className="text-4xl font-bold text-gray-800">Hello,{name}!</h1>
+      <h1 className="text-4xl font-bold text-gray-800">Welcome back, {name}!</h1>
     </div>
   );
 }
 
+// Main Host Dashboard
 function HostPage() {
-  // Simulated data
-  const [totalRevenue] = useState(65000);
-  const [totalBookedProperties] = useState(100);
-  const [totalProperties] = useState(120); // Ensure this number is greater than totalBookedProperties
-  const [incomeExpensesData] = useState([
-    { month: "January", income: 5000, expenses: 2000 },
-    { month: "February", income: 5500, expenses: 1800 },
-    { month: "March", income: 6000, expenses: 2200 },
-    { month: "April", income: 6500, expenses: 2100 },
-    { month: "May", income: 7000, expenses: 2500 },
-    { month: "June", income: 7500, expenses: 2300 },
-    { month: "July", income: 8000, expenses: 2400 },
-    { month: "August", income: 8200, expenses: 2500 },
-    { month: "September", income: 8300, expenses: 2600 },
-    { month: "October", income: 8500, expenses: 2700 },
-    { month: "November", income: 8700, expenses: 2800 },
-    { month: "December", income: 9000, expenses: 2900 },
-  ]);
-  const [propertyData] = useState([
-    { property: "Beachside Villa", bookings: 25, endDate: "2024-07-31", startDate: "2024-01-15", persons: 4, revenue: 12500 },
-    { property: "Mountain Lodge", bookings: 18, endDate: "2024-07-15", startDate: "2024-03-10", persons: 6, revenue: 9000 },
-    { property: "City Apartment", bookings: 20, endDate: "2024-08-05", startDate: "2024-02-20", persons: 2, revenue: 10000 },
-    { property: "Countryside Cabin", bookings: 15, endDate: "2024-09-10", startDate: "2024-04-15", persons: 3, revenue: 7500 },
-    { property: "Lake House", bookings: 22, endDate: "2024-10-01", startDate: "2024-05-25", persons: 5, revenue: 11000 },
-  ]);
   const [view, setView] = useState("monthly");
 
-  const data = view === "monthly" ? incomeExpensesData : incomeExpensesData;
-  const dataKey = view === "monthly" ? "month" : "year";
+  // Simulated data
+  const [totalRevenue] = useState(120000);
+  const [totalBookedProperties] = useState(75);
+  const [totalProperties] = useState(100);
+  const [incomeExpensesData] = useState([
+    { month: "January", income: 20000, expenses: 8000 },
+    { month: "February", income: 22000, expenses: 10000 },
+    { month: "March", income: 25000, expenses: 12000 },
+    { month: "April", income: 28000, expenses: 14000 },
+    { month: "May", income: 30000, expenses: 16000 },
+    { month: "June", income: 32000, expenses: 18000 },
+  ]);
 
-  const downloadCSV = (data, filename) => {
-    const csvRows = [];
-    // Get headers
-    const headers = Object.keys(data[0]);
-    csvRows.push(headers.join(','));
-
-    // Format data
-    for (const row of data) {
-      const values = headers.map(header => row[header]);
-      csvRows.push(values.join(','));
-    }
-
-    // Create a CSV blob and download it
-    const blob = new Blob([csvRows.join('\n')], { type: 'text/csv' });
-    const url = URL.createObjectURL(blob);
-    const a = document.createElement('a');
-    a.href = url;
-    a.download = filename;
-    a.click();
-    URL.revokeObjectURL(url);
-  };
+  const [propertyData] = useState([
+    { id: 1, name: "Beachfront Villa", type: "Villa", address: "123 Ocean Drive", status: "Available" },
+    { id: 2, name: "City Loft", type: "Apartment", address: "45 Downtown Street", status: "Booked" },
+    { id: 3, name: "Mountain Cabin", type: "Cabin", address: "789 Hilltop Road", status: "Available" },
+    { id: 4, name: "Lake House", type: "House", address: "456 Lakeside Avenue", status: "Under Maintenance" },
+    { id: 5, name: "Countryside Cottage", type: "Cottage", address: "321 Meadow Lane", status: "Booked" },
+  ]);
 
   return (
     <main className="p-6 min-h-screen bg-gradient-to-r from-blue-50 to-blue-100">
-      <GreetingBox name="Sachin Elvitigala" />
+      <GreetingBox name="Host User" />
 
-      <h3 className="text-4xl font-bold text-gray-800 mb-8">Dashboard</h3>
-
-      <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6 mb-8">
-        <div className="bg-white shadow-xl p-6 rounded-lg flex flex-col items-center transform transition duration-300 hover:scale-105">
-          <FaMoneyBillWave className="text-5xl text-green-600 mb-3 animate-pulse" />
+      {/* Metrics Section */}
+      <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6 mb-8">
+        <div className="bg-white shadow-lg p-6 rounded-lg flex flex-col items-center">
+          <FaMoneyBillWave className="text-5xl text-green-600 mb-3" />
           <h3 className="text-xl font-semibold text-gray-700">Total Revenue</h3>
-          <p className="text-2xl font-bold text-gray-900">
-            LKR {totalRevenue.toLocaleString()}
-          </p>
+          <p className="text-2xl font-bold text-gray-900">LKR {totalRevenue.toLocaleString()}</p>
         </div>
-        <div className="bg-white shadow-xl p-6 rounded-lg flex flex-col items-center transform transition duration-300 hover:scale-105">
-          <FaHome className="text-5xl text-purple-600 mb-3 animate-pulse" />
-          <h3 className="text-xl font-semibold text-gray-700">Total Booked Properties</h3>
-          <p className="text-2xl font-bold text-gray-900">
-            {totalBookedProperties}
-          </p>
+        <div className="bg-white shadow-lg p-6 rounded-lg flex flex-col items-center">
+          <FaHome className="text-5xl text-blue-600 mb-3" />
+          <h3 className="text-xl font-semibold text-gray-700">Booked Properties</h3>
+          <p className="text-2xl font-bold text-gray-900">{totalBookedProperties}</p>
         </div>
-        <div className="bg-white shadow-xl p-6 rounded-lg flex flex-col items-center transform transition duration-300 hover:scale-105">
-          <FaHome className="text-5xl text-blue-600 mb-3 animate-pulse" />
+        <div className="bg-white shadow-lg p-6 rounded-lg flex flex-col items-center">
+          <FaClipboardList className="text-5xl text-purple-600 mb-3" />
           <h3 className="text-xl font-semibold text-gray-700">Total Properties</h3>
-          <p className="text-2xl font-bold text-gray-900">
-            {totalProperties}
-          </p>
+          <p className="text-2xl font-bold text-gray-900">{totalProperties}</p>
         </div>
       </div>
 
-      <div className="flex justify-end mb-8">
-        <div className="flex space-x-4">
-          <button
-            onClick={() => setView("monthly")}
-            className={`px-6 py-3 rounded-lg font-semibold transition-colors duration-300 ${view === "monthly" ? "bg-blue-600 text-white" : "bg-white text-blue-600 border border-blue-600"} hover:bg-blue-700 hover:text-white shadow-md`}
-          >
-            Monthly
-          </button>
-          <button
-            onClick={() => setView("yearly")}
-            className={`px-6 py-3 rounded-lg font-semibold transition-colors duration-300 ${view === "yearly" ? "bg-blue-600 text-white" : "bg-white text-blue-600 border border-blue-600"} hover:bg-blue-700 hover:text-white shadow-md`}
-          >
-            Yearly
-          </button>
-        </div>
-      </div>
-
+      {/* Table and Chart Section */}
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
-        <div className="bg-white shadow-xl p-6 rounded-lg transform transition duration-300 hover:scale-105">
+        {/* Property Analysis Table */}
+        <div className="bg-white shadow-lg p-6 rounded-lg">
           <h3 className="text-xl font-semibold text-gray-800 mb-4">Property Analysis</h3>
           <div className="overflow-x-auto">
             <table className="min-w-full divide-y divide-gray-200">
               <thead className="bg-gray-50">
                 <tr>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Property</th>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Start Date</th>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">End Date</th>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">No. of Persons</th>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Revenue</th>
+                  <th className="px-4 py-2 text-left text-xs font-medium text-gray-500 uppercase">ID</th>
+                  <th className="px-4 py-2 text-left text-xs font-medium text-gray-500 uppercase">Name</th>
+                  <th className="px-4 py-2 text-left text-xs font-medium text-gray-500 uppercase">Type</th>
+                  <th className="px-4 py-2 text-left text-xs font-medium text-gray-500 uppercase">Address</th>
+                  <th className="px-4 py-2 text-left text-xs font-medium text-gray-500 uppercase">Status</th>
                 </tr>
               </thead>
               <tbody className="bg-white divide-y divide-gray-200">
-                {propertyData.map((property, index) => (
-                  <tr key={index} className="hover:bg-gray-100">
-                    <td className="px-6 py-4 whitespace-nowrap">{property.property}</td>
-                    <td className="px-6 py-4 whitespace-nowrap">{property.startDate}</td>
-                    <td className="px-6 py-4 whitespace-nowrap">{property.endDate}</td>
-                    <td className="px-6 py-4 whitespace-nowrap">{property.persons}</td>
-                    <td className="px-6 py-4 whitespace-nowrap">LKR {property.revenue.toLocaleString()}</td>
+                {propertyData.map((property) => (
+                  <tr key={property.id} className="hover:bg-gray-100">
+                    <td className="px-4 py-2">{property.id}</td>
+                    <td className="px-4 py-2">{property.name}</td>
+                    <td className="px-4 py-2">{property.type}</td>
+                    <td className="px-4 py-2">{property.address}</td>
+                    <td className="px-4 py-2">{property.status}</td>
                   </tr>
                 ))}
               </tbody>
@@ -152,12 +99,13 @@ function HostPage() {
           </div>
         </div>
 
-        <div className="bg-white shadow-xl p-6 rounded-lg transform transition duration-300 hover:scale-105">
+        {/* Income vs Expenses Chart */}
+        <div className="bg-white shadow-lg p-6 rounded-lg">
           <h3 className="text-xl font-semibold text-gray-800 mb-4">Income & Expenses</h3>
           <ResponsiveContainer width="100%" height={400}>
-            <LineChart data={data} margin={{ top: 10, right: 30, left: 0, bottom: 0 }}>
+            <LineChart data={incomeExpensesData}>
               <CartesianGrid strokeDasharray="3 3" />
-              <XAxis dataKey={dataKey} />
+              <XAxis dataKey="month" />
               <YAxis />
               <Tooltip />
               <Legend />
@@ -165,14 +113,6 @@ function HostPage() {
               <Line type="monotone" dataKey="expenses" stroke="#82ca9d" strokeWidth={3} />
             </LineChart>
           </ResponsiveContainer>
-          <div className="flex justify-end mt-4">
-            <button
-              onClick={() => downloadCSV(data, 'income_expenses_data.csv')}
-              className="px-6 py-3 rounded-lg font-semibold bg-blue-600 text-white transition-colors duration-300 hover:bg-blue-700 shadow-md"
-            >
-              Download Data
-            </button>
-          </div>
         </div>
       </div>
     </main>
@@ -180,3 +120,4 @@ function HostPage() {
 }
 
 export default HostPage;
+
