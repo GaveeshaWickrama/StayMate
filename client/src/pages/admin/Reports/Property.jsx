@@ -31,9 +31,59 @@ function PropertyReport() {
     }
   };
 
+  const downloadCSV = (chartData, fileName) => {
+    const headers = Object.keys(chartData[0]).join(",");
+    const rows = chartData.map((row) =>
+      Object.values(row)
+        .map((value) => `"${value}"`)
+        .join(",")
+    );
+    const csvContent = [headers, ...rows].join("\n");
+
+    const blob = new Blob([csvContent], { type: "text/csv;charset=utf-8;" });
+    const link = document.createElement("a");
+    link.href = URL.createObjectURL(blob);
+    link.download = `${fileName}.csv`;
+    link.click();
+  };
+
   useEffect(() => {
-    fetchPropertyData(); // Fetch data on mount
+    fetchPropertyData();
   }, [token]);
+
+  const renderPieChart = (title, chartData, dataKey, nameKey, csvFileName) => (
+    <div className="w-1/3 p-4 shadow-lg rounded-lg bg-white">
+      <h4 className="text-lg font-semibold mb-4 text-center">{title}</h4>
+      <div className="relative">
+        <ResponsiveContainer width="100%" height={300}>
+          <PieChart>
+            <Pie
+              data={chartData}
+              dataKey={dataKey}
+              nameKey={nameKey}
+              cx="50%"
+              cy="50%"
+              outerRadius={110}
+              label={({ [nameKey]: name, percent }) =>
+                `${name}: ${(percent * 100).toFixed(2)}%`
+              }
+            >
+              {chartData.map((entry, index) => (
+                <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
+              ))}
+            </Pie>
+            <Tooltip formatter={(value, name) => [`${value}`, name]} />
+          </PieChart>
+        </ResponsiveContainer>
+      </div>
+      <button
+        onClick={() => downloadCSV(chartData, csvFileName)}
+        className="mt-4 px-4 py-2 bg-blue-500 text-white rounded-md hover:bg-blue-600 w-full"
+      >
+        Download CSV
+      </button>
+    </div>
+  );
 
   return (
     <div className="flex flex-wrap">
@@ -41,74 +91,27 @@ function PropertyReport() {
         <p className="text-center text-gray-500 w-full">Loading...</p>
       ) : data ? (
         <>
-          {/* Type Distribution */}
-          <div className="w-1/3 p-4">
-            <h4 className="text-lg font-semibold mb-2 text-center">Type Distribution</h4>
-            <ResponsiveContainer width="100%" height={300}>
-              <PieChart>
-                <Pie
-                  data={data.typeCounts}
-                  dataKey="count"
-                  nameKey="type"
-                  cx="50%"
-                  cy="50%"
-                  outerRadius={100}
-                  label={({ type, percent }) => `${type}: ${(percent * 100).toFixed(2)}%`}
-                >
-                  {data.typeCounts.map((entry, index) => (
-                    <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
-                  ))}
-                </Pie>
-                <Tooltip />
-              </PieChart>
-            </ResponsiveContainer>
-          </div>
-
-          {/* District Distribution */}
-          <div className="w-1/3 p-4">
-            <h4 className="text-lg font-semibold mb-2 text-center">District Distribution</h4>
-            <ResponsiveContainer width="100%" height={300}>
-              <PieChart>
-                <Pie
-                  data={data.districtCounts}
-                  dataKey="count"
-                  nameKey="district"
-                  cx="50%"
-                  cy="50%"
-                  outerRadius={100}
-                  label={({ district, percent }) => `${district}: ${(percent * 100).toFixed(2)}%`}
-                >
-                  {data.districtCounts.map((entry, index) => (
-                    <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
-                  ))}
-                </Pie>
-                <Tooltip />
-              </PieChart>
-            </ResponsiveContainer>
-          </div>
-
-          {/* Status Distribution */}
-          <div className="w-1/3 p-4">
-            <h4 className="text-lg font-semibold mb-2 text-center">Status Distribution</h4>
-            <ResponsiveContainer width="100%" height={300}>
-              <PieChart>
-                <Pie
-                  data={data.statusCounts}
-                  dataKey="count"
-                  nameKey="status"
-                  cx="50%"
-                  cy="50%"
-                  outerRadius={100}
-                  label={({ status, percent }) => `${status}: ${(percent * 100).toFixed(2)}%`}
-                >
-                  {data.statusCounts.map((entry, index) => (
-                    <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
-                  ))}
-                </Pie>
-                <Tooltip />
-              </PieChart>
-            </ResponsiveContainer>
-          </div>
+          {renderPieChart(
+            "Type Distribution",
+            data.typeCounts,
+            "count",
+            "type",
+            "type_distribution"
+          )}
+          {renderPieChart(
+            "District Distribution",
+            data.districtCounts,
+            "count",
+            "district",
+            "district_distribution"
+          )}
+          {renderPieChart(
+            "Status Distribution",
+            data.statusCounts,
+            "count",
+            "status",
+            "status_distribution"
+          )}
         </>
       ) : (
         <p className="text-center text-gray-500 w-full">No data available</p>
