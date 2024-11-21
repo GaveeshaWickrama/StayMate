@@ -258,7 +258,7 @@ async function getComplaintById(req, res) {
     // Fetch complaint details with nested population
     const complaintDetails = await Complaint.findById(complaintID)
       .populate([
-        { path: "technician", populate: { path: "userId" } },
+        { path: "technician", populate: [ { path: "userId" }, {path:"reviews.reviewerId"}] },
         { path: "reservationId" }, // Example for another field
         { path: "reservationId", populate: { path: "user" } }, // Example for another field
         {
@@ -285,12 +285,21 @@ async function getComplaintById(req, res) {
 }
 
 async function reviewTask(req, res) {
-  const complaintId = req.params.id;
+  const complaintId = req.params.complaintId;
 
+  console.log("you entered the reviewTask function in the complaint controller")
+
+  console.log("Request parameters:", req.params);
+  
+    // Check if the complaintId is available
+    if (!complaintId) {
+      return res.status(400).json({ message: "Complaint ID is missing in the request." });
+    }
+  
   try {
     // Check if the complaint exists
 
-    console.log("Received complaint ID:", complaintId);
+    console.log("Received complaint ID:", req.params.complaintId);
 
     // Check if the complaint exists and its status is pendingHostDecision
     const complaint = await Complaint.findOne({

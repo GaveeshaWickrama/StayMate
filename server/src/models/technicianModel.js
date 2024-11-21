@@ -20,6 +20,11 @@ const reviewSchema = new Schema({
     type: String, // Optional review text
     trim: true,
   },
+  complaintID: {
+    type: Schema.Types.ObjectId,
+    ref: 'complaint',
+    required: true, // Reference to the complaint for which the technician was rated
+  },
   createdAt: {
     type: Date,
     default: Date.now, // Automatically set the review creation date

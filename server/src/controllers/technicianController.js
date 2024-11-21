@@ -40,16 +40,25 @@ const getAllTechnicians = async (req, res) => {
 
 
 const getReviews = async (req, res) => {
-  const { id } = req.params;
+  let id = req.params.technicianId;
+console.log("this is the technician id received in the backend:",id); //userId
+
+if(id){
+  id= mongoose.Types.ObjectId.createFromHexString(id);
+}
+  
+
   console.log(id);
   console.log(
     "Technician review collection name:",
-    TechnicianReview.collection.name
+    Technician.collection.name
   );
   try {
-    console.log(res.data);
-    const reviews = await TechnicianReview.find({ technicianId: id });
-    if (!reviews.length) {
+    // const reviews = await Technician.findById(id).populate("userId").exec().reviews;
+     const technician = await Technician.findOne({userId:id});
+     const reviews = technician?.reviews;
+    
+    if (!reviews || !reviews.length) {
       console.log("No reviews found");
       return res.status(404).json({ message: "No reviews found" });
     }
@@ -121,7 +130,8 @@ console.log("you are here");
  technician.reviews.push({
   reviewerId:userId,
   rating,
-  review
+  review,
+  complaintID
  });
 
  console.log(technician.reviews);
