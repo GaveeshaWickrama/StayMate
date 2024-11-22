@@ -99,9 +99,9 @@ function HostPage() {
           </div>
         </div>
 
-        {/* Income vs Expenses Chart */}
+        {/* Income Chart (Only showing Income now) */}
         <div className="bg-white shadow-lg p-6 rounded-lg">
-          <h3 className="text-xl font-semibold text-gray-800 mb-4">Income & Expenses</h3>
+          <h3 className="text-xl font-semibold text-gray-800 mb-4">Income</h3>
           <ResponsiveContainer width="100%" height={400}>
             <LineChart data={incomeExpensesData}>
               <CartesianGrid strokeDasharray="3 3" />
@@ -110,7 +110,6 @@ function HostPage() {
               <Tooltip />
               <Legend />
               <Line type="monotone" dataKey="income" stroke="#8884d8" strokeWidth={3} />
-              <Line type="monotone" dataKey="expenses" stroke="#82ca9d" strokeWidth={3} />
             </LineChart>
           </ResponsiveContainer>
         </div>
@@ -120,4 +119,3 @@ function HostPage() {
 }
 
 export default HostPage;
-
