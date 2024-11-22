@@ -52,8 +52,8 @@ function PropertyReport() {
   }, [token]);
 
   const renderPieChart = (title, chartData, dataKey, nameKey, csvFileName) => (
-    <div className="w-1/3 p-4 shadow-lg rounded-lg bg-white">
-      <h4 className="text-lg font-semibold mb-4 text-center">{title}</h4>
+    <div className="w-full md:w-1/8 p-8 bg-white shadow-xl rounded-lg mb-4 hover:shadow-xl transition-shadow duration-300">
+      <h4 className="text-xl font-semibold text-center text-gray-700 mb-4">{title}</h4>
       <div className="relative">
         <ResponsiveContainer width="100%" height={300}>
           <PieChart>
@@ -76,48 +76,54 @@ function PropertyReport() {
           </PieChart>
         </ResponsiveContainer>
       </div>
-      <button
-        onClick={() => downloadCSV(chartData, csvFileName)}
-        className="mt-4 px-4 py-2 bg-blue-500 text-white rounded-md hover:bg-blue-600 w-full"
-      >
-        Download CSV
-      </button>
+      <div className="flex justify-center mt-6">
+        <button
+          onClick={() => downloadCSV(chartData, csvFileName)}
+          className="px-8 py-2.5 bg-blue-500 text-white text-sm rounded-md hover:bg-blue-600 transition duration-200"
+        >
+          Download Data
+        </button>
+      </div>
     </div>
   );
 
   return (
-    <div className="flex flex-wrap">
-      {loading ? (
-        <p className="text-center text-gray-500 w-full">Loading...</p>
-      ) : data ? (
-        <>
-          {renderPieChart(
-            "Type Distribution",
-            data.typeCounts,
-            "count",
-            "type",
-            "type_distribution"
-          )}
-          {renderPieChart(
-            "District Distribution",
-            data.districtCounts,
-            "count",
-            "district",
-            "district_distribution"
-          )}
-          {renderPieChart(
-            "Status Distribution",
-            data.statusCounts,
-            "count",
-            "status",
-            "status_distribution"
-          )}
-        </>
-      ) : (
-        <p className="text-center text-gray-500 w-full">No data available</p>
-      )}
+    <div className="min-h-screen p-6 bg-gray-100">
+      <div className="max-w-screen-xl mx-auto">
+        <h2 className="text-3xl font-bold text-center text-gray-800 mb-8">Property Report</h2>
+        {loading ? (
+          <p className="text-center text-gray-500">Loading...</p>
+        ) : data ? (
+          <div className="flex flex-wrap justify-between">
+            {renderPieChart(
+              "Property Type Distribution",
+              data.typeCounts,
+              "count",
+              "type",
+              "type_distribution"
+            )}
+            {renderPieChart(
+              "District Distribution",
+              data.districtCounts,
+              "count",
+              "district",
+              "district_distribution"
+            )}
+            {renderPieChart(
+              "Property Status Distribution",
+              data.statusCounts,
+              "count",
+              "status",
+              "status_distribution"
+            )}
+          </div>
+        ) : (
+          <p className="text-center text-gray-500">No data available</p>
+        )}
+      </div>
     </div>
   );
 }
 
 export default PropertyReport;
+
