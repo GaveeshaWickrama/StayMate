@@ -101,9 +101,6 @@ const ReservationsView = () => {
               <th className="py-3 px-4 text-left text-sm font-medium text-gray-700">
                 Number of Reservations
               </th>
-              <th className="py-3 px-4 text-left text-sm font-medium text-gray-700">
-                Action
-              </th>
             </tr>
           </thead>
           <tbody>
@@ -131,14 +128,7 @@ const ReservationsView = () => {
                       {hostName}
                     </td>
                     <td className="py-3 px-4 text-sm text-gray-700">{count}</td>
-                    <td className="py-3 px-4 text-sm text-gray-700">
-                      <button
-                        className="bg-blue-500 text-white font-semibold py-2 px-4 rounded hover:bg-blue-600 transition duration-300"
-                        onClick={() => handleViewClick(property)}
-                      >
-                        View
-                      </button>
-                    </td>
+                    <td className="py-3 px-4 text-sm text-gray-700"></td>
                   </tr>
                 </React.Fragment>
               );
