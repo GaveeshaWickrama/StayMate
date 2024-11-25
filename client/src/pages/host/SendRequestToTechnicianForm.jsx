@@ -22,19 +22,20 @@ const PopupForm = ({
     technicianID,
     hostID,
     additionalInfo,
-    deadline
+    deadline,
   ) => {
     try {
       console.log(`Complaint ID: ${complaintId}`);
       console.log(`Technician ID: ${technicianID}`);
       console.log(`Host ID: ${hostID}`);
       console.log(`additional info: ${additionalInfo}`);
+      console.log(` deadline: ${deadline}`);
 
       await axios.post(
         `${
           import.meta.env.VITE_API_URL
         }/complaints/assign-complaint/${technicianID}`,
-        { additionalInfo, deadline }, // Include the additional info in the request body
+        { additionalInfo, deadline  }, // Include the additional info in the request body
 
         { params: { complaintId, hostID } }
       );
@@ -48,12 +49,18 @@ const PopupForm = ({
 
   const handleSave = async (e) => {
     e.preventDefault();
+
+
+
+
+
     await sendRequest(
       complaintId,
       technicianID,
       hostID,
       additionalInfo,
-      deadline
+      deadline,
+      
     );
     handleClose();
     navigate("/host/manage-complaints");

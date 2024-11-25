@@ -248,11 +248,19 @@ const TableComponent = ({ data }) => {
                             </span>
                           </button>
                         )}
-                        {item.status === "pendingTechnicianApproval" && (
+                        {item.status === "pendingTechnicianApproval" && item.estimatedBudget != null && (
                           <button className="">
                             {" "}
                             <span className="badge badge-ghost bg-red-100 badge-sm whitespace-nowrap">
-                              Pending Technician Approval
+                              Pending Budget confirmation
+                            </span>
+                          </button>
+                        )}
+                        {item.status === "pendingTechnicianApproval"  && !item.estimatedBudget  &&  (
+                          <button className="">
+                            {" "}
+                            <span className="badge badge-ghost bg-red-100 badge-sm whitespace-nowrap">
+                              pending Technician Approval
                             </span>
                           </button>
                         )}
@@ -267,6 +275,14 @@ const TableComponent = ({ data }) => {
                             {" "}
                             <span className="badge badge-ghost badge-sm bg-red-100 whitespace-nowrap">
                               Pending Host Decision
+                            </span>
+                          </button>
+                        )}
+                        {item.status === "technicianCompleted" && (
+                          <button className="">
+                            {" "}
+                            <span className="badge badge-ghost badge-sm bg-red-100 whitespace-nowrap">
+                              awaiting proof review
                             </span>
                           </button>
                         )}

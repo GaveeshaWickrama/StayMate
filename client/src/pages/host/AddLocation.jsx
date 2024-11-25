@@ -24,7 +24,7 @@ const AddLocation = () => {
     province: '',
     latitude: defaultCenter.lat,
     longitude: defaultCenter.lng,
-    zipcode: ''
+    zipcode: '',
   });
   const [googleResponse, setGoogleResponse] = useState(null);
   const [isMapsApiLoaded, setIsMapsApiLoaded] = useState(false);
@@ -62,7 +62,7 @@ const AddLocation = () => {
     const { name, value } = e.target;
     setPropertyLocation(prevState => ({
       ...prevState,
-      [name]: value
+      [name]: value,
     }));
   };
 
@@ -89,13 +89,13 @@ const AddLocation = () => {
         latitude: lat,
         longitude: lng,
         ...addressComponents,
-        geocoding_response: JSON.stringify(results[0])
+        geocoding_response: JSON.stringify(results[0]),
       };
       setPropertyLocation(newLocation);
       updateLocation(newLocation);
       setGoogleResponse(results[0]);
     } catch (error) {
-      console.error("Error fetching location details: ", error);
+      console.error('Error fetching location details: ', error);
     }
   };
 
@@ -121,14 +121,14 @@ const AddLocation = () => {
         latitude: lat,
         longitude: lng,
         ...addressComponents,
-        geocoding_response: JSON.stringify(results[0])
+        geocoding_response: JSON.stringify(results[0]),
       };
       setPropertyLocation(newLocation);
       updateLocation(newLocation);
       setValue(results[0].formatted_address, false);
       setGoogleResponse(results[0]);
     } catch (error) {
-      console.error("Error fetching location details: ", error);
+      console.error('Error fetching location details: ', error);
     }
   };
 
@@ -140,7 +140,7 @@ const AddLocation = () => {
     if (!propertyLocation.zipcode.trim()) newErrors.zipcode = 'Zip code is required';
     if (!propertyLocation.latitude) newErrors.latitude = 'Latitude is required';
     if (!propertyLocation.longitude) newErrors.longitude = 'Longitude is required';
-    
+
     setErrors(newErrors);
     return Object.keys(newErrors).length === 0;
   };
@@ -149,7 +149,7 @@ const AddLocation = () => {
     e.preventDefault();
 
     if (!validateForm()) {
-      return;  // If validation fails, stop submission.
+      return; // If validation fails, stop submission.
     }
 
     navigate('/host/add-property', { state: { ...location.state, location: propertyLocation, stage: 6 } });
@@ -158,10 +158,10 @@ const AddLocation = () => {
   if (!isMapsApiLoaded) return <div>Loading Maps...</div>;
 
   return (
-    <div className='p-8 bg-white shadow-md rounded-lg'>
+    <div className="p-8 bg-white shadow-md rounded-lg">
       <form onSubmit={handleSubmit} className="">
         <h2 className="text-2xl font-semibold mb-6 text-gray-800">Location Information</h2>
-        
+
         <div className="mb-4">
           <label className="block text-gray-600 mb-2">Address:</label>
           <input
@@ -173,7 +173,7 @@ const AddLocation = () => {
             required
           />
           {errors.address && <p className="text-red-500 text-sm">{errors.address}</p>}
-          {status === "OK" && (
+          {status === 'OK' && (
             <ul className="border border-gray-300 mt-2 rounded-lg max-h-48 overflow-y-auto bg-white shadow-lg">
               {data.map(({ place_id, description }) => (
                 <li
@@ -188,6 +188,7 @@ const AddLocation = () => {
           )}
         </div>
 
+        {/* Additional fields */}
         <div className="mb-4 flex space-x-4">
           <div className="flex-1">
             <label className="block text-gray-600 mb-2">District:</label>
@@ -215,6 +216,7 @@ const AddLocation = () => {
           </div>
         </div>
 
+        {/* Other fields */}
         <div className="mb-4 flex space-x-4">
           <div className="flex-1">
             <label className="block text-gray-600 mb-2">Latitude:</label>
@@ -285,7 +287,7 @@ const AddLocation = () => {
       </form>
 
       {googleResponse && (
-        <pre className="mt-4  p-4 rounded">
+        <pre className="mt-4 p-4 rounded">
           {/* {JSON.stringify(googleResponse, null, 2)} */}
         </pre>
       )}

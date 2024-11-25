@@ -14,7 +14,7 @@ const sectionTemplate = {
     guests: 1,
   },
   price_per_night: 0,
-  individual_sections: [],  // To handle multiple subsections
+  individual_sections: [], // To handle multiple subsections
   images: [],
   amenities: [],
 };
@@ -25,11 +25,11 @@ export const PropertyProvider = ({ children }) => {
     host_id: '',
     title: '',
     description: '',
-    type: 'House',  // Default type
-    total_unique_sections: '-1',  // Default to "An entire place"
+    type: 'House', // Default type
+    total_unique_sections: '-1', // Default to "An entire place"
     sections: [sectionTemplate],
-    images: [],  // Array to hold images for the property
-    amenities: [],  // Array for property-wide amenities
+    images: [], // Array to hold images for the property
+    amenities: [], // Array for property-wide amenities
     location: {
       address: '',
       latitude: 0,
@@ -39,8 +39,8 @@ export const PropertyProvider = ({ children }) => {
       zipcode: '',
       geocoding_response: '', // Store full geocoding response as string
     },
-    deed: null,  // Placeholder for uploaded deed
-    additionalDetails: '',  // Extra details about the property
+    deed: null, // Placeholder for uploaded deed
+    additionalDetails: '', // Extra details about the property
   };
 
   const [property, setProperty] = useState(initialPropertyState);
@@ -85,21 +85,31 @@ export const PropertyProvider = ({ children }) => {
     }));
   };
 
-  // Update the amenities array
+  // Update the amenities array (skip WiFi or non-image amenities)
   const updateAmenities = (newAmenities) => {
+    const filteredAmenities = newAmenities.map((amenity) =>
+      amenity.name === 'WiFi' ? { ...amenity, image: null } : amenity
+    );
+
     setProperty((prevProperty) => ({
       ...prevProperty,
-      amenities: newAmenities,
+      amenities: filteredAmenities,
     }));
   };
 
-  // Update a specific amenity for a section
+  // Update a specific amenity for a section (skip WiFi or non-image amenities)
   const updateSectionAmenity = (sectionIndex, amenityIndex, newAmenityData) => {
     setProperty((prevProperty) => {
       const updatedSections = prevProperty.sections.map((section, idx) => {
         if (idx === sectionIndex) {
           const updatedAmenities = section.amenities.map((amenity, amenityIdx) =>
-            amenityIdx === amenityIndex ? { ...amenity, ...newAmenityData } : amenity
+            amenityIdx === amenityIndex
+              ? {
+                  ...amenity,
+                  ...newAmenityData,
+                  image: amenity.name === 'WiFi' ? null : newAmenityData.image,
+                }
+              : amenity
           );
           return { ...section, amenities: updatedAmenities };
         }
@@ -138,4 +148,3 @@ export const PropertyProvider = ({ children }) => {
 
 // Custom hook to use the PropertyContext
 export const useProperty = () => useContext(PropertyContext);
-
