@@ -93,27 +93,24 @@ const getUserReviews = async (req, res) => {
     res.status(500).json({ message: "Server Error!" });
   }
 };
+// Function to get reviews for a specific property
 const getPropertyReviews = async (req, res) => {
-  const { propertyId } = req.query;
-
-  if (!propertyId) {
-    return res.status(400).json({ message: "Property ID is required" });
-  }
+  const propertyId = req.params.propertyId; // Get property ID from request params
 
   try {
-    // Find reviews for the specified property
+    // Find reviews related to the specified property
     const reviews = await Review.find({ property: propertyId })
       .populate({
         path: "user",
-        select: " firstName lastName ", // Select the user details you need
+        select: "email firstName lastName", // Select user details
       })
       .populate({
         path: "property",
-        select: "title", // Select the property details you need
+        select: "title description location", // Select property details (optional)
       })
       .exec();
 
-    if (reviews.length === 0) {
+    if (!reviews || reviews.length === 0) {
       return res
         .status(404)
         .json({ message: "No reviews found for this property" });

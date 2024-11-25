@@ -5,10 +5,6 @@ import Carousel from "../../components/Carousel";
 import PropertyAmenitiesDisplay from "../host/components/PropertyAmenitiesDisplay";
 import ReservationSection from "../../components/ReservationSection";
 import PropertyHost from "../../components/PropertyHost";
-import { useAuth } from "../../context/auth";
-import defaultProfileImg from "../../assets/profile.jpg";
-import { FaStar } from "react-icons/fa";
-
 import {
   FaCouch,
   FaHome,
@@ -55,16 +51,47 @@ const PropertyImages = ({ images }) => {
   );
 };
 
-const PropertyInfo = ({ location, section }) => {
+const PropertyInfo = ({ location, section, propertyId }) => {
+  const [reviews, setReviews] = useState([]);
+  const [currentIndex, setCurrentIndex] = useState(0); // State for carousel navigation
+
+  useEffect(() => {
+    const fetchReviews = async () => {
+      console.debug("Fetching reviews for property ID:", propertyId); // Debug log
+
+      try {
+        const response = await axios.get(
+          `http://localhost:3000/properties/${propertyId}/reviews`
+        );
+        console.debug("API response data:", response.data); // Debug log
+        setReviews(response.data);
+      } catch (error) {
+        console.error("Error fetching reviews:", error.message); // Debug log
+      } finally {
+        setLoading(false); // Ensure loading is stopped regardless of outcome
+        console.debug("Fetch reviews completed."); // Debug log
+      }
+    };
+
+    if (propertyId) {
+      console.debug("Property ID available, initiating API call."); // Debug log
+      fetchReviews();
+    } else {
+      console.warn("Property ID not provided, skipping fetch."); // Debug warning
+    }
+  }, [propertyId]);
+
   return (
     <div className="w-full md:w-2/3 rounded-lg p-1 bg-white shadow">
+      {/* Property Location */}
       <div className="bg-white p-8 flex items-center border-b">
         <FaMapMarkerAlt className="mr-2" />
         <p className="font-semibold text-xl">
-          {capitalizeWords(location.address)}{" "}
-          {capitalizeWords(location.province)}
+          {location.address} {location.province}
         </p>
       </div>
+
+      {/* Property Plan Details */}
       <div className="bg-white p-8 flex items-center text-xl gap-4 border-b">
         <MdOutlineMeetingRoom className="text-blue-500" />
         <p>Bedrooms: {section.plan.bedrooms}</p>
@@ -74,6 +101,67 @@ const PropertyInfo = ({ location, section }) => {
         <p>Bathrooms: {section.plan.bathrooms}</p>
         <GoPersonFill className="ml-3 text-blue-500" />
         <p>Guests: {section.plan.guests}</p>
+      </div>
+      {/* Reviews Section */}
+      <div className="bg-white p-8">
+        <h2 className="text-xl font-bold mb-4">Reviews</h2>
+        {reviews.length > 0 ? (
+          <div className="relative">
+            {/* Carousel for Reviews */}
+            <div className="flex overflow-hidden mx-16">
+              {" "}
+              {/* Added horizontal margin */}
+              {reviews.slice(currentIndex, currentIndex + 2).map((review) => (
+                <div
+                  key={review._id}
+                  className="p-4 bg-gray-100 rounded-lg shadow hover:shadow-lg transition-shadow flex items-center mx-2"
+                >
+                  <img
+                    src="/src/assets/profile.jpg"
+                    alt={`${review.user.firstName} ${review.user.lastName}`}
+                    className="w-16 h-16 rounded-full object-cover mr-4"
+                  />
+                  <div>
+                    <div className="text-lg font-semibold text-blue-600">
+                      {review.user.firstName} {review.user.lastName}
+                    </div>
+                    <div className="italic text-gray-700 my-2">
+                      "{review.comment}"
+                    </div>
+                    <div className="text-sm text-gray-500">
+                      Rating:{" "}
+                      <span className="font-bold">{review.rating}/5</span>
+                    </div>
+                  </div>
+                </div>
+              ))}
+            </div>
+
+            {/* Navigation Arrows */}
+            <button
+              onClick={() =>
+                setCurrentIndex((prev) =>
+                  prev === 0 ? Math.max(reviews.length - 2, 0) : prev - 2
+                )
+              }
+              className="absolute left-4 top-1/2 transform -translate-y-1/2 bg-blue-500 text-white p-3 rounded-full shadow-lg hover:bg-blue-600 transition-colors"
+            >
+              &#8592;
+            </button>
+            <button
+              onClick={() =>
+                setCurrentIndex((prev) =>
+                  prev + 2 >= reviews.length ? 0 : prev + 2
+                )
+              }
+              className="absolute right-4 top-1/2 transform -translate-y-1/2 bg-blue-500 text-white p-3 rounded-full shadow-lg hover:bg-blue-600 transition-colors"
+            >
+              &#8594;
+            </button>
+          </div>
+        ) : (
+          <p className="ml-4">No reviews yet.</p>
+        )}
       </div>
     </div>
   );
@@ -88,6 +176,10 @@ const PropertyInfoSections = ({ location }) => {
           {capitalizeWords(location.address)}{" "}
           {capitalizeWords(location.province)}
         </p>
+      </div>
+      <div className="bg-white p-8 flex items-center">
+        <h2 className="text-xl font-bold">Rating: </h2>
+        <p className="ml-4">No reviews yet.</p>
       </div>
     </div>
   );
@@ -238,54 +330,7 @@ const PropertySectionsList = ({ property }) => {
   );
 };
 
-const PropertyReviews = ({ reviews }) => {
-  return (
-    <div className="bg-white p-6 rounded-lg shadow mt-6">
-      <h2 className="text-2xl font-bold mb-4">Reviews</h2>
-      {reviews.length > 0 ? (
-        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
-          {reviews.map((review, index) => (
-            <div
-              key={index}
-              className="border rounded-lg p-4 flex flex-col items-center bg-gray-50"
-            >
-              <img
-                src={defaultProfileImg}
-                alt="Profile"
-                className="w-16 h-16 rounded-full border-2 border-gray-300 mb-2"
-              />
-              <div className="flex flex-col items-center text-center">
-                <h3 className="text-lg font-semibold">
-                  {review.user.firstName} {review.user.lastName}
-                </h3>
-                <p className="text-sm text-gray-600 mb-2">
-                  {new Date(review.createdAt).toLocaleDateString()}
-                </p>
-                <div className="flex items-center mb-2">
-                  {[...Array(5)].map((_, starIndex) => (
-                    <FaStar
-                      key={starIndex}
-                      className={`text-lg ${
-                        starIndex < review.rating
-                          ? "text-yellow-500"
-                          : "text-gray-300"
-                      }`}
-                    />
-                  ))}
-                </div>
-                <p className="text-md">{review.comment}</p>
-              </div>
-            </div>
-          ))}
-        </div>
-      ) : (
-        <p className="text-center text-gray-600">No reviews yet.</p>
-      )}
-    </div>
-  );
-};
-
-const DetailedPropertyView = ({ property, id, reviews }) => {
+const DetailedPropertyView = ({ property, id }) => {
   return (
     <div className="bg-gray-100 mx-auto py-2 px-8">
       <PropertyHeader title={property.title} createdAt={property.created_at} />
@@ -294,6 +339,7 @@ const DetailedPropertyView = ({ property, id, reviews }) => {
         <PropertyInfo
           location={property.location}
           section={property.sections[0]}
+          propertyId={property._id}
         />
         <PropertyHostInfo propertyId={property._id} />
       </div>
@@ -302,12 +348,16 @@ const DetailedPropertyView = ({ property, id, reviews }) => {
         propertyId={id}
         sectionId={property.sections[0].section_id}
         nightlyRate={property.sections[0].price_per_night}
-        initialCheckInDate="2024-07-11"
-        initialCheckOutDate="2024-07-16"
+        initialCheckInDate={new Date().toISOString().split("T")[0]} // Today's date in YYYY-MM-DD format
+        initialCheckOutDate={
+          new Date(new Date().setDate(new Date().getDate() + 7))
+            .toISOString()
+            .split("T")[0]
+        } // Today's date + 7 days in YYYY-MM-DD format
         serviceFeePercentage={10}
       />
+
       <PropertyAmenitiesDisplay amenities={property.amenities} />
-      <PropertyReviews reviews={reviews} />
     </div>
   );
 };
@@ -315,8 +365,6 @@ const DetailedPropertyView = ({ property, id, reviews }) => {
 function PropertyDetails() {
   const { id } = useParams();
   const [property, setProperty] = useState(null);
-  const [reviews, setReviews] = useState([]);
-  const { token } = useAuth(); // Retrieve the token here
 
   useEffect(() => {
     const fetchProperty = async () => {
@@ -329,21 +377,8 @@ function PropertyDetails() {
         console.error("Error fetching property:", error);
       }
     };
-    const fetchReviews = async () => {
-      try {
-        const response = await axios.get(
-          `${
-            import.meta.env.VITE_API_URL
-          }/reviews/propertyreviews?propertyId=${id}`
-        );
-        setReviews(response.data);
-      } catch (error) {
-        console.error("Error fetching reviews:", error);
-      }
-    };
 
     fetchProperty();
-    fetchReviews();
   }, [id]);
 
   if (!property) {
@@ -351,9 +386,7 @@ function PropertyDetails() {
   }
 
   if (property.total_unique_sections === -1) {
-    return (
-      <DetailedPropertyView property={property} id={id} reviews={reviews} />
-    );
+    return <DetailedPropertyView property={property} id={id} />;
   } else {
     return <PropertySectionsList property={property} />;
   }

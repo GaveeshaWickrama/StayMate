@@ -66,6 +66,10 @@ const ReservationsView = () => {
     }, {});
   };
 
+  const handleViewClick = (property) => {
+    navigate(`/admin/reservations/view`, { state: { property } });
+  };
+
   if (loading) {
     return <p>Loading Reservations...</p>;
   }
@@ -101,29 +105,32 @@ const ReservationsView = () => {
           </thead>
           <tbody>
             {Object.keys(aggregatedReservations).map((key) => {
-              const { title, hostName, imageUrl, count } =
+              const { title, hostName, imageUrl, count, property } =
                 aggregatedReservations[key];
               return (
-                <tr className="border-b" key={key}>
-                  <td className="py-3 px-4 text-sm text-gray-700">
-                    <div className="flex items-center">
-                      <div className="flex flex-col items-start">
-                        <span>{title}</span>
-                        {imageUrl && (
-                          <img
-                            src={imageUrl}
-                            alt={title}
-                            className="h-16 w-16 object-cover rounded mt-2"
-                          />
-                        )}
+                <React.Fragment key={key}>
+                  <tr className="border-b">
+                    <td className="py-3 px-4 text-sm text-gray-700">
+                      <div className="flex items-center">
+                        <div className="flex flex-col items-start">
+                          <span>{title}</span>
+                          {imageUrl && (
+                            <img
+                              src={imageUrl}
+                              alt={title}
+                              className="h-16 w-16 object-cover rounded mt-2"
+                            />
+                          )}
+                        </div>
                       </div>
-                    </div>
-                  </td>
-                  <td className="py-3 px-4 text-sm text-gray-700">
-                    {hostName}
-                  </td>
-                  <td className="py-3 px-4 text-sm text-gray-700">{count}</td>
-                </tr>
+                    </td>
+                    <td className="py-3 px-4 text-sm text-gray-700">
+                      {hostName}
+                    </td>
+                    <td className="py-3 px-4 text-sm text-gray-700">{count}</td>
+                    <td className="py-3 px-4 text-sm text-gray-700"></td>
+                  </tr>
+                </React.Fragment>
               );
             })}
           </tbody>
