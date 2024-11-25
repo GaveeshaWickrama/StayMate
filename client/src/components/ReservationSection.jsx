@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { FaCalendarAlt, FaMoneyBillWave, FaInfoCircle } from "react-icons/fa";
-import CustomCalendar from './CustomCalendar';
+import CustomCalendar from "./CustomCalendar";
 
 const ReservationSection = ({
   property,
@@ -28,9 +28,18 @@ const ReservationSection = ({
     const calculateServiceFee = (rate, nights, percentage) =>
       rate * nights * (percentage / 100);
 
-    if (checkInDate && checkOutDate && !errors.checkInDate && !errors.checkOutDate) {
+    if (
+      checkInDate &&
+      checkOutDate &&
+      !errors.checkInDate &&
+      !errors.checkOutDate
+    ) {
       const nights = calculateNights(checkInDate, checkOutDate);
-      const fee = calculateServiceFee(nightlyRate, nights, serviceFeePercentage);
+      const fee = calculateServiceFee(
+        nightlyRate,
+        nights,
+        serviceFeePercentage
+      );
 
       setNights(nights);
       setServiceFee(fee);
@@ -98,8 +107,8 @@ const ReservationSection = ({
   };
 
   const handleDateRangeSelect = (startDate, endDate) => {
-    setCheckInDate(startDate.toLocaleDateString('en-CA')); // Local date format (YYYY-MM-DD)
-    setCheckOutDate(endDate.toLocaleDateString('en-CA'));  // Local date format (YYYY-MM-DD)
+    setCheckInDate(startDate.toLocaleDateString("en-CA")); // Local date format (YYYY-MM-DD)
+    setCheckOutDate(endDate.toLocaleDateString("en-CA")); // Local date format (YYYY-MM-DD)
     setShowCalendar(false); // Hide calendar after selection
   };
 
@@ -114,11 +123,12 @@ const ReservationSection = ({
         <h2 className="text-3xl font-bold mb-6 text-gray-800">
           Rs {nightlyRate.toLocaleString()} / Night
         </h2>
-  
+
         <div className="mb-6">
           <div className="flex flex-col relative">
             <label className="mb-3 text-lg font-semibold flex items-center text-gray-600">
-              <FaCalendarAlt className="mr-2 text-gray-500" /> Check-in / Check-out
+              <FaCalendarAlt className="mr-2 text-gray-500" /> Check-in /
+              Check-out
             </label>
             <input
               type="text"
@@ -146,7 +156,7 @@ const ReservationSection = ({
             )}
           </div>
         </div>
-  
+
         <div className="mb-6">
           <div className="flex flex-col">
             <label className="mb-3 text-lg font-semibold text-gray-600">
@@ -167,7 +177,7 @@ const ReservationSection = ({
           </div>
         </div>
       </div>
-  
+
       {/* Right Column */}
       <div className="w-1/2 flex flex-col">
         <div className="p-6 border border-gray-300 rounded-lg bg-gray-50 mb-6 mt-2">
@@ -204,8 +214,6 @@ const ReservationSection = ({
       </div>
     </div>
   );
-  
-  
 };
 
 export default ReservationSection;
