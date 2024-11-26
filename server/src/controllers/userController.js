@@ -1,18 +1,19 @@
 const User = require("../models/userModel");
 const Technician = require("../models/technicianModel");
+const PropertyOwner = require("../models/propertyOwnerModel");
 const mongoose = require("mongoose");
 
-//get all users
+// Get all users
 const getUsers = async (req, res) => {
   try {
-    const user = await User.find();
-    res.status(200).json(user);
+    const users = await User.find();
+    res.status(200).json(users);
   } catch (error) {
     res.status(400).json({ error: error.message });
   }
 };
 
-//get a single user :means my profile
+// Get a single user (My Profile)
 const getUser = async (req, res) => {
   const { id } = req.params;
 
@@ -20,14 +21,18 @@ const getUser = async (req, res) => {
     return res.status(400).json({ error: "Invalid user ID" });
   }
 
-  const user = await User.findById(id);
-  if (!user) {
-    return res.status(404).json({ error: "No such user" });
+  try {
+    const user = await User.findById(id);
+    if (!user) {
+      return res.status(404).json({ error: "No such user" });
+    }
+    res.status(200).json(user);
+  } catch (error) {
+    res.status(500).json({ error: "Internal server error" });
   }
-  res.status(200).json(user);
 };
 
-//this is same as the above function here only change is I'm getting the id by the URL
+// View Profile (URL-based ID)
 const viewProfile = async (req, res) => {
   const { id } = req.params;
 
@@ -35,50 +40,41 @@ const viewProfile = async (req, res) => {
     return res.status(400).json({ error: "Invalid user ID" });
   }
 
-  let user;
+  try {
+    let user;
 
-  console.log("VVVVVVVVVVVVVVVVVVVVVVVVVVVV came here");
+    if (req.user.role === "technician") {
+      // Fetch technician details
+      const technicianDetails = await Technician.findOne({ userId: id });
+      const userDetails = await User.findById(id);
 
-  if (req.user.role === "technician") {
-    console.log("Inside techhhh pro");
+      if (!technicianDetails || !userDetails) {
+        return res.status(404).json({ error: "No such user" });
+      }
 
-    // Fetch technician details
-    const technicianDetails = await Technician.findOne({ userId: id });
-    console.log("Technician Details: ", technicianDetails);
-
-    // Fetch user details
-    const userDetails = await User.findById(id);
-    console.log("User Details: ", userDetails);
-
-    if (!technicianDetails || !userDetails) {
-      return res.status(404).json({ error: "No such user" });
+      // Merge user and technician details
+      user = {
+        ...userDetails._doc,
+        ...technicianDetails._doc,
+      };
+    } else {
+      // For non-technicians
+      user = await User.findById(id);
+      if (!user) {
+        return res.status(404).json({ error: "No such user" });
+      }
     }
 
-    // Merge details
-    user = {
-      ...userDetails._doc,
-      ...technicianDetails._doc,
-    };
-
-    console.log("after merging technician and user details", user);
-  } else {
-    console.log("Inside normal contt");
-    user = await User.findById(id);
-    console.log("User: ", user);
-
-    if (!user) {
-      return res.status(404).json({ error: "No such user" });
-    }
+    res.status(200).json(user);
+  } catch (error) {
+    console.error("Error viewing profile:", error);
+    res.status(500).json({ error: "Internal server error" });
   }
-
-  res.status(200).json(user);
 };
 
-/// Edit profile
+// Edit Profile
 const editProfile = async (req, res) => {
   const id = req.user.userId;
-  console.log("User ID:", id);
-  console.log("Uploaded file:", req.file); // Log the file object
 
   if (!mongoose.Types.ObjectId.isValid(id)) {
     return res.status(400).json({ error: "Invalid user ID" });
@@ -86,6 +82,8 @@ const editProfile = async (req, res) => {
 
   try {
     const updateData = { ...req.body };
+
+    // If a file is uploaded, update the picture field
     if (req.file && req.file.path) {
       updateData.picture = req.file.path.replace(/\\/g, "/");
     }
@@ -97,17 +95,17 @@ const editProfile = async (req, res) => {
     );
 
     if (!user) {
-      return res.status(400).json({ error: "No such user" });
+      return res.status(404).json({ error: "No such user" });
     }
 
     res.status(200).json(user);
   } catch (error) {
-    console.error("Error updating user profile:", error);
+    console.error("Error editing profile:", error);
     res.status(500).json({ error: "Internal server error" });
   }
 };
 
-//delete user
+// Delete User
 const deleteUser = async (req, res) => {
   const { id } = req.params;
 
@@ -115,45 +113,48 @@ const deleteUser = async (req, res) => {
     return res.status(400).json({ error: "Invalid user ID" });
   }
 
-  const user = await User.findById(id);
-  if (!user) {
-    return res.status(404).json({ error: "No such user" });
+  try {
+    const user = await User.findByIdAndDelete(id);
+    if (!user) {
+      return res.status(404).json({ error: "No such user" });
+    }
+    res.status(200).json({ message: "User deleted successfully" });
+  } catch (error) {
+    res.status(500).json({ error: "Internal server error" });
   }
-  res.status(200).json(user);
 };
 
-// async function getUserSachin(req, res) {
-//     try {
-//         const userId = req.user.userId;
-//         const user = await User.findById(userId);
-//         if (!user) return res.status(404).json({ message: 'Not found' });
-//         res.json(user);
-//     } catch (err) {
-//         res.status(500).json({ message: err.message });
-//     }
-// }
+// Get All Property Owners
+const getPropertyOwners = async (req, res) => {
+  try {
+    // Fetch all users with the role 'host'
+    const propertyOwners = await User.find({ role: "host" });
 
-// async function updateUserbySachin(req, res) {
-//     try {
-//         const userId = req.user.userId;
-//         const user = await User.findById(userId);
-//         if (!user) return res.status(404).json({ message: 'Not found' });
+    // Fetch additional details for each property owner and merge with user data
+    const detailedPropertyOwners = await Promise.all(
+      propertyOwners.map(async (owner) => {
+        const ownerDetails = await PropertyOwner.findOne({ userId: owner._id });
 
-//         Object.keys(req.body).forEach(key => {
-//             user[key] = req.body[key];
-//         });
+        // Merge user and additional property owner details (if available)
+        return {
+          ...owner._doc, // User data
+          ...ownerDetails?._doc, // Property owner data, if it exists
+        };
+      })
+    );
 
-//         const updatedUser = await user.save();
-//         res.json(updatedUser);
-//     } catch (err) {
-//         res.status(400).json({ message: err.message });
-//     }
-// }
+    res.status(200).json(detailedPropertyOwners);
+  } catch (error) {
+    console.error("Error fetching property owners:", error);
+    res.status(500).json({ error: "Failed to fetch property owners." });
+  }
+};
 
 module.exports = {
-  getUser,
   getUsers,
+  getUser,
+  viewProfile,
   editProfile,
   deleteUser,
-  viewProfile,
+  getPropertyOwners,
 };
