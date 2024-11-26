@@ -31,6 +31,7 @@ import ReviewTask from "../pages/host/ReviewTask";
 import Test from "../pages/host/Test"
 
 import ChatHomePage from "../pages/common/ChatHomePage";
+import Reviews from "../pages/host/HostReviews";
 
 function HostRoutes() {
   const { currentUser, loading } = useAuth();

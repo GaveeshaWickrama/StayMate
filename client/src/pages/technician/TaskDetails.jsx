@@ -116,6 +116,11 @@ export default function ComplaintDetails(props) {
                 awaiting Proof review
               </p>
               )}
+              {complaint.status === "jobCompleted" && (
+                <p className="ml-4 badge badge-ghost bg-yellow-200">
+                Job Finished
+              </p>
+              )}
               {/* <p className="ml-4 badge badge-ghost bg-yellow-200">
                 {complaint.status}
               </p> */}
