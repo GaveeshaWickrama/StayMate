@@ -177,7 +177,7 @@ function AdminDashboard() {
 
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
         <div className="bg-white shadow-lg p-6 rounded-lg transform transition duration-300 hover:scale-105">
-          <h3 className="text-xl font-semibold text-gray-800 mb-4">Customers</h3>
+          <h3 className="text-xl font-semibold text-gray-800 mb-4">Tenants</h3>
           <ResponsiveContainer width="100%" height={400}>
             <LineChart data={data} margin={{ top: 10, right: 30, left: 0, bottom: 0 }}>
               <CartesianGrid strokeDasharray="3 3" />
