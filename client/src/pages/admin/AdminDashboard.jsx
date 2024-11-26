@@ -154,7 +154,7 @@ function AdminDashboard() {
         <div className="bg-white shadow-lg p-6 rounded-lg flex flex-col items-center transform transition duration-300 hover:scale-105">
           <FaCalendarCheck className="text-5xl text-orange-600 mb-3" />
           <h3 className="text-xl font-semibold text-gray-700">Upcoming Bookings</h3>
-          <p className="text-2xl font-bold text-gray-900">25</p> {/* Example static data */}
+          <p className="text-2xl font-bold text-gray-900">30</p> {/* Example static data */}
         </div>
       </div>
 
