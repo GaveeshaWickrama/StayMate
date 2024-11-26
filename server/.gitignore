@@ -16,5 +16,4 @@ uploads/taskProof/*
 
 uploads/deeds/*
 !uploads/deeds/default.jpg
-# Environment file
-.env
+
