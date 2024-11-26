@@ -98,4 +98,6 @@ router.put(
   adminController.updateProfile
 );
 
+router.get('/technicians', adminController.getAllTechnicians);
+
 module.exports = router;

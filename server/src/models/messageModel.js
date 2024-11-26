@@ -15,6 +15,7 @@ const messageSchema = new mongoose.Schema({
         type: String,
         required : true
     },
+    unread: { type: Boolean, default: true } // Add unread field
 },{timestamps: true});
 
 const Message = mongoose.model('Message',messageSchema);
