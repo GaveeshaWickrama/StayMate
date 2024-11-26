@@ -144,7 +144,7 @@ function Navbar({ isVisible }) {
     // { path: "/technician/requests/pending-tasks", label: "Pending Tasks" },
     // { path: "/technician/requests/active-tasks", label: "Active Tasks" },
     { path: "/technician/tasks", label: "Tasks" },
-    { path: "/host/viewReviews", label: "Reviews" },
+    { path: '/technician/reviews/', label: "Reviews" },
   ];
 
   const publicLinks = [

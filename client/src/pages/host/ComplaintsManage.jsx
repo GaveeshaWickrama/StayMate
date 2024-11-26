@@ -214,21 +214,24 @@ const TableComponent = ({ data }) => {
 </td>
                 <td>
                 {item.status === 'jobCompleted' && (
-          <button  > <span className='badge badge-ghost badge-sm '>Completed</span></button>
+          <button  > <span className='badge bg-green-100 badge-sm '>Completed</span></button>
         )}
-        {item.status === 'pendingTechnicianApproval' && (
-          <button className=''> <span className='badge badge-ghost badge-sm whitespace-nowrap'>Pending Technician Approval</span></button>
+        {(item.status === 'pendingTechnicianApproval' && !item.estimatedBudget) && (
+          <button className=''> <span className='badge bg-red-100 badge-sm whitespace-nowrap'>Pending Technician Approval</span></button>
+        )}
+        {(item.status === 'pendingTechnicianApproval' && item.estimatedBudget) && (
+          <button className=''> <span className='badge bg-yellow-100 badge-sm whitespace-nowrap'>Pending Budget Confirmation</span></button>
         )}
         {item.status === 'active' && <span className='badge badge-ghost badge-sm'>active</span>}
               
         {item.status === 'pendingHostDecision' && (
-          <button className=''> <span className='badge badge-ghost badge-sm whitespace-nowrap'>Pending Host Decision</span></button>
+          <button className=''> <span className='badge bg-red-300 badge-sm whitespace-nowrap'>Pending Host Decision</span></button>
         )}
         {item.status === 'hostCompleted' && (
-          <button className=''> <span className='badge badge-ghost badge-sm whitespace-nowrap'>Resolved</span></button>
+          <button className=''> <span className='badge bg-green-300 badge-sm whitespace-nowrap'>Resolved</span></button>
         )}
         {item.status === 'technicianCompleted' && (
-          <button className=''> <span className='badge badge-ghost badge-sm whitespace-nowrap'>to be reviewed</span></button>
+          <button className=''> <span className='badge bg-orange-200 badge-sm whitespace-nowrap'>to be reviewed</span></button>
         )}
                 </td>
                 <td>

@@ -13,6 +13,9 @@ import TaskDetails from '../pages/technician/TaskDetails'
 import TasksProof from '../pages/technician/UploadProofForm'
 import PendingTaskDetails from '../pages/technician/components/PendingTaskDetails';
 import ActiveTaskDetails from '../pages/technician/components/ActiveTaskDetails';
+import Reviews from '../pages/technician/Reviews';
+import { AuthProvider } from '../context/auth';
+
 
 function TechnicianRoutes() {
   const { currentUser, loading} = useAuth();
@@ -21,8 +24,7 @@ function TechnicianRoutes() {
     return <div>Loading...</div>; // Show a loading spinner or message
   }
   return (
-    <div>
-    
+ 
       <Routes>
       
       {currentUser && currentUser.role === 'technician' ? (
@@ -38,7 +40,7 @@ function TechnicianRoutes() {
               <Route path="/tasks" element={<Tasks />} />
               <Route path="/:id/task-details" element={<TaskDetails />} />
               <Route path="/:id/task/estimateBudget" element={<PendingTaskDetails />} />
-              <Route path="/:id/reviews" element={<PendingTaskDetails />} />
+              <Route path="/reviews/" element={<Reviews />} />
 
             </>
           ) : (
@@ -51,7 +53,7 @@ function TechnicianRoutes() {
       
 
     </Routes>
-    </div>
+  
     
   );
 }

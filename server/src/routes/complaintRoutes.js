@@ -27,7 +27,6 @@ router.get("/complaints/:id", complaintController.getComplaintsByHost);
 // complaintController.getActiveJobs);
 router.get("/raiseComplaint", complaintController.raiseComplaint);
 router.get("/:id/tasks", complaintController.getAllJobsByTechnicianId);
-// router.get('/:id/active/tech',complaintController.getActiveJobsByTechnicianId);
 router.get(
   "/:id/pending/tech",
   complaintController.getPendingJobsByTechnicianId
@@ -57,5 +56,6 @@ router.post(
 router.get("/complaint/:complaintId/getProgress",complaintController.getProgress)
 router.post("/complaint/:complaintId/setProgress",complaintController.setProgress)
 router.post("/complaint/:complaintId/markJobCompleted",complaintController.markJobCompleted)
+
 
 module.exports = router;

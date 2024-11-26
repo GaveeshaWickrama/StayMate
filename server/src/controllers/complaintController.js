@@ -346,6 +346,13 @@ async function uploadProof(req, res) {
     // Check if the complaint exists and its status is pendingHostDecision
     const complaint = await Complaint.findOne({ _id: complaintId });
 
+
+
+    const { additionalRemarks } = req.body;
+
+    // Set task completion date to current date
+    const taskCompletedDate = new Date();
+
     if (!complaint) {
       return res
         .status(404)
@@ -360,7 +367,10 @@ async function uploadProof(req, res) {
     const updatedComplaint = await Complaint.findOneAndUpdate(
       { _id: complaintId, status: "active" },
       {
-        $set: { status: "technicianCompleted" },
+        $set: { status: "technicianCompleted"
+          , taskCompletedDate,
+          additionalComments:additionalRemarks,
+         },
         $push: { proofImages: { $each: proofImages } },
       },
       { new: true } // Return the updated document
@@ -511,7 +521,7 @@ const getAllJobsByTechnicianId = async (req, res) => {
 };
 
 const getActiveJobsByTechnicianId = async (req, res) => {
-  const id = req.params.id;
+  const id = req.params.technicianId;
 
   console.log(id);
 
@@ -737,6 +747,93 @@ const markJobCompleted = async (req, res) => {
 
 
 
+
+const rejectJob = async (req, res) => {
+  const id = req.params.complaintId; //complaintid
+
+  if(!id){
+    return res.status(400).json({message:"complaint id is required"});
+  }
+  
+  const complaintObjectId =
+  mongoose.Types.ObjectId.createFromHexString(id);
+
+  
+  try {
+
+   
+
+    const updatedComplaint = await Complaint.findByIdAndUpdate(
+      { _id: complaintObjectId }, // Ensure only non-resolved complaints are updated
+      { $set: { status: "pendingHostDecision" },
+        $unset : {technicianId: 1, assignedDate : 1, deadline : 1} },
+      {new:true}
+    );
+
+    res.status(200).json({ message: "complaint rejected", updatedComplaint });
+  } catch (error) {
+    console.error(error); // Log the error
+    res.status(500).json({ message: "try again", error }); // Send error response
+  }
+};
+
+
+const extendJob = async (req, res) => {
+  const id = req.params.complaintId; //complaintid
+
+ 
+
+  if(!id){
+    return res.status(400).json({message:"complaint id is required"});
+  }
+
+
+
+  const complaintObjectId =
+  // mongoose.Types.ObjectId.createFromHexString(id);
+  id;
+  try {
+
+
+   const complaint = await Complaint.findById(id);
+
+   if(!complaint){
+    return res.status(404).json({messsage: "Complaint not found"});
+   }
+
+   if(!complaint.deadline){
+    return res.status(400).json({message:"No existing deadline to extend"});
+   }
+
+   const currentDeadline = new Date(complaint.deadline);
+   const newDeadline = new Date(currentDeadline);
+   newDeadline.setDate(currentDeadline.getDate() + 3);
+
+    //update the complaint with the new deadline
+
+    const updatedComplaint = await Complaint.findByIdAndUpdate(
+       complaintObjectId,  // Ensure only non-resolved complaints are updated
+      { $set: { deadline : newDeadline } },
+      {new:true}
+    );
+
+
+    if(!updatedComplaint){
+      return res.status(404).json({message: "Complaint not found"});
+    }
+
+
+    
+
+    res.status(200).json({ message: "deadline extended by 3 days", updatedComplaint });
+  } catch (error) {
+    console.error(error); // Log the error
+    res.status(500).json({ message: "couldnt save changes", error }); // Send error response
+  }
+};
+
+
+
 module.exports = {
   raiseComplaint,
   getComplaintById, //host
@@ -756,6 +853,8 @@ module.exports = {
   reviewTask,
   uploadProof,
   markAsResolved,
+  rejectJob,
+  extendJob,
   confirmJob,
   getProgress,
   setProgress,
