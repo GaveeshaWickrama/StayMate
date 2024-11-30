@@ -18,6 +18,7 @@ import {
   Link,
 } from "react-router-dom";
 import ProgressBar from "../technician/components/ProgressBar";
+import Reviews from "../technician/Reviews";
 
 export default function ReviewTask() {
   // const location = useLocation();
@@ -27,7 +28,7 @@ export default function ReviewTask() {
   const [complaint, setComplaint] = useState(null);
   console.log(`complaint id before entering use effect: ${complaint}`);
 
-
+  const navigate = useNavigate();
 
   
     const fetchComplaint = async () => {
@@ -67,6 +68,7 @@ export default function ReviewTask() {
   }
   
 
+
   const review = async (complaintId) => {
   
     if (!complaintId) {
@@ -84,6 +86,8 @@ export default function ReviewTask() {
   const messageUser = () => {
     navigate("/host/chat");
   }
+
+
   return (
     // <div className="bg-gray-100 mx-auto py-2 px-8">
     //     <div className='flex mb-1 border-b-4 border-blue-600 p-6 rounded-md shadow-sm bg-white'>
@@ -142,7 +146,11 @@ export default function ReviewTask() {
             {complaint.taskCompletedDate && (
               <p className="text-base flex flex-col self-center">
                 <span className="font-bold">Completed Date:</span>{" "}
-                {complaint.taskCompletedDate}
+                {new Date(complaint.taskCompletedDate).toLocaleDateString('en-US', {
+    year: 'numeric',
+    month: 'long',
+    day: 'numeric',
+  }) || "No Date Available"}
               </p>
             )}
 
@@ -270,7 +278,10 @@ export default function ReviewTask() {
         <button
           className="bg-blue-600 text-white p-2 rounded font-bold flex items-center"
           onClick={() => review(complaint._id)}
-          disabled={!complaintId || !complaint}
+          disabled={!complaintId || !complaint 
+         
+
+          }
         >
           {!complaintId || !complaint ? "Loading..." : "Confirm"}
         </button>

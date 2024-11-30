@@ -5,8 +5,7 @@ const complaintController = require('../controllers/complaintController');
 
 
 
-// Get reviews
-router.get('/reviews/:id', technicianController.getReviews);
+
 
 // Complaint-related routes
 router.get('/:id/noOfJobsCompleted/', complaintController.getNoOfJobsCompleted);
