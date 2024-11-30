@@ -71,6 +71,15 @@ reservationSchema.statics.updateStatuses = async function () {
       },
       { $set: { status: "ongoing" } }
     );
+    // Update payoutStatus to "paid" if checkInDate is today or in the past and status is "ongoing" or "upcoming"
+    const paidReservations = await this.updateMany(
+      {
+        checkInDate: { $lte: endOfDay },
+        status: { $in: ["upcoming", "ongoing", "completed"] },
+        payoutStatus: "pending",
+      },
+      { $set: { payoutStatus: "paid" } }
+    );
 
     // Update reservations to "completed" if checkOutDate is in the past and status is "ongoing"
     const completedOngoingReservations = await this.updateMany(
@@ -93,6 +102,7 @@ reservationSchema.statics.updateStatuses = async function () {
     console.log(
       `${ongoingReservations.nModified} reservations updated to ongoing.`
     );
+    console.log(`${paidReservations.nModified} reservations updated to paid.`);
     console.log(
       `${completedOngoingReservations.nModified} reservations updated to completed (from ongoing).`
     );

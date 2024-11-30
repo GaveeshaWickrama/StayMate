@@ -15,6 +15,7 @@ import Technicians from "../pages/admin/Technicians";
 import ReservationDetails from "../pages/admin/ReservationDetails";
 import PaymentDetails from "../components/admin/PaymentDetails";
 import ManageUsers from "../pages/admin/ManageUsers";
+import UpdateModerator from "../pages/admin/UpdateModerator"; 
 
 function AdminRoutes() {
   const { currentUser, loading } = useAuth();
@@ -81,6 +82,17 @@ function AdminRoutes() {
         element={
           currentUser && currentUser.role === "admin" ? (
             <ModeratorManagement />
+          ) : (
+            <Navigate to="/Unauthorized" />
+          )
+        }
+      />
+
+      <Route
+        path="/UpdateModerator/:id"
+        element={
+          currentUser && currentUser.role === "admin" ? (
+            <UpdateModerator />
           ) : (
             <Navigate to="/Unauthorized" />
           )

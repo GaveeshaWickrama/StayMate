@@ -1,8 +1,9 @@
-const express = require('express');
+const express = require("express");
 const router = express.Router();
-const propertyController = require('../controllers/propertyController');
-const { authToken, requireRole } = require('../middleware/authProvider');
-const uploadPropertyImages = require('../middleware/multerProperties'); // Import the new multer configuration
+const propertyController = require("../controllers/propertyController");
+const { authToken, requireRole } = require("../middleware/authProvider");
+const uploadPropertyImages = require("../middleware/multerProperties"); // Import the new multer configuration
+const reviewController = require("../controllers/reviewController");
 
 // Create a new property (accessible by hosts and admins)
 router.post(
@@ -25,9 +26,11 @@ router.get(
 router.get("/:id", propertyController.getPropertyById);
 
 // Get host details for a property
-router.get('/:id/host', propertyController.getPropertyHostById);
+router.get("/:id/host", propertyController.getPropertyHostById);
 
 // Get all properties with optional geospatial querying and pagination
-router.get('/', propertyController.getAllProperties);
+router.get("/", propertyController.getAllProperties);
 
+// Review routes related to properties
+router.get("/:propertyId/reviews", reviewController.getPropertyReviews);
 module.exports = router;

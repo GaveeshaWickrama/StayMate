@@ -24,6 +24,7 @@ import { GoPersonFill } from "react-icons/go";
 import ActiveComplaintDetails from "./components/ActiveComplaintDetails";
 import PendingComplaintDetails from "./components/PendingComplaintDetails";
 import FinishedComplaintDetails from "./components/FinishedComplaintDetails";
+import ProgressBar from "../technician/components/ProgressBar";
 
 export default function ComplaintDetails() {
   const { id } = useParams(); //complaintid
@@ -69,6 +70,11 @@ export default function ComplaintDetails() {
     navigate("/host/manage-complaints");
   };
 
+
+  const messageUser = () => {
+    navigate("/host/chat");
+  }
+
   return (
     <div className="bg-gray-100 mx-auto py-2 px-8">
       <div className="flex mb-1 border-b-4 border-blue-600 p-6 rounded-md shadow-sm bg-white">
@@ -89,8 +95,8 @@ export default function ComplaintDetails() {
             <div className="flex flex-row items-center">
               <h2 className="text-xl font-bold">Status:</h2>
               {complaint.status==="technicianCompleted" ? (
-                <p className="ml-4 badge badge-ghost">to be reviewed</p>
-              ) : (<p className="ml-4 badge badge-ghost">{complaint.status}</p>)}
+                <p className="ml-4 badge bg-orange-200">to be reviewed</p>
+              ) : (<p className="ml-4 badge bg-yellow-100">{complaint.status}</p>)}
               
             </div>
 
@@ -101,6 +107,9 @@ export default function ComplaintDetails() {
                 {complaint.category}
               </p>
             </div>
+          </div>
+          <div className="bg-white p-8 flex flex-row justify-between items-center border-b w-full">
+            <ProgressBar complaint={complaint}/>
           </div>
           <div className="flex flex-row gap-8 justify-between py-10 px-8 border-b">
             <p className="text-base flex flex-col self-center ">
@@ -189,7 +198,7 @@ export default function ComplaintDetails() {
                 // disabled={isLoading}
               >
                 <FaEnvelope className="mr-2" size={24} />{" "}
-                <span className="text-white">Message</span>
+                <span className="text-white" onClick={messageUser}>Message</span>
                 {/* <span>{isLoading ? <span className='loading loading-spinner mx-auto'></span> : 'Message Host'}</span> */}
               </button>
             </div>
