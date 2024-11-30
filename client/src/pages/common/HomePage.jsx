@@ -19,13 +19,15 @@ function HomePage() {
     setLoading(true);
     setError(null);
     try {
-      const response = await axios.get(`${import.meta.env.VITE_API_URL}/properties`, {
-        params: {
-          latitude: searchParams.location?.latitude || '',
-          longitude: searchParams.location?.longitude || '',
-          radius: searchParams.radius || '',
-        },
-      });
+      const params = {};
+
+      if (searchParams.location?.latitude && searchParams.location?.longitude && searchParams.radius) {
+        params.latitude = searchParams.location.latitude;
+        params.longitude = searchParams.location.longitude;
+        params.radius = searchParams.radius;
+      }
+
+      const response = await axios.get(`${import.meta.env.VITE_API_URL}/properties`, { params });
 
       const allProperties = response.data;
       setProperties(allProperties);
@@ -39,9 +41,7 @@ function HomePage() {
   };
 
   useEffect(() => {
-    if (searchParams.location && searchParams.radius) {
-      fetchProperties();
-    }
+    fetchProperties();
   }, [searchParams]);
 
   const handleSearch = (params) => {
@@ -104,51 +104,39 @@ function HomePage() {
         ) : error ? (
           <p className="px-2 text-red-600">{error}</p>
         ) : (
-          <>
-            <div className={`flex flex-wrap ${showMap ? 'w-full md:w-2/3' : 'w-full'} -mx-2`}>
-              {filteredProperties.length > 0 ? (
-                filteredProperties.map((property) => (
-                  <div
-                    key={property._id}
-                    className={`w-full sm:w-1/2 ${
-                      showMap ? 'md:w-1/2 lg:w-1/2' : 'md:w-1/3 lg:w-1/4'
-                    } px-2 mb-4`}
-                  >
-                    
-                      <PropertyCard property={property} />
-                      {/* <p className="text-sm text-gray-600 mt-2">
-                        <strong>Distance:</strong>{' '}
-                        {property.distance ? `${property.distance.toFixed(2)} km` : 'N/A'}
-                      </p>
-                      <p className="text-sm text-gray-600">
-                        <strong>Duration:</strong>{' '}
-                        {property.duration || 'N/A'}
-                      </p> */}
-                   
-                  </div>
-                ))
-              ) : (
-                <p className="px-2">No properties found. Try adjusting your search criteria.</p>
-              )}
-            </div>
-            {showMap && (
-              <div className="w-full md:w-1/3 px-2 md:px-4 my-4 md:my-0 relative">
-                <div className="sticky top-0">
-                  <Map
-                    location={searchParams.location}
-                    radius={searchParams.radius}
-                    properties={filteredProperties}
-                  />
-                  <button
-                    onClick={toggleMap}
-                    className="bg-black text-white rounded-md p-3 absolute top-4 right-4 shadow-md hover:bg-blue-600 transition duration-200"
-                  >
-                    Hide Map
-                  </button>
+          <div className={`flex flex-wrap ${showMap ? 'w-full md:w-2/3' : 'w-full'} -mx-2`}>
+            {filteredProperties.length > 0 ? (
+              filteredProperties.map((property) => (
+                <div
+                  key={property._id}
+                  className={`w-full sm:w-1/2 ${
+                    showMap ? 'md:w-1/2 lg:w-1/2' : 'md:w-1/3 lg:w-1/4'
+                  } px-2 mb-4`}
+                >
+                  <PropertyCard property={property} />
                 </div>
-              </div>
+              ))
+            ) : (
+              <p className="px-2">No properties found. Try adjusting your search criteria.</p>
             )}
-          </>
+          </div>
+        )}
+        {showMap && (
+          <div className="w-full md:w-1/3 px-2 md:px-4 my-4 md:my-0 relative">
+            <div className="sticky top-0">
+              <Map
+                location={searchParams.location}
+                radius={searchParams.radius}
+                properties={filteredProperties}
+              />
+              <button
+                onClick={toggleMap}
+                className="bg-black text-white rounded-md p-3 absolute top-4 right-4 shadow-md hover:bg-blue-600 transition duration-200"
+              >
+                Hide Map
+              </button>
+            </div>
+          </div>
         )}
       </div>
     </div>
