@@ -2,7 +2,7 @@ const Reservation = require("../models/reservationModel");
 const Property = require("../models/propertyModel");
 
 const getRevenueReport = async (req, res) => {
-  const { startDate, endDate, status } = req.query;
+  const { startDate, endDate, status, hostId } = req.query; // Get hostId from query
 
   // Validate input
   if (!startDate || !endDate) {
@@ -24,7 +24,10 @@ const getRevenueReport = async (req, res) => {
     } else if (status === "pending") {
       query.paymentStatus = false; // Only fetch pending reservations
     }
-    // If no `status` is provided, fetch all reservations (both paid and pending)
+
+    if (hostId) {
+      query.host_id = hostId; // Filter by host_id if provided
+    }
 
     // Fetch reservations based on the query
     const reservations = await Reservation.find(query);
@@ -57,6 +60,7 @@ const getRevenueReport = async (req, res) => {
       startDate,
       endDate,
       status: status || "all", // Return the status filter applied
+      hostId: hostId || "all", // Return hostId filter applied if any
     });
   } catch (error) {
     console.error("Error fetching revenue report:", error);
@@ -95,5 +99,35 @@ const getPropertyCounts = async (req, res) => {
     }
   };
 
+  const getTotalRevenueForHost = async (req, res) => {
+    const { hostId } = req.query;  // Get hostId from query
+  
+    // Validate input
+    if (!hostId) {
+      return res.status(400).json({ error: "Please provide hostId." });
+    }
+  
+    try {
+      // Build the query to filter reservations by hostId
+      const query = { host_id: hostId, paymentStatus: true };  // Only include paid reservations
+  
+      // Fetch reservations based on the query
+      const reservations = await Reservation.find(query);
+  
+      // Calculate total revenue
+      const totalRevenue = reservations.reduce((sum, reservation) => {
+        return sum + reservation.totalPrice;  // Sum all the totalPrice values
+      }, 0);
+  
+      // Return the result
+      res.status(200).json({
+        totalRevenue,
+        hostId
+      });
+    } catch (error) {
+      console.error("Error fetching total revenue for host:", error);
+      res.status(500).json({ error: "Internal server error" });
+    }
+  };
 
-module.exports = { getRevenueReport , getPropertyCounts  };
+module.exports = { getRevenueReport , getPropertyCounts, getTotalRevenueForHost   };
