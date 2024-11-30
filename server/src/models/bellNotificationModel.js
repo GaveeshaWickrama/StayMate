@@ -18,6 +18,7 @@ const bellNotificationSchema = new mongoose.Schema({
         required : true
     },
 
+
     complaintId : {
         type : mongoose.Schema.Types.ObjectId,
         ref : "complaint"
@@ -27,6 +28,8 @@ const bellNotificationSchema = new mongoose.Schema({
         type : Boolean,
         default : false
     }
+
 },{timestamps: true});
+
 
 module.exports = mongoose.model('bellNotification',bellNotificationSchema);

@@ -9,6 +9,7 @@ const ReviewAdd = () => {
   const [rating, setRating] = useState(0);
   const [comment, setComment] = useState("");
   const [reservationId, setReservationId] = useState("");
+  const [errors, setErrors] = useState({});
 
   const location = useLocation();
 
@@ -22,7 +23,23 @@ const ReviewAdd = () => {
     setRating(value);
   };
 
-  const handleSubmit = async () => {
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+
+    // Validation
+    const newErrors = {};
+    if (rating === 0) {
+      newErrors.rating = "Please provide a rating.";
+    }
+    if (!comment.trim()) {
+      newErrors.comment = "Please enter a comment.";
+    }
+
+    if (Object.keys(newErrors).length > 0) {
+      setErrors(newErrors);
+      return;
+    }
+
     const reviewData = {
       reservationId,
       rating,
@@ -54,19 +71,16 @@ const ReviewAdd = () => {
             <h1 className="text-2xl font-semibold mb-4">
               Describe your experience
             </h1>
-            <form
-              className="flex flex-col"
-              onSubmit={(e) => {
-                e.preventDefault();
-                handleSubmit();
-              }}
-            >
+            <form className="flex flex-col" onSubmit={handleSubmit}>
               <textarea
                 className="w-full h-40 p-6 border border-gray-300 rounded-lg mb-2"
                 placeholder="Describe your experience"
                 value={comment}
                 onChange={(e) => setComment(e.target.value)}
               />
+              {errors.comment && (
+                <p className="text-red-500 text-sm">{errors.comment}</p>
+              )}
               <p className="text-xs text-gray-500 mb-4">
                 * Your review will be public on your guest profile
               </p>
@@ -85,6 +99,9 @@ const ReviewAdd = () => {
                     </span>
                   ))}
                 </div>
+                {errors.rating && (
+                  <p className="text-red-500 text-sm">{errors.rating}</p>
+                )}
               </div>
               <div className="flex justify-end">
                 <span className="font-semibold cursor-pointer mr-4">

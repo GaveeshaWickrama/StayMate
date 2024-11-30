@@ -8,6 +8,11 @@ const PopupForm = ({ isOpen, handleClose, handleSave, complaintId }) => {
   const navigate = useNavigate();
   if (!isOpen) return null;
 
+
+  const handleRemoveImage = (indexToRemove) => {
+    setImages((prevImages) => prevImages.filter((_, index) => index !== indexToRemove));
+  };
+
   const handleFileChange = (event) => {
     const files = Array.from(event.target.files);
     setImages((prevImages) => [...prevImages, ...files]);
@@ -69,10 +74,10 @@ const PopupForm = ({ isOpen, handleClose, handleSave, complaintId }) => {
                 />
               </div>
             ))}
-            {images.length < 3 && (
+            {/* {images.length < 3 && (
               <label className="block text-lg font-medium text-gray-700 py-3">
-                photo
-                <span className="text-2xl font-bold text-gray-500">+</span>
+                photos
+                <span className="text-2xl font-bold text-gray-500 border-blue-400 p-4">+</span>
                 <input
                   type="file"
                   className="hidden"
@@ -81,7 +86,52 @@ const PopupForm = ({ isOpen, handleClose, handleSave, complaintId }) => {
                   onChange={handleFileChange}
                 />
               </label>
-            )}
+            )} */}
+
+
+<div className="bg-gray-100 p-5 rounded-lg shadow-md">
+  {images.length < 3 && (
+    <div className="flex flex-col items-center space-y-3">
+      <label
+        className="flex flex-col items-center justify-center w-full h-32 border-2 border-dashed border-blue-400 rounded-lg cursor-pointer hover:bg-blue-50"
+      >
+        <span className="text-lg font-medium text-gray-700">
+          Upload Photos
+        </span>
+        <span className="text-4xl font-bold text-blue-400 mt-2">+</span>
+        <input
+          type="file"
+          className="hidden"
+          accept="image/*"
+          multiple
+          onChange={handleFileChange}
+        />
+      </label>
+      <p className="text-sm text-gray-500">
+        You can upload up to 3 images.
+      </p>
+    </div>
+  )}
+  <div className="flex space-x-3 mt-5">
+    {images.map((image, index) => (
+      <div key={index} className="relative">
+        <img
+          src={URL.createObjectURL(image)}
+          alt="Uploaded"
+          className="w-24 h-24 object-cover rounded-lg shadow-md"
+        />
+        <button
+          type="button"
+          className="absolute top-1 right-1 bg-red-500 text-white text-xs p-1 rounded-full hover:bg-red-600"
+          onClick={() => handleRemoveImage(index)}
+        >
+          ✕
+        </button>
+      </div>
+    ))}
+  </div>
+</div>
+
           </div>
           <div className="mb-4">
             <label className="block text-lg font-medium text-gray-700 py-3">

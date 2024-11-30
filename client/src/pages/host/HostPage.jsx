@@ -1,5 +1,12 @@
-import React, { useState } from "react";
-import { FaMoneyBillWave, FaHome, FaClipboardList } from "react-icons/fa";
+import React, { useState, useEffect } from "react";
+import axios from "axios";
+import { useAuth } from "../../context/auth";
+import {
+  FaMoneyBillWave,
+  FaHome,
+  FaClipboardList,
+  FaCheckCircle,
+} from "react-icons/fa";
 import {
   LineChart,
   Line,
@@ -11,105 +18,187 @@ import {
   ResponsiveContainer,
 } from "recharts";
 
+import DatePicker from "react-datepicker"; // Install react-datepicker with `npm install react-datepicker`
+import "react-datepicker/dist/react-datepicker.css"; // Import styles for the date picker
+
 // GreetingBox Component
 function GreetingBox({ name }) {
   return (
     <div className="bg-white p-6 rounded-lg border border-gray-200 shadow-lg mb-8">
-      <h1 className="text-4xl font-bold text-gray-800">Welcome back, {name}!</h1>
+      <h1 className="text-4xl font-bold text-gray-800">Hello, {name}!</h1>
     </div>
   );
 }
 
 // Main Host Dashboard
 function HostPage() {
-  const [view, setView] = useState("monthly");
+  const { token } = useAuth();
 
-  // Simulated data
-  const [totalRevenue] = useState(120000);
-  const [totalBookedProperties] = useState(75);
-  const [totalProperties] = useState(100);
-  const [incomeExpensesData] = useState([
-    { month: "January", income: 20000, expenses: 8000 },
-    { month: "February", income: 22000, expenses: 10000 },
-    { month: "March", income: 25000, expenses: 12000 },
-    { month: "April", income: 28000, expenses: 14000 },
-    { month: "May", income: 30000, expenses: 16000 },
-    { month: "June", income: 32000, expenses: 18000 },
-  ]);
+  // State for summary data
+  const [summary, setSummary] = useState({
+    totalRevenue: 0,
+    totalBookings: 0,
+    activeBookings: 0,
+    propertyCount: 0,
+  });
 
-  const [propertyData] = useState([
-    { id: 1, name: "Beachfront Villa", type: "Villa", address: "123 Ocean Drive", status: "Available" },
-    { id: 2, name: "City Loft", type: "Apartment", address: "45 Downtown Street", status: "Booked" },
-    { id: 3, name: "Mountain Cabin", type: "Cabin", address: "789 Hilltop Road", status: "Available" },
-    { id: 4, name: "Lake House", type: "House", address: "456 Lakeside Avenue", status: "Under Maintenance" },
-    { id: 5, name: "Countryside Cottage", type: "Cottage", address: "321 Meadow Lane", status: "Booked" },
-  ]);
+  // State for graphs data
+  const [graphData, setGraphData] = useState([]);
+
+  // State for date range
+  const [startDate, setStartDate] = useState(() => {
+    const twoMonthsAgo = new Date();
+    twoMonthsAgo.setMonth(twoMonthsAgo.getMonth() - 2);
+    return twoMonthsAgo;
+  });
+  const [endDate, setEndDate] = useState(new Date());
+
+  // Fetch host summary data
+  useEffect(() => {
+    const fetchHostSummary = async () => {
+      try {
+        const response = await axios.get(
+          `${import.meta.env.VITE_API_URL}/reports/host-summary`,
+          {
+            headers: {
+              Authorization: `Bearer ${token}`,
+            },
+          }
+        );
+        setSummary(response.data);
+      } catch (error) {
+        console.error("Error fetching host summary:", error);
+      }
+    };
+
+    if (token) fetchHostSummary();
+  }, [token]);
+
+  // Fetch graph data based on date range
+  useEffect(() => {
+    const fetchGraphData = async () => {
+      try {
+        const response = await axios.get(
+          `${import.meta.env.VITE_API_URL}/reports/daily-summary`,
+          {
+            headers: {
+              Authorization: `Bearer ${token}`,
+            },
+            params: {
+              startDate: startDate.toISOString().split("T")[0],
+              endDate: endDate.toISOString().split("T")[0],
+            },
+          }
+        );
+        setGraphData(response.data);
+      } catch (error) {
+        console.error("Error fetching graph data:", error);
+      }
+    };
+
+    if (token) fetchGraphData();
+  }, [token, startDate, endDate]);
+
+  // Calculate the net revenue for the host
+  const netRevenue = summary.totalRevenue * 0.9;
 
   return (
     <main className="p-6 min-h-screen bg-gradient-to-r from-blue-50 to-blue-100">
       <GreetingBox name="Host User" />
 
-      {/* Metrics Section */}
-      <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6 mb-8">
-        <div className="bg-white shadow-lg p-6 rounded-lg flex flex-col items-center">
-          <FaMoneyBillWave className="text-5xl text-green-600 mb-3" />
-          <h3 className="text-xl font-semibold text-gray-700">Total Revenue</h3>
-          <p className="text-2xl font-bold text-gray-900">LKR {totalRevenue.toLocaleString()}</p>
-        </div>
-        <div className="bg-white shadow-lg p-6 rounded-lg flex flex-col items-center">
-          <FaHome className="text-5xl text-blue-600 mb-3" />
-          <h3 className="text-xl font-semibold text-gray-700">Booked Properties</h3>
-          <p className="text-2xl font-bold text-gray-900">{totalBookedProperties}</p>
+      <h3 className="text-4xl font-bold text-gray-800 mb-8">Dashboard</h3>
+
+      {/* Top 4 Summary Boxes */}
+      <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
+        <div className="bg-white shadow-xl p-6 rounded-lg flex flex-col items-center transform transition duration-300 hover:scale-105">
+          <FaMoneyBillWave className="text-5xl text-green-600 mb-3 animate-pulse" />
+          <h3 className="text-xl font-semibold text-gray-700">Net Revenue</h3>
+          <p className="text-2xl font-bold text-gray-900">
+            LKR {netRevenue.toLocaleString()}
+          </p>
         </div>
         <div className="bg-white shadow-lg p-6 rounded-lg flex flex-col items-center">
           <FaClipboardList className="text-5xl text-purple-600 mb-3" />
           <h3 className="text-xl font-semibold text-gray-700">Total Properties</h3>
-          <p className="text-2xl font-bold text-gray-900">{totalProperties}</p>
+          <p className="text-2xl font-bold text-gray-900">
+            {summary.propertyCount}
+          </p>
+        </div>
+        <div className="bg-white shadow-xl p-6 rounded-lg flex flex-col items-center transform transition duration-300 hover:scale-105">
+          <FaClipboardList className="text-5xl text-purple-600 mb-3 animate-pulse" />
+          <h3 className="text-xl font-semibold text-gray-700">Total Bookings</h3>
+          <p className="text-2xl font-bold text-gray-900">
+            {summary.totalBookings}
+          </p>
+        </div>
+        <div className="bg-white shadow-xl p-6 rounded-lg flex flex-col items-center transform transition duration-300 hover:scale-105">
+          <FaCheckCircle className="text-5xl text-orange-600 mb-3 animate-pulse" />
+          <h3 className="text-xl font-semibold text-gray-700">Active Bookings</h3>
+          <p className="text-2xl font-bold text-gray-900">
+            {summary.activeBookings}
+          </p>
         </div>
       </div>
 
-      {/* Table and Chart Section */}
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
-        {/* Property Analysis Table */}
-        <div className="bg-white shadow-lg p-6 rounded-lg">
-          <h3 className="text-xl font-semibold text-gray-800 mb-4">Property Analysis</h3>
-          <div className="overflow-x-auto">
-            <table className="min-w-full divide-y divide-gray-200">
-              <thead className="bg-gray-50">
-                <tr>
-                  <th className="px-4 py-2 text-left text-xs font-medium text-gray-500 uppercase">ID</th>
-                  <th className="px-4 py-2 text-left text-xs font-medium text-gray-500 uppercase">Name</th>
-                  <th className="px-4 py-2 text-left text-xs font-medium text-gray-500 uppercase">Type</th>
-                  <th className="px-4 py-2 text-left text-xs font-medium text-gray-500 uppercase">Address</th>
-                  <th className="px-4 py-2 text-left text-xs font-medium text-gray-500 uppercase">Status</th>
-                </tr>
-              </thead>
-              <tbody className="bg-white divide-y divide-gray-200">
-                {propertyData.map((property) => (
-                  <tr key={property.id} className="hover:bg-gray-100">
-                    <td className="px-4 py-2">{property.id}</td>
-                    <td className="px-4 py-2">{property.name}</td>
-                    <td className="px-4 py-2">{property.type}</td>
-                    <td className="px-4 py-2">{property.address}</td>
-                    <td className="px-4 py-2">{property.status}</td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
-          </div>
+      {/* Date Range Selector */}
+      <div className="bg-white shadow-lg p-6 rounded-lg flex px-10 items-center mb-8">
+        <div>
+          <h3 className="text-xl font-semibold px-10 text-gray-700">Select Date Range</h3>
         </div>
+        <div className="flex space-x-4">
+          <DatePicker
+            selected={startDate}
+            onChange={(date) => setStartDate(date)}
+            maxDate={endDate}
+            selectsStart
+            startDate={startDate}
+            endDate={endDate}
+            className="border rounded-lg p-2"
+          />
+          <DatePicker
+            selected={endDate}
+            onChange={(date) => setEndDate(date)}
+            minDate={startDate}
+            selectsEnd
+            startDate={startDate}
+            endDate={endDate}
+            className="border rounded-lg p-2"
+          />
+        </div>
+      </div>
 
-        {/* Income Chart (Only showing Income now) */}
-        <div className="bg-white shadow-lg p-6 rounded-lg">
-          <h3 className="text-xl font-semibold text-gray-800 mb-4">Income</h3>
+      {/* Graphs Section */}
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
+        {/* Total Bookings Per Date Line Chart */}
+        <div className="bg-white shadow-xl p-6 rounded-lg transform transition duration-300 hover:scale-105">
+          <h3 className="text-xl font-semibold text-gray-800 mb-4">
+            Total Bookings Per Date
+          </h3>
           <ResponsiveContainer width="100%" height={400}>
-            <LineChart data={incomeExpensesData}>
+            <LineChart data={graphData} margin={{ top: 10, right: 30, left: 0, bottom: 0 }}>
               <CartesianGrid strokeDasharray="3 3" />
-              <XAxis dataKey="month" />
+              <XAxis dataKey="date" />
               <YAxis />
               <Tooltip />
               <Legend />
-              <Line type="monotone" dataKey="income" stroke="#8884d8" strokeWidth={3} />
+              <Line type="monotone" dataKey="totalBookings" stroke="#8884d8" strokeWidth={3} />
+            </LineChart>
+          </ResponsiveContainer>
+        </div>
+
+        {/* Total Revenue Per Day Line Chart */}
+        <div className="bg-white shadow-xl p-6 rounded-lg transform transition duration-300 hover:scale-105">
+          <h3 className="text-xl font-semibold text-gray-800 mb-4">
+            Total Revenue Per Day
+          </h3>
+          <ResponsiveContainer width="100%" height={400}>
+            <LineChart data={graphData} margin={{ top: 10, right: 30, left: 0, bottom: 0 }}>
+              <CartesianGrid strokeDasharray="3 3" />
+              <XAxis dataKey="date" />
+              <YAxis />
+              <Tooltip />
+              <Legend />
+              <Line type="monotone" dataKey="totalRevenue" stroke="#82ca9d" strokeWidth={3} />
             </LineChart>
           </ResponsiveContainer>
         </div>

@@ -243,7 +243,7 @@ const TableComponent = ({ data }) => {
                         {item.status === "jobCompleted" && (
                           <button>
                             {" "}
-                            <span className="badge badge-ghost bg-red-100 badge-sm ">
+                            <span className="badge  bg-green-200 badge-sm ">
                               Completed
                             </span>
                           </button>
@@ -251,7 +251,7 @@ const TableComponent = ({ data }) => {
                         {item.status === "pendingTechnicianApproval" && item.estimatedBudget != null && (
                           <button className="">
                             {" "}
-                            <span className="badge badge-ghost bg-red-100 badge-sm whitespace-nowrap">
+                            <span className="badge bg-yellow-200 badge-sm whitespace-nowrap">
                               Pending Budget confirmation
                             </span>
                           </button>
@@ -259,13 +259,13 @@ const TableComponent = ({ data }) => {
                         {item.status === "pendingTechnicianApproval"  && !item.estimatedBudget  &&  (
                           <button className="">
                             {" "}
-                            <span className="badge badge-ghost bg-red-100 badge-sm whitespace-nowrap">
+                            <span className="badge  bg-red-200 badge-sm whitespace-nowrap">
                               pending Technician Approval
                             </span>
                           </button>
                         )}
                         {item.status === "active" && (
-                          <span className="badge badge-ghost bg-red-100 badge-sm">
+                          <span className="badge badge-ghost bg-orange-200 badge-sm">
                             active
                           </span>
                         )}
@@ -281,7 +281,7 @@ const TableComponent = ({ data }) => {
                         {item.status === "technicianCompleted" && (
                           <button className="">
                             {" "}
-                            <span className="badge badge-ghost badge-sm bg-red-100 whitespace-nowrap">
+                            <span className="badge  badge-sm bg-purple-200 whitespace-nowrap">
                               awaiting proof review
                             </span>
                           </button>
@@ -308,7 +308,6 @@ const TableComponent = ({ data }) => {
   );
 };
 
-// Example data for testing purposes
 
 export default function Test() {
   const [jobs, setJobs] = useState([]);

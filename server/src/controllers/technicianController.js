@@ -40,16 +40,25 @@ const getAllTechnicians = async (req, res) => {
 
 
 const getReviews = async (req, res) => {
-  const { id } = req.params;
+  let id = req.params.technicianId;
+console.log("this is the technician id received in the backend:",id); //userId
+
+if(id){
+  id= mongoose.Types.ObjectId.createFromHexString(id);
+}
+  
+
   console.log(id);
   console.log(
     "Technician review collection name:",
-    TechnicianReview.collection.name
+    Technician.collection.name
   );
   try {
-    console.log(res.data);
-    const reviews = await TechnicianReview.find({ technicianId: id });
-    if (!reviews.length) {
+    // const reviews = await Technician.findById(id).populate("userId").exec().reviews;
+     const technician = await Technician.findOne({userId:id});
+     const reviews = technician?.reviews;
+    
+    if (!reviews || !reviews.length) {
       console.log("No reviews found");
       return res.status(404).json({ message: "No reviews found" });
     }
@@ -100,7 +109,7 @@ if(!technicianId || !rating || !userId){
 
   const technician = await Technician.findById(technicianId);
 
-  const complaint = await Complaint.findById({
+  const complaint = await Complaint.findOne({
     _id:complaintID,
     status:"jobCompleted",
   });
@@ -109,13 +118,23 @@ if(!technicianId || !rating || !userId){
     return res.status(404).json({error:'technician or complaint not found'});
   }
 
+
+  if (!Array.isArray(technician.reviews)) {
+    technician.reviews = [];
+  }
+  
+
+console.log("you are here");
+
  //add the new review
  technician.reviews.push({
   reviewerId:userId,
   rating,
-  review
+  review,
+  complaintID
  });
 
+ console.log(technician.reviews);
  //optionally update the overall rating
 
  const totalRatings = technician.reviews.length;
@@ -124,7 +143,7 @@ if(!technicianId || !rating || !userId){
  await technician.save();
 
  res.status(200).json({message:"thank you for your feedback",
-  complaint:ratedComplaint
+  technician
 });
 
 }
@@ -143,6 +162,6 @@ module.exports = {
   
   getTechnicianByIdC,
   getAllTechnicians,
-
+  rateTechnician,
   getTechnicianWithUserDetails,
 };
