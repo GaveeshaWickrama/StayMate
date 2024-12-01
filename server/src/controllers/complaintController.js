@@ -10,8 +10,56 @@ const path = require("path");
 const mongoose = require("mongoose");
 
 
+const viewGuestComplaints = async (req,res) => {
 
+  console.log("Inside viewGuestComplaints");
 
+  try {
+    const guestId = req.user.userId; // Assuming the user is authenticated
+    res.set("Cache-Control", "no-store");
+
+    const complaints = await Complaint.find({
+      status: { $ne: "completed" }, // Exclude complaints with status `completed`
+    })
+      .select("category description status") // Select only category, description, and status fields from complaints
+      .populate({
+        path: "reservationId",
+        match: { user: guestId }, // Match reservations with the current logged-in user's ID
+        select: "property user", // Only select the property field from reservationId
+        populate: [
+          {
+            path: "property",
+            select: "title host_id",
+            populate: {
+              path: "host_id",
+              select: "firstName lastName", // Select fname and lastname of the host
+            },
+          },
+          {
+            path: "user",
+            select: "firstName lastName", // Select fname and lname of the user
+          },
+        ],
+      })
+      .populate({
+        path: "technician",
+        populate: {
+          path: "userId",
+          select: "firstName lastName", // Select fname and lastname of the technician
+        },
+      });
+
+    // After filtering, remove complaints where reservationId is null
+    const filteredComplaints = complaints.filter(c => c.reservationId);
+    console.log("filteredComplaints",filteredComplaints);
+    res.json(filteredComplaints);
+
+  } catch (err) {
+    res.status(500).json({ error: "Failed to fetch complaints" });
+    console.log("Error");
+  }
+
+};
 
 
 const raiseComplaint = async (req, res) => {
@@ -970,5 +1018,6 @@ module.exports = {
   confirmJob,
   getProgress,
   setProgress,
-  markJobCompleted
+  markJobCompleted,
+  viewGuestComplaints
 };

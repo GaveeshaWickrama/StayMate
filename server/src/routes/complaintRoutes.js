@@ -9,6 +9,11 @@ const upload = require('../middleware/multer'); // Import the upload configurati
 // get self user info (id stored in jwt token)
 /* router.get('/',authToken,requireRole('guest'), complaintController.raiseComplaint); */
 
+router.get('/viewGuestComplaints', authToken, requireRole('guest'), (req, res, next) => {
+  console.log("Route reached");
+  complaintController.viewGuestComplaints(req, res, next);
+});
+
 router.post(
   "/raisecomplaint",
   authToken,
