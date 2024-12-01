@@ -109,5 +109,9 @@ router.get(
 );
 
 router.get('/technicians', adminController.getAllTechnicians);
+router.get('/hosts', adminController.getAllHosts);
+router.get('/guests', adminController.getAllGuests);
+
+
 
 module.exports = router;
