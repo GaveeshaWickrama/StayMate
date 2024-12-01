@@ -1,6 +1,7 @@
 const mongoose = require('mongoose');
 
-const resetOtpSchema = new mongoose.Schema({
+// Define the schema for ResetOTP
+const resetOTPSchema = new mongoose.Schema({
     email: {
         type: String,
         required: true,
@@ -12,7 +13,7 @@ const resetOtpSchema = new mongoose.Schema({
     createdAt: {
         type: Date,
         default: Date.now,
-        index: { expires: '10m' }, // OTP expires after 10 minutes
+        index: { expires: '60m' }, // TTL index to expire OTPs after 5 minutes
     },
     otpCount: {
         type: Number,
@@ -21,11 +22,11 @@ const resetOtpSchema = new mongoose.Schema({
     lastOtpTime: {
         type: Date,
         default: Date.now,
-    },
-    isUsed: {
-        type: Boolean,
-        default: false, // Flag to check if the OTP has been used
-    },
+    }
 });
 
-module.exports = mongoose.model('ResetOTP', resetOtpSchema);
+// Create the model
+const ResetOTP = mongoose.model('ResetOTP', resetOTPSchema);
+
+// Export the model
+module.exports = ResetOTP;
