@@ -1,4 +1,5 @@
 const Technician = require("../models/technicianModel");
+const Complaint = require("../models/complaintModel");
 const User = require("../models/userModel");
 const TechnicianReview = require("../models/technicianReviewModel");
 const mongoose = require("mongoose");
@@ -84,6 +85,56 @@ async function getTechnicianByIdC(req, res) {
       .json({ message: "An error occurred while fetching technicians", error }); // Send error response
   }
 }
+
+
+const rateTechnician = async (req,res) => {
+  const {rating,review, userId, complaintID, technicianId} = req.body;
+  
+  try{
+
+if(!technicianId || !rating || !userId){
+  return res.status(400).json({error:'required values missing'});
+}
+
+
+
+  const technician = await Technician.findById(technicianId);
+
+  const complaint = await Complaint.findById({
+    _id:complaintID,
+    status:"jobCompleted",
+  });
+
+  if(!technician || !complaint){
+    return res.status(404).json({error:'technician or complaint not found'});
+  }
+
+ //add the new review
+ technician.reviews.push({
+  reviewerId:userId,
+  rating,
+  review
+ });
+
+ //optionally update the overall rating
+
+ const totalRatings = technician.reviews.length;
+ const totalScore = technician.reviews.reduce((sum,review)=> sum + review.rating, 0);
+ technician.rating = totalScore /totalRatings;
+ await technician.save();
+
+ res.status(200).json({message:"thank you for your feedback",
+  complaint:ratedComplaint
+});
+
+}
+catch(error){
+    console.error("error publishing rating:",error);
+    res.status(500).json({message:"error publishing rating",error});
+  }
+  
+}
+
 
 console.log("Technician collection name:", Technician.collection.name);
 

@@ -5,7 +5,6 @@ import { useAuth } from '../context/auth';
 import TechnicianExploreLayout from '../pages/technician/layouts/TechnicianExplore';
 import TechnicianLayout from '../pages/technician/layouts/TechnicianLayout';
 import PendingTasks from '../pages/technician/PendingTasks';
-import ActiveTasks from '../pages/technician/ActiveTasks';
 import UploadProof from '../pages/technician/Completion';
 import TechnicianExplore from '../pages/technician/ExploreTechnicians'
 import TechnicianDetails from '../pages/technician/TechnicianDetails'
@@ -30,13 +29,11 @@ function TechnicianRoutes() {
             <>
               <Route path="/dashboard" element={<TechnicianDashboard />} />
               <Route path="/requests/pending-tasks" element={<PendingTasks />} />
-              <Route path="/requests/active-tasks" element={<ActiveTasks />} />
               <Route path="/requests/completion" element={<UploadProof />} />
               <Route path="/all" element={<TechnicianExplore />} />
               <Route path="/:id" element={<TechnicianDetails />} />
              
               <Route path="/tasks/pending" element={<PendingTasks />} />
-              <Route path="/tasks/active" element={<ActiveTasks/>} />
               <Route path="/task/:id/upload-proof" element={<ActiveTaskDetails />} />
               <Route path="/tasks" element={<Tasks />} />
               <Route path="/:id/task-details" element={<TaskDetails />} />

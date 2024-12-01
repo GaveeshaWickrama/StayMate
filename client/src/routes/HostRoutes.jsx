@@ -3,6 +3,14 @@ import { Routes, Route, Navigate } from "react-router-dom";
 import { useAuth } from "../context/auth";
 import { PropertyProvider } from "../context/PropertyContext";
 
+
+
+
+
+import GetPaymentDetails from "../pages/host/GetPaymentDetails"
+
+
+
 import HostPage from "../pages/host/HostPage";
 import HostListings from "../pages/host/HostListings";
 import AddProperty from "../pages/host/AddProperty";
@@ -92,8 +100,16 @@ function HostRoutes() {
         <Route path="/technician-details/:id" element={ isHost ? <TechnicianDetails /> : <Navigate to="/Unauthorized" /> } />
         <Route path="/manage-complaints" element={ isHost ? <ComplaintsManage /> : <Navigate to="/Unauthorized" /> } />
         {/* <Route path="/viewReviews" element={isHost ? <HostReviews /> : <Navigate to="/Unauthorized" />} /> */}
-       <Route path="/complaint/review/" element={ currentUser && currentUser.role === "host" ? ( <ReviewTask/> ) : ( <Navigate to="/Unauthorized" /> ) } /> 
+
+       //<Route path="/complaint/review/" element={ currentUser && currentUser.role === "host" ? ( <ReviewTask/> ) : ( <Navigate to="/Unauthorized" /> ) } /> 
+      
+       
+       
+       <Route path="/addpaymentdetails/" element={ currentUser && currentUser.role === "host" ? ( <GetPaymentDetails/> ) : ( <Navigate to="/Unauthorized" /> ) } /> 
+
+       <Route path="/complaint/review/:complaintId" element={ currentUser && currentUser.role === "host" ? ( <ReviewTask/> ) : ( <Navigate to="/Unauthorized" /> ) } /> 
        <Route path="/test/" element={ currentUser && currentUser.role === "host" ? ( <Test/> ) : ( <Navigate to="/Unauthorized" /> ) } /> 
+
        
        <Route
           path="/chat"
