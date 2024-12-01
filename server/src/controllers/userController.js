@@ -1,6 +1,6 @@
 const User = require("../models/userModel");
 const Technician = require("../models/technicianModel");
-const PropertyOwner = require("../models/propertyOwnerModel");
+const PropertyOwner = require("../models/hostModel");
 const mongoose = require("mongoose");
 
 // Get all users
