@@ -58,9 +58,9 @@ const PropertyHost = ({ propertyId }) => {
   };
 
   return (
-    <div className="flex items-center p-4 bg-white rounded-lg">
+    <div className="flex items-center p-0 bg-white rounded-lg">
       <div className="flex flex-col items-center mr-4">
-        <img src={hostDetails.image} alt="Host" className="w-40 h-40 rounded-full mb-2" />
+        <img src={hostDetails.image} alt="Host" className="w-40 h-40 rounded-full mb-0" />
         <h3 className="text-lg font-bold">{hostDetails.name}</h3>
       </div>
       <div className="flex flex-col flex-1">
