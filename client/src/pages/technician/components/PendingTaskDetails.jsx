@@ -10,17 +10,21 @@ import axios from 'axios';
 export default function PendingTaskDetails({complaint}) {
 
   const navigate = useNavigate();
+  const [budgetItems, setBudgetItems] = useState([
+    { expense: '', value: '' }, // Initialize with one item
+  ]);
 
-  const [estimatedBudget, setEstimatedBudget] = useState('');
+  // const [estimatedBudget, setEstimatedBudget] = useState('');
+
   const [showModal, setShowModal] = useState(false);
 
-  const handleSave = async (e) => {
-    e.preventDefault();
+  const handleSave = async ( budgetItems) => {
+    // e.preventDefault();
 
-    console.log(`estimated budget received in handleSave function ${estimatedBudget}`)
+    console.log(`estimated budget received in handleSave function ${budgetItems}`)
 
     try {
-      await axios.post(`${import.meta.env.VITE_API_URL}/complaints/complaint/${complaint._id}/acceptJob`, { budget : estimatedBudget });
+      await axios.post(`${import.meta.env.VITE_API_URL}/complaints/complaint/${complaint._id}/acceptJob`, { budgetItems });
 
       alert('Budget submitted successfully');
     } catch (error) {
@@ -57,7 +61,7 @@ export default function PendingTaskDetails({complaint}) {
   }
 
   console.log(complaint.status);
-  console.log("initial estimated budget",estimatedBudget);
+  console.log("initial estimated budget",budgetItems);
 
   return (
     <div className="bg-gray-100 mx-auto py-2 px-8">
@@ -66,7 +70,7 @@ export default function PendingTaskDetails({complaint}) {
       
 
 
-      {Number(complaint.estimatedBudget) === null || isNaN(Number(complaint.estimatedBudget))? (
+      {(!Array.isArray(complaint.estimatedBudget) || complaint.estimatedBudget.length === 0)? (
      <div> 
            {/* status = pending technician approval */}
 
@@ -86,17 +90,23 @@ export default function PendingTaskDetails({complaint}) {
        isOpen={showModal}
        handleClose={() => setShowModal(false)}
        handleSave={handleSave}
-       estimatedBudget={estimatedBudget} // Pass any other necessary props
-       setEstimatedBudget={setEstimatedBudget} // Pass setter function if needed
+       budgetItems={budgetItems} // Pass any other necessary props
+       setBudgetItems={setBudgetItems} // Pass setter function if needed
      />
    </div>
   ) : (
     <div>
        {/* status = pending host confirmation */}
-    {complaint.estimatedBudget != null && !isNaN(Number(complaint.estimatedBudget)) && (
+    {(Array.isArray(complaint.estimatedBudget) && complaint.estimatedBudget.length > 0) && (
     <div className="bg-blue-100 p-5 m-3">
       Awaiting host confirmation, You estimated a budget of $
-      {Number(complaint.estimatedBudget).toFixed(2)}
+      <ul className="list-disc pl-5 bg-gray-100 p-3 rounded">
+      {complaint.estimatedBudget.map((item, index) => (
+        <li key={index}>
+          <span className="font-bold">{item.expense}:</span> LKR {item.value.toFixed(2)}
+        </li>
+      ))}
+    </ul>
     </div>
   )}
  

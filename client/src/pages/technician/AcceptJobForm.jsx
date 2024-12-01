@@ -1,35 +1,78 @@
 import React, { useState } from 'react';
 
-const PopupForm = ({ isOpen, handleClose, handleSave,
-  estimatedBudget,
-  setEstimatedBudget 
- }) => {
-  if (!isOpen) return null;
+const PopupForm = ({ isOpen, handleClose, handleSave, budgetItems, setBudgetItems }) => {
+ 
 
-  console.log(`estimated budget received in acceptjob form ${estimatedBudget}`);
-
-  const handleChange = (e) => {
-    setEstimatedBudget(e.target.value);
+  // Handle expense changes
+  const handleExpenseChange = (index, field, value) => {
+    const updatedBudgetItems = [...budgetItems];
+    updatedBudgetItems[index][field] = value;
+    setBudgetItems(updatedBudgetItems);
   };
 
+  // Add a new budget item
+  const handleAddItem = () => {
+    setBudgetItems([...budgetItems, { expense: '', value: '' }]);
+  };
+
+  // Remove a budget item
+  const handleRemoveItem = (index) => {
+    const updatedBudgetItems = budgetItems.filter((_, i) => i !== index);
+    setBudgetItems(updatedBudgetItems);
+  };
+
+  // Submit the data
+  const handleSubmit = (e) => {
+    e.preventDefault();
+    handleSave(budgetItems); // Pass the budgetItems to the parent save function
+  };
+
+  if (!isOpen) return null;
 
   return (
     <div className="fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center">
       <div className="bg-white p-8 rounded-lg shadow-lg w-1/3">
-        <h2 className="text-2xl font-bold mb-4">Accept Job </h2>
-        <form onSubmit={handleSave}>
-          <div className="mb-4">
-            <label className="block text-lg font-medium text-gray-700 py-3">Please estimate the payment you would be charging for the job</label>
-           
-            <input type="number"
-            className="focus:outline-none mt-1 block w-full p-2 border border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500"
-            value={estimatedBudget}
-            onChange={handleChange}
-
-            required placeholder='(LKR) 3000'
-             />
-          </div>
-          <div className="flex justify-end">
+        <h2 className="text-2xl font-bold mb-4">Accept Job</h2>
+        <form onSubmit={handleSubmit}>
+          {budgetItems.map((item, index) => (
+            <div key={index} className="mb-4">
+              <label className="block text-lg font-medium text-gray-700">Expense</label>
+              <input
+                type="text"
+                className="mt-1 block w-full p-2 border border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500"
+                value={item.expense}
+                onChange={(e) => handleExpenseChange(index, 'expense', e.target.value)}
+                placeholder="Expense name"
+                required
+              />
+              <label className="block text-lg font-medium text-gray-700 mt-2">Value (LKR)</label>
+              <input
+                type="number"
+                className="mt-1 block w-full p-2 border border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500"
+                value={item.value}
+                onChange={(e) => handleExpenseChange(index, 'value', e.target.value)}
+                placeholder="3000"
+                required
+              />
+              {budgetItems.length > 1 && (
+                <button
+                  type="button"
+                  className="text-red-600 text-sm mt-2"
+                  onClick={() => handleRemoveItem(index)}
+                >
+                  Remove
+                </button>
+              )}
+            </div>
+          ))}
+          <button
+            type="button"
+            className="bg-green-500 text-white px-4 py-2 rounded mt-4"
+            onClick={handleAddItem}
+          >
+            Add Expense
+          </button>
+          <div className="flex justify-end mt-6">
             <button
               type="button"
               className="bg-gray-500 text-white px-4 py-2 rounded mr-2"
@@ -41,7 +84,7 @@ const PopupForm = ({ isOpen, handleClose, handleSave,
               type="submit"
               className="bg-blue-600 text-white px-4 py-2 rounded"
             >
-                Confirm
+              Confirm
             </button>
           </div>
         </form>

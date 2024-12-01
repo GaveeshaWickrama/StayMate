@@ -211,7 +211,7 @@ async function assignComplaintToTechnician(req, res) {
 async function acceptJob(req, res) {
   const { complaintId } = req.params; // Route parameter
 
-  const { budget } = req.body;
+  const { budgetItems } = req.body;
 
   try {
     console.log("Received complaint ID:", complaintId);
@@ -241,7 +241,7 @@ async function acceptJob(req, res) {
       { _id: complaintObjectId, status: "pendingTechnicianApproval" },
       {
         $set: {
-          estimatedBudget: budget,
+          estimatedBudget: budgetItems,
         },
       },
       { new: true } // Return the updated document
@@ -506,13 +506,15 @@ const getComplaintsByHost = async (req, res) => {
 
 //following function is in the technician routes
 const getNoOfJobsCompleted = async (req, res) => {
-  const { id } = req.params;
-  console.log(id); //log technician id
+  const { id } = req.params.technicianId;
+  console.log("technician id received in the no of jobs completed backend",id); //log technician id
   try {
     const noOfJobs = await Complaint.countDocuments({
-      technician: id,
+      "technician.userId": id, 
       status: "jobCompleted",
     });
+
+    console.log("no of jobs",noOfJobs);
     res.status(200).json(noOfJobs);
   } catch (error) {
     console.error(error);
@@ -917,6 +919,11 @@ const extendJob = async (req, res) => {
     return res.status(400).json({message:"No existing deadline to extend"});
    }
 
+   if (complaint.extended) {
+    return res.status(400).json({ message: 'Job has already been extended' });
+}
+
+
    const currentDeadline = new Date(complaint.deadline);
    const newDeadline = new Date(currentDeadline);
    newDeadline.setDate(currentDeadline.getDate() + 3);
@@ -925,7 +932,9 @@ const extendJob = async (req, res) => {
 
     const updatedComplaint = await Complaint.findByIdAndUpdate(
        complaintObjectId,  // Ensure only non-resolved complaints are updated
-      { $set: { deadline : newDeadline } },
+      { $set: { deadline : newDeadline,
+        extended : true
+       } },
       {new:true}
     );
 

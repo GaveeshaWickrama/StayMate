@@ -74,30 +74,34 @@ function PendingComplaintDetails({ complaint, id }) {
         </div>
       )}
 
-      {complaint.status === "pendingTechnicianApproval" && (
-        <div className="flex flex-row">
-          {complaint.estimatedBudget != null &&
-          !isNaN(complaint.estimatedBudget) ? (
-            <div className="flex flex-col items-start ">
-              <p className="bg-blue-100 p-3 m-3">
-                {complaint.technician.userId.firstName}{" "}
-                {complaint.technician.userId.lastName} estimated a budget of $
-                {Number(complaint.estimatedBudget).toFixed(2)}
-                <br />
-                Confirm if you accept
-              </p>
-              <button
-                className="bg-red-600 text-white p-4 rounded font-bold w-50 my-5"
-                onClick={confirmJob}
-              >
-                Confirm Job
-              </button>
-            </div>
-          ) : (
-            <p className="bg-green-100 p-4 m-3">Pending Technician Approval</p>
-          )}
-        </div>
-      )}
+{complaint.status === "pendingTechnicianApproval" && (
+  <div className="flex flex-row">
+    {Array.isArray(complaint.estimatedBudget) && complaint.estimatedBudget.length > 0 ? (
+      <div className="flex flex-col items-start ">
+        <p className="bg-blue-100 p-3 m-3">
+          {complaint.technician.userId.firstName}{" "}
+          {complaint.technician.userId.lastName} estimated a budget of: 
+        </p>
+        <ul className="list-disc pl-5 bg-gray-100 p-3 rounded">
+          {complaint.estimatedBudget.map((item, index) => (
+            <li key={index}>
+              <span className="font-bold">{item.expense}:</span> Rs {item.value.toFixed(2)}
+            </li>
+          ))}
+        </ul>
+        <p className="bg-blue-100 p-3 m-3">Confirm if you accept</p>
+        <button
+          className="bg-red-600 text-white p-4 rounded font-bold w-50 my-5"
+          onClick={confirmJob}
+        >
+          Confirm Job
+        </button>
+      </div>
+    ) : (
+      <p className="bg-green-100 p-4 m-3">Pending Technician Approval</p>
+    )}
+  </div>
+)}
     </div>
   );
 }

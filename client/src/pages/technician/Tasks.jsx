@@ -248,22 +248,21 @@ const TableComponent = ({ data }) => {
                             </span>
                           </button>
                         )}
-                        {item.status === "pendingTechnicianApproval" && item.estimatedBudget != null && (
-                          <button className="">
-                            {" "}
-                            <span className="badge bg-yellow-200 badge-sm whitespace-nowrap">
-                              Pending Budget confirmation
-                            </span>
-                          </button>
-                        )}
-                        {item.status === "pendingTechnicianApproval"  && !item.estimatedBudget  &&  (
-                          <button className="">
-                            {" "}
-                            <span className="badge  bg-red-200 badge-sm whitespace-nowrap">
-                              pending Technician Approval
-                            </span>
-                          </button>
-                        )}
+                       {(item.status === "pendingTechnicianApproval" && Array.isArray(item.estimatedBudget) && item.estimatedBudget.length > 0) && (
+  <button className="">
+    <span className="badge bg-yellow-200 badge-sm whitespace-nowrap">
+      Pending Budget Confirmation
+    </span>
+  </button>
+)}
+
+{(item.status === "pendingTechnicianApproval" && (!Array.isArray(item.estimatedBudget) || item.estimatedBudget.length === 0)) && (
+  <button className="">
+    <span className="badge bg-red-200 badge-sm whitespace-nowrap">
+      Pending Technician Approval
+    </span>
+  </button>
+)}
                         {item.status === "active" && (
                           <span className="badge badge-ghost bg-orange-200 badge-sm">
                             active

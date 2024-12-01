@@ -25,6 +25,8 @@ const TableComponent = ({ data }) => {
   
     const navigate = useNavigate();
 
+
+
     useEffect(() => {
       let newData = data.filter(item =>
         (filters.category ? item.category.includes(filters.category) : true) &&
@@ -80,6 +82,7 @@ const TableComponent = ({ data }) => {
     const uniqueCategories = [...new Set(data.map(item => item.category))];
     const uniqueStatus = [...new Set(data.map(item => item.status))];
 
+    console.log()
   
     return (
       <div className="bg-gray-100 mx-auto py-2 px-8">
@@ -216,10 +219,10 @@ const TableComponent = ({ data }) => {
                 {item.status === 'jobCompleted' && (
           <button  > <span className='badge bg-green-100 badge-sm '>Completed</span></button>
         )}
-        {(item.status === 'pendingTechnicianApproval' && !item.estimatedBudget) && (
+        {(item.status === 'pendingTechnicianApproval' && item.estimatedBudget.length === 0) && (
           <button className=''> <span className='badge bg-red-100 badge-sm whitespace-nowrap'>Pending Technician Approval</span></button>
         )}
-        {(item.status === 'pendingTechnicianApproval' && item.estimatedBudget) && (
+        {(item.status === 'pendingTechnicianApproval' && item.estimatedBudget.length>0) && (
           <button className=''> <span className='badge bg-yellow-100 badge-sm whitespace-nowrap'>Pending Budget Confirmation</span></button>
         )}
         {item.status === 'active' && <span className='badge badge-ghost badge-sm'>active</span>}

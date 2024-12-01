@@ -95,17 +95,17 @@ export default function ComplaintDetails(props) {
           <div className="bg-white p-8 flex flex-row justify-between items-center border-none">
             <div className="flex flex-row items-center">
               <h2 className="text-xl font-bold">Status:</h2>
-              {complaint.status === "pendingTechnicianApproval" && complaint.estimatedBudget!=null && (
-                <p className="ml-4 badge badge-ghost bg-yellow-200">
-                pending Budget  Confirmation
-                
-              </p>
-              )}
-              {complaint.status === "pendingTechnicianApproval" && !complaint.estimatedBudget && (
-                <p className="ml-4 badge badge-ghost bg-yellow-200">
-                {complaint.status}
-              </p>
-              )}
+              {complaint.status === "pendingTechnicianApproval" && Array.isArray(complaint.estimatedBudget) && complaint.estimatedBudget.length > 0 && (
+  <p className="ml-4 badge badge-ghost bg-yellow-200">
+    Pending Budget Confirmation
+  </p>
+)}
+
+{complaint.status === "pendingTechnicianApproval" && (!Array.isArray(complaint.estimatedBudget) || complaint.estimatedBudget.length === 0) && (
+  <p className="ml-4 badge badge-ghost bg-yellow-200">
+    {complaint.status}
+  </p>
+)}
               {complaint.status === "active" && (
                 <p className="ml-4 badge badge-ghost bg-yellow-200">
                 {complaint.status}
@@ -249,13 +249,22 @@ export default function ComplaintDetails(props) {
           </div>
 )}
           
+          {console.log(typeof complaint.estimatedBudget)}
 
           <div>
-            {complaint.estimatedBudget && (
+            {(Array.isArray(complaint.estimatedBudget) && complaint.estimatedBudget.length > 0) && (
               <div className="m-3 p-1">
                 <span>
-                  You estimated a LKR {complaint.estimatedBudget} for this job
+                  Your estimated budget for this job
                 </span>
+                <ul className="list-disc pl-5 mt-2">
+      {complaint.estimatedBudget.map((item, index) => (
+        <li key={index}>
+          <span className="font-semibold">{item?.expense}:</span> LKR {item?.value?.toFixed(2)}
+
+        </li>
+      ))}
+    </ul>
               </div>
             )}
           </div>

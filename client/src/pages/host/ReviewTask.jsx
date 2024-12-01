@@ -20,7 +20,7 @@ import {
 import ProgressBar from "../technician/components/ProgressBar";
 import Reviews from "../technician/Reviews";
 
-export default function ReviewTask() {
+const ReviewTask = () =>  {
   // const location = useLocation();
   // const { complaintId } = location.state || {};
   const {complaintId} = useParams();
@@ -89,16 +89,7 @@ export default function ReviewTask() {
 
 
   return (
-    // <div className="bg-gray-100 mx-auto py-2 px-8">
-    //     <div className='flex mb-1 border-b-4 border-blue-600 p-6 rounded-md shadow-sm bg-white'>
-    //     <h1 className="flex items-center text-4xl font-extrabold text-black-600">
-    //      Review Complaint
-    //     </h1>
-    //     <div className="flex items-center text-gray-600 ml-6 mt-3">
-
-    //     </div>
-    //   </div>
-    // </div>
+   
 
     <div className="bg-gray-100 mx-auto py-2 px-8">
       <div className="flex mb-1 border-b-4 border-blue-600 p-6 rounded-md shadow-sm bg-white">
@@ -155,10 +146,16 @@ export default function ReviewTask() {
             )}
 
 
-{complaint.estimatedBudget ? (
+{Array.isArray(complaint.estimatedBudget) && complaint.estimatedBudget.length > 0 ? (
               <p className="text-base flex flex-col items-center">
                 <span className="font-bold">Estimated Budget:</span>{" "}Rs{" "}
-                {complaint.estimatedBudget} 
+                <ul className="list-disc pl-5">
+      {complaint.estimatedBudget.map((budgetItem, index) => (
+        <li key={index}>
+          <span className="font-semibold">{budgetItem.expense}:</span> Rs {budgetItem.value}
+        </li>
+      ))}
+    </ul>
               </p>
             ) : (
               <p className="text-base flex flex-col items-center text-gray-500">
@@ -189,7 +186,7 @@ export default function ReviewTask() {
             <div className="bg-white p-8 flex flex-col">
               <h2 className="text-xl font-bold pb-2">Proof Images</h2>
               <p className="flex flex-row gap-3 flex-wrap">
-                {complaint.proofImages &&
+                {Array.isArray(complaint.proofImages) &&
                   complaint.proofImages.map((image, index) => (
                     <img
                       key={index}
@@ -229,8 +226,8 @@ export default function ReviewTask() {
             <h2 className="text-xl font-bold mb-2">Assigned Technician</h2>
             <div className="text-xl card">
               {" "}
-              {complaint.technician.userId.firstName}{" "}
-              {complaint.technician.userId.lastName}
+              {complaint.technician?.userId?.firstName}{" "}
+  {complaint.technician?.userId?.lastName}
             </div>
           </div>
 
@@ -247,8 +244,8 @@ export default function ReviewTask() {
             <div className="flex flex-col flex-1">
               <h3 className="text-lg font-bold">
                 {" "}
-                {complaint.technician.userId.firstName}{" "}
-                {complaint.technician.userId.lastName}
+                {complaint.technician?.userId?.firstName}{" "}
+{complaint.technician?.userId?.lastName}
               </h3>
               <h2 className="text-base font-bold">
                 {complaint.technician.subRole}
@@ -276,16 +273,19 @@ export default function ReviewTask() {
         <h2 className="text-xl font-bold mb-2">User Description</h2>
         <p className="text-lg">{complaint.description}</p>
         <button
-          className="bg-blue-600 text-white p-2 rounded font-bold flex items-center"
-          onClick={() => review(complaint._id)}
-          disabled={!complaintId || !complaint 
+          className= {!complaintId || !complaint || complaint.status === 'jobCompleted' ? "bg-gray-600 text-white p-2 rounded font-bold flex items-center" : "bg-blue-600 text-white p-2 rounded font-bold flex items-center"}
+          onClick={() => complaint._id && review(complaint._id)}
+          disabled={!complaintId || !complaint || complaint.status === 'jobCompleted'
          
 
           }
         >
-          {!complaintId || !complaint ? "Loading..." : "Confirm"}
+          {!complaintId || !complaint || complaint.status === 'jobCompleted' ? "Back" : "Confirm"}
         </button>
       </div>
     </div>
   );
 }
+
+
+export default ReviewTask;
