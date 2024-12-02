@@ -1,8 +1,8 @@
 const bcrypt = require('bcrypt');
 const otpGenerator = require('otp-generator');
-const ResetOTP = require('../models/resetOtpModel'); // Import ResetOTP
-const User = require('../models/userModel'); // User model
-const transporter = require('../config/emailConfig'); // Email config
+const User = require('../models/userModel');
+const ResetOTP = require('../models/resetOtpModel');
+const transporter = require('../config/emailConfig');
 
 // Request password reset by generating OTP
 async function requestPasswordReset(req, res) {
@@ -21,19 +21,16 @@ async function requestPasswordReset(req, res) {
 
     try {
         const existingOtp = await ResetOTP.findOne({ email: normalizedEmail });
-        console.log(existingOtp)
+
         if (existingOtp && !existingOtp.isUsed) {
             const currentTime = Date.now();
             const timeDifference = (currentTime - existingOtp.lastOtpTime) / 1000;
             const waitTime = (2 * existingOtp.otpCount) * 20;
 
             if (timeDifference < waitTime) {
-                return res.status(429).json({
-                    message: `Please wait ${(Math.round(waitTime - timeDifference))} seconds before requesting a new OTP.`,
-                });
+                return res.status(429).json({ message: `Please wait ${(Math.round(waitTime - timeDifference))} seconds before requesting a new OTP.` });
             }
 
-            // Update existing OTP
             existingOtp.otpCount += 1;
             existingOtp.lastOtpTime = currentTime;
             existingOtp.otp = otpGenerator.generate(4, { upperCaseAlphabets: false, specialChars: false });
@@ -41,7 +38,6 @@ async function requestPasswordReset(req, res) {
 
             sendOtpEmail(existingOtp.otp, normalizedEmail, res);
         } else {
-            // Create a new OTP entry
             const otp = otpGenerator.generate(4, { upperCaseAlphabets: false, specialChars: false });
             const otpEntry = new ResetOTP({
                 email: normalizedEmail,
@@ -67,7 +63,7 @@ function sendOtpEmail(otp, email, res) {
     };
 
     transporter.sendMail(mailOptions, (error, info) => {
-        if (0) { //set to error
+        if (error) {
             console.error('Error sending OTP email:', error);
             return res.status(500).json({ message: 'Error sending OTP email' });
         } else {
@@ -88,7 +84,7 @@ async function resetPassword(req, res) {
     }
 
     const normalizedEmail = email.toLowerCase().trim();
-    const otpEntry = await ResetOTP.findOne({ email: normalizedEmail, otp});
+    const otpEntry = await ResetOTP.findOne({ email: normalizedEmail, otp, isUsed: false });
 
     if (!otpEntry) {
         return res.status(400).json({ message: "Invalid OTP or password reset request not found" });

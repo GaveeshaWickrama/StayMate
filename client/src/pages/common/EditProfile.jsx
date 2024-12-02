@@ -14,13 +14,12 @@ const EditProfile = () => {
     address: '',
     picture: ''
   });
-  const [errors, setErrors] = useState({});
   const [photo, setPhoto] = useState(null);
   const [previewUrl, setPreviewUrl] = useState('');
   const { currentUser, loading } = useAuth();
-  if (loading) {
-    return <div>Loading...</div>; // Show a loading spinner or message
-  }
+    if (loading) {
+      return <div>Loading...</div>; // Show a loading spinner or message
+    }
 
   useEffect(() => {
     const fetchProfile = async () => {
@@ -50,13 +49,6 @@ const EditProfile = () => {
 
   const handleChange = (e) => {
     const { name, value } = e.target;
-
-    // Reset error for this field
-    setErrors((prevErrors) => ({
-      ...prevErrors,
-      [name]: ''
-    }));
-
     setProfile((prevProfile) => ({
       ...prevProfile,
       [name]: value,
@@ -72,51 +64,6 @@ const EditProfile = () => {
   const handleSave = async (e) => {
     e.preventDefault();
 
-    // Regular Expressions
-    const nameRegex = /^[a-zA-Z]+$/;
-    const phoneRegex = /^\d{10}$/;
-    const nicPassportRegex = /^(?:\d{9}[Vv]|\d{12}|[N]\d{8})$/;
-
-    let validationFailed = false;
-
-  if (!nameRegex.test(profile.firstName)) {
-    setErrors((prevErrors) => ({
-      ...prevErrors,
-      firstName: 'Only Letters Allowed',
-    }));
-    validationFailed = true;
-  }
-
-  if (!nameRegex.test(profile.lastName)) {
-    setErrors((prevErrors) => ({
-      ...prevErrors,
-      lastName: 'Only Letters Allowed',
-    }));
-    validationFailed = true;
-  }
-
-  // Validate Phone Number
-  if (!phoneRegex.test(profile.phone)) {
-    setErrors((prevErrors) => ({
-      ...prevErrors,
-      phone: 'Enter a valid 10-digit phone number',
-    }));
-    validationFailed = true;
-  }
-
-  // Validate NIC/Passport
-  if (!nicPassportRegex.test(profile.nicPassport)) {
-    setErrors((prevErrors) => ({
-      ...prevErrors,
-      nicPassport: 'Enter a valid NIC/Passport number',
-    }));
-    validationFailed = true;
-  }
-
-  if (validationFailed) {
-    return; // Stop execution if validation fails
-  }
-    
     const formData = new FormData();
     Object.keys(profile).forEach((key) => {
       formData.append(key, profile[key]);
@@ -166,28 +113,22 @@ const EditProfile = () => {
               <input
                 type="text"
                 name="firstName"
-                className={`w-full px-4 py-2 border rounded-md focus:outline-none focus:ring-2 ${
-                  errors.firstName ? 'border-red-500' : 'focus:ring-blue-500'
-                }`}
+                className="w-full px-4 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
                 value={profile.firstName}
                 onChange={handleChange}
                 placeholder="First Name"
               />
-               {errors.firstName && <p className="text-red-500 text-sm mt-1">{errors.firstName}</p>}
             </div>
             <div className="w-1/2">
               <label className="block text-gray-700">Last Name</label>
               <input
                 type="text"
                 name="lastName"
-                className={`w-full px-4 py-2 border rounded-md focus:outline-none focus:ring-2 ${
-                  errors.lastName ? 'border-red-500' : 'focus:ring-blue-500'
-                }`}
+                className="w-full px-4 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
                 value={profile.lastName}
                 onChange={handleChange}
                 placeholder="Last Name"
               />
-              {errors.lastName && <p className="text-red-500 text-sm">{errors.lastName}</p>}
             </div>
           </div>
           <div>
@@ -195,14 +136,11 @@ const EditProfile = () => {
             <input
               type="tel"
               name="phone"
-              className={`w-full px-4 py-2 border rounded-md focus:outline-none focus:ring-2 ${
-                  errors.phone ? 'border-red-500' : 'focus:ring-blue-500'
-                }`}
+              className="w-full px-4 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
               value={profile.phone}
               onChange={handleChange}
               placeholder="Mobile"
             />
-            {errors.phone && <p className="text-red-500 text-sm mt-1">{errors.phone}</p>}
           </div>
 
           <div>
@@ -210,14 +148,11 @@ const EditProfile = () => {
             <input
               type="text"
               name="nicPassport"
-              className={`w-full px-4 py-2 border rounded-md focus:outline-none focus:ring-2 ${
-                  errors.nicPassport ? 'border-red-500' : 'focus:ring-blue-500'
-                }`}
+              className="w-full px-4 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
               value={profile.nicPassport}
               onChange={handleChange}
               placeholder="NIC/Passport"
             />
-            {errors.nicPassport && <p className="text-red-500 text-sm mt-1">{errors.nicPassport}</p>}
           </div>
 
           <div className="mt-4">

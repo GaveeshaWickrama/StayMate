@@ -1,5 +1,3 @@
-//this is not a used component 
-//see Complaints Manage for the correct usage
 import React, { useEffect, useState } from 'react'
 import {Link} from 'react-router-dom'
 import axios from 'axios';

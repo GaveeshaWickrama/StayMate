@@ -61,7 +61,7 @@ const HostProfile = ({ profile, currentUser, id }) => {
             <div className="flex space-x-4 mb-6">
                 {currentUser && id === currentUser.id && ( 
                   <Link to={`/users/EditProfile`}>
-                    <button className="bg-blue-500 text-white py-2 px-6 rounded-full shadow-lg hover:bg-blue-600 transition transform hover:-translate-y-1">Edit Profile</button>
+                    <button className="bg-blue-500 text-white py-2 px-6 rounded-full shadow-lg hover:bg-blue-600 transition transform hover:-translate-y-1">Edit llllllllProfile</button>
                   </Link>
                 )}
                 {currentUser && id !== currentUser.id && ( 

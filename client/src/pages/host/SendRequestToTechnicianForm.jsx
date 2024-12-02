@@ -74,8 +74,6 @@ const PopupForm = ({
   //   </div>
   // );
 
-
-
   return (
     <div className="fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center">
       <div className="bg-white p-8 rounded-lg shadow-lg w-1/3">

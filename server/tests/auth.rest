@@ -11,7 +11,7 @@ Content-Type: application/json
 
 #LOGIN - incorrect password, correct email 
 
-POST http://localhost:5173/auth/login
+POST http://localhost:3000/auth/login
 Content-Type: application/json
 
 {
@@ -63,15 +63,4 @@ Content-Type: application/json
 
 {
     "email": "h@gmail.com"
-}
-
-###
-
-POST http://localhost:3000/auth/reset-password
-Content-Type: application/json
-
-{
-    "email": "h@gmail.com", 
-    "otp" : "85si" , 
-    "newPassword" : "pass1234"
 }

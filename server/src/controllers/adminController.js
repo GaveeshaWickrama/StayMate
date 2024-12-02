@@ -12,59 +12,6 @@ const getModerators = async (req, res) => {
   }
 };
 
-//getting a single moderator
-const getModerator = async (req, res) => {
-  const { id } = req.params;
-
-  // Ensure the id is a valid ObjectId
-  if (!mongoose.Types.ObjectId.isValid(id)) {
-    return res.status(400).json({ error: "Invalid Moderator ID" });
-  }
-
-  try {
-    // Fetch the moderator by id
-    const moderator = await User.findById(id);
-    if (!moderator || moderator.role !== 'moderator') {
-      return res.status(404).json({ error: "Moderator not found" });
-    }
-
-    // Send the moderator data as response
-    res.status(200).json(moderator);
-  } catch (error) {
-    res.status(500).json({ error: error.message });
-  }
-};
-
-//update a mod
-const updateModerator = async (req, res) => {
-  const { id } = req.params;
-
-  // Ensure the id is a valid ObjectId
-  if (!mongoose.Types.ObjectId.isValid(id)) {
-    return res.status(400).json({ error: "Invalid Moderator ID" });
-  }
-
-  try {
-    // Fetch the moderator by id
-    const moderator = await User.findById(id);
-    if (!moderator || moderator.role !== "moderator") {
-      return res.status(404).json({ error: "Moderator not found" });
-    }
-
-    // Update the moderator's fields from the request body
-    Object.keys(req.body).forEach((key) => {
-      moderator[key] = req.body[key];
-    });
-
-    // Save the updated moderator
-    const updatedModerator = await moderator.save();
-    res.status(200).json(updatedModerator);
-  } catch (error) {
-    res.status(400).json({ error: error.message });
-  }
-};
-
-
 // Create a new moderator
 const createModerator = async (req, res) => {
   const {
@@ -260,6 +207,4 @@ module.exports = {
   createModerator,
   deleteModerator,
   getAllTechnicians,
-  getModerator,
-  updateModerator,
 };

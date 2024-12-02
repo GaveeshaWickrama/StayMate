@@ -3,7 +3,6 @@ const User = require("../models/userModel")
 const PropertyVerified = require("../models/propertyverifiedModel");
 const path = require("path");
 
-
 async function createProperty(req, res) {
   try {
     const { 
@@ -264,118 +263,49 @@ async function getPropertyHostById(req, res) {
   }
 }
 
-const axios = require('axios');
-
 async function getAllProperties(req, res) {
   const { latitude, longitude, radius, page = 1, limit = 1000 } = req.query;
 
-  console.log('Search parameters:', { latitude, longitude, radius });
+  console.log('Search parameters:');
+  console.log('Latitude:', latitude);
+  console.log('Longitude:', longitude);
+  console.log('Radius:', radius);
+
+  let query = {
+    visibility: 'visible',
+    status: 'verified'
+  };
+
+  if (latitude && longitude && radius && !isNaN(latitude) && !isNaN(longitude) && !isNaN(radius)) {
+    query['location.coordinates'] = {
+      $geoWithin: {
+        $centerSphere: [
+          [parseFloat(longitude), parseFloat(latitude)],
+          parseFloat(radius) / 3963.2 // Radius in radians, assuming radius in miles
+        ]
+      }
+    };
+  }
+
+  console.log('Constructed query:', JSON.stringify(query, null, 2));
 
   try {
-    let properties;
-
-    // Check if latitude, longitude, and radius are provided
-    if (latitude && longitude && radius) {
-      // Fetch properties within the approximate radius
-      properties = await Property.find({
-        visibility: 'visible',
-        status: 'verified',
-        'location.coordinates': {
-          $geoWithin: {
-            $centerSphere: [
-              [parseFloat(longitude), parseFloat(latitude)],
-              parseFloat(radius) / 3963.2, // Convert radius from miles to radians
-            ],
-          },
-        },
-      })
-        .skip((page - 1) * limit)
-        .limit(parseInt(limit));
-
-      console.log(`Found ${properties.length} properties within radius.`);
-    } else {
-      // Fetch all properties if no latitude, longitude, or radius is provided
-      properties = await Property.find({
-        visibility: 'visible',
-        status: 'verified',
-      })
-        .skip((page - 1) * limit)
-        .limit(parseInt(limit));
-
-      console.log(`Found ${properties.length} properties (no radius).`);
-    }
+    const properties = await Property.find(query)
+      .skip((page - 1) * limit)
+      .limit(parseInt(limit));
 
     if (!properties.length) {
       console.log('No properties found.');
-      return res.status(200).json([]);
+      return res.status(200).json([]); // Returns an empty array directly
     }
 
-    // If latitude, longitude, and radius are provided, calculate distances
-    if (latitude && longitude && radius) {
-      const origins = `${latitude},${longitude}`;
-      const destinations = properties
-        .map((property) => {
-          const coordinates = property.location?.coordinates?.coordinates;
-          if (coordinates && coordinates.length === 2) {
-            return `${coordinates[1]},${coordinates[0]}`; // latitude,longitude
-          }
-          console.warn('Invalid coordinates for property:', property._id);
-          return null; // Skip invalid properties
-        })
-        .filter(Boolean); // Remove invalid destinations
-
-      if (destinations.length) {
-        try {
-          const googleResponse = await axios.get(
-            'https://maps.googleapis.com/maps/api/distancematrix/json',
-            {
-              params: {
-                origins,
-                destinations: destinations.join('|'),
-                key: process.env.GOOGLE_API_KEY,
-              },
-            }
-          );
-
-          const distances = googleResponse.data.rows[0].elements.map((element) => ({
-            distance: element.distance?.value / 1000, // Convert meters to kilometers
-            duration: element.duration?.text, // Human-readable travel time
-          }));
-
-          properties = properties.map((property, index) => ({
-            ...property.toObject(),
-            distance: distances[index]?.distance || null,
-            duration: distances[index]?.duration || null,
-          }));
-
-          // Filter properties within the specified radius
-          properties = properties.filter(
-            (property) => property.distance !== null && property.distance <= parseFloat(radius)
-          );
-
-          console.log(`Filtered ${properties.length} properties within the radius.`);
-        } catch (googleError) {
-          console.error('Google Distance Matrix API failed:', googleError.message);
-          // If Google API fails, include properties without distances
-          properties = properties.map((property) => ({
-            ...property.toObject(),
-            distance: null,
-            duration: null,
-          }));
-        }
-      }
-    }
-
-    res.status(200).json(properties);
+    console.log('Properties found:', properties);
+    res.status(200).json(properties); // Simplified response without pagination
   } catch (error) {
-    console.error('Error fetching properties:', error.message);
-    res.status(500).json({ message: 'Server error fetching properties.' });
+    console.error('Server error fetching properties:', error);
+    res.status(500).json({ message: 'Server error' });
   }
 }
-
-module.exports = {
-  getAllProperties,
-};
 
 
 

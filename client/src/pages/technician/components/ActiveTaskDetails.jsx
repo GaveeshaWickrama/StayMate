@@ -119,8 +119,6 @@ import React, { useEffect, useState } from "react";
 import TaskDetails from "../TaskDetails";
 import { Routes, Route, Navigate, useNavigate } from "react-router-dom";
 import PopupForm from "../UploadProofForm";
-import axios from 'axios';
-import ProgressBar from "./ProgressBar";
 
 export default function ActiveTaskDetails({ complaint }) {
   const navigate = useNavigate();
@@ -134,67 +132,43 @@ export default function ActiveTaskDetails({ complaint }) {
     navigate("/technician/tasks");
   };
 
-  const extend = async() => {
-
-    console.log("this is the complaint received by extend function",complaint);
-    console.log("this is the complaint id", complaint._id);
-    try {
-      const response = await axios.post(
-          `${import.meta.env.VITE_API_URL}/technicians/extendJob/${complaint._id}`,
-          
-      );
-
-      console.log(response);
-      if (response.status === 200) {
-          alert('extend successful');
-         
-      } else {
-          alert('Failed to extend');
-      }
-  } catch (error) {
-      console.error('Error extending the deadline:', error);
-      alert('An error occurred while extending job');
-  }
-  console.log("Button clicked");
-};
-
-return (
-  <div className="bg-gray-100 mx-auto py-2 px-8">
-    {/* <ProgressBar complaint = {complaint}/> */}
-    <div className="flex flex-row">
-      <button
-        className="bg-green-600 text-white p-4 rounded font-bold w-50 my-10 m-4"
-        onClick={extend}
-      >
-        Extend
-      </button>
-      <div className="flex flex-row items-center">
-      <button
-        className={`bg-blue-600 text-white p-4 rounded font-bold w-50 my-10 m-4 `}
-        onClick={() => setShowModal(true)}
-        
-      >
-        Mark Job as completed
-      </button>
-
+  return (
+    <div className="bg-gray-100 mx-auto py-2 px-8">
       
+      <div className="flex flex-row">
+        <button
+          className="bg-green-600 text-white p-4 rounded font-bold w-50 my-10 m-4"
+          onClick={() => setShowModal(true)}
+        >
+          Extend
+        </button>
+        <div className="flex flex-row items-center">
+        <button
+          className={`bg-blue-600 text-white p-4 rounded font-bold w-50 my-10 m-4 ${
+    complaint.progress !== 100 ? 'opacity-50 cursor-not-allowed' : ''
+  }`}
+          onClick={() => setShowModal(true)}
+          disabled={complaint.progress !== 100}
+        >
+          Mark Job as completed
+        </button>
+
+        {complaint.progress!==100 && (
+          <div className="text-xs">You can not mark the job as completed until the progress is 100%</div>
+
+        ) }
+        </div>
+       
+
+        <PopupForm
+          isOpen={showModal}
+          complaintId={complaint._id}
+          handleClose={() => setShowModal(false)}
+          handleSave={handleSave}
+        />
       </div>
-     
 
-      <PopupForm
-        isOpen={showModal}
-        complaintId={complaint._id}
-        handleClose={() => setShowModal(false)}
-        handleSave={handleSave}
-      />
+      <div></div>
     </div>
-
-    <div></div>
-  </div>
-);
-
-
-  }
-
-
-
+  );
+}

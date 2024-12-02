@@ -14,7 +14,6 @@ import GuestDashboard from "../pages/guest/GuestDashboard";
 import PaymentSuccess from "../pages/guest/PaymentSuccessPage";
 import { loadStripe } from "@stripe/stripe-js";
 import { Elements } from "@stripe/react-stripe-js"; // Import Elements
-import ViewCpmplaints from "../pages/guest/ViewComplaintsPage";
 
 const stripePromise = loadStripe(import.meta.env.VITE_STRIPE_PUBLISHABLE_KEY);
 
@@ -113,18 +112,6 @@ function UserRoutes() {
             )
           }
         />
-
-        <Route
-          path="/complaints"
-          element={
-            currentUser && currentUser.role === "guest" ? (
-              <ViewCpmplaints />
-            ) : (
-              <Navigate to="/Unauthorized" />
-            )
-          }
-        />
-
       </Routes>
     </Elements>
   );

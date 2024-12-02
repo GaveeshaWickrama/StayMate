@@ -16,14 +16,9 @@ const reviewSchema = new Schema({
     max: 5,
     required: true, // Rating is required
   },
-  review: {
+  reviewText: {
     type: String, // Optional review text
     trim: true,
-  },
-  complaintID: {
-    type: Schema.Types.ObjectId,
-    ref: 'complaint',
-    required: true, // Reference to the complaint for which the technician was rated
   },
   createdAt: {
     type: Date,
@@ -74,7 +69,10 @@ const locationSchema = new Schema({
     }
   },
 
-
+reviews: {
+  type:[reviewSchema],
+  default:[],
+}
  
 });
 
@@ -110,13 +108,7 @@ const technicianSchema = new Schema({
     type: String,
     default: 'No description provided',
     trim: true
-  },
-
-  reviews: {
-    type:[reviewSchema],
-    default:[],
   }
-
 }, {
   timestamps: true, // Adds createdAt and updatedAt timestamps
   collection: 'technicians' // Explicitly set the collection name

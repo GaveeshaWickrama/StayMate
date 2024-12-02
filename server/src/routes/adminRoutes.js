@@ -12,22 +12,6 @@ router.get(
   adminController.getModerators
 );
 
-// Get one single moderator
-router.get(
-  "/moderator/:id",
-  authToken,
-  requireRole("admin"),
-  adminController.getModerator
-);
-
-// Get one single moderator
-router.patch(
-  "/moderator/:id",
-  authToken,
-  requireRole("admin"),
-  adminController.getModerator
-);
-
 // Create a new moderator
 router.post(
   "/moderators",

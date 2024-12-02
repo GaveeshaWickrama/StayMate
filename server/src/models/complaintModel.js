@@ -45,14 +45,7 @@ const complaintSchema = new mongoose.Schema({
   },
   proofImages: [{ type: String }],
 
-  additionalComments:{
-    type:String,
-    required:false
-  },
-  taskCompletedDate:{
-    type:Date,
-    required:false
-  },
+
   category: {
     type: String,
     required: true,
