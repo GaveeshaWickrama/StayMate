@@ -196,7 +196,7 @@ const CustomCalendar = ({
       date < firstDayOfMonth || // Disable all dates before the current month
       !isCurrentMonth || // Disable dates not in the current month
       isDateBooked(date) || // Already booked dates
-      date < today; // Disable previous days of the current month
+      date < today.setHours(0, 0, 0, 0); // Disable previous days of the current month
 
     return (
       <div
@@ -211,6 +211,7 @@ const CustomCalendar = ({
         onClick={() => date && !isDisabled && handleDateSelect(date)}
       >
         {date.getDate()}
+        {isDisabled && <span style={styles.crossMark}>X</span>}
       </div>
     );
   };
@@ -257,7 +258,7 @@ const CustomCalendar = ({
       {selectedStartDate && selectedEndDate && (
         <div style={styles.confirmContainer}>
           <button onClick={handleConfirmSelection} style={styles.confirmButton}>
-            Confirm Dates
+            Confirm Selection
           </button>
         </div>
       )}
@@ -267,95 +268,101 @@ const CustomCalendar = ({
 
 const styles = {
   calendarContainer: {
-    padding: "20px",
-    backgroundColor: "white",
-    borderRadius: "8px",
-    boxShadow: "0 2px 10px rgba(0, 0, 0, 0.1)",
-    position: "relative",
-    width: "320px",
+    display: "flex",
+    flexDirection: "column",
+    backgroundColor: "#fff",
+    borderRadius: "10px",
+    width: "350px",
+    padding: "10px",
+    boxShadow: "0px 4px 6px rgba(0, 0, 0, 0.1)",
   },
   header: {
     display: "flex",
     justifyContent: "space-between",
     alignItems: "center",
-    marginBottom: "15px",
+    marginBottom: "10px",
   },
   navButton: {
-    border: "none",
     background: "transparent",
+    border: "none",
     fontSize: "18px",
     cursor: "pointer",
-    margin: "0 5px",
-    color: "#4caf50",
   },
   closeButton: {
-    border: "none",
     background: "transparent",
-    fontSize: "20px",
+    border: "none",
+    fontSize: "18px",
     cursor: "pointer",
-    color: "#4caf50",
-  },
-  errorMessage: {
-    color: "red",
-    fontSize: "14px",
-    marginTop: "10px",
   },
   calendarGrid: {
+    display: "flex",
+    flexDirection: "column",
     marginTop: "10px",
   },
   monthContainer: {
-    display: "inline-block",
-    width: "150px",
+    display: "flex",
+    flexDirection: "column",
   },
   daysOfWeek: {
-    display: "grid",
-    gridTemplateColumns: "repeat(7, 1fr)",
-    gridGap: "20px",
-    marginBottom: "10px",
+    display: "flex",
+    justifyContent: "space-between",
+    fontWeight: "bold",
   },
   dayOfWeek: {
+    width: "30px",
     textAlign: "center",
-    fontWeight: "bold",
-    fontSize: "12px",
-    color: "#555",
   },
   days: {
     display: "grid",
     gridTemplateColumns: "repeat(7, 1fr)",
     gridGap: "5px",
+    marginTop: "10px",
   },
   day: {
+    display: "flex",
+    alignItems: "center",
+    justifyContent: "center",
     padding: "10px",
-    textAlign: "center",
     cursor: "pointer",
-    borderRadius: "4px",
-    fontSize: "14px",
-    transition: "background-color 0.3s",
-  },
-  emptySlot: {
-    padding: "10px",
-    textAlign: "center",
+    border: "1px solid #ddd",
+    borderRadius: "5px",
+    backgroundColor: "#fff",
+    transition: "background-color 0.2s, border-color 0.2s",
   },
   unavailableDay: {
-    color: "#ccc",
-    pointerEvents: "none",
+    backgroundColor: "#f5f5f5",
+    borderColor: "#ccc",
+    color: "#aaa",
   },
   selectedDay: {
-    backgroundColor: "#4caf50",
-    color: "white",
+    backgroundColor: "#2196f3",
+    color: "#fff",
+  },
+  crossMark: {
+    position: "absolute",
+    fontSize: "12px",
+    color: "black",
+    top: "5px",
+    right: "5px",
+  },
+  errorMessage: {
+    color: "red",
+    fontSize: "12px",
+    marginBottom: "10px",
+  },
+  confirmButton: {
+    backgroundColor: "#4CAF50",
+    color: "#fff",
+    border: "none",
+    padding: "10px 15px",
+    borderRadius: "5px",
+    cursor: "pointer",
+    fontSize: "16px",
   },
   confirmContainer: {
     marginTop: "10px",
-    textAlign: "center",
-  },
-  confirmButton: {
-    backgroundColor: "#4caf50",
-    color: "white",
-    padding: "10px 20px",
-    border: "none",
-    borderRadius: "4px",
-    cursor: "pointer",
-    width: "100%",
+    display: "flex",
+    justifyContent: "center",
   },
 };
 
