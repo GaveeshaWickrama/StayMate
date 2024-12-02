@@ -20,6 +20,7 @@ import {
   FaGlassWhiskey,
   FaHotel,
   FaTools,
+  
 } from 'react-icons/fa';
 import { FaKitchenSet } from 'react-icons/fa6';
 import { RiBilliardsFill } from 'react-icons/ri';

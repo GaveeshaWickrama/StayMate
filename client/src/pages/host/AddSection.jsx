@@ -1,12 +1,26 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { useProperty } from '../../context/PropertyContext';  // Corrected the duplicate import
+import { useProperty } from '../../context/PropertyContext'; // Correct context import
 import { FaUpload } from 'react-icons/fa';
 
 // Importing icons
-import { FaWifi, FaParking, FaDumbbell, FaSwimmingPool, FaHotTub, FaUmbrellaBeach, FaShieldAlt, FaUtensils, FaSpa, FaFireAlt, FaSnowflake, FaTimes, FaFire, FaTshirt, FaLaptop, FaDoorOpen, FaLock, FaGlassWhiskey, FaHotel, FaTools } from 'react-icons/fa';  
+import {
+  FaWifi,
+  FaHotTub,
+  FaUtensils,
+  FaSnowflake,
+  FaFire,
+  FaTshirt,
+  FaLaptop,
+  FaDoorOpen,
+  FaLock,
+  FaGlassWhiskey,
+  FaHotel,
+  FaTools,
+} from 'react-icons/fa';
 import { FaKitchenSet } from "react-icons/fa6";
-import { RiBilliardsFill } from "react-icons/ri";
+import { RiNetflixFill, RiFridgeFill } from "react-icons/ri";
+import { PiTelevisionFill } from "react-icons/pi";
 
 
 
@@ -28,8 +42,9 @@ const sectionAmenitiesList = [
   { name: 'Air Conditioning', icon: <FaSnowflake />, requiresImage: true },
   { name: 'TV', icon: <PiTelevisionFill />, requiresImage: true },
   { name: 'Streaming Service', icon: <RiNetflixFill />, requiresImage: true },
-  { name: 'Heating', icon: <FaFire />, requiresImage: true },
+
 ];
+
 const AddSection = () => {
   const { property, setProperty } = useProperty();
   const navigate = useNavigate();
