@@ -32,6 +32,30 @@ export default function PendingTaskDetails({complaint}) {
     navigate("/technician/tasks");
   };
 
+
+  const reject = async() => {
+    console.log("this is the complaint received by reject function",complaint);
+    console.log("this is the complaint id", complaint._id);
+    try {
+      const response = await axios.post(
+          `${import.meta.env.VITE_API_URL}/technicians/rejectJob/${complaint._id}`,
+          
+      );
+
+      console.log(response);
+      if (response.status === 200) {
+          alert('job Rejected');
+         
+      } else {
+          alert('Could not save changes, try again');
+      }
+  } catch (error) {
+      console.error('Error occured while rejecting', error);
+      alert('An error occurred');
+  }
+  console.log("Button clicked");
+  }
+
   console.log(complaint.status);
   console.log("initial estimated budget",estimatedBudget);
 
@@ -46,7 +70,9 @@ export default function PendingTaskDetails({complaint}) {
      <div> 
            {/* status = pending technician approval */}
 
-     <button className="bg-red-600 text-white p-4 rounded font-bold w-50 my-10">
+     <button className="bg-red-600 text-white p-4 rounded font-bold w-50 my-10"
+     onClick={reject}
+     >
        Reject
      </button>
      <button

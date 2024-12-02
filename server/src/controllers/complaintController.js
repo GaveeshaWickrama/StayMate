@@ -10,8 +10,56 @@ const path = require("path");
 const mongoose = require("mongoose");
 
 
+const viewGuestComplaints = async (req,res) => {
 
+  console.log("Inside viewGuestComplaints");
 
+  try {
+    const guestId = req.user.userId; // Assuming the user is authenticated
+    res.set("Cache-Control", "no-store");
+
+    const complaints = await Complaint.find({
+      status: { $ne: "completed" }, // Exclude complaints with status `completed`
+    })
+      .select("category description status") // Select only category, description, and status fields from complaints
+      .populate({
+        path: "reservationId",
+        match: { user: guestId }, // Match reservations with the current logged-in user's ID
+        select: "property user", // Only select the property field from reservationId
+        populate: [
+          {
+            path: "property",
+            select: "title host_id",
+            populate: {
+              path: "host_id",
+              select: "firstName lastName", // Select fname and lastname of the host
+            },
+          },
+          {
+            path: "user",
+            select: "firstName lastName", // Select fname and lname of the user
+          },
+        ],
+      })
+      .populate({
+        path: "technician",
+        populate: {
+          path: "userId",
+          select: "firstName lastName", // Select fname and lastname of the technician
+        },
+      });
+
+    // After filtering, remove complaints where reservationId is null
+    const filteredComplaints = complaints.filter(c => c.reservationId);
+    console.log("filteredComplaints",filteredComplaints);
+    res.json(filteredComplaints);
+
+  } catch (err) {
+    res.status(500).json({ error: "Failed to fetch complaints" });
+    console.log("Error");
+  }
+
+};
 
 
 const raiseComplaint = async (req, res) => {
@@ -311,7 +359,7 @@ async function getComplaintById(req, res) {
     // Fetch complaint details with nested population
     const complaintDetails = await Complaint.findById(complaintID)
       .populate([
-        { path: "technician", populate: { path: "userId" } },
+        { path: "technician", populate: [ { path: "userId" }, {path:"reviews.reviewerId"}] },
         { path: "reservationId" }, // Example for another field
         { path: "reservationId", populate: { path: "user" } }, // Example for another field
         {
@@ -338,12 +386,21 @@ async function getComplaintById(req, res) {
 }
 
 async function reviewTask(req, res) {
-  const complaintId = req.params.id;
+  const complaintId = req.params.complaintId;
 
+  console.log("you entered the reviewTask function in the complaint controller")
+
+  console.log("Request parameters:", req.params);
+  
+    // Check if the complaintId is available
+    if (!complaintId) {
+      return res.status(400).json({ message: "Complaint ID is missing in the request." });
+    }
+  
   try {
     // Check if the complaint exists
 
-    console.log("Received complaint ID:", complaintId);
+    console.log("Received complaint ID:", req.params.complaintId);
 
     // Check if the complaint exists and its status is pendingHostDecision
     const complaint = await Complaint.findOne({
@@ -390,6 +447,13 @@ async function uploadProof(req, res) {
     // Check if the complaint exists and its status is pendingHostDecision
     const complaint = await Complaint.findOne({ _id: complaintId });
 
+
+
+    const { additionalRemarks } = req.body;
+
+    // Set task completion date to current date
+    const taskCompletedDate = new Date();
+
     if (!complaint) {
       return res
         .status(404)
@@ -404,7 +468,10 @@ async function uploadProof(req, res) {
     const updatedComplaint = await Complaint.findOneAndUpdate(
       { _id: complaintId, status: "active" },
       {
-        $set: { status: "technicianCompleted" },
+        $set: { status: "technicianCompleted"
+          , taskCompletedDate,
+          additionalComments:additionalRemarks,
+         },
         $push: { proofImages: { $each: proofImages } },
       },
       { new: true } // Return the updated document
@@ -555,7 +622,7 @@ const getAllJobsByTechnicianId = async (req, res) => {
 };
 
 const getActiveJobsByTechnicianId = async (req, res) => {
-  const id = req.params.id;
+  const id = req.params.technicianId;
 
   console.log(id);
 
@@ -840,6 +907,93 @@ const getTechnicianUserId = async (technicianId) => {
 }
 
 
+
+const rejectJob = async (req, res) => {
+  const id = req.params.complaintId; //complaintid
+
+  if(!id){
+    return res.status(400).json({message:"complaint id is required"});
+  }
+  
+  const complaintObjectId =
+  mongoose.Types.ObjectId.createFromHexString(id);
+
+  
+  try {
+
+   
+
+    const updatedComplaint = await Complaint.findByIdAndUpdate(
+      { _id: complaintObjectId }, // Ensure only non-resolved complaints are updated
+      { $set: { status: "pendingHostDecision" },
+        $unset : {technicianId: 1, assignedDate : 1, deadline : 1} },
+      {new:true}
+    );
+
+    res.status(200).json({ message: "complaint rejected", updatedComplaint });
+  } catch (error) {
+    console.error(error); // Log the error
+    res.status(500).json({ message: "try again", error }); // Send error response
+  }
+};
+
+
+const extendJob = async (req, res) => {
+  const id = req.params.complaintId; //complaintid
+
+ 
+
+  if(!id){
+    return res.status(400).json({message:"complaint id is required"});
+  }
+
+
+
+  const complaintObjectId =
+  // mongoose.Types.ObjectId.createFromHexString(id);
+  id;
+  try {
+
+
+   const complaint = await Complaint.findById(id);
+
+   if(!complaint){
+    return res.status(404).json({messsage: "Complaint not found"});
+   }
+
+   if(!complaint.deadline){
+    return res.status(400).json({message:"No existing deadline to extend"});
+   }
+
+   const currentDeadline = new Date(complaint.deadline);
+   const newDeadline = new Date(currentDeadline);
+   newDeadline.setDate(currentDeadline.getDate() + 3);
+
+    //update the complaint with the new deadline
+
+    const updatedComplaint = await Complaint.findByIdAndUpdate(
+       complaintObjectId,  // Ensure only non-resolved complaints are updated
+      { $set: { deadline : newDeadline } },
+      {new:true}
+    );
+
+
+    if(!updatedComplaint){
+      return res.status(404).json({message: "Complaint not found"});
+    }
+
+
+    
+
+    res.status(200).json({ message: "deadline extended by 3 days", updatedComplaint });
+  } catch (error) {
+    console.error(error); // Log the error
+    res.status(500).json({ message: "couldnt save changes", error }); // Send error response
+  }
+};
+
+
+
 module.exports = {
   raiseComplaint,
   getComplaintById, //host
@@ -859,8 +1013,11 @@ module.exports = {
   reviewTask,
   uploadProof,
   markAsResolved,
+  rejectJob,
+  extendJob,
   confirmJob,
   getProgress,
   setProgress,
-  markJobCompleted
+  markJobCompleted,
+  viewGuestComplaints
 };

@@ -8,13 +8,16 @@ function PendingComplaintDetails({ complaint, id }) {
 
   const [showModal, setShowModal] = useState(false);
 
+  console.log("complaint exists?",complaint)
   const handleFindTechnician = () => {
     alert("Directing to technician explore page");
     console.log(
       "Complaint ID is going forward from complaint details to view technicians"
     );
     console.log(`This is the complaint ID: ${id}`);
-    navigate(`/host/view-technicians?complaintID=${id}`);
+    navigate(`/host/view-technicians?complaintID=${id}`,{
+      state:{complaint}
+  });
   };
 
   // const markAsResolved = async() => {

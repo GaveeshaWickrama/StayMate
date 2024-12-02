@@ -160,7 +160,7 @@ const PropertyInfo = ({ location, section, propertyId }) => {
             </button>
           </div>
         ) : (
-          <p className="ml-4">No reviews yet.</p>
+          <p className="ml-4">There are no reviews for this property yet!</p>
         )}
       </div>
     </div>
