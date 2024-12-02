@@ -2,6 +2,7 @@ const Property = require("../models/propertyModel");
 const User = require("../models/userModel")
 const PropertyVerified = require("../models/propertyverifiedModel");
 const path = require("path");
+const Notification = require('../models/bellNotificationModel')//to send the moderator that he is assigned
 
 async function createProperty(req, res) {
   try {
@@ -119,6 +120,12 @@ async function createProperty(req, res) {
     newProperty.moderator_id = moderatorIdsArray[modValue]
     
     await newProperty.save();
+
+    Notification.create({
+      userId : moderatorIdsArray[modValue],
+      notificationMessage: `You have been assigned to validate a newly listed property.`,
+      notificationType : "new_listing",
+    });
 
     //until here
 
