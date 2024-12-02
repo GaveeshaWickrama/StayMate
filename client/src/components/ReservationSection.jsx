@@ -50,24 +50,33 @@ const ReservationSection = ({
   const validateDates = () => {
     let errors = {};
     const now = new Date();
+    const today = new Date(now.setHours(0, 0, 0, 0)); // Set to today's date at midnight
     const checkIn = new Date(checkInDate);
     const checkOut = new Date(checkOutDate);
 
-    if (checkIn < now) {
+    // Check if the check-in date is before today
+    if (checkIn < today) {
       errors.checkInDate = "Check-in date cannot be in the past.";
     }
+
+    // Check if check-out date is before or on the check-in date
     if (checkOut <= checkIn) {
       errors.checkOutDate = "Check-out date must be after check-in date.";
     }
+
+    // Check if the check-in or check-out dates are invalid
     if (isNaN(checkIn.getTime()) || isNaN(checkOut.getTime())) {
       errors.checkInDate = "Invalid check-in date.";
       errors.checkOutDate = "Invalid check-out date.";
     }
+
+    // If there are any errors, set them in the state and return false
     if (errors.checkInDate || errors.checkOutDate) {
       setErrors(errors);
       return false;
     }
 
+    // If no errors, clear any existing errors and return true
     setErrors({});
     return true;
   };

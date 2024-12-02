@@ -1,12 +1,11 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import img1 from "../../assets/img1.jpeg";
-import { useAuth } from '../../context/auth';
-import useCreateOrSelectConversation from '../../hooks/useCreateOrSelectConversation';
-import { toast } from 'react-toastify';
+import { useAuth } from "../../context/auth";
+import useCreateOrSelectConversation from "../../hooks/useCreateOrSelectConversation";
+import { toast } from "react-toastify";
 
 const TripDetails = ({ trip, isUpcoming, isOngoing, isCompleted }) => {
-
   const { currentUser } = useAuth();
   const navigate = useNavigate();
   const { createOrSelectConversation } = useCreateOrSelectConversation();
@@ -19,7 +18,6 @@ const TripDetails = ({ trip, isUpcoming, isOngoing, isCompleted }) => {
     navigate(`/user/reviews/add?reservationId=${trip._id}`);
   };
 
-
   const handleMessageHost = async () => {
     if (currentUser) {
       setIsLoading(true);
@@ -27,18 +25,18 @@ const TripDetails = ({ trip, isUpcoming, isOngoing, isCompleted }) => {
         await createOrSelectConversation(trip.property.host_id);
         navigate(`/user/chat`);
       } catch (error) {
-        toast.error('Failed to create or select conversation.');
+        toast.error("Failed to create or select conversation.");
       } finally {
         setIsLoading(false);
       }
     } else {
-      toast.error('User is not logged in');
+      toast.error("User is not logged in");
     }
   };
 
   const handleAddComplaint = async () => {
     navigate(`/user/complaints/add?reservationId=${trip._id}`);
-  }
+  };
 
   // Construct the image URL using the API base URL and the image path
   const imageUrl =
@@ -70,9 +68,15 @@ const TripDetails = ({ trip, isUpcoming, isOngoing, isCompleted }) => {
         </div>
         <div className="mt-4 flex flex-col md:flex-row justify-between items-center">
           {isUpcoming ? (
-            <button className="font-semibold text-white text-sm px-4 py-2 bg-red-500 border border-red-500 rounded mt-2 md:mt-0">
-              Cancel Reservation
-            </button>
+            <>
+              <button
+                onClick={handleMessageHost}
+                className="font-semibold text-white text-sm px-10 py-2 bg-green-500 border border-blue-500 rounded mt-2 md:mt-0 md:ml-2"
+                disabled={isLoading}
+              >
+                Chat
+              </button>
+            </>
           ) : isOngoing ? (
             <>
               <button
