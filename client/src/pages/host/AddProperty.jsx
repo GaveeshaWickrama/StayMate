@@ -136,6 +136,7 @@ const AddProperty = () => {
         }
       });
       console.log('Property added:', response.data);
+      resetProperty();
       navigate('/host/listings', { state: { fromAddProperty: true } });
     } catch (error) {
       console.error('There was an error adding the property:', error);
