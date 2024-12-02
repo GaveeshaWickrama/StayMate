@@ -248,6 +248,31 @@ const updateProfile = async (req, res) => {
   }
 };
 
+
+const getUsersByRole = async (req, res) => {
+  const { role } = req.params; // Get the role from the request parameters
+
+  // Validate the role
+  const validRoles = ["guest", "host", "technician", "admin", "moderator"];
+  if (!validRoles.includes(role)) {
+    return res.status(400).json({ error: "Invalid role specified" });
+  }
+
+  try {
+    // Fetch users with the specified role
+    const users = await User.find({ role }).sort({ createdAt: -1 }); // Sort by creation date (newest first)
+
+    if (users.length === 0) {
+      return res.status(404).json({ message: "No users found for the specified role." });
+    }
+
+    res.status(200).json(users);
+  } catch (error) {
+    console.error("Error fetching users by role:", error);
+    res.status(500).json({ error: "Internal server error" });
+  }
+};
+
 module.exports = {
   getAllUsers,
   createUser,
@@ -262,4 +287,5 @@ module.exports = {
   getAllTechnicians,
   getModerator,
   updateModerator,
+  getUsersByRole,
 };
