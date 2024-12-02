@@ -198,8 +198,20 @@ const AddProperty = () => {
   };
 
   const validateAmenities = () => {
-    return property.amenities.length > 0;
+    // Ensure at least one amenity is selected
+    if (property.amenities.length === 0) {
+      return false;
+    }
+  
+    // Check that all selected amenities (except WiFi) have images
+    return property.amenities.every((amenity) => {
+      if (amenity.name === 'WiFi') {
+        return true; // WiFi doesn't require an image
+      }
+      return amenity.image?.url; // Other amenities must have an image URL
+    });
   };
+  
 
   const validatePropertyImages = () => {
     return property.images.length > 0 &&
