@@ -1,13 +1,13 @@
 import React, { useState, useEffect, useRef } from "react";
 
-const daysOfWeek = ["Mo", "Tu", "We", "Th", "Fr", "Sa", "Su"]; // Start with Monday
+const daysOfWeek = ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"]; // Start with Monday
 
 const CustomCalendar = ({
   propertyId,
   sectionId,
   onDateRangeSelect,
   onClose,
-  maxStayDuration = 7, // Maximum short stay duration
+  maxStayDuration = 7,
 }) => {
   const [currentDate, setCurrentDate] = useState(new Date());
   const [daysInMonth, setDaysInMonth] = useState([]);
@@ -19,11 +19,8 @@ const CustomCalendar = ({
 
   useEffect(() => {
     generateCalendar();
-  }, [currentDate]);
-
-  useEffect(() => {
     fetchReservedDates();
-  }, [currentDate, propertyId, sectionId]);
+  }, [currentDate]);
 
   useEffect(() => {
     const handleClickOutside = (event) => {
@@ -42,25 +39,27 @@ const CustomCalendar = ({
     const year = currentDate.getFullYear();
     const month = currentDate.getMonth();
     const today = new Date();
-    today.setHours(0, 0, 0, 0); // Reset time for accurate comparison
+    today.setHours(0, 0, 0, 0);
 
     const firstDayOfMonth = new Date(year, month, 1);
     const lastDateOfMonth = new Date(year, month + 1, 0).getDate();
-    const startDay = (firstDayOfMonth.getDay() + 6) % 7; // Convert Sunday (0) to last (6)
+
+    const startDay = (firstDayOfMonth.getDay() + 6) % 7;
 
     const days = [];
 
-    // Add empty slots for alignment based on the first day of the month
     for (let i = 0; i < startDay; i++) {
-      days.push(null); // Empty slots for padding
+      days.push({ date: null, isCurrentMonth: false });
     }
 
-    // Add days of the current month from today onwards
     for (let date = 1; date <= lastDateOfMonth; date++) {
       const currentDate = new Date(year, month, date);
-      if (currentDate >= today) {
-        days.push(currentDate);
-      }
+      days.push({ date: currentDate, isCurrentMonth: true });
+    }
+
+    const remainingSlots = 42 - days.length;
+    for (let i = 0; i < remainingSlots; i++) {
+      days.push({ date: null, isCurrentMonth: false });
     }
 
     setDaysInMonth(days);
@@ -99,7 +98,7 @@ const CustomCalendar = ({
   };
 
   const handleDateSelect = (date) => {
-    setErrorMessage(""); // Clear any previous error messages
+    setErrorMessage("");
 
     if (selectedStartDate && date.getTime() === selectedStartDate.getTime()) {
       setSelectedStartDate(null);
@@ -118,7 +117,7 @@ const CustomCalendar = ({
         return;
       }
       setSelectedStartDate(date);
-      setSelectedEndDate(null); // Reset the end date
+      setSelectedEndDate(null);
     } else if (!selectedEndDate) {
       if (date <= selectedStartDate) {
         setErrorMessage("Check-out date must be after the check-in date.");
@@ -142,7 +141,6 @@ const CustomCalendar = ({
 
       setSelectedEndDate(date);
     } else {
-      // Reset dates if clicked after selecting both start and end
       setSelectedStartDate(date);
       setSelectedEndDate(null);
     }
@@ -167,14 +165,18 @@ const CustomCalendar = ({
     }
   };
 
-  const renderDay = (date) => {
+  const navigateMonth = (direction) => {
+    setCurrentDate((prevDate) => {
+      const newDate = new Date(prevDate);
+      newDate.setMonth(newDate.getMonth() + direction);
+      return newDate;
+    });
+  };
+
+  const renderDay = ({ date, isCurrentMonth }) => {
     if (!date) {
-      // Empty slot for alignment
       return <div style={styles.emptySlot}></div>;
     }
-
-    const today = new Date();
-    today.setHours(0, 0, 0, 0); // Reset time for accurate comparison
 
     const isSelectedStartDate =
       date &&
@@ -183,7 +185,18 @@ const CustomCalendar = ({
     const isSelectedEndDate =
       date && selectedEndDate && date.getTime() === selectedEndDate.getTime();
 
-    const isDisabled = date && isDateBooked(date);
+    const firstDayOfMonth = new Date(
+      currentDate.getFullYear(),
+      currentDate.getMonth(),
+      1
+    );
+    const today = new Date();
+
+    const isDisabled =
+      date < firstDayOfMonth || // Disable all dates before the current month
+      !isCurrentMonth || // Disable dates not in the current month
+      isDateBooked(date) || // Already booked dates
+      date < today; // Disable previous days of the current month
 
     return (
       <div
@@ -209,6 +222,21 @@ const CustomCalendar = ({
           {currentDate.toLocaleString("default", { month: "long" })}{" "}
           {currentDate.getFullYear()}
         </span>
+        <div>
+          <button onClick={() => navigateMonth(1)} style={styles.navButton}>
+            ▶
+          </button>
+          <button
+            onClick={() => navigateMonth(-1)}
+            style={styles.navButton}
+            disabled={
+              currentDate.getFullYear() === new Date().getFullYear() &&
+              currentDate.getMonth() === new Date().getMonth()
+            } // Prevent going back from future months
+          >
+            ◁
+          </button>
+        </div>
         <button onClick={onClose} style={styles.closeButton}>
           ×
         </button>
@@ -239,92 +267,95 @@ const CustomCalendar = ({
 
 const styles = {
   calendarContainer: {
-    display: "inline-block",
-    padding: "16px",
-    marginTop: "80px",
-    border: "1px solid #ddd",
+    padding: "20px",
+    backgroundColor: "white",
     borderRadius: "8px",
-    backgroundColor: "#fff",
-    position: "absolute",
-    zIndex: 1,
+    boxShadow: "0 2px 10px rgba(0, 0, 0, 0.1)",
+    position: "relative",
+    width: "320px",
   },
   header: {
     display: "flex",
     justifyContent: "space-between",
     alignItems: "center",
-    marginBottom: "8px",
+    marginBottom: "15px",
+  },
+  navButton: {
+    border: "none",
+    background: "transparent",
+    fontSize: "18px",
+    cursor: "pointer",
+    margin: "0 5px",
+    color: "#4caf50",
   },
   closeButton: {
-    background: "none",
     border: "none",
-    cursor: "pointer",
+    background: "transparent",
     fontSize: "20px",
-    padding: "4px",
-    lineHeight: "20px",
-    marginLeft: "8px",
+    cursor: "pointer",
+    color: "#4caf50",
+  },
+  errorMessage: {
+    color: "red",
+    fontSize: "14px",
+    marginTop: "10px",
   },
   calendarGrid: {
-    display: "flex",
-    justifyContent: "center",
+    marginTop: "10px",
   },
   monthContainer: {
-    width: "100%",
+    display: "inline-block",
+    width: "150px",
   },
   daysOfWeek: {
     display: "grid",
     gridTemplateColumns: "repeat(7, 1fr)",
-    gap: "4px",
+    gridGap: "20px",
+    marginBottom: "10px",
   },
   dayOfWeek: {
-    display: "flex",
-    justifyContent: "center",
-    alignItems: "center",
+    textAlign: "center",
     fontWeight: "bold",
-    fontSize: "14px",
+    fontSize: "12px",
+    color: "#555",
   },
   days: {
     display: "grid",
     gridTemplateColumns: "repeat(7, 1fr)",
-    gap: "4px",
+    gridGap: "5px",
   },
   day: {
-    display: "flex",
-    justifyContent: "center",
-    alignItems: "center",
-    padding: "8px",
-    height: "36px",
-    borderRadius: "4px",
+    padding: "10px",
+    textAlign: "center",
     cursor: "pointer",
-  },
-  unavailableDay: {
-    backgroundColor: "#ddd",
-    color: "#999",
-    cursor: "not-allowed",
-  },
-  selectedDay: {
-    backgroundColor: "#007bff",
-    color: "#fff",
+    borderRadius: "4px",
+    fontSize: "14px",
+    transition: "background-color 0.3s",
   },
   emptySlot: {
-    height: "36px",
-    visibility: "hidden", // Hide empty slots
+    padding: "10px",
+    textAlign: "center",
+  },
+  unavailableDay: {
+    color: "#ccc",
+    pointerEvents: "none",
+  },
+  selectedDay: {
+    backgroundColor: "#4caf50",
+    color: "white",
   },
   confirmContainer: {
-    marginTop: "8px",
+    marginTop: "10px",
     textAlign: "center",
   },
   confirmButton: {
-    padding: "8px 16px",
-    borderRadius: "4px",
+    backgroundColor: "#4caf50",
+    color: "white",
+    padding: "10px 20px",
     border: "none",
-    backgroundColor: "#007bff",
-    color: "#fff",
+    borderRadius: "4px",
     cursor: "pointer",
-  },
-  errorMessage: {
-    color: "red",
-    marginBottom: "8px",
-    textAlign: "center",
+    width: "100%",
   },
 };
 
