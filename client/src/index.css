@@ -24,12 +24,29 @@ body, html {
   position: fixed;
   top: 5rem; /* Adjust this value to match the height of your header */
   left: 0;
-  background-color: #111;
+  background-color: #3548ed;
   color: white;
   padding-top: 20px;
   transition: transform 0.3s ease;
   transform: translateX(-250px);
 }
+
+
+.active-tab{
+  background-color: rgba(0, 0, 255, 0.329); /* Highlight color for active tab */
+  color: white;
+  font-weight: bold;
+
+
+  margin-bottom: 0.5rem; /* mb-2 */
+  padding: 0.5rem; /* p-2 */
+  border-radius: 0.25rem; /* rounded */
+  display: flex; /* flex */
+  align-items: center; /* items-center */
+  transition: background-color 0.3s ease; /* optional smooth hover effect */
+}
+
+
 
 .sidebar.visible {
   transform: translateX(0);
