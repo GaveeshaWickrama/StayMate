@@ -1,16 +1,16 @@
 import React, { useState, useEffect, useRef } from "react";
 
-const daysOfWeek = ["Su", "Mo", "Tu", "We", "Th", "Fr", "Sa"];
+const daysOfWeek = ["Mo", "Tu", "We", "Th", "Fr", "Sa", "Su"]; // Start with Monday
 
 const CustomCalendar = ({
   propertyId,
   sectionId,
   onDateRangeSelect,
   onClose,
+  maxStayDuration = 7, // Maximum short stay duration
 }) => {
   const [currentDate, setCurrentDate] = useState(new Date());
   const [daysInMonth, setDaysInMonth] = useState([]);
-  const [nextMonthDays, setNextMonthDays] = useState([]);
   const [bookedDates, setBookedDates] = useState([]);
   const [selectedStartDate, setSelectedStartDate] = useState(null);
   const [selectedEndDate, setSelectedEndDate] = useState(null);
@@ -41,39 +41,29 @@ const CustomCalendar = ({
   const generateCalendar = () => {
     const year = currentDate.getFullYear();
     const month = currentDate.getMonth();
+    const today = new Date();
+    today.setHours(0, 0, 0, 0); // Reset time for accurate comparison
 
-    const firstDayOfMonth = new Date(year, month, 1).getDay();
+    const firstDayOfMonth = new Date(year, month, 1);
     const lastDateOfMonth = new Date(year, month + 1, 0).getDate();
+    const startDay = (firstDayOfMonth.getDay() + 6) % 7; // Convert Sunday (0) to last (6)
 
-    const nextMonth = month + 1 === 12 ? 0 : month + 1;
-    const nextMonthYear = month + 1 === 12 ? year + 1 : year;
+    const days = [];
 
-    const nextMonthFirstDay = new Date(nextMonthYear, nextMonth, 1).getDay();
-    const nextMonthLastDate = new Date(
-      nextMonthYear,
-      nextMonth + 1,
-      0
-    ).getDate();
-
-    const currentMonthDays = [];
-    const nextMonthDaysArr = [];
-
-    for (let i = 0; i < firstDayOfMonth; i++) {
-      currentMonthDays.push(null); // Empty slots for days of the previous month
+    // Add empty slots for alignment based on the first day of the month
+    for (let i = 0; i < startDay; i++) {
+      days.push(null); // Empty slots for padding
     }
+
+    // Add days of the current month from today onwards
     for (let date = 1; date <= lastDateOfMonth; date++) {
-      currentMonthDays.push(new Date(year, month, date));
+      const currentDate = new Date(year, month, date);
+      if (currentDate >= today) {
+        days.push(currentDate);
+      }
     }
 
-    for (let i = 0; i < nextMonthFirstDay; i++) {
-      nextMonthDaysArr.push(null); // Empty slots for days of the previous month
-    }
-    for (let date = 1; date <= nextMonthLastDate; date++) {
-      nextMonthDaysArr.push(new Date(nextMonthYear, nextMonth, date));
-    }
-
-    setDaysInMonth(currentMonthDays);
-    setNextMonthDays(nextMonthDaysArr);
+    setDaysInMonth(days);
   };
 
   const fetchReservedDates = async () => {
@@ -85,7 +75,7 @@ const CustomCalendar = ({
       ).toLocaleDateString("en-CA");
       const end = new Date(
         currentDate.getFullYear(),
-        currentDate.getMonth() + 2,
+        currentDate.getMonth() + 1,
         0
       ).toLocaleDateString("en-CA");
 
@@ -104,22 +94,12 @@ const CustomCalendar = ({
   };
 
   const isDateBooked = (date) => {
-    const today = new Date();
-    today.setHours(0, 0, 0, 0); // Reset time for accurate comparison
     const dateString = date.toLocaleDateString("en-CA");
-    return bookedDates.includes(dateString) || date < today; // Block past dates
+    return bookedDates.includes(dateString);
   };
 
   const handleDateSelect = (date) => {
     setErrorMessage(""); // Clear any previous error messages
-
-    const today = new Date();
-    today.setHours(0, 0, 0, 0); // Reset time for accurate comparison
-
-    if (date < today) {
-      setErrorMessage("You cannot select a past date.");
-      return;
-    }
 
     if (selectedStartDate && date.getTime() === selectedStartDate.getTime()) {
       setSelectedStartDate(null);
@@ -151,6 +131,15 @@ const CustomCalendar = ({
         return;
       }
 
+      const stayDuration =
+        (date.getTime() - selectedStartDate.getTime()) / (1000 * 60 * 60 * 24);
+      if (stayDuration > maxStayDuration) {
+        setErrorMessage(
+          `Maximum stay duration is ${maxStayDuration} days. Please select a shorter stay.`
+        );
+        return;
+      }
+
       setSelectedEndDate(date);
     } else {
       // Reset dates if clicked after selecting both start and end
@@ -178,28 +167,12 @@ const CustomCalendar = ({
     }
   };
 
-  const handlePrevMonth = () => {
-    setCurrentDate(
-      new Date(currentDate.getFullYear(), currentDate.getMonth() - 1, 1)
-    );
-  };
-
-  const handleNextMonth = () => {
-    setCurrentDate(
-      new Date(currentDate.getFullYear(), currentDate.getMonth() + 1, 1)
-    );
-  };
-
-  const isInRange = (date) => {
-    return (
-      selectedStartDate &&
-      selectedEndDate &&
-      date >= selectedStartDate &&
-      date <= selectedEndDate
-    );
-  };
-
   const renderDay = (date) => {
+    if (!date) {
+      // Empty slot for alignment
+      return <div style={styles.emptySlot}></div>;
+    }
+
     const today = new Date();
     today.setHours(0, 0, 0, 0); // Reset time for accurate comparison
 
@@ -210,21 +183,21 @@ const CustomCalendar = ({
     const isSelectedEndDate =
       date && selectedEndDate && date.getTime() === selectedEndDate.getTime();
 
-    const isDisabled = date && (isDateBooked(date) || date < today);
+    const isDisabled = date && isDateBooked(date);
 
     return (
       <div
-        key={date ? date.toLocaleDateString("en-CA") : "empty"}
+        key={date.toLocaleDateString("en-CA")}
         style={{
           ...styles.day,
           ...(isDisabled ? styles.unavailableDay : {}),
-          ...(isSelectedStartDate || isSelectedEndDate || isInRange(date)
+          ...(isSelectedStartDate || isSelectedEndDate
             ? styles.selectedDay
             : {}),
         }}
         onClick={() => date && !isDisabled && handleDateSelect(date)}
       >
-        {date ? date.getDate() : ""}
+        {date.getDate()}
       </div>
     );
   };
@@ -232,16 +205,10 @@ const CustomCalendar = ({
   return (
     <div ref={calendarRef} style={styles.calendarContainer}>
       <div style={styles.header}>
-        <button onClick={handlePrevMonth} style={styles.headerButton}>
-          {"<"}
-        </button>
         <span>
           {currentDate.toLocaleString("default", { month: "long" })}{" "}
           {currentDate.getFullYear()}
         </span>
-        <button onClick={handleNextMonth} style={styles.headerButton}>
-          {">"}
-        </button>
         <button onClick={onClose} style={styles.closeButton}>
           ×
         </button>
@@ -257,16 +224,6 @@ const CustomCalendar = ({
             ))}
           </div>
           <div style={styles.days}>{daysInMonth.map(renderDay)}</div>
-        </div>
-        <div style={styles.monthContainer}>
-          <div style={styles.daysOfWeek}>
-            {daysOfWeek.map((day, index) => (
-              <div key={index} style={styles.dayOfWeek}>
-                {day}
-              </div>
-            ))}
-          </div>
-          <div style={styles.days}>{nextMonthDays.map(renderDay)}</div>
         </div>
       </div>
       {selectedStartDate && selectedEndDate && (
@@ -297,13 +254,6 @@ const styles = {
     alignItems: "center",
     marginBottom: "8px",
   },
-  headerButton: {
-    background: "none",
-    border: "none",
-    cursor: "pointer",
-    fontSize: "16px",
-    padding: "4px",
-  },
   closeButton: {
     background: "none",
     border: "none",
@@ -315,10 +265,10 @@ const styles = {
   },
   calendarGrid: {
     display: "flex",
-    justifyContent: "space-between",
+    justifyContent: "center",
   },
   monthContainer: {
-    width: "48%",
+    width: "100%",
   },
   daysOfWeek: {
     display: "grid",
@@ -329,10 +279,8 @@ const styles = {
     display: "flex",
     justifyContent: "center",
     alignItems: "center",
-    padding: "8px",
-    borderRadius: "4px",
-    fontSize: "14px",
     fontWeight: "bold",
+    fontSize: "14px",
   },
   days: {
     display: "grid",
@@ -344,36 +292,39 @@ const styles = {
     justifyContent: "center",
     alignItems: "center",
     padding: "8px",
+    height: "36px",
     borderRadius: "4px",
     cursor: "pointer",
-    fontSize: "14px",
   },
   unavailableDay: {
-    backgroundColor: "#f5f5f5", // Light grey background for clarity
-    color: "#ccc", // Greyed-out text
-    pointerEvents: "none", // Prevent clicks
-    textDecoration: "line-through", // Black line through text
+    backgroundColor: "#ddd",
+    color: "#999",
+    cursor: "not-allowed",
   },
   selectedDay: {
-    backgroundColor: "#b3d4fc",
-    color: "#000",
+    backgroundColor: "#007bff",
+    color: "#fff",
   },
-  errorMessage: {
-    color: "red",
-    marginBottom: "8px",
+  emptySlot: {
+    height: "36px",
+    visibility: "hidden", // Hide empty slots
   },
   confirmContainer: {
-    marginTop: "16px",
+    marginTop: "8px",
     textAlign: "center",
   },
   confirmButton: {
     padding: "8px 16px",
-    fontSize: "16px",
-    cursor: "pointer",
+    borderRadius: "4px",
+    border: "none",
     backgroundColor: "#007bff",
     color: "#fff",
-    border: "none",
-    borderRadius: "4px",
+    cursor: "pointer",
+  },
+  errorMessage: {
+    color: "red",
+    marginBottom: "8px",
+    textAlign: "center",
   },
 };
 
