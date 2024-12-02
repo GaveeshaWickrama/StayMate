@@ -1,25 +1,39 @@
 import React, { useState } from 'react';
 import axios from 'axios';
-import { useNavigate } from 'react-router-dom';
 
-const RejectionForm = ({ propertyId, token, currentUser, onClose, onSubmit }) => {
+const RejectionForm = ({ propertyId, token, currentUser, onClose }) => {
   const [rejectionReasons, setRejectionReasons] = useState([]);
-  const navigate = useNavigate();
-
+  const [selectedAmenities, setSelectedAmenities] = useState([]);
+  const [otherReasonText, setOtherReasonText] = useState('');
+  const [propertyOwnershipReason, setPropertyOwnershipReason] = useState('');
+  
   const reasons = [
-   "Misleading Description",
-   "Proof of Amneties Misiing",
-   "Proof of Facilities Missing",
-   "Property Not Belonging to you",
-   "Other"
+    { label: "Misleading Description", subOptions: [] },
+    { label: "Proof of Amenities Missing", subOptions: ["WiFi", "Parking", "Swimming Pool", "Gym"] },
+    { label: "Proof of Facilities Missing", subOptions: ["Electricity", "Water Supply", "Security"] },
+    { label: "Property Not Belonging to You", subOptions: [] },
+    { label: "Other", subOptions: [] },
   ];
 
-  const handleCheckboxChange = (event) => {
-    const { value, checked } = event.target;
+  const handleCheckboxChange = (reason, checked) => {
     if (checked) {
-      setRejectionReasons([...rejectionReasons, value]);
+      setRejectionReasons([...rejectionReasons, reason]);
     } else {
-      setRejectionReasons(rejectionReasons.filter(reason => reason !== value));
+      setRejectionReasons(rejectionReasons.filter(r => r !== reason));
+      if (reason === "Property Not Belonging to You") {
+        setPropertyOwnershipReason('');
+      }
+      if (reason === "Other") {
+        setOtherReasonText('');
+      }
+    }
+  };
+
+  const handleAmenityChange = (amenity, checked) => {
+    if (checked) {
+      setSelectedAmenities([...selectedAmenities, amenity]);
+    } else {
+      setSelectedAmenities(selectedAmenities.filter(a => a !== amenity));
     }
   };
 
@@ -27,71 +41,98 @@ const RejectionForm = ({ propertyId, token, currentUser, onClose, onSubmit }) =>
     try {
       const response = await axios.post(
         `${import.meta.env.VITE_API_URL}/moderator/rejectProperty/${propertyId}`, 
-        { rejectionReasons, moderator: currentUser.id },
+        { 
+          rejectionReasons, 
+          selectedAmenities, 
+          propertyOwnershipReason, 
+          otherReasonText, 
+          moderator: currentUser.id 
+        },
         {
           headers: {
-            Authorization: `Bearer ${token}`
+            Authorization: `Bearer ${token}`,
           },
         }
       );
-  
+
       if (response.status === 200) {
         console.log('Property Rejected:', response.data);
         alert('Property rejected successfully');
-        setTimeout(() => {
-          window.history.back(); // Navigate to the previous page
-        }, 0); // Set a timeout to ensure the navigation happens after the alert
+        onClose();
       } else {
         alert('Failed to reject property');
       }
     } catch (error) {
-      if (error.response) {
-        // The request was made and the server responded with a status code
-        // that falls out of the range of 2xx
-        console.error('Response data:', error.response.data);
-        console.error('Response status:', error.response.status);
-        console.error('Response headers:', error.response.headers);
-        alert(`Server responded with status ${error.response.status}: ${error.response.data}`);
-      } else if (error.request) {
-        // The request was made but no response was received
-        // `error.request` is an instance of XMLHttpRequest in the browser and an instance of
-        // http.ClientRequest in node.js
-        console.error('Request data:', error.request);
-        alert('No response received from server. Please check your network connection.');
-      } else {
-        // Something happened in setting up the request that triggered an Error
-        console.error('Error message:', error.message);
-        alert(`Error: ${error.message}`);
-      }
-      console.error('Error config:', error.config);
+      console.error('Error:', error);
+      alert('An error occurred while rejecting the property.');
     }
-  };
-  
-
-  const handleBack = () => {
-    onClose(); // Navigate to the previous page
   };
 
   return (
     <div className="p-6 bg-white rounded-lg shadow-md mt-2 w-full">
-      <label>
-      <h2 className="text-2xl font-bold text-black-600 mb-4 ">Select reasons for rejection:</h2>
-      </label>
+      <h2 className="text-2xl font-bold text-black-600 mb-4">Select reasons for rejection:</h2>
       <div>
         {reasons.map(reason => (
-          <div key={reason} className="text-lg flex">
-            <input
-              type="checkbox"
-              id={reason}
-              value={reason}
-              onChange={handleCheckboxChange}
-              className="mr-2"
-            />
-            <label htmlFor={reason} className="text-gray-700">{reason}</label>
+          <div key={reason.label} className="mb-4">
+            <div className="flex text-lg">
+              <input
+                type="checkbox"
+                id={reason.label}
+                value={reason.label}
+                onChange={(e) => handleCheckboxChange(reason.label, e.target.checked)}
+                className="mr-2"
+              />
+              <label htmlFor={reason.label} className="text-gray-700">{reason.label}</label>
+            </div>
+            {rejectionReasons.includes(reason.label) && reason.subOptions.length > 0 && (
+              <div className="ml-6 mt-2">
+                <h3 className="text-lg font-semibold text-gray-600">Specify:</h3>
+                {reason.subOptions.map(subOption => (
+                  <div key={subOption} className="flex text-lg">
+                    <input
+                      type="checkbox"
+                      id={subOption}
+                      value={subOption}
+                      onChange={(e) => handleAmenityChange(subOption, e.target.checked)}
+                      className="mr-2"
+                    />
+                    <label htmlFor={subOption} className="text-gray-600">{subOption}</label>
+                  </div>
+                ))}
+              </div>
+            )}
+            {reason.label === "Property Not Belonging to You" && rejectionReasons.includes(reason.label) && (
+              <div className="ml-6 mt-2">
+                <label htmlFor="propertyOwnershipReason" className="text-lg text-gray-700">
+                  Provide details:
+                </label>
+                <textarea
+                  id="propertyOwnershipReason"
+                  value={propertyOwnershipReason}
+                  onChange={(e) => setPropertyOwnershipReason(e.target.value)}
+                  className="w-full mt-2 p-2 border rounded-md"
+                  placeholder="Enter reason why the property does not belong to the user..."
+                />
+              </div>
+            )}
+            {reason.label === "Other" && rejectionReasons.includes(reason.label) && (
+              <div className="ml-6 mt-2">
+                <label htmlFor="otherReasonText" className="text-lg text-gray-700">
+                  Specify other reason:
+                </label>
+                <textarea
+                  id="otherReasonText"
+                  value={otherReasonText}
+                  onChange={(e) => setOtherReasonText(e.target.value)}
+                  className="w-full mt-2 p-2 border rounded-md"
+                  placeholder="Enter additional details..."
+                />
+              </div>
+            )}
           </div>
         ))}
       </div>
-      <div className="flex justify-between">
+      <div className="flex justify-between mt-4">
         <button 
           className="bg-blue-600 text-white px-4 py-2 rounded font-bold mx-2 flex-grow"
           onClick={handleSubmit}
@@ -100,7 +141,7 @@ const RejectionForm = ({ propertyId, token, currentUser, onClose, onSubmit }) =>
         </button>
         <button 
           className="bg-gray-600 text-white px-4 py-2 rounded font-bold mx-2 flex-grow"
-          onClick={handleBack}
+          onClick={onClose}
         >
           Back
         </button>
