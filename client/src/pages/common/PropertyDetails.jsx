@@ -305,8 +305,10 @@ const PropertySection = ({ section, isExpanded, onExpand, propertyId }) => {
             initialCheckOutDate="2024-07-16"
             serviceFeePercentage={10}
           />
+      
         </>
       )}
+      
     </div>
   );
 };
@@ -350,6 +352,7 @@ const PropertySectionsList = ({ property }) => {
         />
       ))}
       <PropertyAmenitiesDisplay amenities={property.amenities} />
+      <ReviewsList propertyId={property._id} />
     </div>
   );
 };
