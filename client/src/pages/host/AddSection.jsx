@@ -11,20 +11,24 @@ import { RiBilliardsFill } from "react-icons/ri";
 
 
 const sectionAmenitiesList = [
-  { name: 'WiFi', icon: <FaWifi /> },
-  { name: 'Kitchen', icon: <FaKitchenSet /> },
-  { name: 'Hot tub', icon: <FaHotTub /> },
-  { name: 'Pool table', icon: <RiBilliardsFill /> },
-  { name: 'Outdoor dining', icon: <FaUtensils /> },
-  { name: 'Heating', icon: <FaFire /> },
-  { name: 'Balcony', icon: <FaHotel /> },
-  { name: 'Workspace', icon: <FaLaptop /> },
-  { name: 'Dryer', icon: <FaTshirt /> },
-  { name: 'Iron', icon: <FaTools /> }, 
-  { name: 'Private Entrance', icon: <FaDoorOpen /> },
-  { name: 'Jacuzzi', icon: <FaHotTub /> },
-  { name: 'Minibar', icon: <FaGlassWhiskey /> },
-  { name: 'Safe', icon: <FaLock /> }
+  { name: 'WiFi', icon: <FaWifi />, requiresImage: false },
+  { name: 'Kitchen', icon: <FaKitchenSet />, requiresImage: true },
+  { name: 'Hot tub', icon: <FaHotTub />, requiresImage: true },
+  { name: 'Outdoor dining', icon: <FaUtensils />, requiresImage: true },
+  { name: 'Heating', icon: <FaFire />, requiresImage: true },
+  { name: 'Balcony', icon: <FaHotel />, requiresImage: true },
+  { name: 'Workspace', icon: <FaLaptop />, requiresImage: true },
+  { name: 'Dryer', icon: <FaTshirt />, requiresImage: true },
+  { name: 'Iron', icon: <FaTools />, requiresImage: true },
+  { name: 'Private Entrance', icon: <FaDoorOpen />, requiresImage: true },
+  { name: 'Jacuzzi', icon: <FaHotTub />, requiresImage: true },
+  { name: 'Minibar', icon: <FaGlassWhiskey />, requiresImage: true },
+  { name: 'Safe', icon: <FaLock />, requiresImage: true },
+  { name: 'Fridge', icon: <RiFridgeFill />, requiresImage: true },
+  { name: 'Air Conditioning', icon: <FaSnowflake />, requiresImage: true },
+  { name: 'TV', icon: <PiTelevisionFill />, requiresImage: true },
+  { name: 'Streaming Service', icon: <RiNetflixFill />, requiresImage: true },
+  { name: 'Heating', icon: <FaFire />, requiresImage: true },
 ];
 const AddSection = () => {
   const { property, setProperty } = useProperty();
