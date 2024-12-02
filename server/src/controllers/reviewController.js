@@ -55,7 +55,7 @@ const getHostReviews = async (req, res) => {
     const reviews = await Review.find({ property: { $in: propertyIds } })
       .populate({
         path: "user",
-        select: "email role createdOn", // Select all user details you need
+        select: "firstName lastName email role createdOn", // Select all user details you need
       })
       .populate({
         path: "property",

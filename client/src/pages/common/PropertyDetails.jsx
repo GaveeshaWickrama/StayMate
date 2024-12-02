@@ -282,8 +282,12 @@ const PropertySection = ({ section, isExpanded, onExpand, propertyId }) => {
             sectionId={section.section_id}
             propertyId={propertyId} // Pass the propertyId to ReservationSection
             nightlyRate={section.price_per_night}
-            initialCheckInDate="2024-07-11"
-            initialCheckOutDate="2024-07-16"
+            initialCheckInDate={new Date().toISOString().split("T")[0]} // Today's date in YYYY-MM-DD format
+            initialCheckOutDate={
+              new Date(new Date().setDate(new Date().getDate() + 7))
+                .toISOString()
+                .split("T")[0]
+            } // Today's date + 7 days in YYYY-MM-DD format
             serviceFeePercentage={10}
           />
         </>
