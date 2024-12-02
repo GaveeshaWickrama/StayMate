@@ -25,6 +25,7 @@ router.get('/reserved-dates/:propertyId/:sectionId', async (req, res) => {
     const { propertyId, sectionId } = req.params;
     const { startDate, endDate } = req.query;
 
+    // Validate query parameters
     if (!startDate || !endDate) {
       return res.status(400).json({ message: 'Start date and end date are required' });
     }
@@ -32,10 +33,36 @@ router.get('/reserved-dates/:propertyId/:sectionId', async (req, res) => {
     const start = new Date(startDate);
     const end = new Date(endDate);
 
+    if (isNaN(start.getTime()) || isNaN(end.getTime())) {
+      return res.status(400).json({ message: 'Invalid start date or end date' });
+    }
+
+    if (start > end) {
+      return res.status(400).json({ message: 'Start date cannot be after end date' });
+    }
+
+    // Fetch the property
+    const property = await Property.findById(propertyId);
+
+    if (!property) {
+      console.error(`Property not found: ${propertyId}`);
+      return res.status(404).json({ message: 'Property not found' });
+    }
+
+    // Explicitly match section_id instead of using .id()
+    const section = property.sections.find(
+      (sec) => sec.section_id.toString() === sectionId
+    );
+
+    if (!section) {
+      console.error(`Section not found in property ${propertyId}: ${sectionId}`);
+      return res.status(404).json({ message: 'Section not found' });
+    }
+
     // Fetch reservations for the specified property and section within the date range
     const reservations = await Reservation.find({
       property: propertyId,
-      sectionId: sectionId, // Filter by specific section ID
+      sectionId: sectionId,
       $or: [
         { checkInDate: { $gte: start, $lte: end } },
         { checkOutDate: { $gte: start, $lte: end } },
@@ -43,14 +70,12 @@ router.get('/reserved-dates/:propertyId/:sectionId', async (req, res) => {
       ],
     });
 
-    // Initialize an array for the date range with all dates set to false (not fully booked)
     const bookedStatus = {};
     for (let date = new Date(start); date <= end; date.setDate(date.getDate() + 1)) {
       const dateString = date.toISOString().split('T')[0];
       bookedStatus[dateString] = 0;
     }
 
-    // Populate the bookedStatus array with counts of how many units are booked on each date
     reservations.forEach((reservation) => {
       const { checkInDate, checkOutDate } = reservation;
 
@@ -67,27 +92,20 @@ router.get('/reserved-dates/:propertyId/:sectionId', async (req, res) => {
       }
     });
 
-    const property = await Property.findById(propertyId);
-    const section = property.sections.id(sectionId); // Get the specific section details
-    let sectionCount = section ? section.count : 1; // Default to 1 if no count is specified
-
-    // Check if the property is listed as a whole
-    if (property.total_unique_sections === -1) {
-      sectionCount = 1; // Treat the entire property as a single unit
-    }
-
-    // Determine if each date is fully booked based on the section's total count
-    const dates = Object.keys(bookedStatus).map(date => ({
+    const sectionCount = section.count;
+    const dates = Object.keys(bookedStatus).map((date) => ({
       date,
-      booked: bookedStatus[date] >= sectionCount
+      booked: bookedStatus[date] >= sectionCount,
+      status: `${bookedStatus[date]}/${sectionCount}`,
     }));
-    console.log({ dates });
+
     res.status(200).json({ dates });
   } catch (error) {
     console.error('Error fetching reserved dates:', error);
     res.status(500).json({ message: 'Server error' });
   }
 });
+
 
 
 
