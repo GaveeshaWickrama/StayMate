@@ -53,49 +53,11 @@ const PropertyImages = ({ images }) => {
 
 
 const PropertyInfo = ({ location, section, propertyId }) => {
-  const [reviews, setReviews] = useState([]);
-  const [averageRating, setAverageRating] = useState(0);
-  const [totalReviews, setTotalReviews] = useState(0);
-
-  useEffect(() => {
-    const fetchReviews = async () => {
-      console.debug("Fetching reviews for property ID:", propertyId);
-
-      try {
-        const response = await axios.get(
-          `http://localhost:3000/properties/${propertyId}/reviews`
-        );
-        console.debug("API response data:", response.data);
-
-        setReviews(response.data);
-
-        // Calculate average rating and total reviews
-        const total = response.data.length;
-        const avg =
-          total > 0
-            ? response.data.reduce((sum, review) => sum + review.rating, 0) / total
-            : 0;
-
-        setAverageRating(avg);
-        setTotalReviews(total);
-      } catch (error) {
-        console.error("Error fetching reviews:", error.message);
-      }
-    };
-
-    if (propertyId) {
-      console.debug("Property ID available, initiating API call.");
-      fetchReviews();
-    } else {
-      console.warn("Property ID not provided, skipping fetch.");
-    }
-  }, [propertyId]);
-
   return (
     <div className="w-full md:w-2/3 rounded-lg p-1 bg-white shadow">
       {/* Property Location */}
-      <div className="bg-white p-8 flex items-center border-b">
-        <FaMapMarkerAlt className="mr-2" />
+      <div className="bg-white p-6 px-8 flex items-center border-b">
+        <FaMapMarkerAlt className="mr-4 text-2xl text-blue-500" />
         <p className="font-semibold text-xl">
           {location.address} {location.province}
         </p>
@@ -115,16 +77,42 @@ const PropertyInfo = ({ location, section, propertyId }) => {
 
       {/* Review Summary Section */}
       <div className="bg-white py-2">
-        <ReviewSummary
-          averageRating={averageRating}
-          totalReviews={totalReviews}
-        />
+        <ReviewSummary propertyId={propertyId} />
       </div>
     </div>
   );
 };
 
-const ReviewSummary = ({ averageRating, totalReviews }) => {
+const ReviewSummary = ({ propertyId }) => {
+  const [averageRating, setAverageRating] = useState(0);
+  const [totalReviews, setTotalReviews] = useState(0);
+
+  useEffect(() => {
+    const fetchReviews = async () => {
+      try {
+        const response = await axios.get(
+          `http://localhost:3000/properties/${propertyId}/reviews`
+        );
+
+        const reviews = response.data;
+        const total = reviews.length;
+        const avg =
+          total > 0
+            ? reviews.reduce((sum, review) => sum + review.rating, 0) / total
+            : 0;
+
+        setAverageRating(avg);
+        setTotalReviews(total);
+      } catch (error) {
+        console.error("Error fetching reviews:", error.message);
+      }
+    };
+
+    if (propertyId) {
+      fetchReviews();
+    }
+  }, [propertyId]);
+
   return (
     <div className="flex items-center px-10 py-4 bg-white">
       {totalReviews > 0 ? (
@@ -172,9 +160,10 @@ const ReviewSummary = ({ averageRating, totalReviews }) => {
 };
 
 
-const PropertyInfoSections = ({ location }) => {
+const PropertyInfoSections = ({ location, propertyId, sections }) => {
   return (
     <div className="w-full md:w-2/3 rounded-lg p-1 bg-white shadow">
+      {/* Location Section */}
       <div className="bg-white p-8 flex items-center border-b">
         <FaMapMarkerAlt className="mr-2" />
         <p className="font-semibold text-xl">
@@ -182,13 +171,38 @@ const PropertyInfoSections = ({ location }) => {
           {capitalizeWords(location.province)}
         </p>
       </div>
-      <div className="bg-white p-8 flex items-center">
-        <h2 className="text-xl font-bold">Rating: </h2>
-        <p className="ml-4">No reviews yet.</p>
+
+      {/* Review Summary Section */}
+      <div className="bg-white px-6 flex items-center border-b">
+        <ReviewSummary propertyId={propertyId} />
+      </div>
+
+      {/* Sections Summary Section */}
+      
+      
+        <div className="flex flex-wrap gap-4 px-8 py-5">
+          <div className="text-xl font-bold pt-2 underline text-gray-500">Accommodations</div>
+          {sections.map((section, index) => (
+            <div
+              key={index}
+              className="flex items-center gap-2 border px-4 py-2 rounded-lg shadow-sm"
+            >
+              <span className="font-medium text-black">
+                {section.section_name}
+              </span>
+              <span className="font-bold text-black">({section.count})</span>
+            </div>
+          ))}
+      
       </div>
     </div>
   );
 };
+
+
+
+
+
 
 const PropertyHostInfo = ({ propertyId }) => {
   return (
@@ -309,7 +323,12 @@ const PropertySectionsList = ({ property }) => {
       <PropertyHeader title={property.title} createdAt={property.created_at} />
       <PropertyImages images={property.images} />
       <div className="flex flex-col md:flex-row gap-4">
-        <PropertyInfoSections location={property.location} />
+      <PropertyInfoSections
+          location={property.location}
+          propertyId={property._id}
+          sections={property.sections}
+        />
+
         <PropertyHostInfo propertyId={property._id} />
       </div>
       <PropertyDescription description={property.description} />
@@ -363,6 +382,7 @@ const DetailedPropertyView = ({ property, id }) => {
       />
 
       <PropertyAmenitiesDisplay amenities={property.amenities} />
+      <ReviewsList propertyId={property._id} />
     </div>
   );
 };
@@ -396,5 +416,134 @@ function PropertyDetails() {
     return <PropertySectionsList property={property} />;
   }
 }
+
+const ReviewsList = ({ propertyId }) => {
+  const [reviews, setReviews] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [visibleCount, setVisibleCount] = useState(4); // Number of reviews to show initially
+
+  useEffect(() => {
+    const fetchReviews = async () => {
+      try {
+        const response = await axios.get(
+          `http://localhost:3000/properties/${propertyId}/reviews`
+        );
+
+        // Add a full URL to profile pictures if they exist
+        const reviewsWithPictures = response.data.map((review) => {
+          const pictureUrl = review.user.picture
+            ? `${import.meta.env.VITE_API_URL}/${review.user.picture}`
+            : `${import.meta.env.VITE_API_URL}/default-profile.jpg`; // Fallback to a default profile picture
+
+          return {
+            ...review,
+            user: {
+              ...review.user,
+              picture: pictureUrl,
+            },
+          };
+        });
+
+        setReviews(reviewsWithPictures);
+      } catch (error) {
+        console.error("Error fetching reviews:", error.message);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    if (propertyId) {
+      fetchReviews();
+    }
+  }, [propertyId]);
+
+  const handleShowMore = () => {
+    setVisibleCount((prevCount) => prevCount + 4); // Increase the visible reviews by 4
+  };
+
+  if (loading) {
+    return (
+      <div className="text-center text-lg text-gray-500">Loading reviews...</div>
+    );
+  }
+
+  if (reviews.length === 0) {
+    return (
+      <div className="text-center text-lg text-gray-500 my-8 italic">
+        
+      </div>
+    );
+  }
+
+  return (
+    <div className="bg-white mt-8 p-4 rounded-lg shadow">
+      <h2 className="text-2xl font-bold text-gray-800 mb-4 bg-gray p-2 ">Reviews</h2>
+      <ul className="space-y-4">
+        {reviews.slice(0, visibleCount).map((review) => (
+          <li
+            key={review._id}
+            className="px-4 py-2 border rounded-lg shadow-sm bg-white"
+          >
+            <div className="flex items-center mb-2">
+              <img
+                src={review.user.picture}
+                alt={`${review.user.firstName} ${review.user.lastName}`}
+                className="w-10 h-10 rounded-full object-cover mr-4"
+              />
+              <div className="flex flex-col">
+                <div className="flex items-center">
+                  <p className="text-lg font-semibold text-gray-800 mr-4">
+                    {review.user.firstName} {review.user.lastName}
+                  </p>
+                  <div className="flex items-center">
+                    {/* Star Rating */}
+                    <div className="flex">
+                      {Array.from({ length: 5 }, (_, index) => (
+                        <svg
+                          key={index}
+                          xmlns="http://www.w3.org/2000/svg"
+                          className={`h-5 w-5 ${
+                            index < review.rating
+                              ? "text-yellow-500"
+                              : "text-gray-300"
+                          }`}
+                          fill="currentColor"
+                          viewBox="0 0 24 24"
+                        >
+                          <path d="M12 .587l3.668 7.568L24 9.75l-6 5.848L19.336 24 12 20.187 4.664 24 6 15.598 0 9.75l8.332-1.595L12 .587z" />
+                        </svg>
+                      ))}
+                    </div>
+                    <p className="ml-2 text-sm text-gray-600 font-bold">
+                      {review.rating}/5
+                    </p>
+                  </div>
+                </div>
+                <p className="text-sm text-gray-500">
+                  {new Date(review.createdAt).toLocaleDateString()}
+                </p>
+              </div>
+            </div>
+            <p className="text-gray-700">{review.comment}</p>
+          </li>
+        ))}
+      </ul>
+      {visibleCount < reviews.length && (
+        <div className=" mt-4">
+          <button
+            onClick={handleShowMore}
+            className="px-4 py-1 text-2xl underline"
+          >
+            Show More
+          </button>
+        </div>
+      )}
+    </div>
+  );
+};
+
+
+
+
 
 export default PropertyDetails;
