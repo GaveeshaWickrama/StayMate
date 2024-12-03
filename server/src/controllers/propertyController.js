@@ -233,17 +233,34 @@ async function getPropertyById(req, res) {
   const propertyId = req.params.id;
 
   try {
+    // Find the property by ID
     const property = await Property.findById(propertyId);
     if (!property) {
       return res.status(404).json({ message: 'Property not found.' });
     }
 
-    res.status(200).json(property);
+    // Find the related PropertyVerified document
+    const propertyVerified = await PropertyVerified.findOne({ propertyID: propertyId });
+
+    // Construct the full URL for the deed if it exists
+    const baseUrl = process.env.VITE_API_URL || 'http://localhost:5000'; // Use environment variable or fallback to localhost
+    const deed = propertyVerified?.deed
+      ? `${baseUrl}/${propertyVerified.deed.replace(/\\/g, '/')}` // Replace '\' with '/'
+      : null;
+
+    // Combine results
+    const result = {
+      ...property.toObject(),
+      deed,
+    };
+
+    res.status(200).json(result);
   } catch (error) {
     console.error(error);
     res.status(500).json({ message: 'Server error' });
   }
 }
+
 
 // async function getAllProperties(req, res) {
 //   try {

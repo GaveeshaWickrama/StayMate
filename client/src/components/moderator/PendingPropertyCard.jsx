@@ -5,6 +5,7 @@ import { Link } from 'react-router-dom';
 import { IoMdHome } from "react-icons/io";
 
 const PendingPropertyCard = ({ property }) => {
+  console.log(property);
   const imageUrl = property?.images[0]?.url 
     ? `${import.meta.env.VITE_API_URL || 'http://localhost:5000'}/${property.images[0].url}` 
     : 'path/to/default/image.jpg';
@@ -17,7 +18,7 @@ const PendingPropertyCard = ({ property }) => {
   };
 
   // Converting the date
-  const date = new Date(property.propertyVerifiedCreatedAt);
+  const date = new Date(property.updated_at);
   const formattedDate = date.toLocaleString('en-US', {
     year: 'numeric',
     month: '2-digit',
@@ -46,10 +47,7 @@ const PendingPropertyCard = ({ property }) => {
         </div>
       </div>
       <div className="px-4 py-2 flex justify-center items-center border-t">
-        <FaUser className="ml-4 mr-1 text-blue-500" /> {property.host_id?.firstName || 'First Name'} {property.host_id?.lastName || 'Last Name'}
-        <div className="ml-2 flex items-center">
-          {renderStars(rating)}
-        </div>
+        <FaUser className="ml-4 mr-1 text-blue-500" /> {property?.host_id?.firstName || 'First Name'} {property?.host_id?.lastName || 'Last Name'}
       </div>
    
       <div className="px-4 py-2 flex justify-center border-t">
