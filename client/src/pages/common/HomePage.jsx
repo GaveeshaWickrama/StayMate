@@ -58,15 +58,19 @@ function HomePage() {
     const filtered = properties.filter((property) => {
       const { type, minPrice, maxPrice, bedrooms } = filterParams;
 
+      // Parse price range
       const min = minPrice ? parseInt(minPrice, 10) : 0;
       const max = maxPrice ? parseInt(maxPrice, 10) : Infinity;
 
-      return (
-        (type ? property.type === type : true) &&
-        min <= property.sections[0]?.price_per_night &&
-        property.sections[0]?.price_per_night <= max &&
-        (bedrooms ? property.sections[0]?.plan?.bedrooms >= parseInt(bedrooms, 10) : true)
-      );
+      // Check if at least one section matches the criteria
+      return property.sections.some((section) => {
+        return (
+          (type ? property.type === type : true) &&
+          min <= section.price_per_night &&
+          section.price_per_night <= max &&
+          (bedrooms ? section.plan?.bedrooms >= parseInt(bedrooms, 10) : true)
+        );
+      });
     });
     setFilteredProperties(filtered);
   };

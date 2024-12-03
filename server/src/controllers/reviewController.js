@@ -78,7 +78,7 @@ const getUserReviews = async (req, res) => {
     const reviews = await Review.find({ user: userId })
       .populate({
         path: "user",
-        select: "email firstName lastName role createdOn", // Select all user details you need
+        select: "email firstName lastName role createdOn picture", // Include 'picture' field
       })
       .populate({
         path: "property",
@@ -87,12 +87,18 @@ const getUserReviews = async (req, res) => {
       })
       .exec();
 
-    res.status(200).json(reviews);
+    // Map over the reviews to add full picture URL if needed
+    const reviewsWithPicture = reviews.map((review) => {
+      return review;
+    });
+
+    res.status(200).json(reviewsWithPicture);
   } catch (error) {
     console.error("Error fetching user reviews:", error);
     res.status(500).json({ message: "Server Error!" });
   }
 };
+
 // Function to get reviews for a specific property
 const getPropertyReviews = async (req, res) => {
   const propertyId = req.params.propertyId; // Get property ID from request params
@@ -102,7 +108,7 @@ const getPropertyReviews = async (req, res) => {
     const reviews = await Review.find({ property: propertyId })
       .populate({
         path: "user",
-        select: "email firstName lastName", // Select user details
+        select: "email firstName lastName picture createdOn", // Select user details
       })
       .populate({
         path: "property",
