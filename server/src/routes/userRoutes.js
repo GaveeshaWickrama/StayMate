@@ -53,4 +53,11 @@ router.delete("/:id", userController.deleteUser);
 // // patch self user info (id stored in jwt token)
 // router.patch('/:id', authToken, requireRole('user', 'admin', 'guest', 'host', 'technician'), userController.updateUser);
 
+
+//to get properties of the host by his id
+router.get("/getHostProperties/:id",authToken,requireRole("user", "admin", "guest", "host", "technician", "moderator"),userController.getProperties)
+
+//to get ratings of the host of all properties listed by him
+router.get("/getHostRatings/:id",authToken,requireRole("user", "admin", "guest", "host", "technician", "moderator"),userController.getRatings)
+
 module.exports = router;
