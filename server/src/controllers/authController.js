@@ -257,7 +257,7 @@ async function requestRegisterTechnician(req, res) {
             };
 
             transporter.sendMail(mailOptions, (error, info) => {
-                if (false) {
+                if (error) {
                     console.error('Error sending OTP email:', error);
                     return res.status(500).json({ message: 'Error sending OTP email' });
                 } else {

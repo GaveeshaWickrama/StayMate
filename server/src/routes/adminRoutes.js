@@ -117,4 +117,6 @@ router.get(
 
 router.get('/technicians', adminController.getAllTechnicians);
 
+router.get("/summary-counts", adminController.getSummaryCounts);
+router.get("/registrations-by-day", adminController.getRegistrationsByDay);
 module.exports = router;

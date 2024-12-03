@@ -1,7 +1,7 @@
 import React from 'react';
 import { useProperty } from '../../../context/PropertyContext';
 import { useNavigate } from 'react-router-dom';
-import { FaBed, FaBath, FaUserFriends, FaDoorClosed, FaEdit, FaTrashAlt } from 'react-icons/fa';
+import { FaBed, FaBath, FaUserFriends, FaDoorClosed, FaTrashAlt } from 'react-icons/fa';
 
 const PropertySections = () => {
   const { property, setProperty } = useProperty();
@@ -15,10 +15,6 @@ const PropertySections = () => {
     }));
   };
 
-  const handleEdit = (index) => {
-    navigate(`/host/edit-section/${index}`);
-  };
-
   return (
     <div className='container mx-auto px-8 mb-96'>
       <h2 className="text-4xl font-extrabold text-black-600 mb-8 border-b-4 border-blue-600 p-6 rounded-md shadow-sm">Add Sections</h2>
@@ -30,12 +26,6 @@ const PropertySections = () => {
               <p className="text-ml text-gray-600 px-10">Count: {section.count}</p>
             </div>
             <div className="flex space-x-8">
-              <button
-                onClick={() => handleEdit(index)}
-                className="text-blue-500 hover:text-blue-700"
-              >
-                <FaEdit className="text-2xl" />
-              </button>
               <button
                 onClick={() => handleDelete(index)}
                 className="text-red-500 hover:text-red-700"
@@ -96,12 +86,9 @@ const PropertySections = () => {
           </div>
         </div>
       ))}
-      <button type="button" onClick={() => navigate('/host/add-section')} className="bg-blue-500 text-white px-4 py-2 rounded mb-4" > Add Section </button>
+      <button type="button" onClick={() => navigate('/host/add-section')} className="bg-blue-500 text-white px-4 py-2 rounded mb-4">Add Section</button>
     </div>
   );
 };
 
 export default PropertySections;
-
-
-
