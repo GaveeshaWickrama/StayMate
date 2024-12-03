@@ -20,8 +20,9 @@ import { MdReportProblem } from "react-icons/md";
 import { MdOutlineTaskAlt } from "react-icons/md";
 import { FaTasks } from "react-icons/fa";
 import { GrTasks } from "react-icons/gr";
-import useTotalUnreadMessageCount from '../../hooks/useTotalUnreadMessageCount';
+import useTotalUnreadMessageCount from "../../hooks/useTotalUnreadMessageCount";
 import useConversation from "../../zustand/useConversation";
+import { FaCcAmazonPay } from "react-icons/fa6";
 
 const iconMap = {
   Home: "home",
@@ -42,6 +43,7 @@ const iconMap = {
   Chat: "chat",
   "View New Properties": <BsFillHousesFill />,
   Payments: <FaCreditCard />,
+  Payment_Details: <FaCreditCard />,
   Report: <MdAssessment />,
   Technicians: <MdBuild />,
   "My Listings": <CiCircleList />,
@@ -50,8 +52,8 @@ const iconMap = {
   "Active Tasks": <MdOutlineTaskAlt />,
   "Pending Tasks": <FaTasks />,
   Tasks: <GrTasks />,
+  "Add Payment Details": <FaCcAmazonPay/>
 };
-
 
 function Sidebar({ title, links, logout, isVisible, newMessageCount }) {
   const location = useLocation();
@@ -93,14 +95,13 @@ function Sidebar({ title, links, logout, isVisible, newMessageCount }) {
 }
 
 function Navbar({ isVisible }) {
-  
   const { currentUser, logout } = useAuth();
   const navigate = useNavigate();
   useTotalUnreadMessageCount();
   // const [activeTab, setActiveTab] = useState('Home'); // Default active tab
 
 
-  const {totalUnreadMessageCount} = useConversation();
+  const { totalUnreadMessageCount } = useConversation();
 
   const handleLogout = () => {
     logout();
@@ -153,9 +154,7 @@ function Navbar({ isVisible }) {
     { path: "/host/HostReviews", label: "Reviews" },
     { path: "/host/chat", label: "Chat" },
 
-    { path: "/host/addpaymentdetails", label: "Add Payment Details" }
-
-
+    { path: "/host/addpaymentdetails", label: "Payment_Details" },
   ];
 
   const technicianLinks = [
