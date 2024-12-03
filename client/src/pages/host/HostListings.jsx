@@ -106,7 +106,7 @@ function ListingCard({ property, handleHide }) {
               style={{ borderLeft: "2px dashed blue" }}
             ></div>
             <div className="flex flex-col bg-grey-400 justify-around p-4 m-2 rounded-lg">
-              <button
+              {/* <button
                 onClick={(e) => {
                   e.preventDefault();
                   handleHide(property._id);
@@ -114,7 +114,7 @@ function ListingCard({ property, handleHide }) {
                 className="bg-gray-500 text-white px-4 py-2 rounded  flex items-center justify-center space-x-1 w-full mb-2"
               >
                 <span>Status</span>
-              </button>
+              </button> */}
               <div
                 className={`relative px-2 py-1 rounded-full text-white text-center text-sm ${
                   property.status === "verified"
