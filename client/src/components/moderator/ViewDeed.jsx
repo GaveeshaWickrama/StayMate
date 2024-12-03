@@ -1,42 +1,32 @@
 import React from 'react';
+import { FaFilePdf } from 'react-icons/fa';
 
-const ViewDeed = ({ file, defaultImage }) => {
-  // Determine file type based on the extension
-  const isPDF = file?.toLowerCase().endsWith('.pdf');
-  const fileUrl = file || defaultImage;
-
-  const handleFileClick = (url) => {
-    window.open(url, '_blank');
-  };
+const ViewDeed = ({ deedId }) => {
+  // Construct the file URL
+  const fileUrl = `http://localhost:3000/properties/deed/${deedId}`;
 
   return (
-    <div>
-      {isPDF ? (
-        // If it's a PDF, render a link or embed viewer
-        <div className="flex flex-col items-center">
-          <iframe
-            src={fileUrl}
-            title="Property Deed PDF"
-            className="w-32 h-32 border rounded mb-2"
-          ></iframe>
-          <button
-            className="text-blue-500 underline text-sm"
-            onClick={() => handleFileClick(fileUrl)}
-          >
-            View Full PDF
-          </button>
-        </div>
-      ) : (
-        // If it's an image, render the image preview
-        <img
-          src={fileUrl}
-          alt="Property Deed"
-          className="w-32 h-32 object-cover cursor-pointer"
-          onClick={() => handleFileClick(fileUrl)}
-        />
-      )}
+    <div className="flex flex-col items-center p-4  rounded-lg ">
+      {/* Icon */}
+      <div className="flex items-center mb-3">
+        <FaFilePdf className="text-red-500 text-4xl" />
+        <span className="ml-3 text-xl font-semibold text-gray-800">
+          Property Document
+        </span>
+      </div>
+      
+      {/* Link to Download */}
+      <a
+        href={fileUrl}
+        target="_blank"
+        rel="noopener noreferrer"
+        className="bg-blue-600 text-white px-4 py-2 rounded-lg font-medium hover:bg-blue-500 transition duration-300"
+      >
+        Download
+      </a>
     </div>
   );
 };
 
 export default ViewDeed;
+
