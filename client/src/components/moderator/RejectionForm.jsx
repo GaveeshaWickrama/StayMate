@@ -18,19 +18,19 @@ const RejectionForm = ({ propertyId, token, currentUser, onClose }) => {
     { label: "Other", subOptions: [] },
   ];
 
-  // const handleCheckboxChange = (reason, checked) => {
-  //   if (checked) {
-  //     setRejectionReasons([...rejectionReasons, reason]);
-  //   } else {
-  //     setRejectionReasons(rejectionReasons.filter(r => r !== reason));
-  //     if (reason === "Ownership couldn't be validated") {
-  //       setPropertyOwnershipReason('');
-  //     }
-  //     if (reason === "Other") {
-  //       setOtherReasonText('');
-  //     }
-  //   }
-  // };
+  const handleCheckboxChange = (reason, checked) => {
+    if (checked) {
+      setRejectionReasons([...rejectionReasons, reason]);
+    } else {
+      setRejectionReasons(rejectionReasons.filter(r => r !== reason));
+      if (reason === "Ownership couldn't be validated") {
+        setPropertyOwnershipReason('');
+      }
+      if (reason === "Other") {
+        setOtherReasonText('');
+      }
+    }
+  };
 
   const handleAmenityChange = (amenity, checked) => {
     if (checked) {
