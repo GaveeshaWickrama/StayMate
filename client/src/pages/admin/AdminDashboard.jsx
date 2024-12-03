@@ -29,17 +29,21 @@ function GreetingBox({ name }) {
 
 function AdminDashboard() {
   const { token } = useAuth();
-  const [totalRevenue, setTotalRevenue] = useState(0);
-  const [totalPayoutToHosts, setTotalPayoutToHosts] = useState(0);
-  const [monthlyData, setMonthlyData] = useState([]);
-  const [yearlyData, setYearlyData] = useState([]);
-  const [view, setView] = useState("monthly");
+  const [totalUsers, setTotalUsers] = useState(0);
+  const [totalProperties, setTotalProperties] = useState(0);
+  const [upcomingBookings, setUpcomingBookings] = useState(0);
+  const [completedBookings, setCompletedBookings] = useState(0);
+  const [registrationData, setRegistrationData] = useState([]);
+  const [startDate, setStartDate] = useState(
+    new Date(new Date().setDate(new Date().getDate() - 7)).toISOString().slice(0, 10)
+  ); // Default to one week ago
+  const [endDate, setEndDate] = useState(new Date().toISOString().slice(0, 10)); // Default to today
 
   useEffect(() => {
-    const fetchPayments = async () => {
+    const fetchSummaryCounts = async () => {
       try {
         const response = await axios.get(
-          `${import.meta.env.VITE_API_URL}/admin/payments`,
+          `http://localhost:3000/admin/summary-counts`,
           {
             headers: {
               Authorization: `Bearer ${token}`,
@@ -47,159 +51,143 @@ function AdminDashboard() {
           }
         );
         const data = response.data;
-        calculateTotals(data);
+        setTotalUsers(data.totalUsers);
+        setTotalProperties(data.totalProperties);
+        setUpcomingBookings(data.upcomingReservations);
+        setCompletedBookings(data.completedReservations);
       } catch (error) {
-        console.error("Error fetching payments:", error);
+        console.error("Error fetching summary counts:", error);
       }
     };
 
-    const fetchUserCounts = async () => {
+    const fetchRegistrationData = async () => {
       try {
         const response = await axios.get(
-          `${import.meta.env.VITE_API_URL}/admin/users`,
+          `http://localhost:3000/admin/registrations-by-day`,
           {
             headers: {
               Authorization: `Bearer ${token}`,
             },
+            params: { startDate, endDate },
           }
         );
-        const data = response.data;
-
-        const guestCount = data.guest || 0;
-        const hostCount = data.host || 0;
-
-        // Simulate monthly data based on the actual user counts
-        const simulatedMonthlyData = [
-          { month: "January", customers: guestCount, propertyOwners: hostCount },
-          { month: "February", customers: guestCount + 10, propertyOwners: hostCount + 5 },
-          { month: "March", customers: guestCount + 15, propertyOwners: hostCount + 12 },
-          { month: "April", customers: guestCount + 20, propertyOwners: hostCount + 15 },
-          { month: "May", customers: guestCount + 26, propertyOwners: hostCount + 20 },
-          { month: "June", customers: guestCount + 30, propertyOwners: hostCount + 24 },
-          { month: "July", customers: guestCount + 35, propertyOwners: hostCount + 30 },
-        ];
-
-        // Simulate yearly data
-        const simulatedYearlyData = [
-          { year: "2020", customers: guestCount * 12, propertyOwners: hostCount * 12 },
-          { year: "2021", customers: guestCount * 15, propertyOwners: hostCount * 15 },
-          { year: "2022", customers: guestCount * 18, propertyOwners: hostCount * 18 },
-          { year: "2023", customers: guestCount * 20, propertyOwners: hostCount * 20 },
-        ];
-
-        setMonthlyData(simulatedMonthlyData);
-        setYearlyData(simulatedYearlyData);
+        setRegistrationData(response.data);
       } catch (error) {
-        console.error("Error fetching user counts:", error);
+        console.error("Error fetching registration data:", error);
       }
     };
 
     if (token) {
-      fetchPayments();
-      fetchUserCounts();
+      fetchSummaryCounts();
+      fetchRegistrationData();
     }
-  }, [token]);
-
-  const calculateTotals = (payments) => {
-    let totalRev = 0;
-    let totalPayout = 0;
-
-    payments.forEach((payment) => {
-      totalRev += payment.totalAmount;
-      totalPayout += payment.amountToHost;
-    });
-
-    setTotalRevenue(totalRev);
-    setTotalPayoutToHosts(totalPayout);
-  };
-
-  const data = view === "monthly" ? monthlyData : yearlyData;
-  const dataKey = view === "monthly" ? "month" : "year";
-
-  
+  }, [token, startDate, endDate]);
 
   return (
     <main
       className="p-6 min-h-screen"
       style={{
-        background: 'linear-gradient(to right, rgba(240, 248, 255, 0.8), rgba(240, 248, 255, 0.8)), url(/path-to-your-background-image.jpg)',
-        backgroundSize: 'cover',
-        backgroundBlendMode: 'overlay',
+        background:
+          "linear-gradient(to right, rgba(240, 248, 255, 0.8), rgba(240, 248, 255, 0.8)), url(/path-to-your-background-image.jpg)",
+        backgroundSize: "cover",
+        backgroundBlendMode: "overlay",
       }}
     >
-      <GreetingBox name="jeo Deo" />
+      <GreetingBox name="Admin" />
 
       <h3 className="text-4xl font-bold text-gray-800 mb-8">Dashboard</h3>
 
       <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6 mb-8">
         <div className="bg-white shadow-lg p-6 rounded-lg flex flex-col items-center transform transition duration-300 hover:scale-105">
-          <FaMoneyBillWave className="text-5xl text-green-600 mb-3" />
-          <h3 className="text-xl font-semibold text-gray-700">Total Revenue</h3>
-          <p className="text-2xl font-bold text-gray-900">
-            LKR {totalRevenue.toLocaleString()}
-          </p>
-        </div>
-        <div className="bg-white shadow-lg p-6 rounded-lg flex flex-col items-center transform transition duration-300 hover:scale-105">
           <FaUserTie className="text-5xl text-blue-600 mb-3" />
-          <h3 className="text-xl font-semibold text-gray-700">Total Payout to Hosts</h3>
-          <p className="text-2xl font-bold text-gray-900">
-            LKR {totalPayoutToHosts.toLocaleString()}
-          </p>
+          <h3 className="text-xl font-semibold text-gray-700">Total Users</h3>
+          <p className="text-2xl font-bold text-gray-900">{totalUsers}</p>
         </div>
         <div className="bg-white shadow-lg p-6 rounded-lg flex flex-col items-center transform transition duration-300 hover:scale-105">
           <FaHome className="text-5xl text-purple-600 mb-3" />
-          <h3 className="text-xl font-semibold text-gray-700">Total Properties</h3>
-          <p className="text-2xl font-bold text-gray-900">45</p> {/* Example static data */}
+          <h3 className="text-xl font-semibold text-gray-700">
+            Total Properties
+          </h3>
+          <p className="text-2xl font-bold text-gray-900">{totalProperties}</p>
         </div>
         <div className="bg-white shadow-lg p-6 rounded-lg flex flex-col items-center transform transition duration-300 hover:scale-105">
           <FaCalendarCheck className="text-5xl text-orange-600 mb-3" />
-          <h3 className="text-xl font-semibold text-gray-700">Upcoming Bookings</h3>
-          <p className="text-2xl font-bold text-gray-900">30</p> {/* Example static data */}
+          <h3 className="text-xl font-semibold text-gray-700">
+            Upcoming Bookings
+          </h3>
+          <p className="text-2xl font-bold text-gray-900">{upcomingBookings}</p>
+        </div>
+        <div className="bg-white shadow-lg p-6 rounded-lg flex flex-col items-center transform transition duration-300 hover:scale-105">
+          <FaMoneyBillWave className="text-5xl text-green-600 mb-3" />
+          <h3 className="text-xl font-semibold text-gray-700">
+            Completed Bookings
+          </h3>
+          <p className="text-2xl font-bold text-gray-900">
+            {completedBookings}
+          </p>
         </div>
       </div>
 
-      <div className="flex justify-end mb-8">
-        <div className="flex space-x-4">
-          <button
-            onClick={() => setView("monthly")}
-            className={`px-4 py-2 rounded-lg font-semibold transition-colors duration-300 ${view === "monthly" ? "bg-blue-600 text-white" : "bg-white text-blue-600 border border-blue-600"} hover:bg-blue-700 hover:text-white`}
-          >
-            Monthly
-          </button>
-          <button
-            onClick={() => setView("yearly")}
-            className={`px-4 py-2 rounded-lg font-semibold transition-colors duration-300 ${view === "yearly" ? "bg-blue-600 text-white" : "bg-white text-blue-600 border border-blue-600"} hover:bg-blue-700 hover:text-white`}
-          >
-            Yearly
-          </button>
+      <div className="flex justify-between items-center mb-8">
+        <div>
+          <label className="mr-2">Start Date:</label>
+          <input
+            type="date"
+            value={startDate}
+            onChange={(e) => setStartDate(e.target.value)}
+            className="p-2 border rounded"
+          />
+          <label className="ml-4 mr-2">End Date:</label>
+          <input
+            type="date"
+            value={endDate}
+            onChange={(e) => setEndDate(e.target.value)}
+            className="p-2 border rounded"
+          />
         </div>
       </div>
 
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
         <div className="bg-white shadow-lg p-6 rounded-lg transform transition duration-300 hover:scale-105">
-          <h3 className="text-xl font-semibold text-gray-800 mb-4">Tenants</h3>
+          <h3 className="text-xl font-semibold text-gray-800 mb-4">Guests</h3>
           <ResponsiveContainer width="100%" height={400}>
-            <LineChart data={data} margin={{ top: 10, right: 30, left: 0, bottom: 0 }}>
+            <LineChart
+              data={registrationData}
+              margin={{ top: 10, right: 30, left: 0, bottom: 0 }}
+            >
               <CartesianGrid strokeDasharray="3 3" />
-              <XAxis dataKey={dataKey} />
+              <XAxis dataKey="date" />
               <YAxis />
               <Tooltip />
               <Legend />
-              <Line type="monotone" dataKey="customers" stroke="#8884d8" strokeWidth={3} />
+              <Line
+                type="monotone"
+                dataKey="guest"
+                stroke="#8884d8"
+                strokeWidth={3}
+              />
             </LineChart>
           </ResponsiveContainer>
         </div>
 
         <div className="bg-white shadow-lg p-6 rounded-lg transform transition duration-300 hover:scale-105">
-          <h3 className="text-xl font-semibold text-gray-800 mb-4">Property Owners</h3>
+          <h3 className="text-xl font-semibold text-gray-800 mb-4">Hosts</h3>
           <ResponsiveContainer width="100%" height={400}>
-            <LineChart data={data} margin={{ top: 10, right: 30, left: 0, bottom: 0 }}>
+            <LineChart
+              data={registrationData}
+              margin={{ top: 10, right: 30, left: 0, bottom: 0 }}
+            >
               <CartesianGrid strokeDasharray="3 3" />
-              <XAxis dataKey={dataKey} />
+              <XAxis dataKey="date" />
               <YAxis />
               <Tooltip />
               <Legend />
-              <Line type="monotone" dataKey="propertyOwners" stroke="#82ca9d" strokeWidth={3} />
+              <Line
+                type="monotone"
+                dataKey="host"
+                stroke="#82ca9d"
+                strokeWidth={3}
+              />
             </LineChart>
           </ResponsiveContainer>
         </div>

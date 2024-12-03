@@ -31,7 +31,11 @@ const PropertyHost = ({ propertyId }) => {
     return <div>Loading...</div>;
   }
 
-  const hostImage = host.profilePicture || defaultProfilePic;
+  const hostImage = host.picture
+  ? `${import.meta.env.VITE_API_URL}/${host.picture}`
+  : defaultProfilePic;
+
+  console.log(hostImage);
   const hostDetails = {
     image: hostImage,
     name: `${host.firstName} ${host.lastName}`,
@@ -58,17 +62,23 @@ const PropertyHost = ({ propertyId }) => {
   };
 
   return (
-    <div className="flex items-center p-4 bg-white rounded-lg">
-      <div className="flex flex-col items-center mr-4">
-        <img src={hostDetails.image} alt="Host" className="w-40 h-40 rounded-full mb-2" />
+    <div className="flex items-center p-0 bg-white rounded-lg">
+      <div className="flex flex-col items-center mr-4 px-2 pt-2">
+      <div className="w-40 h-40 rounded-full overflow-hidden">
+    <img
+      src={hostDetails.image}
+      alt="Host"
+      className="w-full h-full object-cover"
+    />
+  </div>
         <h3 className="text-lg font-bold">{hostDetails.name}</h3>
       </div>
       <div className="flex flex-col flex-1">
-        <div className="text-xl font-bold mb-2">{hostDetails.reviews} Reviews</div>
+        {/* <div className="text-xl font-bold mb-2">{hostDetails.reviews} Reviews</div>
         <div className="flex items-center justify-start mb-2">
           <FaStar className="text-yellow-500 mr-1" size={24} />
           <span className="text-lg font-bold">{hostDetails.rating}</span>
-        </div>
+        </div> */}
         <div className="flex items-center justify-start mb-2">
           <FaPhone className="mr-2" size={24} />
           <span>{hostDetails.phone}</span>

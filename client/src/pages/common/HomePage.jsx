@@ -12,55 +12,72 @@ function HomePage() {
   const [filterParams, setFilterParams] = useState({});
   const [showMap, setShowMap] = useState(false);
   const [searchPerformed, setSearchPerformed] = useState(false);
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState(null);
 
   const fetchProperties = async () => {
+    setLoading(true);
+    setError(null);
     try {
-      const response = await axios.get(`${import.meta.env.VITE_API_URL}/properties`, {
-        params: { latitude: searchParams.location?.latitude || '', longitude: searchParams.location?.longitude || '', radius: searchParams.radius }
-      });
-      setProperties(response.data);
-      setFilteredProperties(response.data); // Initialize filtered properties
-    } catch (error) {
-      console.error('Error fetching properties:', error);
+      const params = {};
+
+      if (searchParams.location?.latitude && searchParams.location?.longitude && searchParams.radius) {
+        params.latitude = searchParams.location.latitude;
+        params.longitude = searchParams.location.longitude;
+        params.radius = searchParams.radius;
+      }
+
+      const response = await axios.get(`${import.meta.env.VITE_API_URL}/properties`, { params });
+
+      const allProperties = response.data;
+      setProperties(allProperties);
+      setFilteredProperties(allProperties);
+    } catch (err) {
+      console.error('Error fetching properties:', err.message);
+      setError('Failed to fetch properties. Please try again.');
+    } finally {
+      setLoading(false);
     }
   };
 
   useEffect(() => {
     fetchProperties();
-  }, []);
+  }, [searchParams]);
 
   const handleSearch = (params) => {
     setSearchParams(params);
-    fetchProperties();
-    setShowMap(true);
     setSearchPerformed(true);
+    setShowMap(false);
   };
 
   const handleFilterChange = (name, value) => {
-    setFilterParams(prev => ({ ...prev, [name]: value }));
+    setFilterParams((prev) => ({ ...prev, [name]: value }));
   };
 
   const applyFilters = () => {
-    const filtered = properties.filter(property => {
+    const filtered = properties.filter((property) => {
       const { type, minPrice, maxPrice, bedrooms } = filterParams;
-       
-      // Parse minPrice and maxPrice to integers, or set to default values if they are empty
-      const min = minPrice ? parseInt(minPrice, 10) : 0; // Use 0 as default for minPrice
-      const max = maxPrice ? parseInt(maxPrice, 10) : Infinity; // Use Infinity as default for maxPrice
-  
-      return (
-        (type ? property.type === type : true) &&
-        (min <= property.sections[0]?.price_per_night  && property.sections[0]?.price_per_night   <= max) &&
-        (bedrooms ? property.sections[0]?.plan?.bedrooms >= parseInt(bedrooms, 10) : true)
-      );
+
+      // Parse price range
+      const min = minPrice ? parseInt(minPrice, 10) : 0;
+      const max = maxPrice ? parseInt(maxPrice, 10) : Infinity;
+
+      // Check if at least one section matches the criteria
+      return property.sections.some((section) => {
+        return (
+          (type ? property.type === type : true) &&
+          min <= section.price_per_night &&
+          section.price_per_night <= max &&
+          (bedrooms ? section.plan?.bedrooms >= parseInt(bedrooms, 10) : true)
+        );
+      });
     });
     setFilteredProperties(filtered);
   };
-  
 
   const resetFilters = () => {
     setFilterParams({});
-    setFilteredProperties(properties); // Show all properties after resetting filters
+    setFilteredProperties(properties);
   };
 
   const toggleMap = () => {
@@ -80,24 +97,46 @@ function HomePage() {
           </button>
         )}
       </div>
-      <FilterBar onFilterChange={handleFilterChange} onFilterSubmit={applyFilters} onFilterReset={resetFilters} />
+      <FilterBar
+        onFilterChange={handleFilterChange}
+        onFilterSubmit={applyFilters}
+        onFilterReset={resetFilters}
+      />
       <div className="flex flex-wrap">
-        <div className={`flex flex-wrap ${showMap ? 'w-full md:w-2/3' : 'w-full'} -mx-2`}>
-          {filteredProperties.length > 0 ? (
-            filteredProperties.map(property => (
-              <div key={property._id} className={`w-full sm:w-1/2 ${showMap ? 'md:w-1/2 lg:w-1/2' : 'md:w-1/3 lg:w-1/4'} px-2 mb-0`}>
-                <PropertyCard property={property} />
-              </div>
-            ))
-          ) : (
-            <p className="px-2">No properties found. Try adjusting your search criteria.</p>
-          )}
-        </div>
+        {loading ? (
+          <p className="px-2">Loading properties...</p>
+        ) : error ? (
+          <p className="px-2 text-red-600">{error}</p>
+        ) : (
+          <div className={`flex flex-wrap ${showMap ? 'w-full md:w-2/3' : 'w-full'} -mx-2`}>
+            {filteredProperties.length > 0 ? (
+              filteredProperties.map((property) => (
+                <div
+                  key={property._id}
+                  className={`w-full sm:w-1/2 ${
+                    showMap ? 'md:w-1/2 lg:w-1/2' : 'md:w-1/3 lg:w-1/4'
+                  } px-2 mb-4`}
+                >
+                  <PropertyCard property={property} />
+                </div>
+              ))
+            ) : (
+              <p className="px-2">No properties found. Try adjusting your search criteria.</p>
+            )}
+          </div>
+        )}
         {showMap && (
           <div className="w-full md:w-1/3 px-2 md:px-4 my-4 md:my-0 relative">
             <div className="sticky top-0">
-              <Map location={searchParams.location} radius={searchParams.radius} properties={filteredProperties} />
-              <button onClick={toggleMap} className="bg-black text-white rounded-md p-3 absolute top-4 right-4 shadow-md hover:bg-blue-600 transition duration-200">
+              <Map
+                location={searchParams.location}
+                radius={searchParams.radius}
+                properties={filteredProperties}
+              />
+              <button
+                onClick={toggleMap}
+                className="bg-black text-white rounded-md p-3 absolute top-4 right-4 shadow-md hover:bg-blue-600 transition duration-200"
+              >
                 Hide Map
               </button>
             </div>

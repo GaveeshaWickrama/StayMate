@@ -17,3 +17,4 @@ uploads/taskProof/*
 uploads/deeds/*
 !uploads/deeds/default.jpg
 
+.env

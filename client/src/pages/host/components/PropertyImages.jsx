@@ -13,14 +13,23 @@ const PropertyImages = ({ property, setProperty }) => {
   };
 
   const handleFiles = (files) => {
+    const currentImages = property.images || [];
+    const maxAllowed = 10 - currentImages.length;
+
+    if (files.length > maxAllowed) {
+      alert(`You can only upload ${maxAllowed} more image(s).`);
+      files = Array.from(files).slice(0, maxAllowed);
+    }
+
     let newImages = [];
     for (let file of files) {
       const url = URL.createObjectURL(file);
       newImages.push({ url, file });
     }
+
     setProperty(prevState => ({
       ...prevState,
-      images: [...prevState.images, ...newImages]
+      images: [...currentImages, ...newImages]
     }));
   };
 
@@ -51,8 +60,8 @@ const PropertyImages = ({ property, setProperty }) => {
   };
 
   return (
-    <div className='container mx-auto px-8 mb-80'>
-      <h2 className="text-4xl font-extrabold text-black-600 mb-8 border-b-4 border-blue-600 p-6 rounded-md shadow-sm">Add Images</h2> 
+    <div className="container mx-auto px-8 mb-80">
+      <h2 className="text-4xl font-extrabold text-black-600 mb-8 border-b-4 border-blue-600 p-6 rounded-md shadow-sm">Add Images</h2>
       <div
         className={`border-2 border-dashed p-8 rounded mb-4 cursor-pointer text-center ${isDragging ? 'border-blue-500 bg-blue-100' : 'border-gray-300'}`}
         onDragOver={handleDragOver}
@@ -62,7 +71,7 @@ const PropertyImages = ({ property, setProperty }) => {
       >
         <FaUpload className="mx-auto text-3xl text-gray-400 mb-2" />
         <p className="text-gray-700">Drag and drop or <span className="text-blue-500 underline">browse</span> to upload</p>
-        <p className="text-gray-500">PNG, JPG, GIF up to 10MB</p>
+        <p className="text-gray-500">PNG, JPG, WEBP (Max: 10 images)</p>
         <input
           type="file"
           id="fileInput"
@@ -100,10 +109,3 @@ const PropertyImages = ({ property, setProperty }) => {
 };
 
 export default PropertyImages;
-
-
-
-
-
-
-

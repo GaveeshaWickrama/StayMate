@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { FaCalendarAlt, FaMoneyBillWave, FaInfoCircle } from "react-icons/fa";
+import { useAuth } from "../context/auth"; // Import AuthContext
 import CustomCalendar from "./CustomCalendar";
 
 const ReservationSection = ({
@@ -20,6 +21,7 @@ const ReservationSection = ({
   const [serviceFee, setServiceFee] = useState(0);
   const [errors, setErrors] = useState({});
   const [showCalendar, setShowCalendar] = useState(false);
+  const { currentUser } = useAuth(); // Access the current user
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -50,10 +52,11 @@ const ReservationSection = ({
   const validateDates = () => {
     let errors = {};
     const now = new Date();
+    const today = new Date(now.setHours(0, 0, 0, 0));
     const checkIn = new Date(checkInDate);
     const checkOut = new Date(checkOutDate);
 
-    if (checkIn < now) {
+    if (checkIn < today) {
       errors.checkInDate = "Check-in date cannot be in the past.";
     }
     if (checkOut <= checkIn) {
@@ -63,6 +66,7 @@ const ReservationSection = ({
       errors.checkInDate = "Invalid check-in date.";
       errors.checkOutDate = "Invalid check-out date.";
     }
+
     if (errors.checkInDate || errors.checkOutDate) {
       setErrors(errors);
       return false;
@@ -75,7 +79,6 @@ const ReservationSection = ({
   const validateGuests = () => {
     let errors = {};
     if (noOfGuests < 1 || noOfGuests > 100) {
-      // Assuming 100 as a reasonable upper limit
       errors.noOfGuests = "Number of guests must be between 1 and 100.";
     }
     if (errors.noOfGuests) {
@@ -91,6 +94,11 @@ const ReservationSection = ({
   };
 
   const handleReserve = () => {
+    if (!currentUser) {
+      navigate("/login"); // Redirect to login page if not logged in or is a guest
+      return;
+    }
+
     if (validateDates() && validateGuests()) {
       navigate(`/user/reserve/${propertyId}`, {
         state: {
@@ -107,9 +115,9 @@ const ReservationSection = ({
   };
 
   const handleDateRangeSelect = (startDate, endDate) => {
-    setCheckInDate(startDate.toLocaleDateString("en-CA")); // Local date format (YYYY-MM-DD)
-    setCheckOutDate(endDate.toLocaleDateString("en-CA")); // Local date format (YYYY-MM-DD)
-    setShowCalendar(false); // Hide calendar after selection
+    setCheckInDate(startDate.toLocaleDateString("en-CA"));
+    setCheckOutDate(endDate.toLocaleDateString("en-CA"));
+    setShowCalendar(false);
   };
 
   const handleCloseCalendar = () => {

@@ -112,7 +112,9 @@ const HostReviews = () => {
               {review.property.images && review.property.images[0] && (
                 <div className="relative mb-4">
                   <img
-                    src={`${import.meta.env.VITE_API_URL}/${review.property.images[0].url}`}
+                    src={`${import.meta.env.VITE_API_URL}/${
+                      review.property.images[0].url
+                    }`}
                     alt={review.property.title}
                     className="w-full h-32 object-cover rounded-lg shadow-sm"
                     onError={(e) => {
@@ -135,4 +137,5 @@ const HostReviews = () => {
   );
 };
 
+export default HostReviews;
 export default HostReviews;

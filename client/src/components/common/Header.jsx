@@ -57,6 +57,18 @@ const Header = ({ toggleNavbar }) => {
       // Navigate to the complaint details page with complaintId
       navigate(`/technician/tasks`);
     }
+    else if (notification.notificationType === "new_listing") {
+      //navigate to the seemore page of the property to be validated
+      navigate(`/moderator/NewPropertySeemore/${notification.complaintId}`)
+    }
+    else if (notification.notificationType === "validation_accept") {
+      //navigate to the seemore page of the property to be validated
+      navigate(`/host/property-details/${notification.complaintId}`)
+    }
+    else if (notification.notificationType === "validation_reject") {
+      //navigate to the seemore page of the property to be validated
+      navigate(`/host/property-details/${notification.complaintId}`)
+    }
 
     try {
       

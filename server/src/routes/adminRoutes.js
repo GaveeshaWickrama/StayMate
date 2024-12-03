@@ -108,10 +108,19 @@ router.get(
   reservationController.getPaymentDetails
 );
 
+router.get(
+  "/users/role/:role",
+  // authToken, // Ensure the request is authenticated
+  // requireRole("admin"), // Restrict access to admins
+  adminController.getUsersByRole
+);
+
 router.get('/technicians', adminController.getAllTechnicians);
 router.get('/hosts', adminController.getAllHosts);
 router.get('/guests', adminController.getAllGuests);
 
 
 
+router.get("/summary-counts", adminController.getSummaryCounts);
+router.get("/registrations-by-day", adminController.getRegistrationsByDay);
 module.exports = router;
