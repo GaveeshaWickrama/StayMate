@@ -1,6 +1,8 @@
 const User = require("../models/userModel");
 const mongoose = require("mongoose");
 const Technician = require("../models/technicianModel");
+const Property = require("../models/propertyModel"); // Assuming you have a Property model
+const Reservation = require("../models/reservationModel");
 
 // Get all Moderators
 const getModerators = async (req, res) => {
@@ -273,6 +275,102 @@ const getUsersByRole = async (req, res) => {
   }
 };
 
+
+const getSummaryCounts = async (req, res) => {
+  try {
+    // Fetch total user count
+    const totalUsers = await User.countDocuments();
+
+    // Fetch total property count
+    const totalProperties = await Property.countDocuments();
+
+    // Fetch total upcoming reservations (including ongoing)
+    const upcomingReservations = await Reservation.countDocuments({
+      status: { $in: ["upcoming", "ongoing"] },
+    });
+
+    // Fetch total completed reservations
+    const completedReservations = await Reservation.countDocuments({
+      status: "completed",
+    });
+
+    // Send the counts as response
+    res.status(200).json({
+      totalUsers,
+      totalProperties,
+      upcomingReservations,
+      completedReservations,
+    });
+  } catch (error) {
+    console.error("Error fetching summary counts:", error);
+    res.status(500).json({ error: "Failed to fetch summary counts" });
+  }
+};
+
+const getRegistrationsByDay = async (req, res) => {
+  const { startDate, endDate } = req.query;
+
+  // Validate date range
+  if (!startDate || !endDate) {
+    return res
+      .status(400)
+      .json({ error: "Please provide both startDate and endDate." });
+  }
+
+  try {
+    // Ensure the dates are valid
+    const start = new Date(startDate);
+    const end = new Date(endDate);
+
+    if (isNaN(start) || isNaN(end)) {
+      return res.status(400).json({ error: "Invalid date format." });
+    }
+
+    // Query for host and guest registrations grouped by date
+    const registrations = await User.aggregate([
+      {
+        $match: {
+          role: { $in: ["guest", "host"] }, // Filter only guests and hosts
+          createdOn: { $gte: start, $lte: end }, // Filter by date range
+        },
+      },
+      {
+        $group: {
+          _id: {
+            date: { $dateToString: { format: "%Y-%m-%d", date: "$createdOn" } },
+            role: "$role",
+          },
+          count: { $sum: 1 },
+        },
+      },
+      {
+        $group: {
+          _id: "$_id.date",
+          registrations: {
+            $push: { role: "$_id.role", count: "$count" },
+          },
+        },
+      },
+      {
+        $sort: { _id: 1 }, // Sort by date
+      },
+    ]);
+
+    // Format the result for better readability
+    const formattedResult = registrations.map((entry) => {
+      const data = { date: entry._id };
+      entry.registrations.forEach((reg) => {
+        data[reg.role] = reg.count;
+      });
+      return data;
+    });
+
+    res.status(200).json(formattedResult);
+  } catch (error) {
+    console.error("Error fetching registrations by day:", error);
+    res.status(500).json({ error: "Internal server error" });
+  }
+};
 module.exports = {
   getAllUsers,
   createUser,
@@ -288,4 +386,6 @@ module.exports = {
   getModerator,
   updateModerator,
   getUsersByRole,
+  getSummaryCounts,
+  getRegistrationsByDay,
 };
