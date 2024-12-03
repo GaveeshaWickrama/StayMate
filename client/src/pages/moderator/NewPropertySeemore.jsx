@@ -44,6 +44,7 @@ function NewPropertySeemore() {
   if (loading || !property) {
     return <div>Loading...</div>;
   }
+  console.log(property);
 
   const handleAccept = async (id) => {
     try {
@@ -151,6 +152,7 @@ function NewPropertySeemore() {
           <div className="flex-shrink-0 pr-4">
             <h2 className="text-xl font-bold mb-2">Assessment Report</h2>
             <div className="flex-shrink-0">
+              <p>{property.deed}</p>
               <ViewDeed
                 image={property.deed}
                 defaultImage={defaultdeed}
