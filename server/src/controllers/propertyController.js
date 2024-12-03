@@ -3,7 +3,7 @@ const User = require("../models/userModel")
 const PropertyVerified = require("../models/propertyverifiedModel");
 const path = require("path");
 const Notification = require('../models/bellNotificationModel')//to send the moderator that he is assigned
-
+const { getRecieverSocketId, io } = require('../socket/socket');
 
 async function createProperty(req, res) {
   try {
@@ -100,8 +100,8 @@ async function createProperty(req, res) {
 
     const newProperty = await property.save();
 
-
-
+    console.log("Came herrrrrrrrr charith");
+    const propertyId = newProperty._id; // to get the ID of the saved property
 
     //added by Gaveeesha
 
@@ -118,18 +118,31 @@ async function createProperty(req, res) {
     const modValue = newProperty.auto_id % moderatorIdsArray.length;
 
     //take the id of the moderator in the moderator array based on mod value
-    newProperty.moderator_id = moderatorIdsArray[modValue]
-    
+    newProperty.moderator_id = moderatorIdsArray[modValue];
+    console.log("Thi is the moderator id");
+    console.log(moderatorIdsArray[modValue]);
     await newProperty.save();
 
-    Notification.create({
+
+    //for sending the notification to moderator
+    const recieverSocketId = getRecieverSocketId(moderatorIdsArray[modValue]);
+
+    const newNotification = new Notification({
       userId : moderatorIdsArray[modValue],
       notificationMessage: `You have been assigned to validate a newly listed property.`,
       notificationType : "new_listing",
+      complaintId : propertyId,
     });
+    console.log("New Notification :- ",newNotification);
 
+    await newNotification.save(); 
+
+    if(recieverSocketId) {
+      io.to(recieverSocketId).emit('newNotification',newNotification);
+    }
     //until here
-
+    console.log("Noto came hhhhhhhhhhhhhhhhhere");
+    
 
 
 
