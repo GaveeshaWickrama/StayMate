@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { useLocation } from "react-router-dom";
+import { useLocation, useNavigate } from "react-router-dom";
 import { useStore } from "../../context/StoreContext";
 import img1 from "../../assets/img1.jpeg";
 import { MdEventAvailable } from "react-icons/md";
@@ -12,6 +12,7 @@ const ReviewAdd = () => {
   const [errors, setErrors] = useState({});
 
   const location = useLocation();
+  const navigate = useNavigate(); // Initialize useNavigate
 
   useEffect(() => {
     const queryParams = new URLSearchParams(location.search);
@@ -47,6 +48,10 @@ const ReviewAdd = () => {
     };
     console.log("Submitting review", reviewData);
     await addReview(reviewData);
+  };
+
+  const handleGoBack = () => {
+    navigate("/user/reservations"); // Redirect to the desired URL
   };
 
   return (
@@ -104,7 +109,10 @@ const ReviewAdd = () => {
                 )}
               </div>
               <div className="flex justify-end">
-                <span className="font-semibold cursor-pointer mr-4">
+                <span
+                  className="font-semibold cursor-pointer mr-4"
+                  onClick={handleGoBack} // Attach the handler here
+                >
                   Go Back
                 </span>
                 <button
