@@ -1,5 +1,5 @@
 import React from "react";
-import { useSocketContext } from '../../context/SocketContext';
+import { useSocketContext } from "../../context/SocketContext";
 import { Link, useNavigate } from "react-router-dom";
 import { useAuth } from "../../context/auth";
 import { IconContext } from "react-icons";
@@ -20,7 +20,7 @@ import { MdReportProblem } from "react-icons/md";
 import { MdOutlineTaskAlt } from "react-icons/md";
 import { FaTasks } from "react-icons/fa";
 import { GrTasks } from "react-icons/gr";
-import useTotalUnreadMessageCount from '../../hooks/useTotalUnreadMessageCount';
+import useTotalUnreadMessageCount from "../../hooks/useTotalUnreadMessageCount";
 import useConversation from "../../zustand/useConversation";
 
 const iconMap = {
@@ -42,6 +42,7 @@ const iconMap = {
   Chat: "chat",
   "View New Properties": <BsFillHousesFill />,
   Payments: <FaCreditCard />,
+  Payment_Details: <FaCreditCard />,
   Report: <MdAssessment />,
   Technicians: <MdBuild />,
   "My Listings": <CiCircleList />,
@@ -51,7 +52,6 @@ const iconMap = {
   "Pending Tasks": <FaTasks />,
   Tasks: <GrTasks />,
 };
-
 
 function Sidebar({ title, links, logout, isVisible, newMessageCount }) {
   return (
@@ -92,12 +92,11 @@ function Sidebar({ title, links, logout, isVisible, newMessageCount }) {
 }
 
 function Navbar({ isVisible }) {
-  
   const { currentUser, logout } = useAuth();
   const navigate = useNavigate();
   useTotalUnreadMessageCount();
 
-  const {totalUnreadMessageCount} = useConversation();
+  const { totalUnreadMessageCount } = useConversation();
 
   const handleLogout = () => {
     logout();
@@ -150,9 +149,7 @@ function Navbar({ isVisible }) {
     { path: "/host/HostReviews", label: "Reviews" },
     { path: "/host/chat", label: "Chat" },
 
-    { path: "/host/addpaymentdetails", label: "Add Payment Details" }
-
-
+    { path: "/host/addpaymentdetails", label: "Payment_Details" },
   ];
 
   const technicianLinks = [
@@ -162,7 +159,7 @@ function Navbar({ isVisible }) {
     // { path: "/technician/requests/pending-tasks", label: "Pending Tasks" },
     // { path: "/technician/requests/active-tasks", label: "Active Tasks" },
     { path: "/technician/tasks", label: "Tasks" },
-    { path: '/technician/reviews/', label: "Reviews" },
+    { path: "/technician/reviews/", label: "Reviews" },
   ];
 
   const publicLinks = [
