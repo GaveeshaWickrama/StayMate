@@ -44,7 +44,10 @@ const ModeratorForm = () => {
             nicPassport: '',
             phone: ''
         };
-
+        if( !address ) {
+            errors.address = 'Address is required.';
+            valid = false;
+        }
         if (!firstName || !/^[a-zA-Z]+$/.test(firstName)) {
             errors.firstName = 'First name is required and must contain only letters.';
             valid = false;
@@ -67,6 +70,10 @@ const ModeratorForm = () => {
         }
         if (!phone || !/^\d{10}$/.test(phone)) {
             errors.phone = 'Phone number must be 10 digits.';
+            valid = false;
+        }
+        if (!gender) {
+            errors.gender = 'Please select a gender.';
             valid = false;
         }
 
@@ -168,7 +175,8 @@ const ModeratorForm = () => {
                 value={address}
                 className="w-full p-2 mb-4 border rounded"
             />
-
+            {fieldErrors.address && <p className="text-red-500 text-sm">{fieldErrors.address}</p>}
+            
             <label className="block mb-2">Role:</label>
             <input 
                 type="text"
@@ -200,6 +208,7 @@ const ModeratorForm = () => {
                     Female
                 </label>
             </div>
+            {fieldErrors.gender && <p className="text-red-500 text-sm">{fieldErrors.gender}</p>}
 
             <label className="block mb-2">Phone:</label>
             <input 

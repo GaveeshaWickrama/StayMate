@@ -22,6 +22,7 @@ import { FaTasks } from "react-icons/fa";
 import { GrTasks } from "react-icons/gr";
 import useTotalUnreadMessageCount from "../../hooks/useTotalUnreadMessageCount";
 import useConversation from "../../zustand/useConversation";
+import { FaCcAmazonPay } from "react-icons/fa6";
 
 const iconMap = {
   Home: "home",
@@ -51,6 +52,7 @@ const iconMap = {
   "Active Tasks": <MdOutlineTaskAlt />,
   "Pending Tasks": <FaTasks />,
   Tasks: <GrTasks />,
+  "Add Payment Details": <FaCcAmazonPay/>
 };
 
 function Sidebar({ title, links, logout, isVisible, newMessageCount }) {
