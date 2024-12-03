@@ -67,7 +67,7 @@ function sendOtpEmail(otp, email, res) {
     };
 
     transporter.sendMail(mailOptions, (error, info) => {
-        if (0) { //set to error
+        if (error) { //set to error
             console.error('Error sending OTP email:', error);
             return res.status(500).json({ message: 'Error sending OTP email' });
         } else {

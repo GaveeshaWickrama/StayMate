@@ -2,7 +2,14 @@ import React, { useEffect, useState } from "react";
 import axios from "axios";
 import { useAuth } from "../../context/auth";
 import { Link, useLocation, useNavigate } from "react-router-dom";
-import { FaMapMarkerAlt, FaHome, FaCalendarAlt, FaInfoCircle, FaEyeSlash, FaPlus } from "react-icons/fa";
+import {
+  FaMapMarkerAlt,
+  FaHome,
+  FaCalendarAlt,
+  FaInfoCircle,
+  FaEyeSlash,
+  FaPlus,
+} from "react-icons/fa";
 
 const Popup = ({ message, onClose }) => {
   return (
@@ -39,76 +46,116 @@ const Popup = ({ message, onClose }) => {
   );
 };
 
-
-
-
-
 function ListingCard({ property, handleHide }) {
+  const [isModalOpen, setModalOpen] = useState(false);
+
+  const openModal = (e) => {
+    e.preventDefault(); // Prevents navigation when clicking "Rejected"
+    setModalOpen(true);
+  };
+
+  const closeModal = (e) => {
+    e.preventDefault();
+    setModalOpen(false);
+  };
+
   return (
-    <Link to={`/host/property-details/${property._id}`}>
-      <div className="bg-white shadow-lg rounded-lg overflow-hidden border border-transparent transform transition-transform duration-300 hover:scale-105 relative card-hover-border">
-        <div className="flex w-full">
-          <img
-            src={`${import.meta.env.VITE_API_URL}/${property.images[0]?.url}`}
-            alt={property.title}
-            className="w-1/3 h-48 object-cover"
-          />
-          <div className="flex flex-col justify-between pl-6 w-2/3 overflow-hidden">
-            <div>
-              <h2 className="text-2xl font-semibold text-black-500 mb-2 pt-3">
-                {property.title}
-              </h2>
-              <div className="flex items-center mb-2">
-                <FaInfoCircle className="text-blue-500 mr-2" />
-                <p className="text-gray-700 overflow-hidden text-ellipsis whitespace-nowrap">
-                  {property.description}
-                </p>
-              </div>
-              <div className="flex items-center mb-2">
-                <FaHome className="text-blue-500 mr-2" />
-                <p className="text-gray-700">{property.type}</p>
-              </div>
-              <div className="flex items-center mb-2">
-                <FaMapMarkerAlt className="text-blue-500 mr-2" />
-                <p className="text-gray-600">
-                  {property.location.address}, {property.location.city},{" "}
-                  {property.location.district}, {property.location.province},{" "}
-                  {property.location.zipcode}
-                </p>
-              </div>
-              <div className="flex items-center">
-                <FaCalendarAlt className="text-blue-500 mr-2" />
-                <p className="text-gray-700">
-                  Added on: {new Date(property.created_at).toLocaleDateString()}
-                </p>
+    <>
+      <Link to={`/host/property-details/${property._id}`}>
+        <div className="bg-white shadow-lg rounded-lg overflow-hidden border border-transparent transform transition-transform duration-300 hover:scale-105 relative card-hover-border">
+          <div className="flex w-full">
+            <img
+              src={`${import.meta.env.VITE_API_URL}/${property.images[0]?.url}`}
+              alt={property.title}
+              className="w-1/3 h-48 object-cover"
+            />
+            <div className="flex flex-col justify-between pl-6 w-2/3 overflow-hidden">
+              <div>
+                <h2 className="text-2xl font-semibold text-black-500 mb-2 pt-3">
+                  {property.title}
+                </h2>
+                <div className="flex items-center mb-2">
+                  <FaInfoCircle className="text-blue-500 mr-2" />
+                  <p className="text-gray-700 overflow-hidden text-ellipsis whitespace-nowrap">
+                    {property.description}
+                  </p>
+                </div>
+                <div className="flex items-center mb-2">
+                  <FaHome className="text-blue-500 mr-2" />
+                  <p className="text-gray-700">{property.type}</p>
+                </div>
+                <div className="flex items-center mb-2">
+                  <FaMapMarkerAlt className="text-blue-500 mr-2" />
+                  <p className="text-gray-600">
+                    {property.location.address}, {property.location.city},{" "}
+                    {property.location.district}, {property.location.province},{" "}
+                    {property.location.zipcode}
+                  </p>
+                </div>
+                <div className="flex items-center">
+                  <FaCalendarAlt className="text-blue-500 mr-2" />
+                  <p className="text-gray-700">
+                    Added on:{" "}
+                    {new Date(property.created_at).toLocaleDateString()}
+                  </p>
+                </div>
               </div>
             </div>
-          </div>
-          <div
-            className="ml-8 mt-9 mb-8"
-            style={{ borderLeft: "2px dashed blue" }}
-          ></div>
-          <div className="flex flex-col bg-grey-400 justify-around p-4 m-2 rounded-lg">
-            <button
-              onClick={(e) => {
-                e.preventDefault();
-                handleHide(property._id);
-              }}
-              className="bg-gray-500 text-white px-4 py-2 rounded hover:bg-gray-700 flex items-center justify-center space-x-1 w-full mb-2"
-            >
-              <FaEyeSlash /> <span>Hide</span>
-            </button>
             <div
-              className={`px-2 py-1 rounded-full text-white text-center text-sm ${
-                property.status === "verified" ? "bg-green-300" : property.status === "rejected" ? "bg-red-300" : "bg-orange-300"
-              }`}
-            >
-              {property.status === "verified" ? "Verified" : property.status === "rejected" ? "Rejected" : "Pending"}
+              className="ml-8 mt-9 mb-8"
+              style={{ borderLeft: "2px dashed blue" }}
+            ></div>
+            <div className="flex flex-col bg-grey-400 justify-around p-4 m-2 rounded-lg">
+              <button
+                onClick={(e) => {
+                  e.preventDefault();
+                  handleHide(property._id);
+                }}
+                className="bg-gray-500 text-white px-4 py-2 rounded  flex items-center justify-center space-x-1 w-full mb-2"
+              >
+                <span>Status</span>
+              </button>
+              <div
+                className={`relative px-2 py-1 rounded-full text-white text-center text-sm ${
+                  property.status === "verified"
+                    ? "bg-green-300"
+                    : property.status === "rejected"
+                    ? "bg-red-300 cursor-pointer"
+                    : "bg-orange-300"
+                }`}
+                onClick={property.status === "rejected" ? openModal : null}
+              >
+                {property.status === "verified"
+                  ? "Verified"
+                  : property.status === "rejected"
+                  ? "Rejected"
+                  : "Pending"}
+              </div>
             </div>
           </div>
         </div>
-      </div>
-    </Link>
+      </Link>
+
+      {/* Modal */}
+      {isModalOpen && (
+        <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 z-50">
+          <div className="bg-white text-center p-6 rounded-lg shadow-lg max-w-lg w-full mx-4">
+            <h2 className="text-red-500 text-lg font-bold mb-4">
+              Rejection Reason
+            </h2>
+            <p className="text-gray-700 mb-6">
+              {property.rejected_reason || "No reason provided"}
+            </p>
+            <button
+              onClick={closeModal}
+              className="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-700"
+            >
+              Close
+            </button>
+          </div>
+        </div>
+      )}
+    </>
   );
 }
 
@@ -132,7 +179,7 @@ function NoListings() {
 function HostListings() {
   const { token } = useAuth();
   const [properties, setProperties] = useState([]);
-  const [popupMessage, setPopupMessage] = useState('');
+  const [popupMessage, setPopupMessage] = useState("");
   const location = useLocation();
   const navigate = useNavigate();
 
@@ -170,7 +217,7 @@ function HostListings() {
   };
 
   const closePopup = () => {
-    setPopupMessage('');
+    setPopupMessage("");
   };
 
   return (
