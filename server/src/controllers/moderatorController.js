@@ -11,7 +11,12 @@ const viewPendingProperties = async (req, res) => {
     try{
 
         const id = req.user.userId;
-        const properties = await Property.find({ status: 'pending' , moderator_id: id  })
+        const properties = await Property.find({ status: 'pending', moderator_id: id })
+            .populate({
+                path: 'host_id',
+                select: 'firstName lastName', // Retrieve only firstName and lastName
+            }
+        );
 
 
         //send notifications
