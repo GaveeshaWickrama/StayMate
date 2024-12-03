@@ -21,7 +21,7 @@ const viewGuestComplaints = async (req,res) => {
     const complaints = await Complaint.find({
       status: { $ne: "completed" }, // Exclude complaints with status `completed`
     })
-      .select("category description status") // Select only category, description, and status fields from complaints
+      .select("category description status timestamp") // Select only category, description, and status fields from complaints
       .populate({
         path: "reservationId",
         match: { user: guestId }, // Match reservations with the current logged-in user's ID
@@ -51,8 +51,15 @@ const viewGuestComplaints = async (req,res) => {
 
     // After filtering, remove complaints where reservationId is null
     const filteredComplaints = complaints.filter(c => c.reservationId);
-    console.log("filteredComplaints",filteredComplaints);
-    res.json(filteredComplaints);
+
+    // Format the timestamp field to 'yyyy-mm-dd'
+    const formattedComplaints = filteredComplaints.map((complaint) => ({
+      ...complaint.toObject(),
+      timestamp: new Date(complaint.timestamp).toISOString().split("T")[0], // Format timestamp
+    }));
+
+     console.log("filteredComplaints", formattedComplaints);
+    res.json(formattedComplaints);
 
   } catch (err) {
     res.status(500).json({ error: "Failed to fetch complaints" });
@@ -68,10 +75,10 @@ const raiseComplaint = async (req, res) => {
   // Log the files to the console to check if they are being received correctly
   //console.log("Uploaded Files:", req.files);
 
-  const images = [];
+  let images = [];
   // Get the file paths
   if(req.files && req.files.length > 0) {
-    const images = req.files.map((file) => file.path);
+    images = req.files.map((file) => file.path);
   }
   
 
