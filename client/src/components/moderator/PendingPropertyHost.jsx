@@ -77,11 +77,11 @@ const PropertyHost = ({ propertyId }) => {
         </Link>
       </div>
       <div className="flex flex-col flex-1">
-        <div className="text-xl font-bold mb-2">{hostDetails.reviews} Reviews</div>
-        <div className="flex items-center justify-start mb-2">
+        {/* <div className="text-xl font-bold mb-2">{hostDetails.reviews} Reviews</div> */}
+        {/* <div className="flex items-center justify-start mb-2">
           <FaStar className="text-yellow-500 mr-1" size={24} />
           <span className="text-lg font-bold">{hostDetails.rating}</span>
-        </div>
+        </div> */}
         <div className="flex items-center justify-start mb-2">
           <FaPhone className="mr-2" size={24} />
           <span>{hostDetails.phone}</span>

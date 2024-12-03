@@ -1,6 +1,8 @@
 const User = require("../models/userModel");
 const Technician = require("../models/technicianModel");
 const mongoose = require("mongoose");
+const Property = require("../models/propertyModel");
+const Review = require("../models/reviewModel"); 
 
 //get all users
 const getUsers = async (req, res) => {
@@ -108,6 +110,114 @@ const editProfile = async (req, res) => {
   }
 };
 
+//get host properties by host id
+//get a single user :means my profile
+const getProperties = async (req, res) => {
+  const { id } = req.params;
+
+  if (!mongoose.Types.ObjectId.isValid(id)) {
+    return res.status(400).json({ error: "Invalid user ID" });
+  }
+
+  try {
+    // Fetch properties based on the host_id
+    const properties = await Property.find({ host_id: id });
+
+    // Respond with an empty array if no properties are found
+    return res.status(200).json(properties.length > 0 ? properties : []);
+  } catch (error) {
+    console.error("Error fetching properties:", error);
+    res.status(500).json({ error: "Internal server error" });
+  }
+};
+
+//get ratings
+const getRatings = async (req, res) => {
+  const { id } = req.params;
+
+  if (!mongoose.Types.ObjectId.isValid(id)) {
+    return res.status(400).json({ error: "Invalid host ID" });
+  }
+
+  try {
+    // Fetch properties where host_id matches the provided ID
+    const properties = await Property.find({ host_id: id });
+
+    if (properties.length === 0) {
+      return res.status(200).json([]);
+    }
+
+    // Extract property IDs
+    const propertyIds = properties.map((property) => property._id);
+
+    // Fetch reviews for these properties, including username
+    const reviews = await Review.aggregate([
+      {
+        $match: {
+          property: { $in: propertyIds }, // Match properties
+        },
+      },
+      {
+        $sort: { createdAt: -1 }, // Sort by the most recent
+      },
+      {
+        $group: {
+          _id: "$property",
+          reviews: { $push: "$$ROOT" },
+        },
+      },
+      {
+        $project: {
+          reviews: { $slice: ["$reviews", 5] }, // Limit to 5 reviews per property
+        },
+      },
+      {
+        $unwind: "$reviews", // Flatten the reviews array for lookup
+      },
+      {
+        $lookup: {
+          from: "users", // The User collection
+          localField: "reviews.user", // Field in Review schema
+          foreignField: "_id", // Field in User schema
+          as: "userDetails",
+        },
+      },
+      {
+        $unwind: "$userDetails", // Flatten user details
+      },
+      {
+        $group: {
+          _id: "$_id",
+          reviews: {
+            $push: {
+              comment: "$reviews.comment",
+              createdAt: "$reviews.createdAt",
+              rating: "$reviews.rating",
+              username: { $concat: ["$userDetails.firstName", " ", "$userDetails.lastName"] },
+            },
+          },
+        },
+      },
+    ]);
+
+    // Map reviews back to properties
+    const result = properties.map((property) => {
+      const propertyReviews = reviews.find(
+        (review) => review._id.toString() === property._id.toString()
+      );
+
+      return {
+        propertyName: property.title, // Assuming the property model has a 'title' field
+        reviews: propertyReviews ? propertyReviews.reviews : [],
+      };
+    });
+
+    res.status(200).json(result);
+  } catch (error) {
+    console.error("Error fetching reviews:", error);
+    res.status(500).json({ error: "Internal server error" });
+  }
+};
 
 
 
@@ -206,4 +316,6 @@ module.exports = {
   deleteUser,
   viewProfile,
   addAccountNo,
+  getProperties,
+  getRatings,
 };
