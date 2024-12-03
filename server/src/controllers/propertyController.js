@@ -2,7 +2,8 @@ const Property = require("../models/propertyModel");
 const User = require("../models/userModel")
 const PropertyVerified = require("../models/propertyverifiedModel");
 const path = require("path");
-
+const Notification = require('../models/bellNotificationModel')//to send the moderator that he is assigned
+const { getRecieverSocketId, io } = require('../socket/socket');
 
 async function createProperty(req, res) {
   try {
@@ -99,8 +100,8 @@ async function createProperty(req, res) {
 
     const newProperty = await property.save();
 
-
-
+    console.log("Came herrrrrrrrr charith");
+    const propertyId = newProperty._id; // to get the ID of the saved property
 
     //added by Gaveeesha
 
@@ -117,12 +118,31 @@ async function createProperty(req, res) {
     const modValue = newProperty.auto_id % moderatorIdsArray.length;
 
     //take the id of the moderator in the moderator array based on mod value
-    newProperty.moderator_id = moderatorIdsArray[modValue]
-    
+    newProperty.moderator_id = moderatorIdsArray[modValue];
+    console.log("Thi is the moderator id");
+    console.log(moderatorIdsArray[modValue]);
     await newProperty.save();
 
-    //until here
 
+    //for sending the notification to moderator
+    const recieverSocketId = getRecieverSocketId(moderatorIdsArray[modValue]);
+
+    const newNotification = new Notification({
+      userId : moderatorIdsArray[modValue],
+      notificationMessage: `You have been assigned to validate a newly listed property.`,
+      notificationType : "new_listing",
+      complaintId : propertyId,
+    });
+    console.log("New Notification :- ",newNotification);
+
+    await newNotification.save(); 
+
+    if(recieverSocketId) {
+      io.to(recieverSocketId).emit('newNotification',newNotification);
+    }
+    //until here
+    console.log("Noto came hhhhhhhhhhhhhhhhhere");
+    
 
 
 
@@ -212,17 +232,34 @@ async function getPropertyById(req, res) {
   const propertyId = req.params.id;
 
   try {
+    // Find the property by ID
     const property = await Property.findById(propertyId);
     if (!property) {
       return res.status(404).json({ message: 'Property not found.' });
     }
 
-    res.status(200).json(property);
+    // Find the related PropertyVerified document
+    const propertyVerified = await PropertyVerified.findOne({ propertyID: propertyId });
+
+    // Construct the full URL for the deed if it exists
+    const baseUrl = process.env.VITE_API_URL || 'http://localhost:5000'; // Use environment variable or fallback to localhost
+    const deed = propertyVerified?.deed
+      ? `${baseUrl}/${propertyVerified.deed.replace(/\\/g, '/')}` // Replace '\' with '/'
+      : null;
+
+    // Combine results
+    const result = {
+      ...property.toObject(),
+      deed,
+    };
+
+    res.status(200).json(result);
   } catch (error) {
     console.error(error);
     res.status(500).json({ message: 'Server error' });
   }
 }
+
 
 // async function getAllProperties(req, res) {
 //   try {

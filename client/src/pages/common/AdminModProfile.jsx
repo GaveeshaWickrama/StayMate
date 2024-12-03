@@ -42,9 +42,14 @@ const ProfilePage = ({ profile, currentUser, id }) => {
             <img src={profile.picture ? `${import.meta.env.VITE_API_URL}/${profile.picture}` : defaultProfilePic} alt="Profile" className="w-full h-full object-cover hover:scale-105 transition-transform" />
           </div>
           {currentUser && id === currentUser.id && (
-            <Link to="/users/EditProfile">
+            <Link to={`/users/EditProfile/${currentUser.id}`}>
               <div className="flex items-end justify-end h-40 mb-6 md:mb-0 md:mr-6">
-                <button type="button" title="Change Profile" className="bg-blue-500 text-white p-2 rounded-full shadow-lg hover:bg-blue-600 transition transform hover:-translate-y-1 z-10" style={{ transform: 'translateX(-65px)' }}>
+                <button 
+                  type="button" 
+                  title="Change Profile" 
+                  className="bg-blue-500 text-white p-2 rounded-full shadow-lg hover:bg-blue-600 transition transform hover:-translate-y-1 z-10" 
+                  style={{ transform: 'translateX(-65px)' }}
+                >
                   <FaEdit size={20} />
                 </button>
               </div>
@@ -54,17 +59,26 @@ const ProfilePage = ({ profile, currentUser, id }) => {
             <h1 className="text-4xl font-bold text-blue-600 mb-2">{profile.firstName} {profile.lastName}</h1>
             <p className="text-gray-600 mb-2">{profile.email}</p>
             <div className="flex space-x-4 mb-6">
-              {currentUser && id !== currentUser.id && (
-                <button className="bg-gray-200 text-gray-700 py-2 px-6 rounded-full shadow-lg hover:bg-gray-300 transition transform hover:-translate-y-1"
-                  onClick={handleMessage}
-                  disabled={isLoading}
-                >  
-                  <span>{isLoading ? <span className='loading loading-spinner mx-auto'></span> : 'Message'}</span>
-                  </button>
-              )}
-              {currentUser && id === currentUser.id && (
-                <button className="bg-blue-500 text-white py-2 px-6 rounded-full shadow-lg hover:bg-blue-600 transition transform hover:-translate-y-1">Edit Profile</button>
-              )}
+            {currentUser && id === currentUser.id && (
+              <Link to={`/users/EditProfile`}>
+                <button className="bg-blue-500 text-white py-2 px-6 rounded-full shadow-lg hover:bg-blue-600 transition transform hover:-translate-y-1">
+                  Edit Profile
+                </button>
+              </Link>
+            )}
+            {currentUser && id !== currentUser.id && (
+              <button
+                className="bg-gray-200 text-gray-700 py-2 px-6 rounded-full shadow-lg hover:bg-gray-300 transition transform hover:-translate-y-1"
+                onClick={handleMessage}
+                disabled={isLoading}
+              >
+                {isLoading ? (
+                  <span className="loading loading-spinner mx-auto"></span>
+                ) : (
+                  'Message'
+                )}
+              </button>
+            )}
             </div>
             <div className="mb-6">
               <h2 className="text-xl font-semibold text-gray-700 mb-2">Contact Information</h2>

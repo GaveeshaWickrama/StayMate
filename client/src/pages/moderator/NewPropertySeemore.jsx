@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 import axios from 'axios';
 import { useParams } from 'react-router-dom';
 import Carousel from '../../components/Carousel';
-import PropertyAmenitiesDisplay from '../host/components/PropertyAmenitiesDisplay';
+import AmenitiesDisplay from '../../components/moderator/AmenitiesDisplay';
 import PendingPropertyHost from '../../components/moderator/PendingPropertyHost';
 import LocationLink from '../../components/moderator/LocationLink';
 import { FaHome, FaClock, FaMapMarkerAlt, FaShower } from 'react-icons/fa';
@@ -44,6 +44,7 @@ function NewPropertySeemore() {
   if (loading || !property) {
     return <div>Loading...</div>;
   }
+  console.log(property);
 
   const handleAccept = async (id) => {
     try {
@@ -149,8 +150,9 @@ function NewPropertySeemore() {
       <div className='w-full rounded-lg p-6 bg-white shadow mt-2'>
         <div className="flex">
           <div className="flex-shrink-0 pr-4">
-            <h2 className="text-xl font-bold mb-2">Property Deed</h2>
+            <h2 className="text-xl font-bold mb-2">Assessment Report</h2>
             <div className="flex-shrink-0">
+              <p>{property.deed}</p>
               <ViewDeed
                 image={property.deed}
                 defaultImage={defaultdeed}
@@ -170,7 +172,7 @@ function NewPropertySeemore() {
         </div>
       </div>
 
-      <PropertyAmenitiesDisplay amenities={property.amenities} />
+      <AmenitiesDisplay amenities={property.amenities} />
 
       {/* <div className='p-6 bg-white rounded-lg shadow-md mt-2'> */}
       <div className="flex justify-center my-10">
