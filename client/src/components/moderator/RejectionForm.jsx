@@ -14,7 +14,7 @@ const RejectionForm = ({ propertyId, token, currentUser, onClose }) => {
     { label: "Proof of Amenities Missing", subOptions: ["WiFi", "Parking", "Pool", "Gym", "Kitchen", "Hot Tub", "Beach Access", "Security", "Pool Table", "Outdoor Dining", "Spa", "Sauna","Steam Room", "BBQ", "Fridge", "Air Conditioning", "TV", "Streaming Service", "Heating" ] },
     // { label: "Misleading Description", subOptions: [] },
     
-    // { label: "Proof of Facilities Missing", subOptions: ["Electricity", "Water Supply", "Security"] },
+    { label: "Proof of Facilities Missing", subOptions: ["bedrooms", "Beds", "Bathrooms"] },
     { label: "Other", subOptions: [] },
   ];
 
@@ -32,13 +32,13 @@ const RejectionForm = ({ propertyId, token, currentUser, onClose }) => {
     }
   };
 
-  // const handleAmenityChange = (amenity, checked) => {
-  //   if (checked) {
-  //     setSelectedAmenities([...selectedAmenities, amenity]);
-  //   } else {
-  //     setSelectedAmenities(selectedAmenities.filter(a => a !== amenity));
-  //   }
-  // };
+  const handleAmenityChange = (amenity, checked) => {
+    if (checked) {
+      setSelectedAmenities([...selectedAmenities, amenity]);
+    } else {
+      setSelectedAmenities(selectedAmenities.filter(a => a !== amenity));
+    }
+  };
 
   const handleSubmit = async () => {
     try {
