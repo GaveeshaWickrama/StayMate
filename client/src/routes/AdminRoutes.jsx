@@ -9,8 +9,8 @@ import ModeratorManagement from "../pages/admin/ModeratorManagement";
 import AddUser from "../pages/admin/AddUser";
 import UpdateUser from "../pages/admin/UpdateUser";
 import Report from "../pages/admin/Report";
-import Hosts from "../pages/admin/Hosts"; 
-import Guests from "../pages/admin/Guests"; 
+import PropertyOwners from "../pages/admin/PropertyOwners"; 
+import Tenants from "../pages/admin/Tenants"; 
 import Technicians from "../pages/admin/Technicians";
 import ReservationDetails from "../pages/admin/ReservationDetails";
 import PaymentDetails from "../components/admin/PaymentDetails";
@@ -149,10 +149,10 @@ function AdminRoutes() {
         }
       />
       <Route
-        path="/Hosts" 
+        path="/PropertyOwners" 
         element={
           currentUser && currentUser.role === "admin" ? (
-            <Hosts />
+            <PropertyOwners />
           ) : (
             <Navigate to="/Unauthorized" />
           )
@@ -171,10 +171,10 @@ function AdminRoutes() {
       />
 
       <Route
-        path="/Guests" 
+        path="/Tenants" 
         element={
           currentUser && currentUser.role === "admin" ? (
-            <Guests />
+            <Tenants />
           ) : (
             <Navigate to="/Unauthorized" />
           )

@@ -138,4 +138,4 @@ const HostReviews = () => {
 };
 
 export default HostReviews;
-export default HostReviews;
+
