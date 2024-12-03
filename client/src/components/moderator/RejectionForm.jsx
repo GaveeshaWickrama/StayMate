@@ -1,33 +1,36 @@
 import React, { useState } from 'react';
 import axios from 'axios';
+import { useNavigate } from 'react-router-dom';
 
 const RejectionForm = ({ propertyId, token, currentUser, onClose }) => {
   const [rejectionReasons, setRejectionReasons] = useState([]);
   const [selectedAmenities, setSelectedAmenities] = useState([]);
   const [otherReasonText, setOtherReasonText] = useState('');
   const [propertyOwnershipReason, setPropertyOwnershipReason] = useState('');
-  
+  const navigate = useNavigate();
+
   const reasons = [
-    { label: "Misleading Description", subOptions: [] },
-    { label: "Proof of Amenities Missing", subOptions: ["WiFi", "Parking", "Swimming Pool", "Gym"] },
-    { label: "Proof of Facilities Missing", subOptions: ["Electricity", "Water Supply", "Security"] },
-    { label: "Property Not Belonging to You", subOptions: [] },
+    { label: "Ownership couldn't be validated", subOptions: [] },
+    { label: "Proof of Amenities Missing", subOptions: ["WiFi", "Parking", "Pool", "Gym", "Kitchen", "Hot Tub", "Beach Access", "Security", "Pool Table", "Outdoor Dining", "Spa", "Sauna","Steam Room", "BBQ", "Fridge", "Air Conditioning", "TV", "Streaming Service", "Heating" ] },
+    // { label: "Misleading Description", subOptions: [] },
+    
+    // { label: "Proof of Facilities Missing", subOptions: ["Electricity", "Water Supply", "Security"] },
     { label: "Other", subOptions: [] },
   ];
 
-  const handleCheckboxChange = (reason, checked) => {
-    if (checked) {
-      setRejectionReasons([...rejectionReasons, reason]);
-    } else {
-      setRejectionReasons(rejectionReasons.filter(r => r !== reason));
-      if (reason === "Property Not Belonging to You") {
-        setPropertyOwnershipReason('');
-      }
-      if (reason === "Other") {
-        setOtherReasonText('');
-      }
-    }
-  };
+  // const handleCheckboxChange = (reason, checked) => {
+  //   if (checked) {
+  //     setRejectionReasons([...rejectionReasons, reason]);
+  //   } else {
+  //     setRejectionReasons(rejectionReasons.filter(r => r !== reason));
+  //     if (reason === "Ownership couldn't be validated") {
+  //       setPropertyOwnershipReason('');
+  //     }
+  //     if (reason === "Other") {
+  //       setOtherReasonText('');
+  //     }
+  //   }
+  // };
 
   const handleAmenityChange = (amenity, checked) => {
     if (checked) {
@@ -58,7 +61,7 @@ const RejectionForm = ({ propertyId, token, currentUser, onClose }) => {
       if (response.status === 200) {
         console.log('Property Rejected:', response.data);
         alert('Property rejected successfully');
-        onClose();
+        navigate(-1); 
       } else {
         alert('Failed to reject property');
       }
@@ -101,7 +104,7 @@ const RejectionForm = ({ propertyId, token, currentUser, onClose }) => {
                 ))}
               </div>
             )}
-            {reason.label === "Property Not Belonging to You" && rejectionReasons.includes(reason.label) && (
+            {reason.label === "Ownership couldn't be validated" && rejectionReasons.includes(reason.label) && (
               <div className="ml-6 mt-2">
                 <label htmlFor="propertyOwnershipReason" className="text-lg text-gray-700">
                   Provide details:
@@ -111,21 +114,21 @@ const RejectionForm = ({ propertyId, token, currentUser, onClose }) => {
                   value={propertyOwnershipReason}
                   onChange={(e) => setPropertyOwnershipReason(e.target.value)}
                   className="w-full mt-2 p-2 border rounded-md"
-                  placeholder="Enter reason why the property does not belong to the user..."
+                  placeholder="Enter reason why property ownership couldn't be validated..."
                 />
               </div>
             )}
             {reason.label === "Other" && rejectionReasons.includes(reason.label) && (
               <div className="ml-6 mt-2">
                 <label htmlFor="otherReasonText" className="text-lg text-gray-700">
-                  Specify other reason:
+                  Specify the reason:
                 </label>
                 <textarea
                   id="otherReasonText"
                   value={otherReasonText}
                   onChange={(e) => setOtherReasonText(e.target.value)}
                   className="w-full mt-2 p-2 border rounded-md"
-                  placeholder="Enter additional details..."
+                  placeholder="Enter the reason (eg: Previous Poperties having extreme bad reviews)"
                 />
               </div>
             )}
@@ -151,3 +154,69 @@ const RejectionForm = ({ propertyId, token, currentUser, onClose }) => {
 };
 
 export default RejectionForm;
+// import React, { useState } from 'react';
+// import axios from 'axios';
+// import { useNavigate } from 'react-router-dom';
+
+// const RejectionForm = ({ propertyId, token, currentUser, onClose }) => {
+//   const [reasonText, setReasonText] = useState('');
+//   const navigate = useNavigate();
+
+//   const handleSubmit = async () => {
+//     try {
+//       const response = await axios.post(
+//         `${import.meta.env.VITE_API_URL}/moderator/rejectProperty/${propertyId}`,
+//         {
+//           reason: reasonText, // Sending the single reason text
+//           moderator: currentUser.id,
+//         },
+//         {
+//           headers: {
+//             Authorization: `Bearer ${token}`,
+//           },
+//         }
+//       );
+
+//       if (response.status === 200) {
+//         console.log('Property Rejected:', response.data);
+//         alert('Property rejected successfully');
+//         navigate(-1);
+//       } else {
+//         alert('Failed to reject property');
+//       }
+//     } catch (error) {
+//       console.error('Error:', error);
+//       alert('An error occurred while rejecting the property.');
+//     }
+//   };
+
+//   return (
+//     <div className="p-6 bg-white rounded-lg shadow-md mt-2 w-full">
+//       <h2 className="text-2xl font-bold text-black-600 mb-4">State the reason for rejection:</h2>
+//       <textarea
+//         id="reasonText"
+//         value={reasonText}
+//         onChange={(e) => setReasonText(e.target.value)}
+//         className="w-full mt-2 p-2 border rounded-md"
+//         placeholder="Enter the reason for rejection..."
+//       />
+
+//       <div className="flex justify-between mt-4">
+//         <button
+//           className="bg-blue-600 text-white px-4 py-2 rounded font-bold mx-2 flex-grow"
+//           onClick={handleSubmit}
+//         >
+//           Submit Rejection
+//         </button>
+//         <button
+//           className="bg-gray-600 text-white px-4 py-2 rounded font-bold mx-2 flex-grow"
+//           onClick={onClose}
+//         >
+//           Back
+//         </button>
+//       </div>
+//     </div>
+//   );
+// };
+
+// export default RejectionForm;
