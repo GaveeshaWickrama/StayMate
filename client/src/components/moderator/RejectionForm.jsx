@@ -32,13 +32,13 @@ const RejectionForm = ({ propertyId, token, currentUser, onClose }) => {
     }
   };
 
-  const handleAmenityChange = (amenity, checked) => {
-    if (checked) {
-      setSelectedAmenities([...selectedAmenities, amenity]);
-    } else {
-      setSelectedAmenities(selectedAmenities.filter(a => a !== amenity));
-    }
-  };
+  // const handleAmenityChange = (amenity, checked) => {
+  //   if (checked) {
+  //     setSelectedAmenities([...selectedAmenities, amenity]);
+  //   } else {
+  //     setSelectedAmenities(selectedAmenities.filter(a => a !== amenity));
+  //   }
+  // };
 
   const handleSubmit = async () => {
     try {
