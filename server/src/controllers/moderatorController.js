@@ -1,41 +1,100 @@
 const PropertyVerified = require('../models/propertyverifiedModel');
 const Property = require('../models/propertyModel');
 const mongoose = require('mongoose');
+const Notification = require('../models/bellNotificationModel')
 
 // Get all pending properties which are to be listed
 const viewPendingProperties = async (req, res) => {
-    try {
-      const properties = await PropertyVerified.find({ status: 'pending' })
-        .populate({
-          path: 'propertyID',
-          populate: {
-            path: 'host_id',
-            model: 'User'
-          }
-        })
-        .sort({ created_at: -1 });
-  
-      console.log(`Fetched ${properties.length} pending properties`);
-  
-      // Combine Property and PropertyVerified data
-      const combinedProperties = properties.map(propertyVerified => {
-        const property = propertyVerified.propertyID.toObject();
-        return {
-          ...property,
-          deed: propertyVerified.deed,
-          additionalDetails: propertyVerified.additionalDetails,
-          verifiedStatus: propertyVerified.status,
-          propertyVerifiedCreatedAt: propertyVerified.created_at,
-          propertyVerifiedUpdatedAt: propertyVerified.updated_at
-        };
-      });
-  
-      res.status(200).json(combinedProperties);
-    } catch (error) {
-      res.status(400).json({ error: error.message });
-    }
-  };
+    // const mod_id = req.user.userId;
 
+
+
+//     try {
+//       const properties = await PropertyVerified.find({ status: 'pending' })
+//         .populate({
+//           path: 'propertyID',
+//           populate: {   
+//             path: 'host_id',
+//             model: 'User'
+//           }
+//         })
+//         .sort({ created_at: -1 });
+  
+//       console.log(`Fetched ${properties.length} pending properties`);
+  
+//       // Combine Property and PropertyVerified data
+//       const combinedProperties = properties.map(propertyVerified => {
+//         const property = propertyVerified.propertyID.toObject();
+//         return {
+//           ...property,
+//           deed: propertyVerified.deed,
+//           additionalDetails: propertyVerified.additionalDetails,
+//           verifiedStatus: propertyVerified.status,
+//           propertyVerifiedCreatedAt: propertyVerified.created_at,
+//           propertyVerifiedUpdatedAt: propertyVerified.updated_at
+//         };
+//       });
+  
+//       res.status(200).json(combinedProperties);
+//     } catch (error) {
+//       res.status(400).json({ error: error.message });
+//     }
+//   };
+
+
+
+
+
+
+
+    try{
+
+        const id = req.user.userId;
+        const properties = await Property.find({ status: 'pending' , moderator_id: id  })
+
+
+        //send notifications
+        
+        // Get the current date
+        const currentDate = new Date();
+        // Iterate over each property and check if it was created more than one week ago
+        properties.forEach((property) => {
+            const oneWeekAgo = new Date(currentDate.getTime() - 7 * 24 * 60 * 60 * 1000); // 7 days in milliseconds
+            const threeDaysAgo = new Date(currentDate.getTime() - 3 * 24 * 60 * 60 * 1000); // 3 days ago
+            const oneDaysAgo = new Date(currentDate.getTime() - 3 * 24 * 60 * 60 * 1000); // 3 days ago
+    
+            if (property.created_at >= oneWeekAgo && property.created_at < threeDaysAgo) {
+                return Notification.create({
+                    userId : req.user.userId,
+                    notificationMessage: `Reminder for Validating Property with ID ${property._id}, which was listed one week ago.`,
+                    notificationType : "validation_reminder",
+                  });
+            }
+            else if (property.created_at >= threeDaysAgo && property.created_at < oneDaysAgo) {
+                return Notification.create({
+                    userId : req.user.userId,
+                    notificationMessage: `Warning for Validating Property with ID ${property._id}, only 3 more days remaining.`,
+                    notificationType : "validation_reminder",
+                  });
+            }
+            else {
+                return Notification.create({
+                    userId : req.user.userId,
+                    notificationMessage: `Warning for Validating Property with ID ${property._id}, only 1 day remaining.`,
+                    notificationType : "validation_reminder",
+                  });
+            }
+        });
+
+
+
+
+        res.status(200).json(properties);
+    } catch (error) {
+        res.status(400).json({ error: error.message });
+    }
+
+};
 // Accepting pending property
 const accept = async (req, res) => {
     const mod_id = req.user.userId;

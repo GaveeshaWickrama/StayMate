@@ -51,16 +51,47 @@ const PropertyImages = ({ images }) => {
   );
 };
 
-const PropertyInfo = ({ location, section }) => {
+const PropertyInfo = ({ location, section, propertyId }) => {
+  const [reviews, setReviews] = useState([]);
+  const [currentIndex, setCurrentIndex] = useState(0); // State for carousel navigation
+
+  useEffect(() => {
+    const fetchReviews = async () => {
+      console.debug("Fetching reviews for property ID:", propertyId); // Debug log
+
+      try {
+        const response = await axios.get(
+          `http://localhost:3000/properties/${propertyId}/reviews`
+        );
+        console.debug("API response data:", response.data); // Debug log
+        setReviews(response.data);
+      } catch (error) {
+        console.error("Error fetching reviews:", error.message); // Debug log
+      } finally {
+        setLoading(false); // Ensure loading is stopped regardless of outcome
+        console.debug("Fetch reviews completed."); // Debug log
+      }
+    };
+
+    if (propertyId) {
+      console.debug("Property ID available, initiating API call."); // Debug log
+      fetchReviews();
+    } else {
+      console.warn("Property ID not provided, skipping fetch."); // Debug warning
+    }
+  }, [propertyId]);
+
   return (
     <div className="w-full md:w-2/3 rounded-lg p-1 bg-white shadow">
+      {/* Property Location */}
       <div className="bg-white p-8 flex items-center border-b">
         <FaMapMarkerAlt className="mr-2" />
         <p className="font-semibold text-xl">
-          {capitalizeWords(location.address)}{" "}
-          {capitalizeWords(location.province)}
+          {location.address} {location.province}
         </p>
       </div>
+
+      {/* Property Plan Details */}
       <div className="bg-white p-8 flex items-center text-xl gap-4 border-b">
         <MdOutlineMeetingRoom className="text-blue-500" />
         <p>Bedrooms: {section.plan.bedrooms}</p>
@@ -71,9 +102,66 @@ const PropertyInfo = ({ location, section }) => {
         <GoPersonFill className="ml-3 text-blue-500" />
         <p>Guests: {section.plan.guests}</p>
       </div>
-      <div className="bg-white p-8 flex items-center">
-        <h2 className="text-xl font-bold">Rating: </h2>
-        <p className="ml-4">No reviews yet.</p>
+      {/* Reviews Section */}
+      <div className="bg-white p-8">
+        <h2 className="text-xl font-bold mb-4">Reviews</h2>
+        {reviews.length > 0 ? (
+          <div className="relative">
+            {/* Carousel for Reviews */}
+            <div className="flex overflow-hidden mx-16">
+              {" "}
+              {/* Added horizontal margin */}
+              {reviews.slice(currentIndex, currentIndex + 2).map((review) => (
+                <div
+                  key={review._id}
+                  className="p-4 bg-gray-100 rounded-lg shadow hover:shadow-lg transition-shadow flex items-center mx-2"
+                >
+                  <img
+                    src="/src/assets/profile.jpg"
+                    alt={`${review.user.firstName} ${review.user.lastName}`}
+                    className="w-16 h-16 rounded-full object-cover mr-4"
+                  />
+                  <div>
+                    <div className="text-lg font-semibold text-blue-600">
+                      {review.user.firstName} {review.user.lastName}
+                    </div>
+                    <div className="italic text-gray-700 my-2">
+                      "{review.comment}"
+                    </div>
+                    <div className="text-sm text-gray-500">
+                      Rating:{" "}
+                      <span className="font-bold">{review.rating}/5</span>
+                    </div>
+                  </div>
+                </div>
+              ))}
+            </div>
+
+            {/* Navigation Arrows */}
+            <button
+              onClick={() =>
+                setCurrentIndex((prev) =>
+                  prev === 0 ? Math.max(reviews.length - 2, 0) : prev - 2
+                )
+              }
+              className="absolute left-4 top-1/2 transform -translate-y-1/2 bg-blue-500 text-white p-3 rounded-full shadow-lg hover:bg-blue-600 transition-colors"
+            >
+              &#8592;
+            </button>
+            <button
+              onClick={() =>
+                setCurrentIndex((prev) =>
+                  prev + 2 >= reviews.length ? 0 : prev + 2
+                )
+              }
+              className="absolute right-4 top-1/2 transform -translate-y-1/2 bg-blue-500 text-white p-3 rounded-full shadow-lg hover:bg-blue-600 transition-colors"
+            >
+              &#8594;
+            </button>
+          </div>
+        ) : (
+          <p className="ml-4">There are no reviews for this property yet!</p>
+        )}
       </div>
     </div>
   );
@@ -198,7 +286,6 @@ const PropertySection = ({ section, isExpanded, onExpand, propertyId }) => {
             initialCheckOutDate="2024-07-16"
             serviceFeePercentage={10}
           />
-          
         </>
       )}
     </div>
@@ -223,7 +310,10 @@ const PropertySectionsList = ({ property }) => {
       <PropertyDescription description={property.description} />
 
       <div className="flex mt-6 border-b-4 border-blue-600 p-6  shadow-sm bg-white">
-        <h1 className="flex items-center text-3xl font-extrabold text-black-600"> <FaCouch className="mr-4" /> Accommodation Types </h1>
+        <h1 className="flex items-center text-3xl font-extrabold text-black-600">
+          {" "}
+          <FaCouch className="mr-4" /> Accommodation Types{" "}
+        </h1>
       </div>
 
       {property.sections.map((section, index) => (
@@ -249,6 +339,7 @@ const DetailedPropertyView = ({ property, id }) => {
         <PropertyInfo
           location={property.location}
           section={property.sections[0]}
+          propertyId={property._id}
         />
         <PropertyHostInfo propertyId={property._id} />
       </div>
@@ -257,10 +348,15 @@ const DetailedPropertyView = ({ property, id }) => {
         propertyId={id}
         sectionId={property.sections[0].section_id}
         nightlyRate={property.sections[0].price_per_night}
-        initialCheckInDate="2024-07-11"
-        initialCheckOutDate="2024-07-16"
+        initialCheckInDate={new Date().toISOString().split("T")[0]} // Today's date in YYYY-MM-DD format
+        initialCheckOutDate={
+          new Date(new Date().setDate(new Date().getDate() + 7))
+            .toISOString()
+            .split("T")[0]
+        } // Today's date + 7 days in YYYY-MM-DD format
         serviceFeePercentage={10}
       />
+
       <PropertyAmenitiesDisplay amenities={property.amenities} />
     </div>
   );

@@ -14,19 +14,72 @@ const ModeratorForm = () => {
     const [nicPassport, setNicPassport] = useState('');
     const [gender, setGender] = useState('');
     const [address, setAddress] = useState('');
+    const [phone, setPhone] = useState('');
     const [error, setError] = useState('');
-    const [emptyFields,setEmptyFields] = useState([])
-    const [phone,setPhone] = useState('')
+    const [emptyFields, setEmptyFields] = useState([]);
     const role = 'moderator';
-    // const gender='male';
-    // const phone="44";
+
+    // Validation state
+    const [fieldErrors, setFieldErrors] = useState({
+        firstName: '',
+        lastName: '',
+        email: '',
+        password: '',
+        nicPassport: '',
+        phone: ''
+    });
+
     const handleChange = (e) => {
         setGender(e.target.value);
-      };
-    
+    };
+
+    // Validate form fields before submission
+    const validateForm = () => {
+        let valid = true;
+        const errors = {
+            firstName: '',
+            lastName: '',
+            email: '',
+            password: '',
+            nicPassport: '',
+            phone: ''
+        };
+
+        if (!firstName || !/^[a-zA-Z]+$/.test(firstName)) {
+            errors.firstName = 'First name is required and must contain only letters.';
+            valid = false;
+        }
+        if (!lastName || !/^[a-zA-Z]+$/.test(lastName)) {
+            errors.lastName = 'Last name is required and must contain only letters.';
+            valid = false;
+        }
+        if (!email || !/\S+@\S+\.\S+/.test(email)) {
+            errors.email = 'Please enter a valid email address.';
+            valid = false;
+        }
+        if (!password || password.length < 6) {
+            errors.password = 'Password must be at least 6 characters long.';
+            valid = false;
+        }
+        if (!nicPassport || !/^[a-zA-Z0-9]+$/.test(nicPassport)) {
+            errors.nicPassport = 'NIC/Passport is required and must be alphanumeric.';
+            valid = false;
+        }
+        if (!phone || !/^\d{10}$/.test(phone)) {
+            errors.phone = 'Phone number must be 10 digits.';
+            valid = false;
+        }
+
+        setFieldErrors(errors);
+        return valid;
+    };
 
     const handleSubmit = async (e) => {
         e.preventDefault();
+
+        if (!validateForm()) {
+            return; // Don't submit if validation fails
+        }
 
         const moderator = { firstName, lastName, email, password, nicPassport, gender, address, role, phone };
 
@@ -40,13 +93,9 @@ const ModeratorForm = () => {
 
             if (response.status !== 201) {
                 setError(response.data.error);
-                setEmptyFields(response.data.emptyFields)
+                setEmptyFields(response.data.emptyFields);
             } else {
-                
                 setError(null);
-                console.log('State before reset:', { firstName, lastName, email, password, nicPassport, gender, address });
-
-                // Reset form fields
                 setFirstName('');
                 setLastName('');
                 setEmail('');
@@ -54,14 +103,12 @@ const ModeratorForm = () => {
                 setNicPassport('');
                 setGender('');
                 setAddress('');
-
-                console.log('State after reset:', { firstName, lastName, email, password, nicPassport, gender, address });
-
-                console.log('new Moderator added', response.data);
+                setPhone('');
+                console.log('New moderator added:', response.data);
                 dispatch({ type: 'CREATE_MODERATORS', payload: response.data });
             }
         } catch (error) {
-            setError(error.response?.data?.error );
+            setError(error.response?.data?.error);
         }
     };
 
@@ -74,86 +121,97 @@ const ModeratorForm = () => {
                 type="text"
                 onChange={(e) => setFirstName(e.target.value)}
                 value={firstName}
-                className="w-full p-2 mb-4 border rounded ${emptyFields.includes('firstName') ? 'border-red-500' : 'border-gray-300'}"
+                className={`w-full p-2 mb-4 border rounded ${fieldErrors.firstName ? 'border-red-500' : 'border-gray-300'}`}
             />
-            
+            {fieldErrors.firstName && <p className="text-red-500 text-sm">{fieldErrors.firstName}</p>}
+
             <label className="block mb-2">Last Name:</label>
             <input 
                 type="text"
                 onChange={(e) => setLastName(e.target.value)}
                 value={lastName}
-                className="w-full p-2 mb-4 border rounded ${emptyFields.includes('lastName') ? 'border-red-500' : 'border-gray-300'}"
+                className={`w-full p-2 mb-4 border rounded ${fieldErrors.lastName ? 'border-red-500' : 'border-gray-300'}`}
             />
+            {fieldErrors.lastName && <p className="text-red-500 text-sm">{fieldErrors.lastName}</p>}
+
             <label className="block mb-2">Email:</label>
             <input 
                 type="email"
                 onChange={(e) => setEmail(e.target.value)}
                 value={email}
-                className="w-full p-2 mb-4 border rounded ${emptyFields.includes('email') ? 'border-red-500' : 'border-gray-300'}"
+                className={`w-full p-2 mb-4 border rounded ${fieldErrors.email ? 'border-red-500' : 'border-gray-300'}`}
             />
+            {fieldErrors.email && <p className="text-red-500 text-sm">{fieldErrors.email}</p>}
+
             <label className="block mb-2">Password:</label>
             <input 
                 type="password"
                 onChange={(e) => setPassword(e.target.value)}
                 value={password}
-                className="w-full p-2 mb-4 border rounded ${emptyFields.includes('password') ? 'border-red-500' : 'border-gray-300'}"
+                className={`w-full p-2 mb-4 border rounded ${fieldErrors.password ? 'border-red-500' : 'border-gray-300'}`}
             />
-            <label className="block mb-2">NICPassport:</label>
+            {fieldErrors.password && <p className="text-red-500 text-sm">{fieldErrors.password}</p>}
+
+            <label className="block mb-2">NIC/Passport:</label>
             <input 
                 type="text"
                 onChange={(e) => setNicPassport(e.target.value)}
                 value={nicPassport}
-                className="w-full p-2 mb-4 border rounded ${emptyFields.includes('') ? 'border-red-500' : 'border-gray-300'}"
+                className={`w-full p-2 mb-4 border rounded ${fieldErrors.nicPassport ? 'border-red-500' : 'border-gray-300'}`}
             />
+            {fieldErrors.nicPassport && <p className="text-red-500 text-sm">{fieldErrors.nicPassport}</p>}
+
             <label className="block mb-2">Address:</label>
             <input 
                 type="text"
                 onChange={(e) => setAddress(e.target.value)}
                 value={address}
-                className="w-full p-2 mb-4 border border-gray-300 rounded"
+                className="w-full p-2 mb-4 border rounded"
             />
 
-            {/* hardcoding the role to be moderator */}
             <label className="block mb-2">Role:</label>
             <input 
                 type="text"
                 value={role}
-                className="w-full p-2 mb-4 border border-gray-300 rounded"
+                className="w-full p-2 mb-4 border rounded"
                 readOnly
             />
+
             <label className="block mb-2">Gender:</label>
             <div className="mb-4">
-      <label className="mr-4">
-        <input 
-          type="radio" 
-          value="male" 
-          checked={gender === 'male'} 
-          onChange={handleChange} 
-          className="mr-2"
-        />
-        Male
-      </label>
-      <label>
-        <input 
-          type="radio" 
-          value="female" 
-          checked={gender === 'female'} 
-          onChange={handleChange} 
-          className="mr-2"
-        />
-        Female
-      </label>
-    </div>
+                <label className="mr-4">
+                    <input 
+                        type="radio" 
+                        value="male" 
+                        checked={gender === 'male'} 
+                        onChange={handleChange} 
+                        className="mr-2"
+                    />
+                    Male
+                </label>
+                <label>
+                    <input 
+                        type="radio" 
+                        value="female" 
+                        checked={gender === 'female'} 
+                        onChange={handleChange} 
+                        className="mr-2"
+                    />
+                    Female
+                </label>
+            </div>
+
             <label className="block mb-2">Phone:</label>
             <input 
                 type="text"
                 onChange={(e) => setPhone(e.target.value)}
                 value={phone}
-                className="w-full p-2 mb-4 border border-gray-300 rounded"
+                className={`w-full p-2 mb-4 border rounded ${fieldErrors.phone ? 'border-red-500' : 'border-gray-300'}`}
             />
+            {fieldErrors.phone && <p className="text-red-500 text-sm">{fieldErrors.phone}</p>}
 
             <button className="w-full bg-blue-500 text-white p-2 rounded hover:bg-blue-600">Add Moderator</button>
-            {error && <div className="mt-4 text-red-500 border border-red-500 bg-red-100 p-2 rounded">{error}</div>}
+            {error && <div className="mt-4 text-red-500 border border-red-500 p-2">{error}</div>}
         </form>
     );
 };

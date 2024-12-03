@@ -137,6 +137,7 @@ function Navbar({ isVisible }) {
     { path: "/user/viewreviews", label: "Reviews" },
     { path: "/user/reservations", label: "Reservations" },
     { path: "/user/chat", label: "Chat" },
+    { path: "/user/complaints", label: "Complaints" },
   ];
 
   const hostLinks = [
@@ -151,6 +152,10 @@ function Navbar({ isVisible }) {
     { path: "/host/view-technicians", label: "Technicians" },
     { path: "/host/HostReviews", label: "Reviews" },
     { path: "/host/chat", label: "Chat" },
+
+    { path: "/host/addpaymentdetails", label: "Add Payment Details" }
+
+
   ];
 
   const technicianLinks = [
