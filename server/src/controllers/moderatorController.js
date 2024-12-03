@@ -79,20 +79,20 @@ const accept = async (req, res) => {
             return res.status(400).json({ error: 'No such property in Property model' });
         }
 
-        // const recieverSocketId = getRecieverSocketId(property.host_id);
+        const recieverSocketId = getRecieverSocketId(property.host_id);
         
-        // const newNotification = new Notification({
-        //     userId: property.host_id, // Assuming the current user is the moderator
-        //     notificationMessage: `Your property with ID ${property._id} has been verified successfully.`,
-        //     notificationType: "validation_accept",
-        //     complaintId: property._id,
-        // });
+        const newNotification = new Notification({
+            userId: property.host_id, // Assuming the current user is the moderator
+            notificationMessage: `Your property with ID ${property._id} has been verified successfully.`,
+            notificationType: "validation_accept",
+            complaintId: property._id,
+        });
 
-        // await newNotification.save();
+        await newNotification.save();
 
-        // if(recieverSocketId) {
-        //     io.to(recieverSocketId).emit('newNotification',newNotification);
-        // }
+        if(recieverSocketId) {
+            io.to(recieverSocketId).emit('newNotification',newNotification);
+        }
 
         res.status(200).json({ message: "Property verified successfully", property });
 
