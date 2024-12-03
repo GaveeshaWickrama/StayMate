@@ -68,10 +68,10 @@ const raiseComplaint = async (req, res) => {
   // Log the files to the console to check if they are being received correctly
   //console.log("Uploaded Files:", req.files);
 
-  const images = [];
+  let images = [];
   // Get the file paths
   if(req.files && req.files.length > 0) {
-    const images = req.files.map((file) => file.path);
+    images = req.files.map((file) => file.path);
   }
   
 
