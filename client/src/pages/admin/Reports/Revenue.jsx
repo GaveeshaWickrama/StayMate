@@ -18,7 +18,6 @@ import { useAuth } from "../../../context/auth";
 function Revenue() {
   const { token } = useAuth();
 
-  // Default date range: 1 year before and 1 year after today
   const currentDate = new Date();
   const defaultStartDate = new Date(currentDate);
   defaultStartDate.setFullYear(currentDate.getFullYear() - 1);
@@ -33,10 +32,8 @@ function Revenue() {
   const [hostPercentage, setHostPercentage] = useState(0);
   const [sitePercentage, setSitePercentage] = useState(0);
 
-  const PLATFORM_PERCENTAGE = 10; // Assume the platform takes 20% of the total revenue
-
-  const COLORS = ["#0088FE", "#FF8042", "#00C49F", "#FFBB28", "#FF6666", "#AA66CC", "#33B5E5"];
-
+  const PLATFORM_PERCENTAGE = 10;
+  const COLORS = ["#4CAF50", "#FF5722"];
 
   const fetchRevenueData = async () => {
     setLoading(true);
@@ -56,7 +53,6 @@ function Revenue() {
         }),
       ]);
 
-      // Merge data into a single array with Paid, Pending, and All values
       const combined = {};
       let totalHostRevenue = 0;
       let totalPlatformProfit = 0;
@@ -69,7 +65,6 @@ function Revenue() {
           combined[item.date][`${type}PlatformProfit`] = platformCut || 0;
           combined[item.date][`${type}HostRevenue`] = (item.totalCashFlow || 0) - platformCut;
 
-          // Calculate totals for the pie chart
           totalPlatformProfit += platformCut || 0;
           totalHostRevenue += (item.totalCashFlow || 0) - platformCut;
         });
@@ -79,10 +74,7 @@ function Revenue() {
       processData(pendingResponse.data.revenueSummary, "pending");
       processData(allResponse.data.revenueSummary, "all");
 
-      // Convert the combined object into an array
       const combinedArray = Object.values(combined);
-
-      // Calculate percentages for the pie chart
       const totalRevenue = totalHostRevenue + totalPlatformProfit;
       setHostPercentage(((totalHostRevenue / totalRevenue) * 100).toFixed(2));
       setSitePercentage(((totalPlatformProfit / totalRevenue) * 100).toFixed(2));
@@ -96,60 +88,64 @@ function Revenue() {
     }
   };
 
+  const downloadCSV = (chartData, fileName) => {
+    const headers = Object.keys(chartData[0]).join(",");
+    const rows = chartData.map((row) =>
+      Object.values(row)
+        .map((value) => `"${value}"`)
+        .join(",")
+    );
+    const csvContent = [headers, ...rows].join("\n");
+
+    const blob = new Blob([csvContent], { type: "text/csv;charset=utf-8;" });
+    const link = document.createElement("a");
+    link.href = URL.createObjectURL(blob);
+    link.download = `${fileName}.csv`;
+    link.click();
+  };
+
   useEffect(() => {
-    fetchRevenueData(); // Fetch data on mount
+    fetchRevenueData();
   }, [token]);
 
   return (
-    <div className="flex">
-      <div className="w-2/3">
-        <h4 className="text-xl font-semibold mb-4 text-center">Cash Flow Breakdown</h4>
-        <div className="flex justify-center gap-4 mb-8">
+    <div className="flex flex-wrap gap-8 p-4 bg-gray-100 min-h-screen">
+      {/* Line Chart Box */}
+      <div className="w-full md:w-2/3 bg-white p-8 shadow-xl rounded-lg">
+        <h4 className="text-2xl font-bold mb-6 text-center text-gray-700">Cash Flow Breakdown</h4>
+        <div className="flex justify-center gap-4 mb-6">
           <input
             type="date"
             value={startDate}
             onChange={(e) => setStartDate(e.target.value)}
-            className="p-2 border border-gray-300 rounded"
+            className="p-2 border border-gray-300 rounded focus:ring-2 focus:ring-blue-400"
           />
           <input
             type="date"
             value={endDate}
             onChange={(e) => setEndDate(e.target.value)}
-            className="p-2 border border-gray-300 rounded"
+            className="p-2 border border-gray-300 rounded focus:ring-2 focus:ring-blue-400"
           />
           <button
             onClick={fetchRevenueData}
-            className="px-4 py-2 bg-blue-500 text-white rounded transition duration-200 ease-in-out"
+            className="px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600 transition duration-200"
           >
             Fetch Data
           </button>
         </div>
 
-        <div className="flex justify-center gap-4 mb-8">
-          <button
-            onClick={() => setGraphType("HostRevenue")}
-            className={`px-4 py-2 ${
-              graphType === "HostRevenue" ? "bg-blue-700" : "bg-blue-500"
-            } text-white rounded transition duration-200 ease-in-out`}
-          >
-            Host Revenue
-          </button>
-          <button
-            onClick={() => setGraphType("PlatformProfit")}
-            className={`px-4 py-2 ${
-              graphType === "PlatformProfit" ? "bg-blue-700" : "bg-blue-500"
-            } text-white rounded transition duration-200 ease-in-out`}
-          >
-            Platform Profit
-          </button>
-          <button
-            onClick={() => setGraphType("TotalRevenue")}
-            className={`px-4 py-2 ${
-              graphType === "TotalRevenue" ? "bg-blue-700" : "bg-blue-500"
-            } text-white rounded transition duration-200 ease-in-out`}
-          >
-            Total Revenue
-          </button>
+        <div className="flex justify-center gap-4 mb-4">
+          {["HostRevenue", "PlatformProfit", "TotalRevenue"].map((type) => (
+            <button
+              key={type}
+              onClick={() => setGraphType(type)}
+              className={`px-4 py-2 ${
+                graphType === type ? "bg-blue-700" : "bg-blue-500"
+              } text-white rounded hover:bg-blue-600 transition duration-200`}
+            >
+              {type.replace(/([A-Z])/g, " $1")}
+            </button>
+          ))}
         </div>
 
         {loading ? (
@@ -158,68 +154,84 @@ function Revenue() {
           <ResponsiveContainer width="100%" height={400}>
             <LineChart
               data={combinedData}
-              margin={{ top: 20, right: 30, left: 50, bottom: 5 }}
+              margin={{ top: 20, right: 30, left: 20, bottom: 5 }}
             >
               <CartesianGrid strokeDasharray="3 3" />
-              <XAxis dataKey="date" padding={{ left: 20, right: 20 }} />
+              <XAxis dataKey="date" />
               <YAxis />
               <Tooltip />
               <Legend />
               <Line
                 type="monotone"
                 dataKey={`paid${graphType}`}
-                name={`Paid ${graphType.replace(/([A-Z])/g, " $1")}`}
-                stroke="#0088FE"
+                stroke="#4CAF50"
                 strokeWidth={2}
-                activeDot={{ r: 8 }}
               />
               <Line
                 type="monotone"
                 dataKey={`pending${graphType}`}
-                name={`Pending ${graphType.replace(/([A-Z])/g, " $1")}`}
-                stroke="#FF8042"
+                stroke="#FF5722"
                 strokeWidth={2}
-                activeDot={{ r: 8 }}
               />
               <Line
                 type="monotone"
                 dataKey={`all${graphType}`}
-                name={`Paid & Pending ${graphType.replace(/([A-Z])/g, " $1")}`}
-                stroke="#00C49F"
+                stroke="#2196F3"
                 strokeWidth={2}
-                activeDot={{ r: 8 }}
               />
             </LineChart>
           </ResponsiveContainer>
         ) : (
-          <p className="text-center text-gray-500">No data available. Please select a date range.</p>
+          <p className="text-center text-gray-500">No data available.</p>
         )}
+        <button
+          onClick={() => downloadCSV(combinedData, "revenue_line_chart")}
+          className="mt-4 px-4 py-2 bg-blue-500 text-white rounded-md hover:bg-blue-600"
+        >
+          Download Data
+        </button>
       </div>
 
-      <div className="w-1/3 flex flex-col items-center mt-10">
-            <h4 className="text-lg font-semibold mb-2">Revenue Distribution</h4>
-            <ResponsiveContainer width="100%" height={300}>
-                <PieChart className="mt-10 pt-8">
-                <Pie
-                    data={[
-                    { name: "Host Revenue", value: Number(hostPercentage) },
-                    { name: "Platform Profit", value: Number(sitePercentage) },
-                    ]}
-                    dataKey="value"
-                    nameKey="name"
-                    cx="50%"
-                    cy="50%"
-                    outerRadius={100}
-                    fill="#8884d8"
-                    label={({ name, percent }) => `${name}: ${(percent * 100).toFixed(2)}%`}
-                >
-                    <Cell key="Host Revenue" fill={COLORS[0]} />
-                    <Cell key="Platform Profit" fill={COLORS[2]} />
-                </Pie>
-                </PieChart>
-            </ResponsiveContainer>
-            </div>
-
+      {/* Pie Chart Box */}
+      <div className="w-full md:w-1/8 lg:w-1/2 bg-white p-0.1 shadow-xl rounded-lg">
+        <h4 className="text-2xl font-bold mb-6 text-center text-gray-700">Revenue Distribution</h4>
+        <ResponsiveContainer width="100%" height={400}>
+          <PieChart>
+            <Pie
+              data={[
+                { name: "Host Revenue", value: Number(hostPercentage) },
+                { name: "Platform Profit", value: Number(sitePercentage) },
+              ]}
+              dataKey="value"
+              nameKey="name"
+              cx="50%"
+              cy="50%"
+              outerRadius={150}
+              label={({ name, percent }) =>
+                `${name}: ${(percent * 100).toFixed(2)}%`
+              }
+              labelStyle={{
+                fontSize: "14px",
+                fontWeight: "bold",
+              }}
+            >
+              {COLORS.map((color, index) => (
+                <Cell key={`cell-${index}`} fill={color} />
+              ))}
+            </Pie>
+            <Tooltip />
+          </PieChart>
+        </ResponsiveContainer>
+        <button
+          onClick={() => downloadCSV([
+            { name: "Host Revenue", value: hostPercentage },
+            { name: "Platform Profit", value: sitePercentage }
+          ], "revenue_pie_chart")}
+          className="mt-4 px-4 py-2 bg-blue-500 text-white rounded-md hover:bg-blue-600"
+        >
+          Download Data
+        </button>
+      </div>
     </div>
   );
 }

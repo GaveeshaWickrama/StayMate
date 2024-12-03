@@ -116,6 +116,10 @@ router.get(
 );
 
 router.get('/technicians', adminController.getAllTechnicians);
+router.get('/hosts', adminController.getAllHosts);
+router.get('/guests', adminController.getAllGuests);
+
+
 
 router.get("/summary-counts", adminController.getSummaryCounts);
 router.get("/registrations-by-day", adminController.getRegistrationsByDay);
