@@ -20,6 +20,7 @@ import {
   FaGlassWhiskey,
   FaHotel,
   FaTools,
+  
 } from 'react-icons/fa';
 import { FaKitchenSet } from 'react-icons/fa6';
 import { RiBilliardsFill } from 'react-icons/ri';
@@ -61,7 +62,6 @@ const PropertyAmenities = () => {
     { name: 'WiFi', icon: <FaWifi />, requiresImage: false },
     { name: 'Kitchen', icon: <FaKitchenSet />, requiresImage: true },
     { name: 'Hot tub', icon: <FaHotTub />, requiresImage: true },
-    { name: 'Pool table', icon: <RiBilliardsFill />, requiresImage: true },
     { name: 'Outdoor dining', icon: <FaUtensils />, requiresImage: true },
     { name: 'Heating', icon: <FaFire />, requiresImage: true },
     { name: 'Balcony', icon: <FaHotel />, requiresImage: true },
@@ -72,15 +72,19 @@ const PropertyAmenities = () => {
     { name: 'Jacuzzi', icon: <FaHotTub />, requiresImage: true },
     { name: 'Minibar', icon: <FaGlassWhiskey />, requiresImage: true },
     { name: 'Safe', icon: <FaLock />, requiresImage: true },
+    { name: 'Fridge', icon: <RiFridgeFill />, requiresImage: true },
+    { name: 'Air Conditioning', icon: <FaSnowflake />, requiresImage: true },
+    { name: 'TV', icon: <PiTelevisionFill />, requiresImage: true },
+    { name: 'Streaming Service', icon: <RiNetflixFill />, requiresImage: true },
+    { name: 'Heating', icon: <FaFire />, requiresImage: true },
   ];
 // Combine both lists without repeating
-const amenitiesList = [
-  ...generalAmenitiesList,
-  ...sectionAmenitiesList.filter(
-    (sectionAmenity) =>
-      !generalAmenitiesList.some((generalAmenity) => generalAmenity.name === sectionAmenity.name)
-  ),
-];
+const amenitiesList =
+property.total_unique_sections === '-1'
+  ? generalAmenitiesList
+  : generalAmenitiesList.filter(
+      (amenity) => !sectionAmenitiesList.some((sectionAmenity) => sectionAmenity.name === amenity.name)
+    );
 
 
   // Handle Amenity Selection

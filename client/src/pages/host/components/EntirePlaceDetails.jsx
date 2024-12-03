@@ -18,10 +18,15 @@ const EntirePlaceDetails = ({ property, setProperty }) => {
 
   const handlePlanChange = (name, value) => {
     setProperty(prevState => {
-      const updatedPlan = {
-        ...prevState.sections[0]?.plan,
-        [name]: value
-      };
+      const currentPlan = prevState.sections[0]?.plan || {};
+      const updatedPlan = { ...currentPlan };
+
+      if (name === 'bedrooms' && value > currentPlan.beds) {
+        // Ensure beds are updated to match bedrooms if bedrooms increase
+        updatedPlan.beds = value;
+      }
+
+      updatedPlan[name] = value;
 
       const updatedSection = {
         ...prevState.sections[0],
@@ -74,11 +79,17 @@ const EntirePlaceDetails = ({ property, setProperty }) => {
     <div className="container mx-auto px-8">
       <h2 className="text-4xl font-extrabold text-black-600 mb-8 border-b-4 border-blue-600 p-6 rounded-md shadow-sm">Property Section Info</h2>
       <div className='p-6'> 
-      <p className="mb-8 text-gray-500">Provide more details</p>
+      <p className="mb-8 text-gray-500">Provide more details about your property</p>
       <div className="flex-col space-y-6">
         {renderNumberInput("Guests", "guests", property.sections[0]?.plan?.guests || 1, handlePlanChange, 1)}
         {renderNumberInput("Bedrooms", "bedrooms", property.sections[0]?.plan?.bedrooms || 1, handlePlanChange, 1)}
-        {renderNumberInput("Beds", "beds", property.sections[0]?.plan?.beds || 1, handlePlanChange, 1)}
+        {renderNumberInput("Beds", "beds", property.sections[0]?.plan?.beds || 1, (name, value) => {
+          if (value < property.sections[0]?.plan?.bedrooms) {
+            // Ensure beds are at least the number of bedrooms
+            value = property.sections[0]?.plan?.bedrooms;
+          }
+          handlePlanChange(name, value);
+        }, 1)}
         {renderNumberInput("Bathrooms", "bathrooms", property.sections[0]?.plan?.bathrooms || 1, handlePlanChange, 1)}
       </div>
       <div className="mt-8 p-6 bg-gray-100 rounded-lg shadow-inner">
