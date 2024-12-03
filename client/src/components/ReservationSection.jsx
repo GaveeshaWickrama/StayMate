@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { FaCalendarAlt, FaMoneyBillWave, FaInfoCircle } from "react-icons/fa";
+import { useAuth } from "../context/auth"; // Import AuthContext
 import CustomCalendar from "./CustomCalendar";
 
 const ReservationSection = ({
@@ -20,6 +21,7 @@ const ReservationSection = ({
   const [serviceFee, setServiceFee] = useState(0);
   const [errors, setErrors] = useState({});
   const [showCalendar, setShowCalendar] = useState(false);
+  const { currentUser } = useAuth(); // Access the current user
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -50,33 +52,26 @@ const ReservationSection = ({
   const validateDates = () => {
     let errors = {};
     const now = new Date();
-    const today = new Date(now.setHours(0, 0, 0, 0)); // Set to today's date at midnight
+    const today = new Date(now.setHours(0, 0, 0, 0));
     const checkIn = new Date(checkInDate);
     const checkOut = new Date(checkOutDate);
 
-    // Check if the check-in date is before today
     if (checkIn < today) {
       errors.checkInDate = "Check-in date cannot be in the past.";
     }
-
-    // Check if check-out date is before or on the check-in date
     if (checkOut <= checkIn) {
       errors.checkOutDate = "Check-out date must be after check-in date.";
     }
-
-    // Check if the check-in or check-out dates are invalid
     if (isNaN(checkIn.getTime()) || isNaN(checkOut.getTime())) {
       errors.checkInDate = "Invalid check-in date.";
       errors.checkOutDate = "Invalid check-out date.";
     }
 
-    // If there are any errors, set them in the state and return false
     if (errors.checkInDate || errors.checkOutDate) {
       setErrors(errors);
       return false;
     }
 
-    // If no errors, clear any existing errors and return true
     setErrors({});
     return true;
   };
@@ -84,7 +79,6 @@ const ReservationSection = ({
   const validateGuests = () => {
     let errors = {};
     if (noOfGuests < 1 || noOfGuests > 100) {
-      // Assuming 100 as a reasonable upper limit
       errors.noOfGuests = "Number of guests must be between 1 and 100.";
     }
     if (errors.noOfGuests) {
@@ -100,6 +94,11 @@ const ReservationSection = ({
   };
 
   const handleReserve = () => {
+    if (!currentUser) {
+      navigate("/login"); // Redirect to login page if not logged in or is a guest
+      return;
+    }
+
     if (validateDates() && validateGuests()) {
       navigate(`/user/reserve/${propertyId}`, {
         state: {
@@ -116,9 +115,9 @@ const ReservationSection = ({
   };
 
   const handleDateRangeSelect = (startDate, endDate) => {
-    setCheckInDate(startDate.toLocaleDateString("en-CA")); // Local date format (YYYY-MM-DD)
-    setCheckOutDate(endDate.toLocaleDateString("en-CA")); // Local date format (YYYY-MM-DD)
-    setShowCalendar(false); // Hide calendar after selection
+    setCheckInDate(startDate.toLocaleDateString("en-CA"));
+    setCheckOutDate(endDate.toLocaleDateString("en-CA"));
+    setShowCalendar(false);
   };
 
   const handleCloseCalendar = () => {
