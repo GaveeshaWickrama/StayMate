@@ -61,6 +61,10 @@ const Header = ({ toggleNavbar }) => {
       //navigate to the seemore page of the property to be validated
       navigate(`/moderator/NewPropertySeemore/${notification.complaintId}`)
     }
+    else if (notification.notificationType === "validation_accept") {
+      //navigate to the seemore page of the property to be validated
+      navigate(`/moderator/NewPropertySeemore/${notification.complaintId}`)
+    }
 
     try {
       
