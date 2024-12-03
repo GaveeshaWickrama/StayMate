@@ -25,7 +25,7 @@ router.get("/complaints/:id", complaintController.getComplaintsByHost);
 //     authToken,
 //     requireRole("technician"),
 // complaintController.getActiveJobs);
-router.get("/raiseComplaint", complaintController.raiseComplaint);
+// router.get("/raiseComplaint", complaintController.raiseComplaint);
 router.get("/:id/tasks", complaintController.getAllJobsByTechnicianId);
 router.get(
   "/:id/pending/tech",

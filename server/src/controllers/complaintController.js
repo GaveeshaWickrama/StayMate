@@ -5,7 +5,6 @@ const Technician = require('../models/technicianModel');
 const User = require('../models/userModel');
 const { getRecieverSocketId, io } = require('../socket/socket');
 
-// const TaskController = require('./taskController'); // Import task controller
 const path = require("path");
 const mongoose = require("mongoose");
 
@@ -17,16 +16,19 @@ const mongoose = require("mongoose");
 const raiseComplaint = async (req, res) => {
   const { reservationId, title, description, category } = req.body;
 
-  // Log the files to the console to check if they are being received correctly
-  //console.log("Uploaded Files:", req.files);
+  //Log the files to the console to check if they are being received correctly
+ 
+  console.log("Uploaded Files:", req.files);
 
-  const images = [];
+  let images = [];
+ 
   // Get the file paths
   if(req.files && req.files.length > 0) {
-    const images = req.files.map((file) => file.path);
+    images = req.files.map((file) => file.path);
   }
+ 
   
-
+console.log("images",images);
   // Complaint placed by the user to the host
   try {
     // Create a new complaint document
@@ -506,7 +508,7 @@ const getComplaintsByHost = async (req, res) => {
 
 //following function is in the technician routes
 const getNoOfJobsCompleted = async (req, res) => {
-  const { id } = req.params.technicianId;
+  const  id  = req.params.technicianId;
   console.log("technician id received in the no of jobs completed backend",id); //log technician id
   try {
     const noOfJobs = await Complaint.countDocuments({
