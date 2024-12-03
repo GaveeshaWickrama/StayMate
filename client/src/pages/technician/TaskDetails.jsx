@@ -76,6 +76,16 @@ export default function ComplaintDetails(props) {
   const deadlineDate = new Date(complaint.deadline);
   const timeLeft = deadlineDate - currentDate; // Time difference in milliseconds
 
+
+  // Calculate the total value based on the budgetItems or complaint.estimatedBudget
+  const totalValue = (complaint.estimatedBudget && Array.isArray(complaint.estimatedBudget) && complaint.estimatedBudget.length > 0)
+    ? complaint.estimatedBudget.reduce((total, item) => total + (parseFloat(item.value) || 0), 0)
+    : 0;
+
+    const handleMessageHost = () => {
+        navigate('/technician/chat');
+    }
+
   return (
     <div className="bg-gray-100 mx-auto py-2 px-8">
       <div className="flex mb-1 border-b-4 border-blue-600 p-6 rounded-md shadow-sm bg-white">
@@ -214,7 +224,7 @@ export default function ComplaintDetails(props) {
               </div>
               <button
                 className="bg-blue-600 text-white p-2 rounded font-bold flex items-center"
-                // onClick={handleMessageHost}
+                onClick={handleMessageHost}
                 // disabled={isLoading}
               >
                 <FaEnvelope className="mr-2" size={24} />{" "}
@@ -265,6 +275,9 @@ export default function ComplaintDetails(props) {
         </li>
       ))}
     </ul>
+    <div className="mt-4">
+            <h3 className="text-xl font-bold">Total:  {totalValue.toFixed(2)} LKR</h3>
+          </div>
               </div>
             )}
           </div>

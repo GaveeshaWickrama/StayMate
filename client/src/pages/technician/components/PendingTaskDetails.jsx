@@ -63,6 +63,13 @@ export default function PendingTaskDetails({complaint}) {
   console.log(complaint.status);
   console.log("initial estimated budget",budgetItems);
 
+
+  // Calculate the total value based on the budgetItems or complaint.estimatedBudget
+  const totalValue = (complaint.estimatedBudget && Array.isArray(complaint.estimatedBudget) && complaint.estimatedBudget.length > 0)
+    ? complaint.estimatedBudget.reduce((total, item) => total + (parseFloat(item.value) || 0), 0)
+    : budgetItems.reduce((total, item) => total + (parseFloat(item.value) || 0), 0);
+
+
   return (
     <div className="bg-gray-100 mx-auto py-2 px-8">
 
@@ -99,14 +106,8 @@ export default function PendingTaskDetails({complaint}) {
        {/* status = pending host confirmation */}
     {(Array.isArray(complaint.estimatedBudget) && complaint.estimatedBudget.length > 0) && (
     <div className="bg-blue-100 p-5 m-3">
-      Awaiting host confirmation, You estimated a budget of $
-      <ul className="list-disc pl-5 bg-gray-100 p-3 rounded">
-      {complaint.estimatedBudget.map((item, index) => (
-        <li key={index}>
-          <span className="font-bold">{item.expense}:</span> LKR {item.value.toFixed(2)}
-        </li>
-      ))}
-    </ul>
+      Awaiting host confirmation for the budget
+     
     </div>
   )}
  

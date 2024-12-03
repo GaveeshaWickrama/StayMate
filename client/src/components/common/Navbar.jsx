@@ -161,6 +161,7 @@ function Navbar({ isVisible }) {
     // { path: "/technician/requests/active-tasks", label: "Active Tasks" },
     { path: "/technician/tasks", label: "Tasks" },
     { path: '/technician/reviews/', label: "Reviews" },
+    { path: "/technician/chat", label: "Chat" },
   ];
 
   const publicLinks = [

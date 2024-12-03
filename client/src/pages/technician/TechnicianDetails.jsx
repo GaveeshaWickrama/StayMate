@@ -21,7 +21,7 @@ function TechnicianDetails() {
   const hostID = currentUser.id;
   const [showModal, setShowModal] = useState(false);
   const [technician, setTechnician] = useState(null);
-
+  const [noOfCompletedJobs, setNoOfCompletedJobs] = useState(0);
 
   // const handleSave = async (e) => {
   //   e.preventDefault();
@@ -34,6 +34,11 @@ function TechnicianDetails() {
   // //   navigate("/host/manage-complaints");
   // // };
 
+
+  const message = () => {
+    navigate('/host/chat')
+  }
+
   useEffect(() => {
     const fetchTechnician = async () => {
       try {
@@ -44,12 +49,35 @@ function TechnicianDetails() {
       }
     };
 
+
+
+    const fetchCompletedJobs = async () => {
+      try {
+        const response = await axios.get(`${import.meta.env.VITE_API_URL}/technicians/${id}/noOfJobsCompleted`);
+        setNoOfCompletedJobs(response.data);
+      } catch (error) {
+        console.error('Error fetching completed jobs:', error);
+      }
+    };
+
     fetchTechnician();
+    fetchCompletedJobs();
   }, [id]);
 
   if (!technician) {
     return <div>Loading...</div>;
   }
+
+
+
+  console.log("id",id);
+
+
+ 
+
+// console.log("id",id);
+// console.log("noof completed jobs", noOfCompletedJobs);
+
 
   return (
     <div className="bg-gray-100 mx-auto py-2 px-8">
@@ -96,7 +124,7 @@ function TechnicianDetails() {
           </div>
           <div className="flex items-center p-6 gap-4">
             <h2 className="text-xl font-bold ">Jobs done</h2>
-            <div className="text-lg">7</div>
+            <div className="text-lg">{noOfCompletedJobs || 0}</div>
           </div>
         </div>
       </div>
@@ -175,7 +203,7 @@ function TechnicianDetails() {
       </button>
       <button
         className="bg-green-600 text-white p-4 rounded font-bold w-50 my-10 m-4 items-center flex flex-row gap-3 "
-        onClick={() => setShowModal(true)}
+        onClick={message}
       >
         <FaRegEnvelope />
         Message

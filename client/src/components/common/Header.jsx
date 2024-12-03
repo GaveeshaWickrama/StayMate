@@ -55,7 +55,8 @@ const Header = ({ toggleNavbar }) => {
     }
     else if (notification.notificationType === "requestToTechnicians") {
       // Navigate to the complaint details page with complaintId
-      navigate(`/technician/tasks`);
+      navigate(`/technician/${notification.complaintId}/task-details`);
+      console.log(`/technician/${notification.complaintId}/task-details`);
     }
 
     try {

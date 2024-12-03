@@ -41,6 +41,18 @@ function FinishedComplaintDetails({ complaint, complaintId }) {
 
   console.log("current user Id received in the finished complaint details part", currentUser.id);
 
+
+  const alreadyReviewed = Array.isArray(complaint?.technician?.reviews) && 
+    complaint?.technician.reviews.some(
+      (review) =>
+        review.reviewerId._id.toString() === currentUser.id.toString() &&
+        review.complaintID.toString() === complaintId.toString()
+    );
+
+    console.log("complant id",complaintId)
+    console.log("complaint",complaint)
+console.log("already reviewed?",alreadyReviewed);
+
   return (
     <div className="bg-gray-100 mx-auto py-2 px-8">
       {complaint.status==="hostCompleted" && (
@@ -63,23 +75,32 @@ function FinishedComplaintDetails({ complaint, complaintId }) {
           
         <>
 
-{(complaint.technician.reviews.some((review)=>review.reviewerId.toString() === currentUser.id.toString() &&
-review.complaintID.toString() === complaint._id.toString()
- )) && (<div> you have already published your review for this job.</div>)} 
 
 
- { (complaint.technician.reviews.some((review)=>review.reviewerId.toString() !== currentUser.id.toString() &&
-review.complaintID.toString() !== complaint._id.toString()
- )) && (
+
+{ 
+alreadyReviewed
+  ? (<div className="">
+    
+    <p>You have already published your review for the techncian </p>
+   
 <button
-          className="bg-blue-600 text-white p-4 rounded font-bold w-50 my-10 m-4"
-          onClick={() => setShowModal(true)}
+      className="bg-blue-600 text-white p-4 rounded font-bold w-50 my-10 m-4"
+      onClick={() => navigate('/host/manage-complaints')}
+    >
+      Go Back
+    </button>
 
-          >
-         Rate Technician 
-        </button>)
 
- }
+  </div>) : (
+    <button
+      className="bg-blue-600 text-white p-4 rounded font-bold w-50 my-10 m-4"
+      onClick={() => setShowModal(true)}
+    >
+      Rate Technician
+    </button>
+  )
+}
           <PopupForm
           isOpen={showModal}
           handleClose={() => setShowModal(false)}

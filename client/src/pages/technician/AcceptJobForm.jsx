@@ -27,7 +27,13 @@ const PopupForm = ({ isOpen, handleClose, handleSave, budgetItems, setBudgetItem
     handleSave(budgetItems); // Pass the budgetItems to the parent save function
   };
 
+
+  const totalValue = budgetItems.reduce((total, item) => total + (parseFloat(item.value) || 0), 0);
+
   if (!isOpen) return null;
+
+
+
 
   return (
     <div className="fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center">
@@ -72,6 +78,17 @@ const PopupForm = ({ isOpen, handleClose, handleSave, budgetItems, setBudgetItem
           >
             Add Expense
           </button>
+
+
+
+       
+
+          {/* Display the total value */}
+          <div className="mt-4">
+            <h3 className="text-xl font-bold">Total: LKR {totalValue.toFixed(2)}</h3>
+          </div>
+
+          
           <div className="flex justify-end mt-6">
             <button
               type="button"

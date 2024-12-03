@@ -44,6 +44,11 @@ function PendingComplaintDetails({ complaint, id }) {
   // useEffect(() => {
   //   confirmJob();
   // }, [id]);
+  // Calculate the total value based on the budgetItems or complaint.estimatedBudget
+  const totalValue = (complaint?.estimatedBudget && Array.isArray(complaint?.estimatedBudget) && complaint?.estimatedBudget.length > 0)
+  ? complaint?.estimatedBudget.reduce((total, item) => total + (parseFloat(item.value) || 0), 0)
+  : null;
+
 
   return (
     <div className="bg-gray-100 mx-auto py-2 px-8">
@@ -89,6 +94,11 @@ function PendingComplaintDetails({ complaint, id }) {
             </li>
           ))}
         </ul>
+         {/* Display the total value */}
+         <div className="mt-4">
+            <h3 className="text-xl font-bold">Total: LKR {totalValue?.toFixed(2)}</h3>
+          </div>
+
         <p className="bg-blue-100 p-3 m-3">Confirm if you accept</p>
         <button
           className="bg-red-600 text-white p-4 rounded font-bold w-50 my-5"

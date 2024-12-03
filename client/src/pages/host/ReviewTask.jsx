@@ -87,6 +87,10 @@ const ReviewTask = () =>  {
     navigate("/host/chat");
   }
 
+   // Calculate the total value based on the budgetItems or complaint.estimatedBudget
+   const totalValue = (complaint.estimatedBudget && Array.isArray(complaint.estimatedBudget) && complaint.estimatedBudget.length > 0)
+   ? complaint.estimatedBudget.reduce((total, item) => total + (parseFloat(item.value) || 0), 0)
+   : budgetItems?.reduce((total, item) => total + (parseFloat(item.value) || 0), 0);
 
   return (
    
@@ -147,7 +151,7 @@ const ReviewTask = () =>  {
 
 
 {Array.isArray(complaint.estimatedBudget) && complaint.estimatedBudget.length > 0 ? (
-              <p className="text-base flex flex-col items-center">
+              <p className="text-sm flex flex-col items-center">
                 <span className="font-bold">Estimated Budget:</span>{" "}Rs{" "}
                 <ul className="list-disc pl-5">
       {complaint.estimatedBudget.map((budgetItem, index) => (
@@ -156,6 +160,10 @@ const ReviewTask = () =>  {
         </li>
       ))}
     </ul>
+
+    <div className="mt-4">
+            <h3 className="text-base font-bold">Total:  {totalValue.toFixed(2)} LKR</h3>
+          </div>
               </p>
             ) : (
               <p className="text-base flex flex-col items-center text-gray-500">
@@ -163,14 +171,22 @@ const ReviewTask = () =>  {
               </p>
             )}
            {complaint.deadline && (
-  <p className="text-base flex flex-col self-center">
-    <span className="font-bold">Days Remaining:</span>{" "}
+            <p className="text-base flex flex-col self-center">
+  <span className="font-bold">
     {Math.ceil(
       (new Date(complaint.deadline).getTime() - new Date().getTime()) /
+        (1000 * 60 * 60 * 24)
+    ) >= 0
+      ? "Days Remaining:"
+      : "Date Exceeded:"}
+  </span>{" "}
+  {Math.ceil(
+    (new Date(complaint.deadline).getTime() - new Date().getTime()) /
       (1000 * 60 * 60 * 24)
-    )}{" "}
-    days
-  </p>
+  )}{" "}
+  days
+</p>
+
 )}
            
 
