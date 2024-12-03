@@ -57,6 +57,10 @@ const Header = ({ toggleNavbar }) => {
       // Navigate to the complaint details page with complaintId
       navigate(`/technician/tasks`);
     }
+    else if (notification.notificationType === "new_listing") {
+      //navigate to the seemore page of the property to be validated
+      navigate(`/moderator/NewPropertySeemore/${notification.complaintId}`)
+    }
 
     try {
       
