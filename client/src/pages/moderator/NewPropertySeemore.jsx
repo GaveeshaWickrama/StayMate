@@ -152,11 +152,8 @@ function NewPropertySeemore() {
           <div className="flex-shrink-0 pr-4">
             <h2 className="text-xl font-bold mb-2">Assessment Report</h2>
             <div className="flex-shrink-0">
-              <p>{property.deed}</p>
-              <ViewDeed
-                image={property.deed}
-                defaultImage={defaultdeed}
-              />
+              {/* <p>{property.deed}</p> */}
+              <ViewDeed deedId={property._id} />
             </div>
           </div>
           <div className="flex-grow px-4 border-l border-r border-gray-300">
