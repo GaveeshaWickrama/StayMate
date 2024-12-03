@@ -177,7 +177,10 @@ const propertySchema = new Schema({
     type: Schema.Types.ObjectId,
     default: null, // Set default value to null
   },
-
+  rejected_reason: {
+    type: String,
+    default: null,
+  },
 
 
 
