@@ -25,10 +25,10 @@ const DeedUpload = ({ property, setProperty }) => {
 
   return (
     <div className="container mx-auto px-8 mb-32">
-      <h2 className="text-4xl font-extrabold text-black-600 mb-8 border-b-4 border-blue-600 p-6 rounded-md shadow-sm">Upload Deed</h2>
+      <h2 className="text-4xl font-extrabold text-black-600 mb-8 border-b-4 border-blue-600 p-6 rounded-md shadow-sm">Assessment Report</h2>
       <div className="flex-col p-10 bg-gray-50 rounded-lg shadow-lg">
         <div className="mb-4">
-          <label className="text-2xl block mb-2 font-semibold">Deed (PDF)</label>
+          <label className="text-2xl block mb-2 font-semibold">Document (PDF)</label>
           <input 
             type="file" 
             accept="application/pdf"  // Accept only PDF

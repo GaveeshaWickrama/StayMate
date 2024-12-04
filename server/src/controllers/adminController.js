@@ -356,6 +356,12 @@ const getRegistrationsByDay = async (req, res) => {
       return res.status(400).json({ error: "Invalid date format." });
     }
 
+    // Generate a full date range
+    const dateRange = [];
+    for (let d = new Date(start); d <= end; d.setDate(d.getDate() + 1)) {
+      dateRange.push(d.toISOString().slice(0, 10)); // Format as YYYY-MM-DD
+    }
+
     // Query for host and guest registrations grouped by date
     const registrations = await User.aggregate([
       {
@@ -386,12 +392,21 @@ const getRegistrationsByDay = async (req, res) => {
       },
     ]);
 
-    // Format the result for better readability
-    const formattedResult = registrations.map((entry) => {
+    // Convert the results into a map for easy lookup
+    const registrationMap = new Map();
+    registrations.forEach((entry) => {
       const data = { date: entry._id };
       entry.registrations.forEach((reg) => {
         data[reg.role] = reg.count;
       });
+      registrationMap.set(entry._id, data);
+    });
+
+    // Create the final output with all dates
+    const formattedResult = dateRange.map((date) => {
+      const data = registrationMap.get(date) || { date };
+      data.guest = data.guest || 0;
+      data.host = data.host || 0;
       return data;
     });
 
@@ -401,6 +416,9 @@ const getRegistrationsByDay = async (req, res) => {
     res.status(500).json({ error: "Internal server error" });
   }
 };
+
+
+
 module.exports = {
   getAllUsers,
   createUser,

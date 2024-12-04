@@ -1,6 +1,16 @@
 // complaintModel.js
 const mongoose = require('mongoose');
 
+
+
+const BudgetItemSchema = new mongoose.Schema({
+  expense: { type: String, required: true },
+  value: { type: Number, required: true },
+  // type: { type: String, enum: ["expense", "profit", "other"], default: "expense" }, // Optional classification
+
+});
+
+
 const complaintSchema = new mongoose.Schema({
   reservationId: {
     type: mongoose.Schema.Types.ObjectId,
@@ -13,10 +23,7 @@ const complaintSchema = new mongoose.Schema({
     required:true
   }, */
 
-  estimatedBudget: {
-    type: Number,
-    required: false, // or true if it's mandatory
-  },
+  estimatedBudget: [BudgetItemSchema], 
   assignTaskComments:{
     type:String,
     required:false
@@ -85,11 +92,17 @@ const complaintSchema = new mongoose.Schema({
     default: Date.now,
   },
 
- 
+ extended : {
+  type:Boolean,
+  required:false
+ }
   
 
   
 });
+
+
+
 
 // Reusable function to update complaints
 async function updatePendingTechnicianApproval() {

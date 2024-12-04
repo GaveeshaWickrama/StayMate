@@ -75,7 +75,7 @@ async function getTechnicianByIdC(req, res) {
   id = mongoose.Types.ObjectId.createFromHexString(id);
 
   try {
-    const technicianDetails = await Technician.findById(id)
+    let technicianDetails = await Technician.findById(id)
       .populate("userId")
 
       // const filteredComplaints = complaints.filter(complaint => {
@@ -84,7 +84,21 @@ async function getTechnicianByIdC(req, res) {
 
       .exec();
     if (!technicianDetails) {
-      return res.status(404).json({ message: "technician not found" });
+      try{
+        //  id = mongoose.Types.ObjectId.createFromHexString(id);
+
+
+         technicianDetails = await Technician.findOne({userId:id})
+      
+      }catch(error){
+        console.error("Error fetching technician details with user ID as well:", error); // Log the error
+
+      }
+
+      if(!technicianDetails){
+        return res.status(404).json({ message: "technician not found" });
+
+      }
     }
     res.status(200).json(technicianDetails);
   } catch (error) {

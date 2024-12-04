@@ -88,7 +88,7 @@ const TechnicianProfile = ({ profile, currentUser, id }) => {
           </div> */}
         </div>
       </div>
-      <div className="mt-6">
+      {/* <div className="mt-6">
         <h2 className="text-2xl font-bold text-gray-700 mb-4">Ratings</h2>
         <div className="space-y-4">
           <div className="bg-gray-100 rounded-lg p-4 shadow-lg transition transform hover:scale-105">
@@ -110,7 +110,7 @@ const TechnicianProfile = ({ profile, currentUser, id }) => {
             <p className="text-gray-500 text-sm mt-2">- Guest Name</p>
           </div>
         </div>
-      </div>
+      </div> */}
     </div>
   );
 };

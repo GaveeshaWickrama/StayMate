@@ -18,8 +18,9 @@ import {
   Link,
 } from "react-router-dom";
 import ProgressBar from "../technician/components/ProgressBar";
+import Reviews from "../technician/Reviews";
 
-export default function ReviewTask() {
+const ReviewTask = () =>  {
   // const location = useLocation();
   // const { complaintId } = location.state || {};
   const {complaintId} = useParams();
@@ -27,7 +28,7 @@ export default function ReviewTask() {
   const [complaint, setComplaint] = useState(null);
   console.log(`complaint id before entering use effect: ${complaint}`);
 
-
+  const navigate = useNavigate();
 
   
     const fetchComplaint = async () => {
@@ -67,6 +68,7 @@ export default function ReviewTask() {
   }
   
 
+
   const review = async (complaintId) => {
   
     if (!complaintId) {
@@ -84,17 +86,14 @@ export default function ReviewTask() {
   const messageUser = () => {
     navigate("/host/chat");
   }
-  return (
-    // <div className="bg-gray-100 mx-auto py-2 px-8">
-    //     <div className='flex mb-1 border-b-4 border-blue-600 p-6 rounded-md shadow-sm bg-white'>
-    //     <h1 className="flex items-center text-4xl font-extrabold text-black-600">
-    //      Review Complaint
-    //     </h1>
-    //     <div className="flex items-center text-gray-600 ml-6 mt-3">
 
-    //     </div>
-    //   </div>
-    // </div>
+   // Calculate the total value based on the budgetItems or complaint.estimatedBudget
+   const totalValue = (complaint.estimatedBudget && Array.isArray(complaint.estimatedBudget) && complaint.estimatedBudget.length > 0)
+   ? complaint.estimatedBudget.reduce((total, item) => total + (parseFloat(item.value) || 0), 0)
+   : budgetItems?.reduce((total, item) => total + (parseFloat(item.value) || 0), 0);
+
+  return (
+   
 
     <div className="bg-gray-100 mx-auto py-2 px-8">
       <div className="flex mb-1 border-b-4 border-blue-600 p-6 rounded-md shadow-sm bg-white">
@@ -142,15 +141,29 @@ export default function ReviewTask() {
             {complaint.taskCompletedDate && (
               <p className="text-base flex flex-col self-center">
                 <span className="font-bold">Completed Date:</span>{" "}
-                {complaint.taskCompletedDate}
+                {new Date(complaint.taskCompletedDate).toLocaleDateString('en-US', {
+    year: 'numeric',
+    month: 'long',
+    day: 'numeric',
+  }) || "No Date Available"}
               </p>
             )}
 
 
-{complaint.estimatedBudget ? (
-              <p className="text-base flex flex-col items-center">
+{Array.isArray(complaint.estimatedBudget) && complaint.estimatedBudget.length > 0 ? (
+              <p className="text-sm flex flex-col items-center">
                 <span className="font-bold">Estimated Budget:</span>{" "}Rs{" "}
-                {complaint.estimatedBudget} 
+                <ul className="list-disc pl-5">
+      {complaint.estimatedBudget.map((budgetItem, index) => (
+        <li key={index}>
+          <span className="font-semibold">{budgetItem.expense}:</span> Rs {budgetItem.value}
+        </li>
+      ))}
+    </ul>
+
+    <div className="mt-4">
+            <h3 className="text-base font-bold">Total:  {totalValue.toFixed(2)} LKR</h3>
+          </div>
               </p>
             ) : (
               <p className="text-base flex flex-col items-center text-gray-500">
@@ -158,14 +171,22 @@ export default function ReviewTask() {
               </p>
             )}
            {complaint.deadline && (
-  <p className="text-base flex flex-col self-center">
-    <span className="font-bold">Days Remaining:</span>{" "}
+            <p className="text-base flex flex-col self-center">
+  <span className="font-bold">
     {Math.ceil(
       (new Date(complaint.deadline).getTime() - new Date().getTime()) /
+        (1000 * 60 * 60 * 24)
+    ) >= 0
+      ? "Days Remaining:"
+      : "Date Exceeded:"}
+  </span>{" "}
+  {Math.ceil(
+    (new Date(complaint.deadline).getTime() - new Date().getTime()) /
       (1000 * 60 * 60 * 24)
-    )}{" "}
-    days
-  </p>
+  )}{" "}
+  days
+</p>
+
 )}
            
 
@@ -181,7 +202,7 @@ export default function ReviewTask() {
             <div className="bg-white p-8 flex flex-col">
               <h2 className="text-xl font-bold pb-2">Proof Images</h2>
               <p className="flex flex-row gap-3 flex-wrap">
-                {complaint.proofImages &&
+                {Array.isArray(complaint.proofImages) &&
                   complaint.proofImages.map((image, index) => (
                     <img
                       key={index}
@@ -221,8 +242,8 @@ export default function ReviewTask() {
             <h2 className="text-xl font-bold mb-2">Assigned Technician</h2>
             <div className="text-xl card">
               {" "}
-              {complaint.technician.userId.firstName}{" "}
-              {complaint.technician.userId.lastName}
+              {complaint.technician?.userId?.firstName}{" "}
+  {complaint.technician?.userId?.lastName}
             </div>
           </div>
 
@@ -239,8 +260,8 @@ export default function ReviewTask() {
             <div className="flex flex-col flex-1">
               <h3 className="text-lg font-bold">
                 {" "}
-                {complaint.technician.userId.firstName}{" "}
-                {complaint.technician.userId.lastName}
+                {complaint.technician?.userId?.firstName}{" "}
+{complaint.technician?.userId?.lastName}
               </h3>
               <h2 className="text-base font-bold">
                 {complaint.technician.subRole}
@@ -268,13 +289,19 @@ export default function ReviewTask() {
         <h2 className="text-xl font-bold mb-2">User Description</h2>
         <p className="text-lg">{complaint.description}</p>
         <button
-          className="bg-blue-600 text-white p-2 rounded font-bold flex items-center"
-          onClick={() => review(complaint._id)}
-          disabled={!complaintId || !complaint}
+          className= {!complaintId || !complaint || complaint.status === 'jobCompleted' ? "bg-gray-600 text-white p-2 rounded font-bold flex items-center" : "bg-blue-600 text-white p-2 rounded font-bold flex items-center"}
+          onClick={() => complaint._id && review(complaint._id)}
+          disabled={!complaintId || !complaint || complaint.status === 'jobCompleted'
+         
+
+          }
         >
-          {!complaintId || !complaint ? "Loading..." : "Confirm"}
+          {!complaintId || !complaint || complaint.status === 'jobCompleted' ? "Back" : "Confirm"}
         </button>
       </div>
     </div>
   );
 }
+
+
+export default ReviewTask;

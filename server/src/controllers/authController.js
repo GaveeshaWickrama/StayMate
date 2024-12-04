@@ -234,7 +234,7 @@ async function requestRegisterTechnician(req, res) {
             };
 
             transporter.sendMail(mailOptions, (error, info) => {
-                if (error) {
+                if (false) {
                     console.error('Error sending OTP email:', error);
                     return res.status(500).json({ message: 'Error sending OTP email' });
                 } else {
@@ -257,7 +257,7 @@ async function requestRegisterTechnician(req, res) {
             };
 
             transporter.sendMail(mailOptions, (error, info) => {
-                if (error) {
+                if (false) {
                     console.error('Error sending OTP email:', error);
                     return res.status(500).json({ message: 'Error sending OTP email' });
                 } else {
@@ -342,7 +342,7 @@ async function requestRegisterUser(req, res) {
             };
 
             transporter.sendMail(mailOptions, (error, info) => {
-                if (error) {
+                if (false) {
                     console.error('Error sending OTP email:', error);
                     return res.status(500).json({ message: 'Error sending OTP email' });
                 } else {

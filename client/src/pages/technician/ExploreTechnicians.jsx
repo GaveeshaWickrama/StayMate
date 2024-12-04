@@ -53,7 +53,7 @@ const UserTile = ({ user, complaintId, goToDetails,  complaint, cityFromGeocodin
                         >
                         </input>
                        ))}
-                       {user.rating % 1 >= 0.5 && (
+                       {/* {user.rating % 1 >= 0.5 && (
                         <input
                         type="radio"
                         name="rating"
@@ -62,13 +62,15 @@ const UserTile = ({ user, complaintId, goToDetails,  complaint, cityFromGeocodin
                         checked
                         >
                         </input>
-                       )}
-                       <span className='m-1 text-xs font-bold'>{user.rating}</span>
+                       )} */}
+                       <span className='m-1 text-xs font-bold'>{user.rating ? user.rating.toFixed(1) : "N/A"}</span>
                        </div>
                         
                     </p>
                     <span className='text-black  text-xs flex flex-row items-center gap-0.5'><FaMapMarkerAlt />
                     {cityFromGeocoding}</span>
+                    
+                   
                     </div>
                 </div>
             </div>
@@ -84,6 +86,7 @@ function ExploreTechnicians() {
   console.log("complaint in the main functional component", complaint);
 
   const [users, setUsers] = useState([]);
+  const [activeJobs, setActiveJobs] = useState([]);
   const [searchQuery, setSearchQuery] = useState("");
   const [skillFilter, setSkillFilter] = useState("");
   const [locationFilter, setLocationFilter] = useState("");
@@ -134,6 +137,13 @@ function ExploreTechnicians() {
 
     fetchUsers();
   }, []);
+
+
+  
+ 
+
+  
+
 
   useEffect(() => {
     handleFilterChange();
@@ -309,6 +319,8 @@ function ExploreTechnicians() {
               complaintId={complaintId}
               goToDetails={goToDetails}
               cityFromGeocoding = {cityFromGeocoding}
+              
+
             />
           ))}
         </div>
@@ -326,6 +338,8 @@ function ExploreTechnicians() {
                   complaintId={complaintId}
                   goToDetails={goToDetails}
                   cityFromGeocoding = {cityFromGeocoding}
+                  
+
                 />
               )
           )}
@@ -343,6 +357,8 @@ function ExploreTechnicians() {
                 complaintId={complaintId}
                 goToDetails={goToDetails}
                 cityFromGeocoding = {cityFromGeocoding}
+                
+
               />
             ))
           ) : (

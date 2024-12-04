@@ -2,7 +2,7 @@ import React, { useState, useEffect } from "react";
 import { useAuth } from "../../context/auth";
 import axios from "axios";
 import TabButtons from "../../components/guest/TabButtons";
-
+import PopupForm from "../../pages/technician/UploadProofForm"
 import { useParams, useLocation, useNavigate, Link } from "react-router-dom";
 import {
   FaHome,
@@ -40,6 +40,9 @@ const TableComponent = ({ data }) => {
   const [sortCategory, setSortCategory] = useState("");
 
   const navigate = useNavigate();
+  const [showModal, setShowModal] = useState(false);
+
+
 
   useEffect(() => {
     let newData = data.filter(
@@ -226,7 +229,15 @@ const TableComponent = ({ data }) => {
                     <tr
                       key={item._id}
                       className="hover:bg-blue-100 cursor-pointer"
-                      onClick={() => handleRowClick(item._id)}
+                      
+
+                      onClick={(e) => {
+                        if (!showModal) { // Only trigger if the modal is not open
+                          // e.preventDefault();
+                          // e.stopPropagation(); // Stop potential conflicts
+                          handleRowClick(item._id); // Navigate to the details page
+                      }
+                      }}
                     >
                       <td>{item.category}</td>
                       <td>{item.description}</td>
@@ -248,22 +259,21 @@ const TableComponent = ({ data }) => {
                             </span>
                           </button>
                         )}
-                        {item.status === "pendingTechnicianApproval" && item.estimatedBudget != null && (
-                          <button className="">
-                            {" "}
-                            <span className="badge bg-yellow-200 badge-sm whitespace-nowrap">
-                              Pending Budget confirmation
-                            </span>
-                          </button>
-                        )}
-                        {item.status === "pendingTechnicianApproval"  && !item.estimatedBudget  &&  (
-                          <button className="">
-                            {" "}
-                            <span className="badge  bg-red-200 badge-sm whitespace-nowrap">
-                              pending Technician Approval
-                            </span>
-                          </button>
-                        )}
+                       {(item.status === "pendingTechnicianApproval" && Array.isArray(item.estimatedBudget) && item.estimatedBudget.length > 0) && (
+  <button className="">
+    <span className="badge bg-yellow-200 badge-sm whitespace-nowrap">
+      Pending Budget Confirmation
+    </span>
+  </button>
+)}
+
+{(item.status === "pendingTechnicianApproval" && (!Array.isArray(item.estimatedBudget) || item.estimatedBudget.length === 0)) && (
+  <button className="">
+    <span className="badge bg-red-200 badge-sm whitespace-nowrap">
+      Pending Technician Approval
+    </span>
+  </button>
+)}
                         {item.status === "active" && (
                           <span className="badge badge-ghost bg-orange-200 badge-sm">
                             active
@@ -288,15 +298,26 @@ const TableComponent = ({ data }) => {
                         )}
                       </td>
                       <td>
-                        <button
-                          className="bg-green-500 w-15 h-15 rounded-xl text-white text-xs p-2"
-                          onClick={() =>
-                            handleStatusChange(item.id, "in-progress")
-                          }
-                        >
-                          {" "}
-                          <span className="">Mark As Completed</span>
-                        </button>
+                      {item.status === "active" && (
+                        <>
+                                    <button className="bg-green-500 w-15 h-15 rounded-xl text-white text-xs p-2"  onClick={(e) => {
+                      e.preventDefault(); // Stop link behavior
+                      e.stopPropagation(); // Prevent row click
+                      setShowModal(true);
+
+        
+        }}
+                > <span className=''>Mark as Completed</span></button> 
+ <PopupForm
+              isOpen={showModal}
+              handleClose={() => setShowModal(false)}
+              complaintId={item._id}
+            />
+                        </>
+                       )}
+
+            
+
                       </td>
                     </tr>
                   );

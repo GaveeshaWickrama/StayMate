@@ -4,6 +4,7 @@ const propertyController = require("../controllers/propertyController");
 const { authToken, requireRole } = require("../middleware/authProvider");
 const uploadPropertyImages = require("../middleware/multerProperties"); // Import the new multer configuration
 const reviewController = require("../controllers/reviewController");
+const { getDeedByPropertyId } = require("../controllers/propertyController");
 
 // Create a new property (accessible by hosts and admins)
 router.post(
@@ -33,4 +34,7 @@ router.get("/", propertyController.getAllProperties);
 
 // Review routes related to properties
 router.get("/:propertyId/reviews", reviewController.getPropertyReviews);
+
+router.get("/deed/:propertyID", getDeedByPropertyId);
+
 module.exports = router;

@@ -78,8 +78,9 @@ const ReservationSection = ({
 
   const validateGuests = () => {
     let errors = {};
-    if (noOfGuests < 1 || noOfGuests > 100) {
-      errors.noOfGuests = "Number of guests must be between 1 and 100.";
+    if (noOfGuests < 1 || noOfGuests > 7) {
+      // Assuming 100 as a reasonable upper limit
+      errors.noOfGuests = "Number of guests must be between 1 and 7.";
     }
     if (errors.noOfGuests) {
       setErrors((prevErrors) => ({

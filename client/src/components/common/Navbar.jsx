@@ -1,6 +1,6 @@
 import React from "react";
 import { useSocketContext } from '../../context/SocketContext';
-import { Link, useNavigate } from "react-router-dom";
+import { Link, useNavigate, useLocation } from "react-router-dom";
 import { useAuth } from "../../context/auth";
 import { IconContext } from "react-icons";
 import { RiLogoutBoxRLine } from "react-icons/ri";
@@ -20,8 +20,9 @@ import { MdReportProblem } from "react-icons/md";
 import { MdOutlineTaskAlt } from "react-icons/md";
 import { FaTasks } from "react-icons/fa";
 import { GrTasks } from "react-icons/gr";
-import useTotalUnreadMessageCount from '../../hooks/useTotalUnreadMessageCount';
+import useTotalUnreadMessageCount from "../../hooks/useTotalUnreadMessageCount";
 import useConversation from "../../zustand/useConversation";
+import { FaCcAmazonPay } from "react-icons/fa6";
 
 const iconMap = {
   Home: "home",
@@ -42,6 +43,7 @@ const iconMap = {
   Chat: "chat",
   "View New Properties": <BsFillHousesFill />,
   Payments: <FaCreditCard />,
+  Payment_Details: <FaCreditCard />,
   Report: <MdAssessment />,
   Technicians: <MdBuild />,
   "My Listings": <CiCircleList />,
@@ -50,15 +52,16 @@ const iconMap = {
   "Active Tasks": <MdOutlineTaskAlt />,
   "Pending Tasks": <FaTasks />,
   Tasks: <GrTasks />,
+  "Add Payment Details": <FaCcAmazonPay/>
 };
 
-
 function Sidebar({ title, links, logout, isVisible, newMessageCount }) {
+  const location = useLocation();
   return (
     <nav
       className={`sidebar ${
         isVisible ? "visible" : ""
-      } h-full w-64 fixed top-20 left-0 bg-gray-800 z-2 text-white flex flex-col p-4`}
+      } h-full w-64 fixed top-20 left-0 bg-blue-500 z-2 text-white flex flex-col p-4`}
     >
       <h1 className="text-2xl font-bold mb-6">{title}</h1>
       <IconContext.Provider value={{ className: "inline-block mr-2" }}>
@@ -66,7 +69,7 @@ function Sidebar({ title, links, logout, isVisible, newMessageCount }) {
           <Link
             key={index}
             to={link.path}
-            className="mb-2 p-2 hover:bg-gray-700 rounded flex items-center"
+            className={` ${location.pathname === link.path ? 'active-tab' : 'mb-2 p-2 hover:bg-blue-200 hover:text-blue-900 rounded flex items-center'}`}
           >
             <span className="material-icons">{iconMap[link.label]}</span>
             <span>{link.label}</span>
@@ -92,12 +95,13 @@ function Sidebar({ title, links, logout, isVisible, newMessageCount }) {
 }
 
 function Navbar({ isVisible }) {
-  
   const { currentUser, logout } = useAuth();
   const navigate = useNavigate();
   useTotalUnreadMessageCount();
+  // const [activeTab, setActiveTab] = useState('Home'); // Default active tab
 
-  const {totalUnreadMessageCount} = useConversation();
+
+  const { totalUnreadMessageCount } = useConversation();
 
   const handleLogout = () => {
     logout();
@@ -150,9 +154,7 @@ function Navbar({ isVisible }) {
     { path: "/host/HostReviews", label: "Reviews" },
     { path: "/host/chat", label: "Chat" },
 
-    { path: "/host/addpaymentdetails", label: "Add Payment Details" }
-
-
+    { path: "/host/addpaymentdetails", label: "Payment_Details" },
   ];
 
   const technicianLinks = [
@@ -163,6 +165,7 @@ function Navbar({ isVisible }) {
     // { path: "/technician/requests/active-tasks", label: "Active Tasks" },
     { path: "/technician/tasks", label: "Tasks" },
     { path: '/technician/reviews/', label: "Reviews" },
+    { path: "/technician/chat", label: "Chat" },
   ];
 
   const publicLinks = [

@@ -40,7 +40,7 @@ function ManageUsers() {
           </Link>
         </div>
         <div className="text-center bg-gray-100 p-6 rounded-md shadow-sm hover:bg-gray-200">
-          <Link to="/admin/Moderator">
+          <Link to="/admin/ManageModerators">
             <MdSupervisorAccount
               size={70}
               className="text-purple-500 mx-auto mb-4"

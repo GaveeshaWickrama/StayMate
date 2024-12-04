@@ -21,7 +21,7 @@ function TechnicianDetails() {
   const hostID = currentUser.id;
   const [showModal, setShowModal] = useState(false);
   const [technician, setTechnician] = useState(null);
-
+  const [noOfCompletedJobs, setNoOfCompletedJobs] = useState(0);
 
   // const handleSave = async (e) => {
   //   e.preventDefault();
@@ -34,6 +34,11 @@ function TechnicianDetails() {
   // //   navigate("/host/manage-complaints");
   // // };
 
+
+  const message = () => {
+    navigate('/host/chat')
+  }
+
   useEffect(() => {
     const fetchTechnician = async () => {
       try {
@@ -44,12 +49,35 @@ function TechnicianDetails() {
       }
     };
 
+
+
+    const fetchCompletedJobs = async () => {
+      try {
+        const response = await axios.get(`${import.meta.env.VITE_API_URL}/technicians/${id}/noOfJobsCompleted`);
+        setNoOfCompletedJobs(response.data);
+      } catch (error) {
+        console.error('Error fetching completed jobs:', error);
+      }
+    };
+
     fetchTechnician();
+    fetchCompletedJobs();
   }, [id]);
 
   if (!technician) {
     return <div>Loading...</div>;
   }
+
+
+
+  console.log("id",id);
+
+
+ 
+
+// console.log("id",id);
+// console.log("noof completed jobs", noOfCompletedJobs);
+
 
   return (
     <div className="bg-gray-100 mx-auto py-2 px-8">
@@ -96,59 +124,72 @@ function TechnicianDetails() {
           </div>
           <div className="flex items-center p-6 gap-4">
             <h2 className="text-xl font-bold ">Jobs done</h2>
-            <div className="text-lg">7</div>
+            <div className="text-lg">{noOfCompletedJobs || 0}</div>
           </div>
         </div>
       </div>
-
       <div className="w-full rounded-lg p-6 bg-white shadow mt-2">
-        <h2 className="text-xl font-bold mb-3 pb-4">Reviews</h2>
+  <h2 className="text-xl font-bold mb-3 pb-4">Reviews</h2>
 
-        <div className="border-b flex flex-col items-start">
-          <div className="flex flex-row gap-2 p-2 items-center">
-            <div className="rounded-full w-10 h-10 bg-blue-100">
-              <img src={`  ${import.meta.env.VITE_API_URL}/uploads/profilePictures/test`} alt="" />
-            </div>
-            <div className="flex flex-col">
-              <span className="text-lg">chamma siri</span>
-              <span className="text-sm text-gray-500">2022-03-02</span>
-             
-            </div>
+  {/* Check if reviews exist */}
+  {technician?.reviews && technician.reviews.length > 0 ? (
+    technician.reviews.slice(0, 5).map((review, index) => (
+      <div key={index} className="border-b flex flex-col items-start mb-4 pb-4">
+        <div className="flex flex-row gap-2 p-2 items-center">
+          {/* Placeholder for profile picture */}
+          <div className="rounded-full w-10 h-10 bg-blue-100 overflow-hidden">
+            <img
+              src={`${import.meta.env.VITE_API_URL}/uploads/profilePictures/${review.userId}`}
+              alt={review.userName || "User"}
+              className="w-full h-full object-cover"
+            />
           </div>
-          <div className="p-1">
-                {/* <span className="text-base p-2">4.5</span> */}
-                <div className="rating rating-sm	 ">
-                  <input
-                    type="radio"
-                    name="rating-2"
-                    className="mask mask-star-2 bg-orange-400"
-                  />
-                  <input
-                    type="radio"
-                    name="rating-2"
-                    className="mask mask-star-2 bg-orange-400"
-                    defaultChecked
-                  />
-                  <input
-                    type="radio"
-                    name="rating-2"
-                    className="mask mask-star-2 bg-orange-400"
-                  />
-                  <input
-                    type="radio"
-                    name="rating-2"
-                    className="mask mask-star-2 bg-orange-400"
-                  />
-                  <input
-                    type="radio"
-                    name="rating-2"
-                    className="mask mask-star-2 bg-orange-400"
-                  />
-                </div>
-              </div>
-          <p className="text-lg pb-5 p-1">Attended to the issue immediately!</p>
+          {/* Reviewer details */}
+          <div className="flex flex-col">
+            <span className="text-lg">{review.userName || "Anonymous"}</span>
+            <span className="text-sm text-gray-500">
+              {new Date(review.date).toLocaleDateString()}
+            </span>
+          </div>
         </div>
+        {/* Rating */}
+        <p className="text-sm text-gray-500">
+
+<div className='rating w-3/5'>
+{[1,2,3,4,5].map((star)=> (
+ <input
+ key={star}
+ type="radio"
+ name="rating"
+ className={`mask mask-star ${star<=review.rating ? "bg-yellow-500": "bg-gray-300"}`}
+ disabled
+ checked={star <= Math.floor(review.rating)} //fill up to the whole number part
+ >
+ </input>
+))}
+{/* {user.rating % 1 >= 0.5 && (
+ <input
+ type="radio"
+ name="rating"
+ className='mask mask-star-half bg-yellow-500'
+ disabled
+ checked
+ >
+ </input>
+)} */}
+<span className='m-1 text-xs font-bold'>{review.rating ? review.rating.toFixed(1) : "N/A"}</span>
+</div>
+ 
+</p>
+        {/* Review comment */}
+        <p className="text-lg p-1">{review.review || "No comment provided."}</p>
       </div>
+    ))
+  ) : (
+    <p className="text-gray-500 text-center">No reviews available.</p>
+  )}
+</div>
+
 
     
 
@@ -162,7 +203,7 @@ function TechnicianDetails() {
       </button>
       <button
         className="bg-green-600 text-white p-4 rounded font-bold w-50 my-10 m-4 items-center flex flex-row gap-3 "
-        onClick={() => setShowModal(true)}
+        onClick={message}
       >
         <FaRegEnvelope />
         Message

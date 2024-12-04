@@ -17,12 +17,12 @@ const UpdateModerator = () => {
         role: 'moderator',
         phone: ''
     });
+    const [errors, setErrors] = useState({});
     const [successMessage, setSuccessMessage] = useState('');
     const [errorMessage, setErrorMessage] = useState('');
     const navigate = useNavigate();
 
     useEffect(() => {
-        // Fetch moderator details when the component mounts
         const fetchModerator = async () => {
             try {
                 const response = await axios.get(`${import.meta.env.VITE_API_URL}/admin/moderator/${id}`, {
@@ -39,8 +39,51 @@ const UpdateModerator = () => {
         fetchModerator();
     }, [id, token]);
 
+    const validateForm = () => {
+        const errors = {};
+        let valid = true;
+
+        if (!moderator.firstName || !/^[a-zA-Z]+$/.test(moderator.firstName)) {
+            errors.firstName = 'First name is required and must contain only letters.';
+            valid = false;
+        }
+        if (!moderator.lastName || !/^[a-zA-Z]+$/.test(moderator.lastName)) {
+            errors.lastName = 'Last name is required and must contain only letters.';
+            valid = false;
+        }
+        if (!moderator.email || !/\S+@\S+\.\S+/.test(moderator.email)) {
+            errors.email = 'Please enter a valid email address.';
+            valid = false;
+        }
+        if (!moderator.password || moderator.password.length < 6) {
+            errors.password = 'Password must be at least 6 characters long.';
+            valid = false;
+        }
+        if (!moderator.nicPassport || !/^[a-zA-Z0-9]+$/.test(moderator.nicPassport)) {
+            errors.nicPassport = 'NIC/Passport is required and must be alphanumeric.';
+            valid = false;
+        }
+        if (!moderator.phone || !/^\d{10}$/.test(moderator.phone)) {
+            errors.phone = 'Phone number must be 10 digits.';
+            valid = false;
+        }
+        if (!moderator.gender) {
+            errors.gender = 'Please select a gender.';
+            valid = false;
+        }
+        if (!moderator.address) {
+            errors.address = 'Address is required.';
+            valid = false;
+        }
+
+        setErrors(errors);
+        return valid;
+    };
+
     const handleSubmit = async (e) => {
         e.preventDefault();
+        if (!validateForm()) return;
+
         try {
             const response = await axios.patch(`${import.meta.env.VITE_API_URL}/admin/moderator/${id}`, moderator, {
                 headers: {
@@ -50,14 +93,14 @@ const UpdateModerator = () => {
             if (response.status === 200) {
                 setSuccessMessage('Moderator updated successfully!');
                 setTimeout(() => {
-                    setSuccessMessage(''); // Clear the success message after a few seconds
-                    navigate('/admin/ManageModerators'); // Redirect back to the moderator list
-                }, 3000); // Message disappears after 3 seconds
+                    setSuccessMessage('');
+                    navigate('/admin/ManageModerators');
+                }, 3000);
             }
         } catch (error) {
             console.error('Error updating moderator', error);
             setErrorMessage('Failed to update moderator. Please try again.');
-            setTimeout(() => setErrorMessage(''), 5000); // Clear error message after 5 seconds
+            setTimeout(() => setErrorMessage(''), 5000);
         }
     };
 
@@ -73,14 +116,12 @@ const UpdateModerator = () => {
         <div className="bg-white shadow-md rounded-lg p-6 max-w-xl mx-auto">
             <h2 className="text-2xl font-semibold mb-6 text-center">Update Moderator</h2>
 
-            {/* Success Message */}
             {successMessage && (
                 <div className="bg-green-500 text-white p-4 rounded-md mb-4 text-center">
                     {successMessage}
                 </div>
             )}
 
-            {/* Error Message */}
             {errorMessage && (
                 <div className="bg-red-500 text-white p-4 rounded-md mb-4 text-center">
                     {errorMessage}
@@ -88,100 +129,22 @@ const UpdateModerator = () => {
             )}
 
             <form onSubmit={handleSubmit}>
-                <div className="mb-4">
-                    <label className="block font-medium text-gray-700">First Name</label>
-                    <input
-                        type="text"
-                        name="firstName"
-                        value={moderator.firstName}
-                        onChange={handleChange}
-                        className="border p-2 w-full rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-                    />
-                </div>
-                <div className="mb-4">
-                    <label className="block font-medium text-gray-700">Last Name</label>
-                    <input
-                        type="text"
-                        name="lastName"
-                        value={moderator.lastName}
-                        onChange={handleChange}
-                        className="border p-2 w-full rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-                    />
-                </div>
-                <div className="mb-4">
-                    <label className="block font-medium text-gray-700">Email</label>
-                    <input
-                        type="email"
-                        name="email"
-                        value={moderator.email}
-                        onChange={handleChange}
-                        className="border p-2 w-full rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-                    />
-                </div>
-                <div className="mb-4">
-                    <label className="block font-medium text-gray-700">Password</label>
-                    <input
-                        type="password"
-                        name="password"
-                        value={moderator.password}
-                        onChange={handleChange}
-                        className="border p-2 w-full rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-                    />
-                </div>
-                <div className="mb-4">
-                    <label className="block font-medium text-gray-700">NIC/Passport</label>
-                    <input
-                        type="text"
-                        name="nicPassport"
-                        value={moderator.nicPassport}
-                        onChange={handleChange}
-                        className="border p-2 w-full rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-                    />
-                </div>
-                <div className="mb-4">
-                    <label className="block font-medium text-gray-700">Gender</label>
-                    <select
-                        name="gender"
-                        value={moderator.gender}
-                        onChange={handleChange}
-                        className="border p-2 w-full rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-                    >
-                        <option value="">Select Gender</option>
-                        <option value="male">Male</option>
-                        <option value="female">Female</option>
-                        <option value="other">Other</option>
-                    </select>
-                </div>
-                <div className="mb-4">
-                    <label className="block font-medium text-gray-700">Address</label>
-                    <textarea
-                        name="address"
-                        value={moderator.address}
-                        onChange={handleChange}
-                        className="border p-2 w-full rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-                    />
-                </div>
-                <div className="mb-4">
-                    <label className="block font-medium text-gray-700">Phone</label>
-                    <input
-                        type="text"
-                        name="phone"
-                        value={moderator.phone}
-                        onChange={handleChange}
-                        className="border p-2 w-full rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-                    />
-                </div>
-                <div className="mb-4">
-                    <label className="block font-medium text-gray-700">Role</label>
-                    <input
-                        type="text"
-                        name="role"
-                        value={moderator.role}
-                        onChange={handleChange}
-                        className="border p-2 w-full rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-                        disabled
-                    />
-                </div>
+                {['firstName', 'lastName', 'email', 'password', 'nicPassport', 'address', 'phone', 'gender'].map((field) => (
+                    <div className="mb-4" key={field}>
+                        <label className="block font-medium text-gray-700">
+                            {field.charAt(0).toUpperCase() + field.slice(1).replace(/([A-Z])/g, ' $1')}
+                        </label>
+                        <input
+                            type={field === 'password' ? 'password' : 'text'}
+                            name={field}
+                            value={moderator[field]}
+                            onChange={handleChange}
+                            className="border p-2 w-full rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                        />
+                        {errors[field] && <p className="text-red-500 text-sm mt-1">{errors[field]}</p>}
+                    </div>
+                ))}
+
                 <button
                     type="submit"
                     className="bg-blue-500 text-white px-6 py-2 rounded-md hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500"

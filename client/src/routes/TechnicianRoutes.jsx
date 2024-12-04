@@ -15,7 +15,7 @@ import PendingTaskDetails from '../pages/technician/components/PendingTaskDetail
 import ActiveTaskDetails from '../pages/technician/components/ActiveTaskDetails';
 import Reviews from '../pages/technician/Reviews';
 import { AuthProvider } from '../context/auth';
-
+import ChatHomePage from "../pages/common/ChatHomePage";
 
 function TechnicianRoutes() {
   const { currentUser, loading} = useAuth();
@@ -41,6 +41,7 @@ function TechnicianRoutes() {
               <Route path="/:id/task-details" element={<TaskDetails />} />
               <Route path="/:id/task/estimateBudget" element={<PendingTaskDetails />} />
               <Route path="/reviews/" element={<Reviews />} />
+              <Route path="/chat/" element={<ChatHomePage />} />
 
             </>
           ) : (

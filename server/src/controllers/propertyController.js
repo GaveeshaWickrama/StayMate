@@ -1,4 +1,5 @@
 const Property = require("../models/propertyModel");
+const mongoose = require("mongoose");
 const User = require("../models/userModel")
 const PropertyVerified = require("../models/propertyverifiedModel");
 const path = require("path");
@@ -410,9 +411,41 @@ async function getAllProperties(req, res) {
   }
 }
 
-module.exports = {
-  getAllProperties,
-};
+const fs = require("fs");
+
+async function getDeedByPropertyId(req, res) {
+  try {
+      const { propertyID } = req.params;
+      console.log("Fetching deed for propertyID:", propertyID);
+
+      // Convert propertyID to ObjectId using 'new'
+      const propertyVerified = await PropertyVerified.findOne({
+          propertyID: new mongoose.Types.ObjectId(propertyID),
+      });
+
+      if (!propertyVerified || !propertyVerified.deed) {
+          return res.status(404).json({ message: "Deed file not found for this property." });
+      }
+
+      const deedPath = path.resolve(__dirname, "../../", propertyVerified.deed);
+      console.log("Deed Path:", deedPath);
+
+      if (!fs.existsSync(deedPath)) {
+          console.error("File does not exist:", deedPath);
+          return res.status(404).json({ message: "Deed file does not exist." });
+      }
+
+      res.download(deedPath, (err) => {
+          if (err) {
+              console.error("Error sending deed file:", err);
+              res.status(500).send("Error sending deed file");
+          }
+      });
+  } catch (error) {
+      console.error("Error fetching deed file:", error.message);
+      res.status(500).json({ message: "Server error fetching deed file." });
+  }
+}
 
 
 
@@ -422,4 +455,5 @@ module.exports = {
   getPropertyById,
   getAllProperties,
   getPropertyHostById, 
+  getDeedByPropertyId,
 };
