@@ -26,8 +26,8 @@
     "otp-generator": "^4.0.1",
     "path": "^0.12.7",
     "react-slick": "^0.30.2",
-    "slick-carousel": "^1.8.1",
     "server": "file:",
+    "slick-carousel": "^1.8.1",
     "socket.io": "^4.7.5",
     "stripe": "^16.6.0",
     "validator": "^13.12.0"

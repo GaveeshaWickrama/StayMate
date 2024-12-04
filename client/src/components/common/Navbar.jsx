@@ -1,6 +1,6 @@
 import React from "react";
-import { useSocketContext } from "../../context/SocketContext";
-import { Link, useNavigate } from "react-router-dom";
+import { useSocketContext } from '../../context/SocketContext';
+import { Link, useNavigate, useLocation } from "react-router-dom";
 import { useAuth } from "../../context/auth";
 import { IconContext } from "react-icons";
 import { RiLogoutBoxRLine } from "react-icons/ri";
@@ -56,11 +56,12 @@ const iconMap = {
 };
 
 function Sidebar({ title, links, logout, isVisible, newMessageCount }) {
+  const location = useLocation();
   return (
     <nav
       className={`sidebar ${
         isVisible ? "visible" : ""
-      } h-full w-64 fixed top-20 left-0 bg-gray-800 z-2 text-white flex flex-col p-4`}
+      } h-full w-64 fixed top-20 left-0 bg-blue-500 z-2 text-white flex flex-col p-4`}
     >
       <h1 className="text-2xl font-bold mb-6">{title}</h1>
       <IconContext.Provider value={{ className: "inline-block mr-2" }}>
@@ -68,7 +69,7 @@ function Sidebar({ title, links, logout, isVisible, newMessageCount }) {
           <Link
             key={index}
             to={link.path}
-            className="mb-2 p-2 hover:bg-gray-700 rounded flex items-center"
+            className={` ${location.pathname === link.path ? 'active-tab' : 'mb-2 p-2 hover:bg-blue-200 hover:text-blue-900 rounded flex items-center'}`}
           >
             <span className="material-icons">{iconMap[link.label]}</span>
             <span>{link.label}</span>
@@ -97,6 +98,8 @@ function Navbar({ isVisible }) {
   const { currentUser, logout } = useAuth();
   const navigate = useNavigate();
   useTotalUnreadMessageCount();
+  // const [activeTab, setActiveTab] = useState('Home'); // Default active tab
+
 
   const { totalUnreadMessageCount } = useConversation();
 
@@ -161,7 +164,8 @@ function Navbar({ isVisible }) {
     // { path: "/technician/requests/pending-tasks", label: "Pending Tasks" },
     // { path: "/technician/requests/active-tasks", label: "Active Tasks" },
     { path: "/technician/tasks", label: "Tasks" },
-    { path: "/technician/reviews/", label: "Reviews" },
+    { path: '/technician/reviews/', label: "Reviews" },
+    { path: "/technician/chat", label: "Chat" },
   ];
 
   const publicLinks = [

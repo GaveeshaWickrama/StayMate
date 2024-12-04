@@ -15,9 +15,10 @@ const storage = multer.diskStorage({
       uploadPath = 'uploads/profilepictures/';
     } else if (req.url.includes('/uploadProof')) {
       uploadPath = 'uploads/taskProof/';
-    } else if (req.url.includes('/complaint-details')) {
-      uploadPath = 'uploads/complaints/';
-    } 
+    }
+    // } else if (req.url.includes('/complaint-details')) {
+    //   uploadPath = 'uploads/complaints/';
+    // } 
      else if (req.url.includes('/uploadProof')) {
       uploadPath = 'uploads/proof/';
     } 

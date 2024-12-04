@@ -1,116 +1,175 @@
 import React, { useState, useEffect } from "react";
 import { useAuth } from "../../context/auth";
-
 import axios from "axios";
-import { useParams } from "react-router-dom";
 
 function NoReviews() {
   return (
     <div className="text-center mt-20">
-      <p className="text-lg text-gray-700 items-center">no Reviews found</p>
-      {/* <Link to="/host/add-technician" className="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600 inline-flex items-center space-x-2">
-        
-        
-      </Link> */}
+      <p className="text-lg text-gray-700 items-center">No Reviews Found</p>
     </div>
   );
 }
 
-async function Reviews() {
-  // const { id } = useParams();  //technician id
+function Reviews() {
   const { currentUser, loading } = useAuth();
-  
   const [reviews, setReviews] = useState([]);
-  // const [loading, setLoading] = useState(true);
+  const [complaints, setComplaints] = useState([]);
   const [error, setError] = useState(null);
-
-  if (loading) {
-    return <div>Loading application...</div>;
-  }
-
-  console.log("structure of the current user id", currentUser);
-  // console.log("this is the params ",id);
-  console.log(
-    "this is the current user id received by reviews frontend",
-    currentUser.id
-  );
+  const [sortOptions, setSortOptions] = useState({
+    date: "none", // Default: No sorting
+    rating: "none", // Default: No sorting
+  });
 
   useEffect(() => {
     const fetchReviews = async () => {
-      if (!currentUser) return;
       try {
         const response = await axios.get(
-          `${import.meta.env.VITE_API_URL}/technicians/reviews/${
-            currentUser.id
-          }`
+          `${import.meta.env.VITE_API_URL}/technicians/reviews/${currentUser.id}`
         );
-
-        console.log("Response from backend:", response.data); // Log the actual data
-
         setReviews(response.data);
-        // setLoading(false);
-        console.log(reviews);
       } catch (err) {
-        console.error("error fetching reviews", err);
-        setError("failed to load reviews");
-        setLoading(false);
+        console.error("Error fetching reviews", err);
+        setError("Failed to load reviews");
       }
     };
 
-    if (currentUser.id) {
+    if (currentUser?.id) {
       fetchReviews();
     }
-  }, [currentUser.id]);
+  }, [currentUser]);
+
+  useEffect(() => {
+    const fetchComplaints = async () => {
+      try {
+        const complaintData = await Promise.all(
+          reviews.map(async (review) => {
+            const response = await axios.get(
+              `${import.meta.env.VITE_API_URL}/complaints/complaint-details/${review.complaintID}`
+            );
+            return response.data;
+          })
+        );
+        setComplaints(complaintData);
+      } catch (err) {
+        console.error("Error fetching complaint data", err);
+      }
+    };
+
+    if (reviews.length > 0) {
+      fetchComplaints();
+    }
+  }, [reviews]);
+
+  // Sort Reviews Based on Dropdown Selection
+  const sortedReviews = [...reviews].sort((a, b) => {
+    if (sortOptions.date !== "none") {
+      return sortOptions.date === "asc"
+        ? new Date(a.createdAt) - new Date(b.createdAt)
+        : new Date(b.createdAt) - new Date(a.createdAt);
+    } else if (sortOptions.rating !== "none") {
+      return sortOptions.rating === "asc" ? a.rating - b.rating : b.rating - a.rating;
+    }
+    return 0; // No sorting applied
+  });
 
   if (loading) {
-    return <div>Loading reviews</div>; //show loading text while data is being fetched
-  }
-
-  // Handle case where `currentUser` is still null
-  if (!currentUser) {
-    return <div>No user found.</div>;
+    return <div>Loading reviews...</div>;
   }
 
   if (error) {
     return <div>{error}</div>;
   }
 
-  if (reviews.length === 0) {
+  if (sortedReviews.length === 0) {
     return <NoReviews />;
   }
 
-  console.log("this is after the data is retrieved");
-  console.log(
-    "this is the response received as the reviews for the technician id",
-    response.data
-  );
   return (
-    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 p-6">
-      {/* <!-- Review Card --> */}
-      {reviews.map((review) => (
-        <div class="bg-white shadow-md rounded-lg p-6 flex flex-col space-y-4">
-          <div class="flex items-center space-x-4">
-            {/* <!-- Profile Picture --> */}
-            <img
-              src="https://via.placeholder.com/50"
-              alt="Reviewer Profile"
-              class="w-12 h-12 rounded-full border border-gray-200"
-            />
-            {/* <!-- Reviewer Details --> */}
-            <div>
-              <h3 class="text-lg font-semibold text-gray-800">Reviewer Name</h3>
-              <p class="text-sm text-gray-500">Reviewed on: October 12, 2024</p>
-            </div>
+    <div className="p-6">
+      {/* Sort Dropdown Menus */}
+      <div className="flex justify-between items-center mb-6">
+        <div className="flex items-center space-x-4">
+          {/* Sort by Date Dropdown */}
+          <div className="relative">
+            <label className="mr-2 text-gray-700 font-medium">Sort by Date:</label>
+            <select
+              className="border rounded px-4 py-2"
+              value={sortOptions.date}
+              onChange={(e) =>
+                setSortOptions((prev) => ({
+                  ...prev,
+                  date: e.target.value,
+                }))
+              }
+            >
+              <option value="none">None</option>
+              <option value="asc">Ascending</option>
+              <option value="desc">Descending</option>
+            </select>
           </div>
-          {/* <!-- Rating --> */}
-          <div class="flex items-center">
-            <span class="text-yellow-500 text-lg">★★★★☆</span>
-            <span class="ml-2 text-gray-600 text-sm">({review.rating}/5)</span>
+
+          {/* Sort by Rating Dropdown */}
+          <div className="relative">
+            <label className="mr-2 text-gray-700 font-medium">Sort by Rating:</label>
+            <select
+              className="border rounded px-4 py-2"
+              value={sortOptions.rating}
+              onChange={(e) =>
+                setSortOptions((prev) => ({
+                  ...prev,
+                  rating: e.target.value,
+                }))
+              }
+            >
+              <option value="none">None</option>
+              <option value="asc">Ascending</option>
+              <option value="desc">Descending</option>
+            </select>
           </div>
-          {/* <!-- Review Text --> */}
-          <p class="text-gray-700 text-sm">{review.review}</p>
         </div>
-      ))}
+      </div>
+
+      {/* Reviews Grid */}
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+        {sortedReviews.map((review) => {
+          const matchingComplaint = complaints.find(
+            (complaint) => complaint._id === review.complaintID
+          );
+          return (
+            <div key={review._id} className="bg-white shadow-md rounded-lg p-6 flex flex-col space-y-4">
+              <div className="flex items-center space-x-4">
+                <img
+                  src="https://via.placeholder.com/50"
+                  alt="Reviewer Profile"
+                  className="w-12 h-12 rounded-full border border-gray-200"
+                />
+                <div>
+                  <h3 className="text-lg font-semibold text-gray-800">
+                    {matchingComplaint?.reservationId?.property?.host_id?.firstName || "N/A"}{" "}
+                    {matchingComplaint?.reservationId?.property?.host_id?.lastName || "N/A"}
+                  </h3>
+                  <p className="text-sm text-gray-500">
+                    Reviewed on:{" "}
+                    {new Date(review.createdAt).toLocaleDateString("en-US", {
+                      year: "numeric",
+                      month: "long",
+                      day: "numeric",
+                    })}
+                  </p>
+                  <p className="text-xs py-1">{matchingComplaint?.title}</p>
+                </div>
+              </div>
+              <div className="flex items-center">
+                <span className="text-yellow-500 text-lg">★★★★☆</span>
+                <span className="ml-2 text-gray-600 text-sm">
+                  ({review.rating}/5)
+                </span>
+              </div>
+              <p className="text-gray-700 text-sm">{review.review}</p>
+            </div>
+          );
+        })}
+      </div>
     </div>
   );
 }

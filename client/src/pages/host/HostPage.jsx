@@ -30,6 +30,7 @@ function GreetingBox({ name }) {
   );
 }
 
+// Main Host Dashboard
 function HostPage() {
   const { token } = useAuth();
 
@@ -103,7 +104,7 @@ function HostPage() {
 
   return (
     <main className="p-6 min-h-screen bg-gradient-to-r from-blue-50 to-blue-100">
-      <GreetingBox name="Sachin Elvitigala" />
+      <GreetingBox name="Host User" />
 
       <h3 className="text-4xl font-bold text-gray-800 mb-8">Dashboard</h3>
 
@@ -116,8 +117,8 @@ function HostPage() {
             LKR {netRevenue.toLocaleString()}
           </p>
         </div>
-        <div className="bg-white shadow-xl p-6 rounded-lg flex flex-col items-center transform transition duration-300 hover:scale-105">
-          <FaHome className="text-5xl text-blue-600 mb-3 animate-pulse" />
+        <div className="bg-white shadow-lg p-6 rounded-lg flex flex-col items-center">
+          <FaClipboardList className="text-5xl text-purple-600 mb-3" />
           <h3 className="text-xl font-semibold text-gray-700">Total Properties</h3>
           <p className="text-2xl font-bold text-gray-900">
             {summary.propertyCount}

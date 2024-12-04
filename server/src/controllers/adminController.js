@@ -3,6 +3,8 @@ const mongoose = require("mongoose");
 const Technician = require("../models/technicianModel");
 const Property = require("../models/propertyModel"); // Assuming you have a Property model
 const Reservation = require("../models/reservationModel");
+const Host = require("../models/hostModel");
+const Guest = require("../models/guestModel");
 
 // Get all Moderators
 const getModerators = async (req, res) => {
@@ -155,6 +157,34 @@ const getAllTechnicians = async (req, res) => {
     res.status(400).json({ error: error.message });
   }
 };
+
+// Get all Hosts
+const getAllHosts = async (req, res) => {
+  try {
+    const hosts = await Host.find().populate(
+      "userId",
+      "firstName lastName email phone"
+    ); // Optionally populate user fields
+    res.status(200).json(hosts);
+  } catch (error) {
+    res.status(400).json({ error: error.message });
+  }
+};
+
+// Get all guests
+const getAllGuests = async (req, res) => {
+  try {
+    const guests = await Guest.find().populate(
+      "userId",
+      "firstName lastName email phone"
+    ); // Optionally populate user fields
+    res.status(200).json(guests);
+  } catch (error) {
+    res.status(400).json({ error: error.message });
+  }
+};
+
+
 
 // Other User Functions
 const getAllUsers = async (req, res) => {
@@ -401,6 +431,8 @@ module.exports = {
   createModerator,
   deleteModerator,
   getAllTechnicians,
+  getAllGuests,
+  getAllHosts,
   getModerator,
   updateModerator,
   getUsersByRole,

@@ -10,9 +10,21 @@ function CompletedTaskDetails({complaint}) {
         <p className="text-lg">You successfully completed this job</p>
         <div className="bg-green-100 m-3 p-5 rounded-lg">
           <p>
-            Assigned Date: 2024-07-21 <br />
-            Completion Date: 2024-07-20 <br />
-            Response Time: 1 day <br />
+            Assigned Date: {complaint?.assignedDate
+    ? new Date(complaint.assignedDate).toLocaleDateString('en-US', {
+        year: 'numeric',
+        month: 'long',
+        day: 'numeric',
+      })
+    : 'Date not available'}<br />
+            Completion Date: {complaint?.taskCompletedDate
+    ? new Date(complaint.taskCompletedDate).toLocaleDateString('en-US', {
+        year: 'numeric',
+        month: 'long',
+        day: 'numeric',
+      })
+    : 'Date not available'} <br />
+          
           </p>
         </div>
       </div>

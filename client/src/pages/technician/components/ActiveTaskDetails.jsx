@@ -147,6 +147,7 @@ export default function ActiveTaskDetails({ complaint }) {
       console.log(response);
       if (response.status === 200) {
           alert('extend successful');
+          
          
       } else {
           alert('Failed to extend');
@@ -163,10 +164,10 @@ return (
     {/* <ProgressBar complaint = {complaint}/> */}
     <div className="flex flex-row">
       <button
-        className="bg-green-600 text-white p-4 rounded font-bold w-50 my-10 m-4"
+        className={`${complaint?.extended ? 'bg-gray-600 text-white p-4 rounded font-bold w-50 my-10 m-4' :'bg-green-600 text-white p-4 rounded font-bold w-50 my-10 m-4'}`}
         onClick={extend}
       >
-        Extend
+         {complaint?.extended ? 'Job Extended' : 'Extend Job'}
       </button>
       <div className="flex flex-row items-center">
       <button
