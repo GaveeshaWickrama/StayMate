@@ -18,7 +18,7 @@ function ManageUsers() {
       </div>
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
         <div className="text-center bg-gray-100 p-6 rounded-md shadow-sm hover:bg-gray-200">
-          <Link to="/admin/tenants">
+          <Link to="/admin/Tenants">
             <MdAccountCircle size={70} className="text-blue-500 mx-auto mb-4" />
             <p className="mt-2 text-xl font-semibold text-gray-700">Tenants</p>
           </Link>

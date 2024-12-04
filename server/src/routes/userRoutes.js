@@ -4,6 +4,7 @@ const upload = require("../middleware/multer");
 const userController = require("../controllers/userController");
 const { authToken, requireRole } = require("../middleware/authProvider");
 
+
 //get the profile of a single user
 router.get(
   "/:id",
